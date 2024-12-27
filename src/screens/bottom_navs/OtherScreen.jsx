@@ -2,6 +2,8 @@ import { StyleSheet, Image, SafeAreaView, Text, View, ScrollView , TouchableOpac
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icons from 'react-native-vector-icons/Fontisto';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFeather from 'react-native-vector-icons/Feather';
 
 
 
@@ -9,119 +11,88 @@ import Icons from 'react-native-vector-icons/Fontisto';
 const CardItem = ({ icon, text, color }) => {
   return (
     <View style={styles.card}>
-      <Icon name={icon} size={24} color={color} />
+      <IconFeather name={icon} size={24} color={color} />
       <Text style={styles.cardText}>{text}</Text>
     </View>
   );
 };
-
 
 const OtherScreen = (props) => {
   return (
     <SafeAreaView style={styles.container}>
 
       <View style={styles.header}>
-        <Text style={styles.textHeader}>Khác</Text>
+        <Text style={styles.textHeader}>Cá nhân</Text>
         <View style={styles.notification}>
           <View style={styles.itemNotification}>
-            <Icon name="ticket-confirmation-outline" size={25} color="#1c1c1c" />
+            <Icon name="ticket-confirmation-outline" size={25} color="#299345" />
           </View>
           <View style={styles.itemNotification}>
-            <Icons name="bell" size={25} color="#1c1c1c" />
+            <Icons name="bell" size={25} color="#299345" />
           </View>
         </View>
       </View>
 
       <ScrollView style={styles.body}>
         <Text style={styles.tittle}>
-          Tiện ích
+          Tài khoản
         </Text>
         <View style={styles.extention}>
           <CardItem 
-            icon="file-document-outline" 
-            text="Lịch sử đơn hàng" 
-            color="#ff9800" 
+            icon="user" 
+            text="Thông tin cá nhân" 
+            color="#299345" 
           />
           <CardItem 
-            icon="file-document-outline" 
-            text="Điều khoản" 
-            color="#8e44ad" 
+            icon="map-pin" 
+            text="Địa chỉ" 
+            color="#F04C7F" 
           />
         </View>
+        <TouchableOpacity>
         <View style={styles.row}>
           <CardItem 
-            icon="file-document-outline" 
-            text="Điều khoản VNPAY" 
-            color="#8e44ad" 
+            icon="file-text" 
+            text="Lịch sử đơn hàng" 
+            color="#FF6924" 
           />
         </View>
+        </TouchableOpacity>
+
+
         <Text style={styles.tittle}>
-          Hỗ trợ
+          Tiện ích
         </Text>
         <View style={styles.support}>
             <TouchableOpacity style={styles.item}>
             <View style={styles.leftSection}>
-              <Icon name="star-outline" size={24} color="#000" />
-              <Text style={styles.title}>Đánh giá đơn hàng</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="message-outline" size={24} color="#000" />
-              <Text style={styles.title}>Liên hệ và góp ý</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="file-chart-outline" size={24} color="#000" />
-              <Text style={styles.title}>Hướng dẫn xuất hoá đơn GTGT</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-
-
-        <Text style={styles.tittle}>
-          Tài Khoản
-        </Text>
-        <View style={styles.support}>
-            <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="account-outline" size={24} color="#000" />
+              <IconAntDesign name="setting" size={24} color="#666666" />
               <Text style={styles.title}>Thông tin cá nhân</Text>
             </View>
-            <Icon name="chevron-right" size={24} color="#000" />
           </TouchableOpacity>
 
           <View style={styles.separator} />
           <TouchableOpacity style={styles.item}>
             <View style={styles.leftSection}>
-              <Icon name="bookmark-outline" size={24} color="#000" />
-              <Text style={styles.title}>Địa chỉ đã lưu</Text>
+              <IconFeather name="message-circle" size={24} color="#666666" />
+              <Text style={styles.title}>Liên hệ góp ý</Text>
             </View>
-            <Icon name="chevron-right" size={24} color="#000" />
           </TouchableOpacity>
 
           <View style={styles.separator} />
           <TouchableOpacity style={styles.item}>
             <View style={styles.leftSection}>
-              <Icon name="cog-outline" size={24} color="#000" />
+              <IconFeather name="star" size={24} color="#666666" />
               <Text style={styles.title}>Cài đặt</Text>
             </View>
-            <Icon name="chevron-right" size={24} color="#000" />
           </TouchableOpacity>
 
           <View style={styles.separator} />
           <TouchableOpacity style={styles.item}>
             <View style={styles.leftSection}>
-              <Icon name="login" size={24} color="#000" />
+              <IconAntDesign name="login" size={24} color="#666666" />
               <Text style={styles.title}>Đăng xuất</Text>
             </View>
-            <Icon name="chevron-right" size={24} color="#000" />
           </TouchableOpacity>
         </View>
         
@@ -138,18 +109,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     marginVertical: 5,
     width: 352,
+    
   },
   support:{
     backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0,
+    shadowRadius: 2,
+    elevation: 2,
   },
   item: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
+    
   },
   leftSection: {
     flexDirection: 'row',
@@ -173,6 +151,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     justifyContent: 'space-around',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 1,
+    elevation: 1,
   },
   cardText: {
     fontSize: 14,
@@ -198,17 +181,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   itemNotification: {
-    width: 50,
+   width: 40,
     height: 40,
     marginHorizontal: 3, 
     backgroundColor: '#fff',
-    borderRadius: 15, 
+    borderRadius: 17, 
     justifyContent: 'center', 
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
     elevation: 5,
   },
   notification: {
@@ -226,6 +209,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: 'white',
   },
 });
