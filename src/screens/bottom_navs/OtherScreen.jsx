@@ -33,6 +33,14 @@ const OtherScreen = (props) => {
         </View>
       </View>
 
+
+
+
+
+
+
+
+
       <ScrollView style={styles.body}>
         <Text style={styles.tittle}>
           Tài khoản
