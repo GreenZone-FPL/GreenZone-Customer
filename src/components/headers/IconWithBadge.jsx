@@ -11,7 +11,7 @@ const IconWithBadge = (props) => {
             onPress={onPress}
             style={styles.container}>
             <View style={styles.button}>
-                <Feather name="bell" style={styles.icon} />
+                <Feather name="bell" style={styles.icon} size={24}/>
             </View>
             <Badge style={styles.badge}>13</Badge>
         </Pressable>
@@ -26,8 +26,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     button: {
-        width: 34,
-        height: 34,
+       padding: 10,
         borderRadius: 20,
         backgroundColor: colors.white,
         justifyContent: 'center',
