@@ -10,7 +10,7 @@ const screens = {
     OrderScreen: 'OrderScreen',
     MerchantScreen: 'MerchantScreen',
     VoucherScreen: 'VoucherScreen',
-    OtherScreen: 'OtherScreen',
+    ProfileScreen: 'ProfileScreen',
 
 
      // bottom_navs_stack
@@ -18,7 +18,7 @@ const screens = {
      OrderStackScreen: 'OrderStackScreen',
      MerchantStackScreen: 'MerchantStackScreen',
      VoucherStackScreen: 'VoucherStackScreen',
-     OtherStackScreen: 'OtherStackScreen'
+     ProfileStackScreen: 'ProfileStackScreen'
 
 
 

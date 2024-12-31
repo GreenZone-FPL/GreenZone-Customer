@@ -1,9 +1,10 @@
 
 import { StyleSheet, Text, View, TextInput, Pressable, Image, Dimensions } from 'react-native'
 import React, { useState } from 'react'
-import { styles } from '../screens/auth/LoginScreen'
-import colors from '../constants/color'
-const InputStyledPassword = (props) => {
+import { styles } from '../../screens/auth/LoginScreen'
+import colors from '../../constants/color'
+
+const CustomInputPassword = (props) => {
     const { placeholder, value, setValue, message, visiblePassword, setVisiblePassword } = props
     const togglePassword = () => {
         setVisiblePassword(!visiblePassword)
@@ -39,4 +40,4 @@ const InputStyledPassword = (props) => {
 }
 
 
-export default InputStyledPassword;
+export default CustomInputPassword;

@@ -1,12 +1,16 @@
 import { StyleSheet, Image, SafeAreaView } from 'react-native'
 import { View, Text } from 'react-native';
 
+
+
 const VoucherScreen = (props) => {
 
   return (
 
     <SafeAreaView style={styles.container}>
+
       <Text>Voucher Screen</Text>
+    
 
     </SafeAreaView>
 
@@ -21,12 +25,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-  },
-  contentContainer: {
-    flex: 1,
-    padding: 36,
-    alignItems: 'center',
-  },
+  }
 
 })
 

@@ -1,4 +1,4 @@
-import axiosInstance from "..";
+import axiosInstance from "../../axios";
  
 export const loginApi = async (request) => {
     try {

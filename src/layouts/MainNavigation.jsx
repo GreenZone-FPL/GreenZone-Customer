@@ -1,18 +1,17 @@
-
-import React from 'react'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import colors from '../constants/color'
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Icon } from 'react-native-paper'; 
+import { Text } from 'react-native'; 
+import colors from '../constants/color';
 import ScreenEnum from '../constants/screenEnum';
 import HomeStackScreen from './stacks/HomeStackScreen';
-import OtherStackScreen from './stacks/OtherStackScreen';
+import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
 import MerchantStackScreen from './stacks/MerchantStackScreen';
 import OrderStackScreen from './stacks/OrderStackScreen';
+import GLOBAL_KEYS from '../constants/global_keys';
 
-
-
-const BottomTab = createBottomTabNavigator()
+const BottomTab = createBottomTabNavigator();
 
 const MainNavigation = () => {
   return (
@@ -20,42 +19,67 @@ const MainNavigation = () => {
       initialRouteName={ScreenEnum.HomeStackScreen}
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true, 
         tabBarStyle: {
           backgroundColor: colors.white,
-          borderTopWidth: 0,
-          elevation: 0,
-          shadowOpacity: 0,
-          height: 60,
+          height: 60
         },
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused }) => {
           let iconName;
 
+        
           if (route.name === ScreenEnum.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === ScreenEnum.OrderStackScreen) {
-            iconName = focused ? 'cafe' : 'cafe-outline';
+            iconName = focused ? 'food' : 'food-outline';
           } else if (route.name === ScreenEnum.MerchantStackScreen) {
-            iconName = focused ? 'storefront' : 'storefront-outline';
+            iconName = focused ? 'store' : 'store-outline';
           } else if (route.name === ScreenEnum.VoucherStackScreen) {
-            iconName = focused ? 'wallet' : 'wallet-outline';
-          } else if (route.name === ScreenEnum.OtherStackScreen) {
-            iconName = focused ? 'list-sharp' : 'list-outline';
+            iconName = focused ? 'gift-open' : 'gift-outline';
+          } else if (route.name === ScreenEnum.ProfileStackScreen) {
+            iconName = focused ? 'account-circle' : 'account-circle-outline';
           }
-          return <Ionicons name={iconName} size={size} color={color} />;
+
+          return (
+            <Icon
+              source={iconName}
+              color={focused ? colors.primary : colors.gray700}
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} 
+            />
+          );
+        },
+        tabBarLabel: ({ focused }) => {
+          let label;
+
+
+          if (route.name === ScreenEnum.HomeStackScreen) {
+            label = 'Trang Chủ';
+          } else if (route.name === ScreenEnum.OrderStackScreen) {
+            label = 'Đặt hàng';
+          } else if (route.name === ScreenEnum.MerchantStackScreen) {
+            label = 'Cửa hàng';
+          } else if (route.name === ScreenEnum.VoucherStackScreen) {
+            label = 'Ưu đãi';
+          } else if (route.name === ScreenEnum.ProfileStackScreen) {
+            label = 'Cá nhân';
+          }
+
+          return (
+              <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: 12 }}>
+                {label}
+              </Text>   
+          );
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: colors.gray700, 
       })}>
       <BottomTab.Screen name={ScreenEnum.HomeStackScreen} component={HomeStackScreen} />
       <BottomTab.Screen name={ScreenEnum.OrderStackScreen} component={OrderStackScreen} />
       <BottomTab.Screen name={ScreenEnum.MerchantStackScreen} component={MerchantStackScreen} />
       <BottomTab.Screen name={ScreenEnum.VoucherStackScreen} component={VoucherStackScreen} />
-      <BottomTab.Screen name={ScreenEnum.OtherStackScreen} component={OtherStackScreen} />
-
-
+      <BottomTab.Screen name={ScreenEnum.ProfileStackScreen} component={ProfileStackScreen} />
     </BottomTab.Navigator>
-  )
-}
+  );
+};
 
-export default MainNavigation
+export default MainNavigation;
