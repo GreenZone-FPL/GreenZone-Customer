@@ -1,9 +1,12 @@
+
+
 const screens = {
     // auth
     SplashScreen: 'SplashScreen',
     LoginScreen: 'LoginScreen',
     MainScreen: 'MainScreen',
     ProductDetail: 'ProductDetail',
+    UpdateProfileScreen: 'UpdateProfileScreen',
 
     // bottom_navs_screen
     HomeScreen: 'HomeScreen',

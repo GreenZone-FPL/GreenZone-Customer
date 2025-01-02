@@ -17,6 +17,9 @@ import ScreenEnum from './src/constants/screenEnum';
 import ProductDetail from './src/screens/buy_products/VoucherScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 
+import UpdateProfileScreen from './src/screens/auth/UpdateProfileScreen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 
 const BaseStack = createNativeStackNavigator()
@@ -24,24 +27,26 @@ function App() {
   return (
 
 
+    <SafeAreaProvider>
+        <UpdateProfileScreen/>
+    </SafeAreaProvider>
+
+    // <NavigationContainer>
 
 
-    <NavigationContainer>
+    //   <BaseStack.Navigator
+    //     screenOptions={{ headerShown: false }}>
+    //     <BaseStack.Screen name={"MainNavigation"} component={MainNavigation} />
 
-
-      <BaseStack.Navigator
-        screenOptions={{ headerShown: false }}>
-        <BaseStack.Screen name={"MainNavigation"} component={MainNavigation} />
-
-        <BaseStack.Screen name={ScreenEnum.ProductDetail} component={ProductDetail} />
-        <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
+    //     <BaseStack.Screen name={ScreenEnum.ProductDetail} component={ProductDetail} />
+    //     <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
 
 
-      </BaseStack.Navigator>
+    //   </BaseStack.Navigator>
 
 
-    </NavigationContainer>
+    // </NavigationContainer>
 
 
 

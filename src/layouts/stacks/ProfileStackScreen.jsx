@@ -17,7 +17,6 @@ const ProfileStackScreen = () => {
             <ProfileStack.Screen name={ScreenEnum.ProfileScreen} component={ProfileScreen} />
 
             <ProfileStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
-
         </ProfileStack.Navigator>
 
     )
