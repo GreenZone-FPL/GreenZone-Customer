@@ -1,55 +1,75 @@
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, View, Button } from 'react-native';
-import CustomSearchBar from './inputs/CustomSearchBar';
-import HeaderWithBadge from './headers/HeaderWithBadge';
+import { StyleSheet, View, Button } from 'react-native';
 import colors from '../constants/color';
+import FlatInput from './inputs/FlatInput';
+import OutlineInput from './inputs/OutlineInput';
+import GLOBAL_KEYS from '../constants/global_keys';
+
 
 const TestComponent = () => {
+  const [fullname, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [errors, setErrors] = useState({
+    fullname: '',
+    email: '',
+    password: '',
+  });
 
+  const validateInputs = () => {
+    const newErrors = {
+      fullname: fullname.trim() === '' ? 'Fullname is required' : '',
+      email: email.trim() === '' ? 'Email is required' : '',
+      password: password.trim() === '' ? 'Password is required' : '',
+    };
+    setErrors(newErrors);
+  };
 
-  const [searchQuery, setSearchQuery] = useState('');
   return (
-    <SafeAreaView style={styles.container}>
-
-      <HeaderWithBadge title="Test Component" isHome={true} />
-
-
-      <View style={styles.containerContent}>
-
-        <CustomSearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          placeholder="Tìm kiếm sản phẩm"
-        />
-
-
-
-
-
-        
-
-      </View>
-
-
-    </SafeAreaView>
+    <View style={styles.container}>
+      <FlatInput
+        label="Fullname"
+        value={fullname}
+        setValue={(value) => {
+          setErrors((prev) => ({ ...prev, fullname: '' }));
+          setFullname(value);
+        }}
+        message={errors.fullname}
+      />
+      <FlatInput
+        label="Email"
+        value={email}
+        setValue={(value) => {
+          setErrors((prev) => ({ ...prev, email: '' }));
+          setEmail(value);
+        }}
+        message={errors.email}
+      />
+      <FlatInput
+        label="Password"
+        value={password}
+        setValue={(value) => {
+          setErrors((prev) => ({ ...prev, password: '' }));
+          setPassword(value);
+        }}
+        message={errors.password}
+        secureTextEntry
+        isPasswordVisible={isPasswordVisible}
+        setIsPasswordVisible={setIsPasswordVisible}
+      />
+      <Button title="Validate" onPress={validateInputs} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 20,
-    alignItems: 'center',
     backgroundColor: colors.white,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
-  containerContent: {
-    flex: 1,
-    width: '100%',
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-    padding: 16,
-    gap: 16
-  }
 });
 
 export default TestComponent;

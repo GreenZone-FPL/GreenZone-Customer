@@ -2,6 +2,7 @@ import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Appbar } from 'react-native-paper';
 import colors from '../../constants/color';
+import GLOBAL_KEYS from '../../constants/global_keys';
 
 
 const NormalHeader = (props) => {
@@ -39,7 +40,7 @@ const NormalHeader = (props) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 16,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     textAlign: 'center',
     color: colors.black

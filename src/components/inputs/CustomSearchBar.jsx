@@ -10,6 +10,7 @@ const CustomSearchBar = (props) => {
     placeholder = "Search",
     searchQuery,
     setSearchQuery,
+    style
   } = props;
 
   return (
@@ -21,7 +22,7 @@ const CustomSearchBar = (props) => {
       clearIcon="close"
       inputStyle={styles.input}
       elevation={1}
-      style={styles.searchBar}
+      style={[styles.searchBar, style]}
     />
   );
 };
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT
   },
   input: {
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
   },
 });

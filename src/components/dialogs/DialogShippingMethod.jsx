@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Button, Modal, StyleSheet, Text, TouchableOpacity, Image, Pressable } from 'react-native';
 import { IconButton } from 'react-native-paper';
 import colors from '../../constants/color';
+import GLOBAL_KEYS from '../../constants/global_keys';
 
 
 
@@ -31,9 +32,9 @@ const DialogShippingMethod = () => {
                 <View style={styles.overlay}>
                     <View style={styles.modalContainer}>
                         <View style={styles.header}>
-                            <View style={{ width: 24, height: 24, backgroundColor: colors.transparent }} ></View>
+                            <View style={{ width: GLOBAL_KEYS.ICON_SIZE_DEFAULT, height: GLOBAL_KEYS.ICON_SIZE_DEFAULT, backgroundColor: colors.transparent }} ></View>
                             <Text style={styles.titleText}>Chọn phương thức đặt hàng</Text>
-                            <IconButton icon="close" size={24} color={colors.black} onPress={hideModal} />
+                            <IconButton icon="close" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.black} onPress={hideModal} />
                         </View>
 
                         <View style={styles.optionsContainer}>
@@ -52,7 +53,7 @@ const DialogShippingMethod = () => {
                                         </View>
                                         <IconButton
                                             icon="square-edit-outline"
-                                            size={24}
+                                            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                                             iconColor={colors.primary}
                                             onPress={() => handleEdit(option.label)}
                                         />
@@ -91,22 +92,22 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingVertical: 16,
+        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
         shadowColor: colors.black,
         shadowOffset: { width: 0, height: -4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
     },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, paddingHorizontal: 16 },
-    titleText: { fontSize: 18, fontWeight: '700', color: colors.black, textAlign: 'center', flex: 1 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom:  GLOBAL_KEYS.PADDING_DEFAULT, paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT },
+    titleText: { fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER, fontWeight: 'bold', color: colors.black, textAlign: 'center', flex: 1 },
     optionsContainer: { gap: 8, backgroundColor: colors.gray200 },
-    optionItem: { paddingVertical: 8, paddingHorizontal: 16, backgroundColor: colors.white },
+    optionItem: { paddingVertical:  GLOBAL_KEYS.PADDING_SMALL, paddingHorizontal:  GLOBAL_KEYS.PADDING_DEFAULT, backgroundColor: colors.white },
     row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     iconContainer: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.green100, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
     icon: { width: 28, height: 28, resizeMode: 'cover' },
-    optionText: { fontSize: 14, fontWeight: '700', color: colors.black },
-    normalText: { fontSize: 14, color: colors.gray850 },
+    optionText: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: 'bold', color: colors.black },
+    normalText: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray850 },
 });
 
 export default DialogShippingMethod;

@@ -12,7 +12,7 @@ const CustomModal = (props) => {
 
     const handleOptionSelect = (option) => setSelectedOption(option);
     const handleEdit = (option) => console.log(`Editing ${option}`);
-    
+
     return (
         <View style={styles.modalContainer}>
             <OverlayStatusBar />
@@ -81,65 +81,65 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         width: '100%',
-        backgroundColor: 'white',
+        backgroundColor: colors.white,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        shadowColor: '#000',
+        shadowColor: colors.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-        elevation: 5, // Tạo hiệu ứng nổi
+        elevation: 5,
     },
     header: {
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
         backgroundColor: colors.white
     },
     titleText: {
-        fontSize: 16, 
-        fontWeight: '700', 
-        color: colors.black, 
-        textAlign: 'center', 
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '700',
+        color: colors.black,
+        textAlign: 'center',
         flex: 1
     },
     optionsContainer: {
-        gap: 8, 
+        gap: 8,
         backgroundColor: colors.gray200
     },
     optionItem: {
-        paddingVertical: GLOBAL_KEYS.PADDING_SMALL, 
-        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, 
+        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
         backgroundColor: colors.white
     },
-    row: { 
-        flexDirection: 'row', 
-        justifyContent: 'space-between', 
-        alignItems: 'center' 
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     iconContainer: {
-        width: 40, 
-        height: 40, 
-        borderRadius: 20, 
-        backgroundColor: colors.green100, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        marginRight: 10 
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: colors.green100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10
     },
-    icon: { 
-        width: 28, 
-        height: 28, 
-        resizeMode: 'cover' 
+    icon: {
+        width: 28,
+        height: 28,
+        resizeMode: 'cover'
     },
-    optionText: { 
-        fontSize: 14, 
-        fontWeight: '700', 
-        color: colors.black 
+    optionText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '700',
+        color: colors.black
     },
-    normalText: { 
-        fontSize: 14, 
-        color: colors.gray850, 
-        textAlign: 'justify' 
+    normalText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray850,
+        textAlign: 'justify'
     },
 });
 

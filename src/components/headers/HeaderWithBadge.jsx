@@ -44,7 +44,7 @@ const HeaderWithBadge = (props) => {
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: 4,
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 16,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     color: colors.black,
   },
