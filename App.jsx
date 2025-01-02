@@ -27,26 +27,26 @@ function App() {
   return (
 
 
-    <SafeAreaProvider>
-        <UpdateProfileScreen/>
-    </SafeAreaProvider>
+    // <SafeAreaProvider>
+    //     <UpdateProfileScreen/>
+    // </SafeAreaProvider>
 
-    // <NavigationContainer>
-
-
-    //   <BaseStack.Navigator
-    //     screenOptions={{ headerShown: false }}>
-    //     <BaseStack.Screen name={"MainNavigation"} component={MainNavigation} />
-
-    //     <BaseStack.Screen name={ScreenEnum.ProductDetail} component={ProductDetail} />
-    //     <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
+    <NavigationContainer>
 
 
+      <BaseStack.Navigator
+        screenOptions={{ headerShown: false }}>
+        <BaseStack.Screen name={"MainNavigation"} component={MainNavigation} />
 
-    //   </BaseStack.Navigator>
+        <BaseStack.Screen name={ScreenEnum.ProductDetail} component={ProductDetail} />
+        <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
 
-    // </NavigationContainer>
+
+      </BaseStack.Navigator>
+
+
+    </NavigationContainer>
 
 
 
