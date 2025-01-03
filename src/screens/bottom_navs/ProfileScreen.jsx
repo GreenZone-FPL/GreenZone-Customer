@@ -5,6 +5,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import GLOBAL_KEYS from '../../constants/global_keys';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status_bars/LightStatusBar';
+import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 
 
   const ProfileScreen = (props) => {
@@ -13,7 +14,7 @@ import LightStatusBar from '../../components/status_bars/LightStatusBar';
     return (
       <SafeAreaView style={styles.container}>
         <LightStatusBar/>
-
+        <HeaderWithBadge   title="Tittle"   />
         <ScrollView style={styles.body}>
           <Text style={styles.tittle}>
             Tài khoản
@@ -28,14 +29,12 @@ import LightStatusBar from '../../components/status_bars/LightStatusBar';
               <Text style={styles.cardText}>Địa chỉ</Text>
             </TouchableOpacity>
           </View>
-         
           <View style={styles.row}>
               <TouchableOpacity style={styles.card}>
                 <Feather name="file-text" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.orange700} />
                 <Text style={styles.cardText}>Lịch sử đơn hàng</Text>
               </TouchableOpacity>
           </View>
-
           <Text style={styles.tittle}>
             Tiện ích
           </Text>
@@ -149,8 +148,7 @@ import LightStatusBar from '../../components/status_bars/LightStatusBar';
     },
     body:{
       flexDirection: 'column',
-      paddingHorizontal: 20,
-      marginTop: 15
+      paddingHorizontal: 16,
     },
     container: {
       flex: 1,
