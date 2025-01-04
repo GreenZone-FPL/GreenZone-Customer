@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import colors from '../constants/color';
 import FlatInput from './inputs/FlatInput';
-import OutlineInput from './inputs/OutlineInput';
+
 import GLOBAL_KEYS from '../constants/global_keys';
 
 
@@ -72,4 +72,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TestComponent;
+export default TestComponent

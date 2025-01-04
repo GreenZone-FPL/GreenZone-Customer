@@ -25,7 +25,7 @@ const NormalHeader = (props) => {
         titleStyle={styles.title}
       />
 
-    
+
       {  // Quyết định có show right icon hay không ?
         enableRightIcon ? (
           <Appbar.Action icon={rightIcon} onPress={onRightPress} />
@@ -39,6 +39,9 @@ const NormalHeader = (props) => {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: colors.white
+  },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
@@ -47,4 +50,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default NormalHeader;
+export default NormalHeader

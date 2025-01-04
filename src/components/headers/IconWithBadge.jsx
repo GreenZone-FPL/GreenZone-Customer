@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     button: {
-        padding: 8, 
+        padding: GLOBAL_KEYS.PADDING_SMALL,
         borderRadius: 20,
         backgroundColor: colors.white,
         justifyContent: 'center',
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     },
     badge: {
         position: 'absolute',
-        top: 4, 
+        top: 4,
         right: 4,
         backgroundColor: colors.red800,
         color: colors.white,

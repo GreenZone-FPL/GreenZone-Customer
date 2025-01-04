@@ -84,10 +84,10 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-        elevation: 5,
+        elevation: 3,
     },
     header: {
         flexDirection: 'row',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     optionsContainer: {
-        gap: 8,
+        gap: GLOBAL_KEYS.GAP_SMALL,
         backgroundColor: colors.gray200
     },
     optionItem: {

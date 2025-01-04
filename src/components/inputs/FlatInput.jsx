@@ -3,24 +3,73 @@ import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/global_keys';
+import PropTypes from 'prop-types';
 
+// PropTypes cho FlatInput
+const FlatInputPropTypes = {
+    label: PropTypes.string,
+    placeholder: PropTypes.string,
+    setValue: PropTypes.func.isRequired,
+    message: PropTypes.string,
+    setIsPasswordVisible: PropTypes.func,
+    isPasswordVisible: PropTypes.bool,
+    secureTextEntry: PropTypes.bool,
+    style: PropTypes.object,
+    editable: PropTypes.bool,
+    keyboardType: PropTypes.oneOf([
+        "default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad", "url"
+    ]),
+};
+
+// PropTypes cho CustomFlatInput
+const CustomFlatInputPropTypes = {
+    label: PropTypes.string,
+    placeholder: PropTypes.string,
+    value: PropTypes.string.isRequired,
+    setValue: PropTypes.func.isRequired,
+    message: PropTypes.string,
+    rightIcon: PropTypes.string,
+    onRightPress: PropTypes.func,
+    rightIconColor: PropTypes.string,
+    style: PropTypes.object,
+    editable: PropTypes.bool,
+    keyboardType: PropTypes.oneOf([
+        "default", "number-pad", "decimal-pad", "numeric", "email-address", "phone-pad", "url"
+    ]),
+};
+
+/**
+ * Usage Example:
+ *
+ * <FlatInput
+ *    label="Email"
+ *    placeholder="Enter your email"
+ *    setValue={(text) => setEmail(text)}
+ *    message={emailError}
+ *    keyboardType="email-address"
+ * />
+ */
 const FlatInput = ({
-    label,
+    label = "Default label",
+    placeholder = "Default place holder",
     value,
     setValue,
     message,
     setIsPasswordVisible,
     isPasswordVisible = false,
-    secureTextEntry = false
+    secureTextEntry = false,
+    style,
+    editable = true,
+    keyboardType = "default"
 }) => {
     return (
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, style]}>
             <TextInput
                 label={label}
                 value={value}
                 onChangeText={setValue}
                 mode="flat"
-                placeholder={`Enter your ${label.toLowerCase()}`}
+                placeholder={placeholder}
                 placeholderTextColor={colors.gray400}
                 error={!!message}
                 outlineColor={!!message ? colors.red800 : colors.primary}
@@ -37,11 +86,70 @@ const FlatInput = ({
                         />
                     )
                 }
+                editable={editable}
+                keyboardType={keyboardType}
             />
             {message && <Text style={styles.errorText}>{message}</Text>}
         </View>
     );
 };
+
+FlatInput.propTypes = FlatInputPropTypes;
+
+/**
+ * Usage Example:
+ *
+ * <CustomFlatInput
+ *    label="Email"
+ *    placeholder="Enter your email"
+ *    setValue={(text) => setEmail(text)}
+ *    message={emailError}
+ *    keyboardType="email-address"
+ * />
+ */
+const CustomFlatInput = ({
+    label = "Default label",
+    placeholder = "Default place holder",
+    value,
+    setValue,
+    message,
+    rightIcon = "calendar",
+    onRightPress,
+    rightIconColor = colors.primary,
+    style,
+    editable = true,
+    keyboardType = "default"
+}) => {
+    return (
+        <View style={[styles.inputContainer, style]}>
+            <TextInput
+                label={label}
+                value={value}
+                onChangeText={setValue}
+                mode="flat"
+                placeholder={placeholder}
+                placeholderTextColor={colors.gray400}
+                error={!!message}
+                outlineColor={!!message ? colors.red800 : colors.primary}
+                activeUnderlineColor={colors.primary}
+                underlineColor={colors.primary}
+                style={styles.input}
+                right={
+                    <TextInput.Icon
+                        color={rightIconColor}
+                        icon={rightIcon}
+                        onPress={onRightPress}
+                    />
+                }
+                editable={editable}
+                keyboardType={keyboardType}
+            />
+            {message && <Text style={styles.errorText}>{message}</Text>}
+        </View>
+    );
+};
+
+CustomFlatInput.propTypes = CustomFlatInputPropTypes;
 
 const styles = StyleSheet.create({
     input: {
@@ -59,6 +167,11 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
         marginTop: 4,
     },
+    disabledInput: {
+        backgroundColor: colors.gray200,
+        color: colors.gray500,
+    }
 });
 
 export default FlatInput;
+export { CustomFlatInput };

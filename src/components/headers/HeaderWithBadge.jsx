@@ -12,7 +12,6 @@ const HeaderWithBadge = (props) => {
     <View style={styles.header}>
 
 
-
       { // Kiểm tra xem có phải trang Home hay không
         // 1. Nếu là trang Home thì đổi Header Chào user
         // 2. Nếu không phải Home thì chỉ hiển thị Header Title
@@ -30,7 +29,6 @@ const HeaderWithBadge = (props) => {
           <View style={styles.left}>
             <Text style={styles.title}>{title}</Text>
           </View>
-
         )}
 
 
@@ -49,11 +47,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    width: '100%'
+
   },
   left: {
     flexDirection: 'row',
-    gap: 8,
+    gap: GLOBAL_KEYS.GAP_SMALL,
     alignItems: 'center'
   },
   right: {
@@ -73,4 +71,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default HeaderWithBadge;
+export default HeaderWithBadge
