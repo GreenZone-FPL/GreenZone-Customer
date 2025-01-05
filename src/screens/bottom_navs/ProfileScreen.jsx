@@ -14,7 +14,7 @@ import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
     return (
       <SafeAreaView style={styles.container}>
         <LightStatusBar/>
-        <HeaderWithBadge   title="Tittle"   />
+        <HeaderWithBadge   title="Cá nhân"   />
         <ScrollView style={styles.body}>
           <Text style={styles.tittle}>
             Tài khoản
@@ -81,15 +81,15 @@ import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
   const styles = StyleSheet.create({
     separator: {
       height: 1,
-      backgroundColor: colors.gray400,
+      backgroundColor: colors.gray300,
       marginVertical: 5,
       width: "100%",
       
     },
     support:{
       backgroundColor: colors.white,
-      paddingVertical: 15,
-      paddingHorizontal: 15,
+      paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+      paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
       borderRadius: 10,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -101,7 +101,7 @@ import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingVertical: 8,
+      paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
       
     },
     leftSection: {
@@ -124,7 +124,7 @@ import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
       backgroundColor: colors.white,
       marginHorizontal: 5,
       borderRadius: 10,
-      padding: 10,
+      padding: GLOBAL_KEYS.PADDING_SMALL,
       justifyContent: 'space-around',
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 0 },
@@ -148,7 +148,7 @@ import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
     },
     body:{
       flexDirection: 'column',
-      paddingHorizontal: 16,
+      paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     },
     container: {
       flex: 1,
