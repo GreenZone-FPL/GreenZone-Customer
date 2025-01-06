@@ -3,7 +3,7 @@ import React, {useState} from 'react';
 import NormalHeader from '../../components/headers/NormalHeader';
 import colors from '../../constants/color';
 import {Icon} from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import {Dimensions} from 'react-native';
 import FlatInput from '../../components/inputs/FlatInput';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpdateProfileScreen;
+export default UpdateProfileScreen

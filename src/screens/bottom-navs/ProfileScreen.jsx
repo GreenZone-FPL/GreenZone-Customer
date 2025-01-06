@@ -1,13 +1,15 @@
 import React from 'react';
 import { StyleSheet, SafeAreaView, Text, View, Pressable, Alert } from 'react-native';
 import { Icon } from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
-import LightStatusBar from '../../components/status_bars/LightStatusBar';
+import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
+import ScreenEnum from '../../constants/screenEnum';
 
 
-const ProfileScreen = () => {
+const ProfileScreen = (props) => {
+  const {navigation} = props
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -20,7 +22,7 @@ const ProfileScreen = () => {
               icon="account"
               color={colors.primary}
               title="Thông tin cá nhân"
-              onPress={() => alert('Thông tin cá nhân!')}
+              onPress={() => {navigation.navigate(ScreenEnum.UpdateProfileScreen)}}
             />
             <CardAccount
               icon="google-maps"

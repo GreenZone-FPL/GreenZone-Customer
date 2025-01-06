@@ -14,6 +14,7 @@ import ScreenEnum from '../../constants/screenEnum';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import CategoryMenu from '../../components/category/CategoryMenu';
 
 const {width} = Dimensions.get('window');
 
@@ -29,7 +30,7 @@ const HomeScreen = props => {
         isHome={true}
       />
 
-      <CategoryScreen />
+      <CategoryMenu />
 
       <Button
         title="Open Modal"
