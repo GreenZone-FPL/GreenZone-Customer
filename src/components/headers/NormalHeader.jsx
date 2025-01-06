@@ -3,7 +3,19 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import { Icon } from 'react-native-paper'
+import PropTypes from 'prop-types'
 
+const NormalHeaderPropTypes = {
+  title: PropTypes.string.isRequired,
+  leftIcon: PropTypes.string.isRequired,
+  rightIcon: PropTypes.string,
+  onLeftPress: PropTypes.func,
+  onRightPress: PropTypes.func,
+  enableRightIcon: PropTypes.bool,
+  leftIconColor: PropTypes.string,
+  rightIconColor: PropTypes.string,
+  style: PropTypes.object
+}
 const NormalHeader = ({
   title = 'Default Title',
   leftIcon = 'arrow-left',
@@ -36,6 +48,9 @@ const NormalHeader = ({
     </View>
   );
 };
+
+
+NormalHeader.propTypes = NormalHeaderPropTypes
 
 const styles = StyleSheet.create({
   header: {

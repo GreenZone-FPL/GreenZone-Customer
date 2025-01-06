@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { StyleSheet, SafeAreaView, Text, View, Pressable, Alert } from 'react-native';
 import { Icon } from 'react-native-paper';
 import GLOBAL_KEYS from '../../constants/globalKeys';
@@ -9,7 +9,8 @@ import ScreenEnum from '../../constants/screenEnum';
 
 
 const ProfileScreen = (props) => {
-  const {navigation} = props
+  const navigation = props.navigation 
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -22,7 +23,7 @@ const ProfileScreen = (props) => {
               icon="account"
               color={colors.primary}
               title="Thông tin cá nhân"
-              onPress={() => {navigation.navigate(ScreenEnum.UpdateProfileScreen)}}
+              onPress={() => { navigation.navigate(ScreenEnum.UpdateProfileScreen) }}
             />
             <CardAccount
               icon="google-maps"
