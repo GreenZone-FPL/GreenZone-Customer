@@ -1,231 +1,147 @@
-import { StyleSheet, Image, SafeAreaView, Text, View, ScrollView , TouchableOpacity} from 'react-native';
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icons from 'react-native-vector-icons/Fontisto';
+import { StyleSheet, SafeAreaView, Text, View, Pressable, Alert } from 'react-native';
+import { Icon } from 'react-native-paper';
+import GLOBAL_KEYS from '../../constants/global_keys';
+import colors from '../../constants/color';
+import LightStatusBar from '../../components/status_bars/LightStatusBar';
+import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 
 
-
-
-const CardItem = ({ icon, text, color }) => {
-  return (
-    <View style={styles.card}>
-      <Icon name={icon} size={24} color={color} />
-      <Text style={styles.cardText}>{text}</Text>
-    </View>
-  );
-};
-
-
-const ProfileScreen = (props) => {
+const ProfileScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
+      <LightStatusBar />
+      <HeaderWithBadge title="Cá nhân" />
+      <View style={styles.body}>
+        <Text style={styles.sectionTitle}>Tài khoản</Text>
+        <View>
+          <View style={styles.accountContainer}>
+            <CardAccount
+              icon="account"
+              color={colors.primary}
+              title="Thông tin cá nhân"
+              onPress={() => alert('Thông tin cá nhân!')}
+            />
+            <CardAccount
+              icon="google-maps"
+              color={colors.pink500}
+              title="Địa chỉ"
+              onPress={() => alert('Địa chỉ!')}
+            />
+          </View>
+          <View style={styles.accountContainer}>
+            <CardAccount
+              icon="file-document-edit"
+              color={colors.orange700}
+              title="Lịch sử đơn hàng"
+              onPress={() => alert('Lịch sử đơn hàng!')}
+            />
+          </View>
+        </View>
 
-      <View style={styles.header}>
-        <Text style={styles.textHeader}>Khác</Text>
-        <View style={styles.notification}>
-          <View style={styles.itemNotification}>
-            <Icon name="ticket-confirmation-outline" size={25} color="#1c1c1c" />
-          </View>
-          <View style={styles.itemNotification}>
-            <Icons name="bell" size={25} color="#1c1c1c" />
-          </View>
+        <Text style={styles.sectionTitle}>Tiện ích</Text>
+        <View style={styles.utilities}>
+          <CardUtiliti
+            icon="cog"
+            title="Cài đặt"
+            onPress={() => alert('Cài đặt!')}
+          />
+          <View style={styles.separator} />
+          <CardUtiliti
+            icon="chat"
+            title="Liên hệ góp ý"
+            onPress={() => alert('Liên hệ góp ý!')}
+          />
+          <View style={styles.separator} />
+          <CardUtiliti
+            icon="star"
+            title="Đánh giá đơn hàn"
+            onPress={() => alert('Đánh giá đơn hàn!')}
+          />
+          <View style={styles.separator} />
+          <CardUtiliti
+            icon="logout"
+            title="Đăng xuất"
+            onPress={() => alert('Đăng xuất!')}
+          />
         </View>
       </View>
-
-      <ScrollView style={styles.body}>
-        <Text style={styles.tittle}>
-          Tiện ích
-        </Text>
-        <View style={styles.extention}>
-          <CardItem 
-            icon="file-document-outline" 
-            text="Lịch sử đơn hàng" 
-            color="#ff9800" 
-          />
-          <CardItem 
-            icon="file-document-outline" 
-            text="Điều khoản" 
-            color="#8e44ad" 
-          />
-        </View>
-        <View style={styles.row}>
-          <CardItem 
-            icon="file-document-outline" 
-            text="Điều khoản VNPAY" 
-            color="#8e44ad" 
-          />
-        </View>
-        <Text style={styles.tittle}>
-          Hỗ trợ
-        </Text>
-        <View style={styles.support}>
-            <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="star-outline" size={24} color="#000" />
-              <Text style={styles.title}>Đánh giá đơn hàng</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="message-outline" size={24} color="#000" />
-              <Text style={styles.title}>Liên hệ và góp ý</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="file-chart-outline" size={24} color="#000" />
-              <Text style={styles.title}>Hướng dẫn xuất hoá đơn GTGT</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-
-
-        <Text style={styles.tittle}>
-          Tài Khoản
-        </Text>
-        <View style={styles.support}>
-            <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="account-outline" size={24} color="#000" />
-              <Text style={styles.title}>Thông tin cá nhân</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="bookmark-outline" size={24} color="#000" />
-              <Text style={styles.title}>Địa chỉ đã lưu</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="cog-outline" size={24} color="#000" />
-              <Text style={styles.title}>Cài đặt</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-
-          <View style={styles.separator} />
-          <TouchableOpacity style={styles.item}>
-            <View style={styles.leftSection}>
-              <Icon name="login" size={24} color="#000" />
-              <Text style={styles.title}>Đăng xuất</Text>
-            </View>
-            <Icon name="chevron-right" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
-        
-      </ScrollView>
     </SafeAreaView>
   );
 };
 
 export default ProfileScreen
 
+const CardAccount = ({ icon, color, title, onPress }) => (
+  <Pressable style={styles.card} onPress={onPress}>
+    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
+    <Text style={styles.cardText}>{title}</Text>
+  </Pressable>
+);
+
+const CardUtiliti = ({ icon, title, onPress }) => (
+  <Pressable style={styles.item} onPress={onPress}>
+    <View style={styles.leftSection}>
+      <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.gray700} />
+      <Text style={styles.itemText}>{title}</Text>
+    </View>
+  </Pressable>
+);
 const styles = StyleSheet.create({
-  separator: {
-    height: 1,
-    backgroundColor: '#ddd',
-    marginVertical: 5,
-    width: 352,
+  container: {
+    flex: 1,
+    backgroundColor: colors.white,
+    flexDirection: 'column'
   },
-  support:{
-    backgroundColor: '#fff',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10
+  body: {
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  },
+  sectionTitle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: 'bold',
+  },
+  accountContainer: {
+    flexDirection: 'row',
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    marginBottom: GLOBAL_KEYS.GAP_DEFAULT,
+    justifyContent: 'space-between'
+  },
+  card: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    elevation: 3,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  },
+  cardText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
+  },
+  utilities: {
+    backgroundColor: colors.white,
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    elevation: 3,
   },
   item: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
   leftSection: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: GLOBAL_KEYS.GAP_SMALL,
   },
-  title: {
-    marginLeft: 10,
-    fontSize: 16,
-    color: '#333',
+  itemText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  card: {
-    flex: 1,
-    height: 80,
-    backgroundColor: '#fff',
-    marginHorizontal: 5,
-    borderRadius: 10,
-    padding: 10,
-    justifyContent: 'space-around',
-  },
-  cardText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#1c1c1c',
-  },
-  extention:{
-    flexDirection: 'row'
-  },
-  tittle:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginTop: 10,
-  },
-  body:{
-    flexDirection: 'column',
-    paddingHorizontal: 20,
-    marginTop: 15
-  },
-  textHeader:{
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  itemNotification: {
-    width: 50,
-    height: 40,
-    marginHorizontal: 3, 
-    backgroundColor: '#fff',
-    borderRadius: 15, 
-    justifyContent: 'center', 
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  notification: {
-    flexDirection: 'row',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    alignContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 8
-  },
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: '#F5F5F5',
+  separator: {
+    height: 1,
+    backgroundColor: colors.gray200,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
 });

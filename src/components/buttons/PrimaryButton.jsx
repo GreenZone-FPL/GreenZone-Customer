@@ -1,19 +1,15 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import {Pressable, Text, StyleSheet} from 'react-native';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 
-const PrimaryButton = (props) => {
-    const {
-        title,
-        onPress,
-        style
-    } = props
-    return (
-        <Pressable style={[styles.button, style]} onPress={onPress}>
-            <Text style={styles.text}>{title}</Text>
-        </Pressable>
-    );
+const PrimaryButton = props => {
+  const {title, onPress, style} = props;
+  return (
+    <Pressable style={[styles.button, style]} onPress={onPress}>
+      <Text style={styles.text}>{title}</Text>
+    </Pressable>
+  );
 };
 
 const styles = StyleSheet.create({

@@ -17,16 +17,16 @@ const MainNavigation = () => {
   return (
     <BottomTab.Navigator
       initialRouteName={ScreenEnum.HomeStackScreen}
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
         headerShown: false,
         tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: colors.white,
-          height: 60
+          maxHeight: 100,
+          height: 80,
         },
-        tabBarIcon: ({ focused }) => {
+        tabBarIcon: ({focused}) => {
           let iconName;
-
 
           if (route.name === ScreenEnum.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
@@ -48,9 +48,8 @@ const MainNavigation = () => {
             />
           );
         },
-        tabBarLabel: ({ focused }) => {
+        tabBarLabel: ({focused}) => {
           let label;
-
 
           if (route.name === ScreenEnum.HomeStackScreen) {
             label = 'Trang chủ';
@@ -73,11 +72,26 @@ const MainNavigation = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.gray700,
       })}>
-      <BottomTab.Screen name={ScreenEnum.HomeStackScreen} component={HomeStackScreen} />
-      <BottomTab.Screen name={ScreenEnum.OrderStackScreen} component={OrderStackScreen} />
-      <BottomTab.Screen name={ScreenEnum.MerchantStackScreen} component={MerchantStackScreen} />
-      <BottomTab.Screen name={ScreenEnum.VoucherStackScreen} component={VoucherStackScreen} />
-      <BottomTab.Screen name={ScreenEnum.ProfileStackScreen} component={ProfileStackScreen} />
+      <BottomTab.Screen
+        name={ScreenEnum.HomeStackScreen}
+        component={HomeStackScreen}
+      />
+      <BottomTab.Screen
+        name={ScreenEnum.OrderStackScreen}
+        component={OrderStackScreen}
+      />
+      <BottomTab.Screen
+        name={ScreenEnum.MerchantStackScreen}
+        component={MerchantStackScreen}
+      />
+      <BottomTab.Screen
+        name={ScreenEnum.VoucherStackScreen}
+        component={VoucherStackScreen}
+      />
+      <BottomTab.Screen
+        name={ScreenEnum.ProfileStackScreen}
+        component={ProfileStackScreen}
+      />
     </BottomTab.Navigator>
   );
 };

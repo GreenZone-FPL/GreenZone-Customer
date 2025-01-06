@@ -1,32 +1,22 @@
-import { StyleSheet, Image, SafeAreaView  } from 'react-native'
-import React from 'react'
+import {StyleSheet, Image, SafeAreaView} from 'react-native';
+import React from 'react';
+import {Appbar} from 'react-native-paper';
 
-const OrderScreen = (props) => {
-
+const OrderScreen = props => {
   return (
-
     <SafeAreaView style={styles.container}>
-      <Image source={require('../../assets/images/bottom_order.jpg')} style={{ width: '100%', height: '100%', resizeMode: 'cover' }} />
+      <Image
+        source={require('../../assets/images/bottom_order.jpg')}
+        style={{width: '100%', height: '100%', resizeMode: 'cover'}}
+      />
     </SafeAreaView>
+  );
+};
 
-  )
-}
-
-export default OrderScreen
-
+export default OrderScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  }
-
-})
-
-
-
-
-
-
-
-
-
+    flex: 1,
+  },
+});
