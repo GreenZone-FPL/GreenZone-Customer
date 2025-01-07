@@ -4,6 +4,22 @@ import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import QuantityButton from '../buttons/QuantityButton';
 import QuantitySelector from '../buttons/QuantitySelector';
+import PropTypes from 'prop-types';
+
+
+const SelectablePropTypes = {
+  item: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number
+  }).isRequired,
+  quantity: PropTypes.number.isRequired,
+  selected: PropTypes.bool.isRequired,
+  handlePlus: PropTypes.func.isRequired,
+  handleMinus: PropTypes.func.isRequired,
+  activeIconColor: PropTypes.string,
+  activeTextColor: PropTypes.string
+};
+
 
 const Selectable = ({
   item,
@@ -17,7 +33,7 @@ const Selectable = ({
 }) => {
 
   const activeColor = selected ? activeIconColor : colors.gray400;
-  const textColor = selected ? activeTextColor: colors.black;
+  const textColor = selected ? activeTextColor : colors.black;
 
 
   return (
@@ -46,6 +62,9 @@ const Selectable = ({
     </View>
   );
 };
+
+Selectable.propTypes = SelectablePropTypes;
+
 
 const styles = StyleSheet.create({
   container: {

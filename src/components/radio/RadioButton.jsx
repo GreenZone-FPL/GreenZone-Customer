@@ -2,6 +2,19 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import PropTypes from 'prop-types';
+
+
+const RadioButtonPropTypes = {
+    label: PropTypes.string.isRequired,
+    selected: PropTypes.bool,
+    onPress: PropTypes.func.isRequired,
+    price: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+};
+
 
 const RadioButton = ({
     label,
@@ -11,8 +24,6 @@ const RadioButton = ({
 }) => {
     const radioColor = selected ? colors.primary : colors.gray400
     const textColor = selected ? colors.primary : colors.black
-
-    // test 
     return (
 
         <Pressable style={styles.radioContainer} onPress={onPress}>
@@ -34,6 +45,10 @@ const RadioButton = ({
         </Pressable>
     );
 };
+
+RadioButton.propTypes = RadioButtonPropTypes;
+
+
 
 const styles = StyleSheet.create({
     radioContainer: {

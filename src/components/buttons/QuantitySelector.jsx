@@ -3,19 +3,23 @@ import { View, Text, StyleSheet } from 'react-native';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import QuantityButton from './QuantityButton';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 
 const QuantitySelectorPropTypes = {
-
+  quantity: PropTypes.number.isRequired,
+  iconColor: PropTypes.string,
+  textColor: PropTypes.string,
+  handlePlus: PropTypes.func,
+  handleMinus: PropTypes.func,
 }
+
 const QuantitySelector = ({
   quantity,
   iconColor = colors.primary,
   textColor = colors.black,
   handlePlus,
   handleMinus,
- 
 }) => {
   return (
     <View style={styles.row}>
@@ -24,7 +28,7 @@ const QuantitySelector = ({
         onPress={handleMinus}
         iconColor={iconColor}
       />
-      <Text style={[styles.quantityText, { color: colors.textColor }]}>{quantity}</Text>
+      <Text style={[styles.quantityText, { color: textColor }]}>{quantity}</Text>
       <QuantityButton
         iconName="plus"
         onPress={handlePlus}
@@ -33,6 +37,10 @@ const QuantitySelector = ({
     </View>
   );
 };
+
+
+QuantitySelector.propTypes = QuantitySelectorPropTypes
+
 
 const styles = StyleSheet.create({
   row: {

@@ -4,7 +4,14 @@ import IconWithBadge from './IconWithBadge';
 import colors from '../../constants/color';
 import { Icon } from 'react-native-paper';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import PropTypes from 'prop-types'
 
+
+const HeaderWithBadgePropTypes = {
+  title: PropTypes.string,
+  onBadgePress: PropTypes.func,
+  isHome: PropTypes.bool,
+};
 
 const HeaderWithBadge = (props) => {
   const { title, onBadgePress, isHome } = props;
@@ -38,6 +45,9 @@ const HeaderWithBadge = (props) => {
     </View>
   );
 };
+
+HeaderWithBadge.propTypes = HeaderWithBadgePropTypes
+
 
 const styles = StyleSheet.create({
   header: {

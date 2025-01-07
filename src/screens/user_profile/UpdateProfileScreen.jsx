@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpdateProfileScreen;
+export default UpdateProfileScreen
