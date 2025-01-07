@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Image, SafeAreaView, ImageBackground, Pressable, Alert } from 'react-native';
 import { View, Text } from 'react-native';
-import LightStatusBar from '../../components/status_bars/LightStatusBar';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import { Icon } from 'react-native-paper';
 
