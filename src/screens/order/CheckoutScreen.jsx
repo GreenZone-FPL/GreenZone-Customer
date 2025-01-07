@@ -15,7 +15,7 @@ const CheckoutScreen = (props) => {
     const [quantity, setQuantity] = useState(1);
 
     const [isVisibleModal, setIsVisibleModal] = useState(false);
-    const [selectedOption, setSelectedOption] = useState([]);
+    const [selectedOption, setSelectedOption] = useState('');
 
     return (
 

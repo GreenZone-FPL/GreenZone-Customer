@@ -26,16 +26,15 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge
         title="Home"
-        onBadgePress={() => console.log('Click badge')}
+        onBadgePress={() => {
+          navigation.navigate('ProductDetailSheet')
+        }}
         isHome={true}
       />
+      <Button title='Checkout Screen' onPress={() => navigation.navigate('CheckoutScreen')}/>
 
       <CategoryMenu />
 
-      <Button
-        title="Open Modal"
-        onPress={() => navigation.navigate('ProductDetailSheet')}
-      />
     </SafeAreaView>
   );
 };

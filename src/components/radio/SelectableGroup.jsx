@@ -12,7 +12,7 @@ const SelectableGroupPropTypes = {
         PropTypes.shape({
             id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
-            price: PropTypes.string
+            price: PropTypes.number
         })
     ).isRequired,
     title: PropTypes.string,

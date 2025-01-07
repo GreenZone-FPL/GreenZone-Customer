@@ -9,7 +9,7 @@ import PropTypes from 'prop-types'
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
-  onBadgePress: PropTypes.func.isRequired,
+  onBadgePress: PropTypes.func,
   isHome: PropTypes.bool,
 };
 
