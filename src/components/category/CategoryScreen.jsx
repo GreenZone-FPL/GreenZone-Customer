@@ -1,7 +1,7 @@
 import {View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 
 const width = Dimensions.get('window').width;

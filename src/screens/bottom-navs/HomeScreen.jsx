@@ -14,6 +14,7 @@ import ScreenEnum from '../../constants/screenEnum';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import CategoryScreen from '../../components/category/CategoryScreen'
 
 const {width} = Dimensions.get('window');
 
