@@ -1,14 +1,23 @@
 import React from 'react';
 import { View, Modal, StyleSheet, Text, Image, Pressable } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import PropTypes from 'prop-types'
 
+
+const DialogShippingMethodPropTypes = {
+    isVisible: PropTypes.bool.isRequired,
+    selectedOption: PropTypes.string.isRequired,
+    onHide: PropTypes.func.isRequired,
+    onEditOption: PropTypes.func,
+    onOptionSelect: PropTypes.func
+}
 const DialogShippingMethod = ({
     isVisible,
     selectedOption,
     onHide,
-    onEdit,
+    onEditOption,
     onOptionSelect,
 }) => {
     return (
@@ -24,12 +33,14 @@ const DialogShippingMethod = ({
                     <View style={styles.header}>
                         <View style={styles.placeholderIcon} />
                         <Text style={styles.titleText}>Chọn phương thức đặt hàng</Text>
-                        <IconButton
-                            icon="close"
-                            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                            color={colors.black}
-                            onPress={onHide}
-                        />
+                        <Pressable onPress={onHide}>
+                            <Icon
+                                source="close"
+                                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                                color={colors.primary}
+                            />
+                        </Pressable>
+
                     </View>
 
                     <View style={styles.optionsContainer}>
@@ -49,12 +60,14 @@ const DialogShippingMethod = ({
                                         </View>
                                         <Text style={styles.optionText}>{option.label}</Text>
                                     </View>
-                                    <IconButton
-                                        icon="square-edit-outline"
-                                        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                                        iconColor={colors.primary}
-                                        onPress={() => onEdit(option.label)}
-                                    />
+                                    <Pressable onPress={() => onEditOption(option.label)}>
+                                        <Icon
+                                            source="square-edit-outline"
+                                            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                                            color={colors.primary}
+                                        />
+                                    </Pressable>
+
                                 </View>
                                 <Text style={styles.normalText}>{option.address}</Text>
                                 {option.phone && (
@@ -68,6 +81,8 @@ const DialogShippingMethod = ({
         </Modal>
     );
 };
+
+DialogShippingMethod.propTypes = DialogShippingMethodPropTypes
 
 // Data mẫu
 const options = [
@@ -96,19 +111,24 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
         shadowColor: colors.black,
-        shadowOffset: { width: 0, height: -4 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
-        elevation: 5,
+        elevation: 4,
+        paddingBottom: 24
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
         paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+        paddingVertical: 12,
+        borderBottomWidth: 2,
+        borderBottomColor: colors.gray200,
+        backgroundColor: colors.white,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12
     },
     placeholderIcon: {
         width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
@@ -116,20 +136,21 @@ const styles = StyleSheet.create({
         backgroundColor: colors.transparent,
     },
     titleText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-        fontWeight: 'bold',
-        color: colors.black,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '600',
+        color: colors.primary,
         textAlign: 'center',
         flex: 1,
     },
     optionsContainer: {
-        gap: 8,
+        gap: GLOBAL_KEYS.GAP,
         backgroundColor: colors.gray200,
     },
     optionItem: {
         paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
         paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
         backgroundColor: colors.white,
+        gap: 4
     },
     selectedOption: {
         backgroundColor: colors.green100,
@@ -138,12 +159,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+
     },
     iconContainer: {
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: colors.green100,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
@@ -161,6 +182,8 @@ const styles = StyleSheet.create({
     normalText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.gray850,
+        lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
+        textAlign: 'justify'
     },
     phoneText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

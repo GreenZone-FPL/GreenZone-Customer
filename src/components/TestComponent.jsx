@@ -20,7 +20,7 @@ const TestComponent = () => {
         isVisible={isVisible}
         selectedOption={selectedOption}
         onHide={handleHide}
-        onEdit={handleEdit}
+        onEditOption={handleEdit}
         onOptionSelect={handleOptionSelect}
       />
     </View>

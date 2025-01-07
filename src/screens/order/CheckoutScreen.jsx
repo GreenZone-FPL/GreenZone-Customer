@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar, FlatList, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, Text, ScrollView, Pressable, FlatList, } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
@@ -7,14 +7,16 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import NormalHeader from '../../components/headers/NormalHeader';
 import CheckoutFooter from '../../components/footer/CheckoutFooter';
 import { Icon } from 'react-native-paper';
+import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
 
-const width = Dimensions.get('window').width;
 const CheckoutScreen = (props) => {
 
     const { navigation } = props;
     const [quantity, setQuantity] = useState(1);
 
-    const totalPrice = 68000
+    const [isVisibleModal, setIsVisibleModal] = useState(false);
+    const [selectedOption, setSelectedOption] = useState([]);
+
     return (
 
         <View style={styles.container}>
@@ -28,33 +30,13 @@ const CheckoutScreen = (props) => {
                     leftColor={colors.primary}
                     rightColor={colors.primary}
                     leftTextFontWeight='700'
+                    onRightPress={() => setIsVisibleModal(true)}
                 />
 
-                <CustomRow
-                    leftText={'Địa chỉ nhận hàng'}
-                    rightText={'Thay đổi'}
-                    leftColor={colors.black}
-                    rightColor={colors.primary}
-                    leftTextFontWeight='700'
-                />
+                <AddressSection />
 
-                <Text style={styles.normalText}>
-                    FPT Polytechnic TP. HCM - Tòa F,
-                    Công Viên Phần Mềm Quang Trung, Tòa nhà GenPacific
-                    Lô 3 đường 16, Trung Mỹ Tây, Quận 12, Hồ Chí Minh
-                </Text>
+                <RecipientInfo />
 
-                <CustomRow
-                    leftText={'Thông tin người nhận'}
-                    rightText={'Thay đổi'}
-                    leftColor={colors.black}
-                    rightColor={colors.primary}
-                    leftTextFontWeight='700'
-                />
-
-                <Text style={styles.normalText}>
-                    Ngọc Đại | 012345678
-                </Text>
                 <FlatList
                     data={products}
                     keyExtractor={item => item.id.toString()}
@@ -66,56 +48,11 @@ const CheckoutScreen = (props) => {
                 />
 
 
-                <CustomRow
-                    leftText={'CHI TIẾT THANH TOÁN'}
-                    leftColor={colors.primary}
-                    rightColor={colors.primary}
-                    leftTextFontWeight='700'
-                />
+                <PaymentDetails />
 
-                <CustomRow
-                    leftText={'Tạm tính (2 sản phẩm)'}
-                    rightText={'69.000đ'}
-                    leftColor={colors.black}
-                    rightColor={colors.black}
-
-                />
-
-                <CustomRow
-                    leftText={'Phí giao hàng'}
-                    rightText={'18.000đ'}
-                    leftColor={colors.black}
-                    rightColor={colors.black}
-
-                />
-
-                <CustomRow
-                    leftText={'Giảm 14K'}
-                    rightText={'-14.000đ'}
-                    leftColor={colors.black}
-                    rightColor={colors.primary}
-
-                />
-
-                <CustomRow
-                    leftText={'Giảm 5K'}
-                    rightText={'-5.000đ'}
-                    leftColor={colors.black}
-                    rightColor={colors.primary}
-                    leftTextFontWeight='400'
-                />
-
-                <CustomRow
-                    leftText={'Tổng số tiền'}
-                    rightText={'68.000đ'}
-                    leftColor={colors.black}
-                    rightColor={colors.black}
-                    leftTextFontWeight='700'
-                    rightTextFontWeight='700'
-                />
-                <VoucherRow />
-                <PaymentMethodRow />
             </ScrollView>
+
+
 
             <CheckoutFooter
                 quantity={quantity}
@@ -133,48 +70,88 @@ const CheckoutScreen = (props) => {
                 buttonTitle='Thêm vào giỏ hàng'
                 onButtonPress={() => { }}
             />
+
+            <DialogShippingMethod
+                isVisible={isVisibleModal}
+                selectedOption={selectedOption}
+                onHide={() => { setIsVisibleModal(false) }}
+                onEditOption={(option) => console.log(`Editing ${option}`)}
+                onOptionSelect={(option) => setSelectedOption(option)}
+            />
         </View>
 
 
     );
 };
 
+const RecipientInfo = () => (
+    <>
+        <CustomRow
+            leftText={'Thông tin người nhận'}
+            rightText={'Thay đổi'}
+            leftColor={colors.black}
+            rightColor={colors.primary}
+            leftTextFontWeight='600'
+        />
+        <Text style={styles.normalText}>Ngọc Đại | 012345678</Text>
+    </>
+);
 
-const ItemProduct = ({ item, onItemClick }) => {
-    return (
-        <View style={styles.itemProduct}>
+const AddressSection = () => (
+    <>
+        <CustomRow leftText="Địa chỉ nhận hàng" leftTextFontWeight='600' onRightPress={() => setIsVisibleModal(true)} />
+        <Text style={styles.normalText}>
+            FPT Polytechnic TP. HCM - Tòa F, Công Viên Phần Mềm Quang Trung, Tòa nhà GenPacific Lô 3 đường 16, Trung Mỹ Tây, Quận 12, Hồ Chí Minh
+        </Text>
+    </>
+);
 
-            <View style={styles.imageWrapper}>
-                <Image style={styles.itemImage} source={item.image} />
-                <View style={styles.quantityBadge}>
-                    <Text style={styles.quantityText}>x5</Text>
-                </View>
+
+const PaymentDetails = () => (
+    <>
+        <CustomRow leftText="CHI TIẾT THANH TOÁN" leftTextFontWeight='700' leftColor={colors.primary} />
+        {[
+            { leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ' },
+            { leftText: 'Phí giao hàng', rightText: '18.000đ' },
+            { leftText: 'Giảm 14K', rightText: '-14.000đ', rightColor: colors.primary },
+            { leftText: 'Giảm 5K', rightText: '-5.000đ', rightColor: colors.primary },
+            { leftText: 'Tổng số tiền', rightText: '68.000đ', leftTextFontWeight: '700', rightTextFontWeight: '700' },
+        ].map((item, index) => (
+            <CustomRow key={index} {...item} />
+        ))}
+        <VoucherRow />
+        <PaymentMethodRow />
+    </>
+);
+
+const ItemProduct = ({ item }) => (
+    <View style={styles.itemProduct}>
+        <View style={styles.imageWrapper}>
+            <Image style={styles.itemImage} source={item.image} />
+            <View style={styles.quantityBadge}>
+                <Text style={styles.quantityText}>x5</Text>
             </View>
-
-
-            <View style={styles.productInfo}>
-                <Text style={styles.productName}>{item.name}</Text>
-
-                <Text style={styles.gray700Text}>Lớn</Text>
-                <Text style={styles.gray700Text}>Kem Phô Mai Macchiato</Text>
-            </View>
-            <View style={styles.priceContainer}>
-                <Text style={styles.productPrice}>{item.price}đ</Text>
-                <Text style={styles.lineThroughText}>70.000đ</Text>
-                <Pressable onPress={() => { }} >
-                    <Icon
-                        source="square-edit-outline"
-                        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-                        color={colors.primary}
-                    />
-                </Pressable>
-            </View>
-
-
-
         </View>
-    );
-};
+
+        <View style={styles.productInfo}>
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.gray700Text}>Lớn</Text>
+            <Text style={styles.gray700Text}>Kem Phô Mai Macchiato</Text>
+        </View>
+
+        <View style={styles.priceContainer}>
+            <Text style={styles.productPrice}>{item.price}đ</Text>
+            <Text style={styles.lineThroughText}>70.000đ</Text>
+            <Pressable onPress={() => { }}>
+                <Icon
+                    source="square-edit-outline"
+                    size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+                    color={colors.primary}
+                />
+            </Pressable>
+        </View>
+    </View>
+);
 
 
 const products = [
@@ -360,7 +337,7 @@ const styles = StyleSheet.create({
         color: colors.black,
         fontWeight: '500'
     },
-  
+
     imageWrapper: {
         position: 'relative',
     },
@@ -370,7 +347,7 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: colors.green100,
         borderColor: colors.white,
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         width: 20,
         height: 20,
@@ -380,7 +357,7 @@ const styles = StyleSheet.create({
     quantityText: {
         color: colors.black,
         fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        fontWeight: 'bold',
+        fontWeight: '500',
     },
     priceContainer: {
         flexDirection: 'column',
