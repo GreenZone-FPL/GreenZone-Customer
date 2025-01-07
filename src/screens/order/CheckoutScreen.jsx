@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign'; 
+import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar, FlatList, Dimensions } from 'react-native';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import NormalHeader from '../../components/headers/NormalHeader';
 import CheckoutFooter from '../../components/footer/CheckoutFooter';
+import { Icon } from 'react-native-paper';
 
-
+const width = Dimensions.get('window').width;
 const CheckoutScreen = (props) => {
 
     const { navigation } = props;
@@ -20,7 +21,7 @@ const CheckoutScreen = (props) => {
             <LightStatusBar />
             <NormalHeader title='Xác nhận đơn hàng' />
 
-            <View style={styles.containerContent}>
+            <ScrollView style={styles.containerContent}>
                 <CustomRow
                     leftText={'GIAO HÀNG'}
                     rightText={'Thay đổi'}
@@ -54,6 +55,16 @@ const CheckoutScreen = (props) => {
                 <Text style={styles.normalText}>
                     Ngọc Đại | 012345678
                 </Text>
+                <FlatList
+                    data={products}
+                    keyExtractor={item => item.id.toString()}
+                    renderItem={({ item }) => (
+                        <ItemProduct item={item} onItemClick={() => { }} />
+                    )}
+                    contentContainerStyle={styles.flatListContentContainer}
+                    scrollEnabled={false}
+                />
+
 
                 <CustomRow
                     leftText={'CHI TIẾT THANH TOÁN'}
@@ -104,11 +115,7 @@ const CheckoutScreen = (props) => {
                 />
                 <VoucherRow />
                 <PaymentMethodRow />
-            </View>
-
-
-
-
+            </ScrollView>
 
             <CheckoutFooter
                 quantity={quantity}
@@ -131,6 +138,71 @@ const CheckoutScreen = (props) => {
 
     );
 };
+
+
+const ItemProduct = ({ item, onItemClick }) => {
+    return (
+        <View style={styles.itemProduct}>
+
+            <View style={styles.imageWrapper}>
+                <Image style={styles.itemImage} source={item.image} />
+                <View style={styles.quantityBadge}>
+                    <Text style={styles.quantityText}>x5</Text>
+                </View>
+            </View>
+
+
+            <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item.name}</Text>
+
+                <Text style={styles.gray700Text}>Lớn</Text>
+                <Text style={styles.gray700Text}>Kem Phô Mai Macchiato</Text>
+            </View>
+            <View style={styles.priceContainer}>
+                <Text style={styles.productPrice}>{item.price}đ</Text>
+                <Text style={styles.lineThroughText}>70.000đ</Text>
+                <Pressable onPress={() => { }} >
+                    <Icon
+                        source="square-edit-outline"
+                        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+                        color={colors.primary}
+                    />
+                </Pressable>
+            </View>
+
+
+
+        </View>
+    );
+};
+
+
+const products = [
+    {
+        id: '1',
+        name: 'Trà Xanh Sữa Hạnh Nhân (Latte)',
+        image: require('../../assets/images/product1.png'),
+        price: 69000,
+    },
+    {
+        id: '2',
+        name: 'Combo 3 Olong Tea',
+        image: require('../../assets/images/product1.png'),
+        price: 79000,
+    },
+    {
+        id: '3',
+        name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
+        image: require('../../assets/images/product1.png'),
+        price: 69000,
+    },
+    {
+        id: '4',
+        name: 'Trà Xanh Sữa Hạnh Nhân (Latte)',
+        image: require('../../assets/images/product1.png'),
+        price: 79000,
+    },
+];
 
 const CustomRow = ({
     leftText,
@@ -222,7 +294,8 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginVertical: 6
     },
     column: {
         flexDirection: 'column',
@@ -238,7 +311,14 @@ const styles = StyleSheet.create({
     normalText: {
         textAlign: 'justify',
         lineHeight: 20,
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.black
+    },
+    gray700Text: {
+        textAlign: 'justify',
+        lineHeight: 20,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray700
     },
     circleWrapper: {
         width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
@@ -247,6 +327,70 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginRight: GLOBAL_KEYS.PADDING_SMALL
+    },
+
+    flatListContentContainer: {
+        marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
+    },
+    itemProduct: {
+        flexDirection: 'row',
+        borderBottomColor: colors.gray200,
+        borderBottomWidth: 2,
+        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+        gap: GLOBAL_KEYS.GAP_SMALL
+    },
+    itemImage: {
+        width: 50,
+        height: 50,
+        resizeMode: 'cover',
+        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    },
+    productInfo: {
+        flexDirection: 'column',
+        flex: 1,
+        gap: 5,
+    },
+    productName: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '500',
+
+    },
+    productPrice: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.black,
+        fontWeight: '500'
+    },
+  
+    imageWrapper: {
+        position: 'relative',
+    },
+    quantityBadge: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        backgroundColor: colors.green100,
+        borderColor: colors.white,
+        borderWidth: 1,
+        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    quantityText: {
+        color: colors.black,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+        fontWeight: 'bold',
+    },
+    priceContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end'
+    },
+    lineThroughText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray700,
+        textDecorationLine: 'line-through',
     },
 });
 

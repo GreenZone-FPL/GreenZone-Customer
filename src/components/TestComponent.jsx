@@ -1,64 +1,32 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // Thêm icon
+import { StyleSheet, View, Button } from 'react-native';
 import colors from '../constants/color';
 import GLOBAL_KEYS from '../constants/globalKeys';
-import CustomSearchBar from './inputs/CustomSearchBar';
-import NotesList from './notes-list/NotesList';
+import DialogShippingMethod from './dialogs/DialogShippingMethod';
+
 
 const TestComponent = () => {
-  const [selectedNotes, setSelectedNotes] = useState([]); // Danh sách các note được chọn
-  const [searchQuery, setSearchQuery] = useState(''); // Nội dung tìm kiếm
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
-  const onToggleNote = (note) => {
-    if (selectedNotes.includes(note)) {
-      // Nếu đã được chọn, bỏ chọn
-      setSelectedNotes(selectedNotes.filter((item) => item !== note));
-    } else {
-      // Nếu chưa được chọn, thêm vào danh sách
-      setSelectedNotes([...selectedNotes, note]);
-    }
-  };
-
-  const filteredNotes = notes.filter((note) =>
-    note.toLowerCase().includes(searchQuery.toLowerCase())
-  ); // Lọc danh sách theo nội dung tìm kiếm
-
+  const handleShow = () => setIsVisible(true);
+  const handleHide = () => setIsVisible(false);
+  const handleEdit = (option) => console.log(`Editing ${option}`);
+  const handleOptionSelect = (option) => setSelectedOption(option);
   return (
     <View style={styles.container}>
-      {/* SearchBar và Bản đồ */}
-      <View style={styles.searchBarContainer}>
-        <CustomSearchBar
-          placeholder="Tìm kiếm ghi chú..."
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          onClearIconPress={() => setSearchQuery('')}
-          leftIcon="magnify"
-          rightIcon="close"
-          style={{ flex: 1, marginRight: 16, elevation: 3 }}
-        />
-        {/* Text Bản đồ và Icon Map */}
-        <View style={styles.mapContainer}>
-          <Icon name="map-marker" size={24} color={colors.primary} style={styles.mapIcon} />
-          <Text style={styles.mapText}>Bản đồ</Text>
-
-        </View>
-
-        {/* CustomSearchBar */}
-
-      </View>
-
-      {/* Danh sách ghi chú */}
-      <NotesList
-        selectedNotes={selectedNotes}
-        onToggleNote={onToggleNote}
-        notes={filteredNotes} // Chỉ hiển thị các ghi chú đã lọc
+      <Button title='Open Modal' onPress={handleShow} />
+      <DialogShippingMethod
+        isVisible={isVisible}
+        selectedOption={selectedOption}
+        onHide={handleHide}
+        onEdit={handleEdit}
+        onOptionSelect={handleOptionSelect}
       />
     </View>
   );
 };
 
-const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem'];
 
 const styles = StyleSheet.create({
   container: {

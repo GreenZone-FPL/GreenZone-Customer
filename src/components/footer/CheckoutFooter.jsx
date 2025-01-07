@@ -14,6 +14,7 @@ const CheckoutFooterPropTypes = {
     totalPrice: PropTypes.number,
     buttonTitle: PropTypes.string,
     onButtonPress: PropTypes.func,
+    backgroundColor: PropTypes.string
 };
 
 /**
@@ -42,9 +43,10 @@ const CheckoutFooter = ({
     totalPrice,
     buttonTitle,
     onButtonPress,
+    backgroundColor = colors.green100
 }) => {
     return (
-        <View style={styles.footer}>
+        <View style={[styles.footer, {backgroundColor: backgroundColor}]}>
             <View style={[styles.row, { justifyContent: 'space-between' }]}>
                 <View style={[styles.column, { paddingHorizontal: 0 }]}>
                     <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
@@ -71,7 +73,7 @@ const styles = StyleSheet.create({
     footer: {
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         elevation: 4,
-        backgroundColor: colors.white,
+        backgroundColor: colors.green100,
     },
     infoContainer: {
         flexDirection: 'column',

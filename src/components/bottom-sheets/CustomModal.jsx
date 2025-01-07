@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Pressable, StatusBar } from 'react-native';
 import { IconButton } from 'react-native-paper';
-import OverlayStatusBar from '../status_bars/OverlayStatusBar';
+import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CustomModal;
+export default CustomModal
