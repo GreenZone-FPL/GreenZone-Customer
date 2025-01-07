@@ -14,7 +14,6 @@ import MainNavigation from './src/layouts/MainNavigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ScreenEnum from './src/constants/screenEnum';
-import ProductDetail from './src/screens/buy_products/VoucherScreen';
 import LoginScreen from './src/screens/auth/LoginScreen';
 
 
@@ -33,7 +32,6 @@ function App() {
         screenOptions={{ headerShown: false }}>
         <BaseStack.Screen name={"MainNavigation"} component={MainNavigation} />
 
-        <BaseStack.Screen name={ScreenEnum.ProductDetail} component={ProductDetail} />
         <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
 

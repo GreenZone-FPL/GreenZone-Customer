@@ -3,7 +3,7 @@ import React, { useContext } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import ScreenEnum from '../../constants/screenEnum';
 import LoginScreen from '../../screens/auth/LoginScreen';
-import MerchantScreen from '../../screens/bottom_navs/MerchantScreen';
+import MerchantScreen from '../../screens/bottom-navs/MerchantScreen';
 
 
 

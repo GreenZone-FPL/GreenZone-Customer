@@ -1,75 +1,58 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Button } from 'react-native';
 import colors from '../constants/color';
-import FlatInput from './inputs/FlatInput';
-
-import GLOBAL_KEYS from '../constants/global_keys';
+import GLOBAL_KEYS from '../constants/globalKeys';
+import DialogShippingMethod from './dialogs/DialogShippingMethod';
 
 
 const TestComponent = () => {
-  const [fullname, setFullname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({
-    fullname: '',
-    email: '',
-    password: '',
-  });
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
 
-  const validateInputs = () => {
-    const newErrors = {
-      fullname: fullname.trim() === '' ? 'Fullname is required' : '',
-      email: email.trim() === '' ? 'Email is required' : '',
-      password: password.trim() === '' ? 'Password is required' : '',
-    };
-    setErrors(newErrors);
-  };
-
+  const handleShow = () => setIsVisible(true);
+  const handleHide = () => setIsVisible(false);
+  const handleEdit = (option) => console.log(`Editing ${option}`);
+  const handleOptionSelect = (option) => setSelectedOption(option);
   return (
     <View style={styles.container}>
-      <FlatInput
-        label="Fullname"
-        value={fullname}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, fullname: '' }));
-          setFullname(value);
-        }}
-        message={errors.fullname}
+      <Button title='Open Modal' onPress={handleShow} />
+      <DialogShippingMethod
+        isVisible={isVisible}
+        selectedOption={selectedOption}
+        onHide={handleHide}
+        onEditOption={handleEdit}
+        onOptionSelect={handleOptionSelect}
       />
-      <FlatInput
-        label="Email"
-        value={email}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, email: '' }));
-          setEmail(value);
-        }}
-        message={errors.email}
-      />
-      <FlatInput
-        label="Password"
-        value={password}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, password: '' }));
-          setPassword(value);
-        }}
-        message={errors.password}
-        secureTextEntry
-        isPasswordVisible={isPasswordVisible}
-        setIsPasswordVisible={setIsPasswordVisible}
-      />
-      <Button title="Validate" onPress={validateInputs} />
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
+  searchBarContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 16,
+  },
+  mapContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mapText: {
+    fontSize: 16,
+    color: colors.primary,
+    marginRight: 8,
+    fontWeight: 'bold',
+  },
+  mapIcon: {
+    marginRight: 8,
+  },
+
 });
 
-export default TestComponent
+export default TestComponent;

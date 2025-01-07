@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 
 const OutlineInput = ({ label, value, setValue, message, setIsPasswordVisible, isPasswordVisible = false, secureTextEntry = false }) => {
     return (

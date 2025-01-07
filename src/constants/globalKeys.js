@@ -1,14 +1,15 @@
-const CONSTANTS = {
-    USER_KEY: 'User', 
+
+const GLOBAL_KEYS = Object.freeze({
+    USER_KEY: 'User',
     MAX_QUANTITY: 99,
     MIN_QUANTITY: 0,
 
     // UI keys
-    ICON_SIZE_SMALL: 18,     
+    ICON_SIZE_SMALL: 18,
     ICON_SIZE_DEFAULT: 24,
-    ICON_SIZE_LARGE: 28,     
-       
-  
+    ICON_SIZE_LARGE: 28,
+
+
     BORDER_RADIUS_DEFAULT: 6,
     PADDING_DEFAULT: 16,
     PADDING_SMALL: 8,
@@ -21,10 +22,6 @@ const CONSTANTS = {
     GAP_SMALL: 8,
 
     LIGHT_HEIGHT_DEFAULT: 22
-};
-
-const GLOBAL_KEYS = Object.freeze({
-    ...CONSTANTS
 });
 
 export default GLOBAL_KEYS

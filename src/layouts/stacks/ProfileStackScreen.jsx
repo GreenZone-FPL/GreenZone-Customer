@@ -1,27 +1,37 @@
-
-import React, { useContext } from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import React, {useContext} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ScreenEnum from '../../constants/screenEnum';
 import LoginScreen from '../../screens/auth/LoginScreen';
-import ProfileScreen from '../../screens/bottom_navs/ProfileScreen';
+import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
+import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
 
+const ProfileStack = createNativeStackNavigator();
+// Navigation Container Can chung cu
 
-const ProfileStack = createNativeStackNavigator()
+// Stack Tang 8 7 6 5 4
+
+// Screen Can phong 12 574
 const ProfileStackScreen = () => {
+  return (
+    <ProfileStack.Navigator // Stack.Navigator Extension
+      name={ScreenEnum.ProfileStackScreen}
+      screenOptions={{headerShown: false}}>
+      <ProfileStack.Screen
+        name={ScreenEnum.ProfileScreen}
+        component={ProfileScreen}
+      />
 
-    return (
+      <ProfileStack.Screen // Stack.Screen Extension 
+        name={ScreenEnum.LoginScreen}
+        component={LoginScreen}
+      />
 
-        <ProfileStack.Navigator
-            name={ScreenEnum.ProfileStackScreen}
-            screenOptions={{ headerShown: false }}>
-            <ProfileStack.Screen name={ScreenEnum.ProfileScreen} component={ProfileScreen} />
+      <ProfileStack.Screen
+        name={ScreenEnum.UpdateProfileScreen}
+        component={UpdateProfileScreen}
+      />
+    </ProfileStack.Navigator>
+  );
+};
 
-            <ProfileStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
-
-        </ProfileStack.Navigator>
-
-    )
-}
-
-export default ProfileStackScreen
-
+export default ProfileStackScreen;
