@@ -3,6 +3,7 @@ import { View, Modal, StyleSheet, Text, Image, Pressable } from 'react-native';
 import { Icon } from 'react-native-paper';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import OverlayStatusBar from '../status-bars/OverlayStatusBar'
 import PropTypes from 'prop-types'
 
 
@@ -29,7 +30,7 @@ const DialogShippingMethod = ({
         >
             <View style={styles.overlay}>
                 <View style={styles.modalContainer}>
-
+                    <OverlayStatusBar />
                     <View style={styles.header}>
                         <View style={styles.placeholderIcon} />
                         <Text style={styles.titleText}>Chọn phương thức đặt hàng</Text>
