@@ -3,8 +3,31 @@ import { View, Text, StyleSheet } from 'react-native';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import Selectable from './Selectable';
+import PropTypes from 'prop-types';
 
 
+
+const SelectableGroupPropTypes = {
+    items: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            price: PropTypes.string
+        })
+    ).isRequired,
+    title: PropTypes.string,
+    selectedGroup: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            quantity: PropTypes.number.isRequired
+        })
+    ).isRequired,
+    setSelectedGroup: PropTypes.func.isRequired,
+    required: PropTypes.bool,
+    note: PropTypes.string,
+    activeIconColor: PropTypes.string,
+    activeTextColor: PropTypes.string
+};
 
 const SelectableGroup = ({
     items,
@@ -32,8 +55,8 @@ const SelectableGroup = ({
                         selected={selectedGroup.some(selectedItem => selectedItem.id === item.id)}
                         handlePlus={(item) => handlePlus(item, selectedGroup, setSelectedGroup)}
                         handleMinus={(item) => handleMinus(item, selectedGroup, setSelectedGroup)}
-                        activeIconColor = {activeIconColor}
-                        activeTextColor = {activeTextColor}
+                        activeIconColor={activeIconColor}
+                        activeTextColor={activeTextColor}
                         key={item.id}
                     />
                 );
@@ -41,6 +64,10 @@ const SelectableGroup = ({
         </View>
     );
 };
+
+SelectableGroup.propTypes = SelectableGroupPropTypes;
+
+
 
 
 // Hàm xử lý tăng số lượng

@@ -22,17 +22,19 @@ const MainNavigation = () => {
         tabBarShowLabel: true,
         tabBarStyle: {
           backgroundColor: colors.white,
-          maxHeight: 100,
-          height: 80,
+          maxHeight: 80,
+          height: 60,
         },
         tabBarIcon: ({focused}) => {
           let iconName;
 
           if (route.name === ScreenEnum.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === ScreenEnum.OrderStackScreen) {
-            iconName = focused ? 'food' : 'food-outline';
-          } else if (route.name === ScreenEnum.MerchantStackScreen) {
+          } 
+          // else if (route.name === ScreenEnum.OrderStackScreen) {
+          //   iconName = focused ? 'food' : 'food-outline';
+          // } 
+          else if (route.name === ScreenEnum.MerchantStackScreen) {
             iconName = focused ? 'store' : 'store-outline';
           } else if (route.name === ScreenEnum.VoucherStackScreen) {
             iconName = focused ? 'gift-open' : 'gift-outline';
@@ -53,9 +55,11 @@ const MainNavigation = () => {
 
           if (route.name === ScreenEnum.HomeStackScreen) {
             label = 'Trang chủ';
-          } else if (route.name === ScreenEnum.OrderStackScreen) {
-            label = 'Đặt hàng';
-          } else if (route.name === ScreenEnum.MerchantStackScreen) {
+          } 
+          // else if (route.name === ScreenEnum.OrderStackScreen) {
+          //   label = 'Đặt hàng';
+          // }
+           else if (route.name === ScreenEnum.MerchantStackScreen) {
             label = 'Cửa hàng';
           } else if (route.name === ScreenEnum.VoucherStackScreen) {
             label = 'Ưu đãi';
@@ -76,10 +80,10 @@ const MainNavigation = () => {
         name={ScreenEnum.HomeStackScreen}
         component={HomeStackScreen}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name={ScreenEnum.OrderStackScreen}
         component={OrderStackScreen}
-      />
+      /> */}
       <BottomTab.Screen
         name={ScreenEnum.MerchantStackScreen}
         component={MerchantStackScreen}

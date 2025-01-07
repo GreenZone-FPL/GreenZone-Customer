@@ -1,10 +1,23 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, StyleSheet, Text } from 'react-native';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import PrimaryButton from '../buttons/PrimaryButton';
 import QuantitySelector from '../buttons/QuantitySelector';
+
+
+const CheckoutFooterPropTypes = {
+    quantity: PropTypes.number.isRequired,
+    handlePlus: PropTypes.func.isRequired,
+    handleMinus: PropTypes.func.isRequired,
+    totalPrice: PropTypes.number,
+    buttonTitle: PropTypes.string,
+    onButtonPress: PropTypes.func,
+};
+
 /**
+ * Usage Example
  *  <CheckoutFooter
         quantity={quantity}
         handlePlus={() => {
@@ -18,19 +31,20 @@ import QuantitySelector from '../buttons/QuantitySelector';
             }
         }}
         totalPrice={68000}
-        addToCart={() => { }}
+        buttonTitle="Thêm vào giỏ hàng"
+        onButtonPress={() => { console.log('Thêm vào giỏ hàng') }}
     />
  */
 const CheckoutFooter = ({
     quantity,
     handlePlus,
     handleMinus,
-    totalPrice = 68000,
-    addToCart
+    totalPrice,
+    buttonTitle,
+    onButtonPress,
 }) => {
     return (
         <View style={styles.footer}>
-
             <View style={[styles.row, { justifyContent: 'space-between' }]}>
                 <View style={[styles.column, { paddingHorizontal: 0 }]}>
                     <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
@@ -39,28 +53,29 @@ const CheckoutFooter = ({
 
                 <QuantitySelector
                     quantity={quantity}
-                    activeColor={colors.primary}
                     handlePlus={handlePlus}
                     handleMinus={handleMinus}
                 />
             </View>
 
-
-            <PrimaryButton title='Thêm vào giỏ hàng' onPress={addToCart} />
+            <PrimaryButton title={buttonTitle} onPress={onButtonPress} />
         </View>
     );
 };
 
 
+CheckoutFooter.propTypes = CheckoutFooterPropTypes;
+
+
 const styles = StyleSheet.create({
     footer: {
-        padding: 16,
-        elevation: 5,
-        backgroundColor: colors.white
+        padding: GLOBAL_KEYS.PADDING_DEFAULT,
+        elevation: 4,
+        backgroundColor: colors.white,
     },
     infoContainer: {
         flexDirection: 'column',
-        marginBottom: 8,
+        marginBottom: GLOBAL_KEYS.PADDING_SMALL,
     },
     quantityInfoText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -75,14 +90,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
     },
     quantityText: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         fontWeight: 'bold',
         color: colors.black,
-        marginHorizontal: 8,
+        marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     },
-})
+});
 
-export default CheckoutFooter
+export default CheckoutFooter;

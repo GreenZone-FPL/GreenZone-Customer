@@ -7,8 +7,6 @@ import RadioGroup from '../radio/RadioGroup';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 import SelectableGroup from '../radio/SelectableGroup';
 import NotesList from '../notes-list/NotesList';
-import PrimaryButton from '../buttons/PrimaryButton';
-import QuantitySelector from '../buttons/QuantitySelector';
 import CheckoutFooter from '../footer/CheckoutFooter';
 
 
