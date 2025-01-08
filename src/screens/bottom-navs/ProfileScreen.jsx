@@ -27,7 +27,7 @@ const ProfileScreen = (props) => {
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => alert('Địa chỉ!')}
+              onPress={() => navigation.navigate('AddressScreen')}
             />
           </View>
           <View style={styles.accountContainer}>

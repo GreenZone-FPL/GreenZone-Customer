@@ -4,6 +4,10 @@ import ScreenEnum from '../../constants/screenEnum';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
 import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
+import AddressScreen from '../../screens/user_profile/AddressScreen';
+import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
+import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
+import MapAddressScreen from '../../screens/user_profile/MapAddressScreen';
 
 const ProfileStack = createNativeStackNavigator();
 const ProfileStackScreen = () => {
@@ -24,6 +28,23 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen
         name={ScreenEnum.UpdateProfileScreen}
         component={UpdateProfileScreen}
+      />
+
+      <ProfileStack.Screen
+        name={ScreenEnum.AddressScreen}
+        component={AddressScreen}
+      />
+      <ProfileStack.Screen
+        name={ScreenEnum.NewAddressScreen}
+        component={NewAddressScreen}
+      />
+      <ProfileStack.Screen
+        name={ScreenEnum.SearchAddressScreen}
+        component={SearchAddressScreen}
+      />
+      <ProfileStack.Screen
+        name={ScreenEnum.MapAddressScreen}
+        component={MapAddressScreen}
       />
     </ProfileStack.Navigator>
   );

@@ -1,3 +1,4 @@
+
 const screens = {
   // auth
   SplashScreen: 'SplashScreen',
@@ -21,6 +22,10 @@ const screens = {
   // ProfileScreen
   ProfileStackScreen: 'ProfileStackScreen',
   UpdateProfileScreen: 'UpdateProfileScreen',
+  AddressScreen : 'AddressScreen',
+  NewAddressScreen : 'NewAddressScreen',
+  SearchAddressScreen : 'SearchAddressScreen',
+  MapAddressScreen: 'MapAddressScreen',
 };
 
 const ScreenEnum = Object.freeze({
