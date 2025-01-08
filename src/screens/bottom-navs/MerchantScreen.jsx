@@ -27,6 +27,11 @@ console.log('Height:', height);
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');
 
+  const {navigation} = props;
+
+  const handleMerchant = item => {
+    navigation.navigate('MerchantDetailSheet', {item: item});
+  };
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithbadge title="Cửa hàng" />
@@ -55,7 +60,7 @@ const MerchantScreen = props => {
           <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
           <FlatList
             data={data.slice(0, 1)}
-            renderItem={renderItem}
+            renderItem={({item}) => renderItem({handleMerchant, item})}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
           />
@@ -63,7 +68,7 @@ const MerchantScreen = props => {
         <Text style={styles.tittle}>Cửa hàng Khác</Text>
         <FlatList
           data={data}
-          renderItem={renderItem}
+          renderItem={({item}) => renderItem({handleMerchant, item})}
           keyExtractor={item => item.id}
         />
       </View>
@@ -71,8 +76,8 @@ const MerchantScreen = props => {
   );
 };
 
-const renderItem = ({item}) => (
-  <TouchableOpacity style={styles.item}>
+const renderItem = ({item, handleMerchant}) => (
+  <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
     <Image source={{uri: item.image}} style={styles.imageItem} />
     <View style={styles.infoItem}>
       <Text style={styles.title}>{item.name}</Text>
