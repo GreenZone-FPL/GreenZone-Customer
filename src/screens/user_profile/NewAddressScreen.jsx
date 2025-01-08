@@ -13,42 +13,27 @@ const NewAddressScreen = (props) => {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [title, setTitle] = useState('');
-    const [level, setLevel] = useState('');
     const navigation = props.navigation
     return (
 
         <SafeAreaView style={styles.container}>
             <LightStatusBar />
             <NormalHeader title='Thêm địa chỉ mới'
-                onLeftPress={() => navigation.goBack()}
-                leftIcon='chevron-left' />
-            <ScrollView>
+                onLeftPress={() => navigation.goBack()}/>
                 <View style={styles.formContainer}>
-                    <Text style={styles.titleForm}>Tên địa chỉ</Text>
-                    <FlatInput label={'Nhà...'} setValue={setHome} />
-                    <Text style={styles.titleForm}>Địa chỉ</Text>
-                    <Pressable style={styles.localtion}
+                    <FlatInput label={'Tên địa chỉ'} setValue={setHome} />
+                    <Pressable style={styles.location}
                         onPress={() => navigation.navigate('SearchAddressScreen')}>
                         <Text>Chọn địa chỉ...</Text>
                     </Pressable>
-                    <Text style={styles.titleForm}>Tòa nhà, số tầng</Text>
-                    <FlatInput label={'Tòa...'}
-                        setValue={setHome} />
-                    <Text style={styles.titleForm}>Cổng</Text>
-                    <FlatInput label={'Cổng'}
-                        setValue={setLevel} />
-                    <Text style={styles.titleForm}>Ghi chú khác</Text>
                     <FlatInput label={'Ghi chú'}
                         setValue={setTitle} />
-                    <Text style={styles.titleForm}>Tên người nhận</Text>
-                    <FlatInput label={'Họ tên'}
+                    <FlatInput label={'Họ tên người nhận'}
                         setValue={setName} />
-                    <Text style={styles.titleForm}>Số điện thoại</Text>
                     <FlatInput label={'(+84)'}
                         setValue={setPhone} />
                     <PrimaryButton title='Lưu' />
                 </View>
-            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -64,14 +49,10 @@ const styles = StyleSheet.create({
     formContainer: {
         flex: 1,
         marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
-        gap: GLOBAL_KEYS.GAP_DEFAULT,
+        gap: 24,
         marginBottom: GLOBAL_KEYS.GAP_DEFAULT,
     },
-    titleForm: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black
-    },
-    localtion: {
+    location: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         backgroundColor: colors.white,
         elevation: 4,
@@ -81,5 +62,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
+        borderBottomColor: colors.primary,
+        borderBottomWidth: 1,
     }
 })

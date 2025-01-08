@@ -16,7 +16,7 @@ const SearchAddressScreen = (props) => {
             <View style={styles.header}>
                 <Pressable onPress={() => navigation.goBack()}>
                     <Icon
-                        source="chevron-left"
+                        source="arrow-left"
                         color={colors.black}
                         size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                     />
@@ -28,7 +28,7 @@ const SearchAddressScreen = (props) => {
                     onClearIconPress={() => setsearchQuery('')}
                     leftIcon="magnify"
                     rightIcon="close"
-                    style={{ flex: 1, backgroundColor: colors.white, borderWidth: 1 }}
+                    style={{ flex: 1, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.gray300}}
                 />
             </View>
 
@@ -60,7 +60,6 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        alignContent: 'center',
         alignItems: 'center',
         gap: GLOBAL_KEYS.GAP_DEFAULT
     },
@@ -70,7 +69,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         justifyContent: 'space-between',
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        alignContent: 'center',
         alignItems: 'center',
         borderColor: colors.gray200,
         marginTop: GLOBAL_KEYS.GAP_DEFAULT

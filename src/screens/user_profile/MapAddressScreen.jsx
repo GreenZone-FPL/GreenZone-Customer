@@ -13,22 +13,19 @@ const MapAddressScreen = (props) => {
             <LightStatusBar/>
             <NormalHeader title='Chọn địa chỉ'
                 onLeftPress={() => navigation.goBack()}
-                leftIcon='chevron-left'
-                rightIcon='search' />
+                rightIcon='magnify'
+                enableRightIcon = {true} />
             <View style={styles.content}>
                 <Image
                     source={require('../../assets/images/map.png')}
                     style={{ height: 500, width: '100%' }}
                 />
                 <Card
-                    icon="google-maps"
                     title="Đ. Lê Trọng Tấn, Sơn Kỳ, Tân Phú, Hồ Chí Minh, Việt Nam"
                     distance='0.00km'
                     onPress={() => navigation.navigate('NewAddressScreen')}
                 />
-                <View style={styles.separator}></View>
                 <Card
-                    icon="google-maps"
                     title="Đ. Lê Trọng Tấn/3 Hẻm 221, Khu Phố 2, Tân Phú, Hồ Chí Minh, Việt Nam"
                     distance='1.00km'
                     onPress={() => navigation.navigate('NewAddressScreen')}
@@ -38,9 +35,9 @@ const MapAddressScreen = (props) => {
         </SafeAreaView>
     )
 }
-const Card = ({ icon, title, onPress, distance }) => (
+const Card = ({ title, onPress, distance }) => (
     <Pressable style={styles.card} onPress={onPress}>
-        <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.green500} />
+        <Icon source="google-maps" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
         <View style={styles.textContainer}>
             <Text style={styles.cardText}>{title}</Text>
             <Text style={styles.distance}>{distance}</Text>
@@ -56,7 +53,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
     },
     content: {
-        paddingHorizontal: GLOBAL_KEYS.GAP_DEFAULT
+        padding: GLOBAL_KEYS.GAP_DEFAULT
     },
     card: {
         flexDirection: 'row',
@@ -67,19 +64,15 @@ const styles = StyleSheet.create({
         marginVertical: GLOBAL_KEYS.GAP_DEFAULT,
     },
     cardText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
     },
-    separator: {
-        height: 4,
-        backgroundColor: colors.gray200,
-        marginVertical: GLOBAL_KEYS.PADDING_SMALL,
-    },
     distance: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        color: colors.gray400
+        color: colors.gray400,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     },
     textContainer: {
         flex: 1,
+        gap: GLOBAL_KEYS.GAP_SMALL,
     },
 })

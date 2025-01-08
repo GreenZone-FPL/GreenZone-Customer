@@ -13,9 +13,7 @@ const AddressScreen = (props) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalHeader title='Địa chỉ đã lưu'
-                    onLeftPress={() => navigation.goBack()}
-                    leftIcon ='chevron-left'
-                     
+                    onLeftPress={() => navigation.goBack()}                   
       />
       <View style={styles.content}>
         <Card
@@ -23,13 +21,11 @@ const AddressScreen = (props) => {
           title="Thêm địa chỉ công ty"
           onPress={() => navigation.navigate('NewAddressScreen')}
         />
-        <View style={styles.separator} />
         <Card
           icon ="plus-circle"
           title="Thêm địa chỉ nhà"
           onPress={() => navigation.navigate('NewAddressScreen')}
         />
-        <View style={styles.separator} />
         <Card
           icon ="plus-circle"
           title="Thêm địa chỉ mới"
@@ -62,16 +58,12 @@ const styles = StyleSheet.create({
   card:{
     flexDirection: 'row',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    alignContent: 'center',
     alignItems: 'center',
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    borderBottomColor: colors.gray200,
+    borderBottomWidth: 1,
   },
   cardText:{
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-  },
-  separator: {
-    height: 4,
-    backgroundColor: colors.gray200,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
 })
