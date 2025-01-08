@@ -14,11 +14,7 @@ import ScreenEnum from '../../constants/screenEnum';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
-<<<<<<< HEAD
-import CategoryScreen from '../../components/category/CategoryScreen'
-=======
 import CategoryMenu from '../../components/category/CategoryMenu';
->>>>>>> dai/setup-bottom-navigation
 
 const {width} = Dimensions.get('window');
 
@@ -37,7 +33,7 @@ const HomeScreen = props => {
         }}
         isHome={true}
       />
-      <Button title='Checkout Screen' onPress={() => navigation.navigate('CheckoutScreen')}/>
+      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)}/>
 
       <CategoryMenu />
 

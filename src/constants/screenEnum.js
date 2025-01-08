@@ -1,4 +1,5 @@
 const screens = {
+  MainNavigation: 'MainNavigation',
   // auth
   SplashScreen: 'SplashScreen',
   LoginScreen: 'LoginScreen',
@@ -24,6 +25,8 @@ const screens = {
 
 
   // Cart, Order
+  CheckoutScreen: 'CheckoutScreen',
+  OrderHistoryScreen: 'OrderHistoryScreen'
   
 };
 

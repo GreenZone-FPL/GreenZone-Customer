@@ -79,6 +79,7 @@ const MainNavigation = () => {
       <BottomTab.Screen
         name={ScreenEnum.HomeStackScreen}
         component={HomeStackScreen}
+      
       />
       {/* <BottomTab.Screen
         name={ScreenEnum.OrderStackScreen}

@@ -15,13 +15,13 @@ const CheckoutScreen = (props) => {
     const [quantity, setQuantity] = useState(1);
 
     const [isVisibleModal, setIsVisibleModal] = useState(false);
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState('Giao hàng');
 
     return (
 
         <View style={styles.container}>
             <LightStatusBar />
-            <NormalHeader title='Xác nhận đơn hàng' />
+            <NormalHeader title='Xác nhận đơn hàng' onLeftPress={() => navigation.goBack()} />
 
             <ScrollView style={styles.containerContent}>
                 <CustomRow

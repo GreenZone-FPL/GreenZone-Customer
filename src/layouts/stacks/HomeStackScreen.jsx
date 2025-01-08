@@ -5,7 +5,7 @@ import ScreenEnum from '../../constants/screenEnum';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProductDetailSheet from '../../components/bottom-sheets/ProductDetailSheet';
-
+import CheckoutScreen from '../../screens/order/CheckoutScreen'
 
 const HomeStack = createNativeStackNavigator()
 const HomeStackScreen = () => {
@@ -29,6 +29,8 @@ const HomeStackScreen = () => {
                 }}
 
             />
+
+            <HomeStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
         </HomeStack.Navigator>
 
     )
