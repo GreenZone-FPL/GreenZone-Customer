@@ -98,4 +98,4 @@ const categories = [
   },
 ];
 
-export default CategoryMenu;
+export default CategoryMenu

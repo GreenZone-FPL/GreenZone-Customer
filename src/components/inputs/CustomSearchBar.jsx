@@ -10,15 +10,16 @@ import GLOBAL_KEYS from '../../constants/globalKeys';
 
 const CustomSearchBarPropTypes = {
   placeholder: PropTypes.string,
-  searchQuery: PropTypes.string.isRequired, // Dữ liệu bắt buộc
-  setSearchQuery: PropTypes.func.isRequired, // Hàm bắt buộc
-  onClearIconPress: PropTypes.func.isRequired, // Hàm bắt buộc
+  searchQuery: PropTypes.string.isRequired,
+  setSearchQuery: PropTypes.func.isRequired,
+  onClearIconPress: PropTypes.func.isRequired,
   style: PropTypes.object,
   leftIcon: PropTypes.string,
   rightIcon: PropTypes.string,
   rightIconColor: PropTypes.string,
   onLeftIconPress: PropTypes.func,
 };
+
 /**
  *
  * Usage Example
@@ -71,6 +72,7 @@ const CustomSearchBar = ({
 };
 
 CustomSearchBar.propTypes = CustomSearchBarPropTypes
+
 
 
 

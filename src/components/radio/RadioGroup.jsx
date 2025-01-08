@@ -3,7 +3,23 @@ import { View, Text, StyleSheet } from 'react-native';
 import RadioButton from './RadioButton';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
+import PropTypes from 'prop-types';
 
+
+const RadioGroupPropTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+  selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onValueChange: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  required: PropTypes.bool,
+  note: PropTypes.string,
+};
 
 const RadioGroup = ({
   items,
@@ -41,6 +57,10 @@ const RadioGroup = ({
     </View>
   );
 };
+
+RadioGroup.propTypes = RadioGroupPropTypes
+
+
 
 const styles = StyleSheet.create({
   container: {

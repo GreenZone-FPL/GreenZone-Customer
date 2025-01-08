@@ -1,5 +1,9 @@
 import { StyleSheet, Image, SafeAreaView, Text, View, ScrollView, TouchableOpacity, FlatList, TextInput, SectionList, Dimensions } from 'react-native'
+<<<<<<< HEAD
 import React, {useState} from 'react'
+=======
+import React from 'react'
+>>>>>>> dai/setup-bottom-navigation
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import HeaderWithbadge from '../../components/headers/HeaderWithBadge'
@@ -7,6 +11,7 @@ import { Icon } from 'react-native-paper';
 import CustomSearchBar from '../../components/inputs/CustomSearchBar';
 
 // commit again Duong branch
+<<<<<<< HEAD
 
 
 const height = Dimensions.get('window').height
@@ -16,6 +21,11 @@ console.log('Height:' , height)
 const MerchantScreen = (props) => {
   const [searchQuery, setsearchQuery] = useState('')
 
+=======
+const { width, height } = Dimensions.get('window')
+
+const MerchantScreen = (props) => {
+>>>>>>> dai/setup-bottom-navigation
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithbadge title='Cửa hàng' />
@@ -23,6 +33,7 @@ const MerchantScreen = (props) => {
 
         <View style={styles.tool}>
 
+<<<<<<< HEAD
           <CustomSearchBar 
             placeholder="Tìm kiếm..."
             searchQuery={searchQuery}
@@ -32,6 +43,9 @@ const MerchantScreen = (props) => {
             rightIcon="close"
             style={{ flex: 1, elevation: 3}}
            />
+=======
+       
+>>>>>>> dai/setup-bottom-navigation
           <View style={styles.map}>
             <Icon source="google-maps" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
             <Text style={styles.textMap}>
@@ -65,6 +79,10 @@ const MerchantScreen = (props) => {
   )
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> dai/setup-bottom-navigation
 const renderItem = ({ item }) => (
   <TouchableOpacity style={styles.item}>
     <Image source={{ uri: item.image }} style={styles.imageItem} />

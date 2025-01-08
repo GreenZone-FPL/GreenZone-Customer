@@ -10,9 +10,14 @@ import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen'
 import MapAddressScreen from '../../screens/user_profile/MapAddressScreen';
 
 const ProfileStack = createNativeStackNavigator();
+// Navigation Container Can chung cu
+
+// Stack Tang 8 7 6 5 4
+
+// Screen Can phong 12 574
 const ProfileStackScreen = () => {
   return (
-    <ProfileStack.Navigator
+    <ProfileStack.Navigator // Stack.Navigator Extension
       name={ScreenEnum.ProfileStackScreen}
       screenOptions={{headerShown: false}}>
       <ProfileStack.Screen
@@ -20,7 +25,7 @@ const ProfileStackScreen = () => {
         component={ProfileScreen}
       />
 
-      <ProfileStack.Screen
+      <ProfileStack.Screen // Stack.Screen Extension 
         name={ScreenEnum.LoginScreen}
         component={LoginScreen}
       />

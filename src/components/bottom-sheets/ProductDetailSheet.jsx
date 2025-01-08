@@ -7,8 +7,7 @@ import RadioGroup from '../radio/RadioGroup';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 import SelectableGroup from '../radio/SelectableGroup';
 import NotesList from '../notes-list/NotesList';
-import PrimaryButton from '../buttons/PrimaryButton';
-import QuantitySelector from '../buttons/QuantitySelector';
+import CheckoutFooter from '../footer/CheckoutFooter';
 
 
 
@@ -71,8 +70,8 @@ const ProductDetailSheet = (props) => {
                     selectedGroup={selectedGroup}
                     setSelectedGroup={setSelectedGroup}
                     note="Tối đa 3 toppings"
-                    activeIconColor = {colors.pink500}
-                    activeTextColor = {colors.red900}
+                    activeIconColor = {colors.primary}
+                    activeTextColor = {colors.primary}
                 />
 
                 <NotesList
@@ -91,7 +90,7 @@ const ProductDetailSheet = (props) => {
                 />
             </ScrollView>
 
-            <Footer
+            <CheckoutFooter
                 quantity={quantity}
                 handlePlus={() => {
                     if (quantity < 10) {
@@ -143,29 +142,6 @@ const product = {
 
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 
-const Footer = ({ quantity, handlePlus, handleMinus, totalPrice = 68000, addToCart }) => {
-    return (
-        <View style={styles.footer}>
-
-            <View style={[styles.row, { justifyContent: 'space-between' }]}>
-                <View style={[styles.column, { paddingHorizontal: 0 }]}>
-                    <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
-                    <Text style={styles.totalText}>{totalPrice}đ</Text>
-                </View>
-
-                <QuantitySelector
-                    quantity={quantity}
-                    activeColor={colors.primary}
-                    handlePlus={handlePlus}
-                    handleMinus={handleMinus}
-                />
-            </View>
-
-
-            <PrimaryButton title='Thêm vào giỏ hàng' onPress={addToCart} />
-        </View>
-    );
-};
 
 const ProductImage = ({ hideModal }) => (
     <View style={styles.imageContainer}>

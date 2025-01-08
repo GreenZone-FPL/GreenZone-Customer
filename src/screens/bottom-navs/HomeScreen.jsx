@@ -9,16 +9,22 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import ScreenEnum from '../../constants/screenEnum';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
+<<<<<<< HEAD
 import CategoryScreen from '../../components/category/CategoryScreen'
+=======
+import CategoryMenu from '../../components/category/CategoryMenu';
+>>>>>>> dai/setup-bottom-navigation
 
 const {width} = Dimensions.get('window');
 
 const HomeScreen = props => {
+
+
   const {navigation} = props;
 
   return (
@@ -26,16 +32,15 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge
         title="Home"
-        onBadgePress={() => console.log('Click badge')}
+        onBadgePress={() => {
+          navigation.navigate('ProductDetailSheet')
+        }}
         isHome={true}
       />
+      <Button title='Checkout Screen' onPress={() => navigation.navigate('CheckoutScreen')}/>
 
-      <CategoryScreen />
+      <CategoryMenu />
 
-      <Button
-        title="Open Modal"
-        onPress={() => navigation.navigate('ProductDetailSheet')}
-      />
     </SafeAreaView>
   );
 };
