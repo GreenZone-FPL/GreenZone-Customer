@@ -12,8 +12,7 @@ import React from 'react';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import {Icon} from 'react-native-paper';
-import LightStatusBar from '../status-bars/LightStatusBar';
-
+import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 const width = Dimensions.get('window').width;
 
 const MerchantDetailSheet = props => {
@@ -26,10 +25,12 @@ const MerchantDetailSheet = props => {
   };
 
   return (
-    <View style={styles.container}>
-      <LightStatusBar />
-      <Header item={item} handleGoBack={handleGoBack} />
-      <Body item={item} />
+    <View style={{flex: 1, backgroundColor: colors.overlay}}>
+      <View style={styles.container}>
+        <OverlayStatusBar />
+        <Header item={item} handleGoBack={handleGoBack} />
+        <Body item={item} />
+      </View>
     </View>
   );
 };
