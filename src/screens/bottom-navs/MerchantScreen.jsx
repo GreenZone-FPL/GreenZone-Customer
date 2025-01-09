@@ -1,5 +1,5 @@
 import { StyleSheet, Image, SafeAreaView, Text, View, ScrollView, TouchableOpacity, FlatList, TextInput, SectionList, Dimensions } from 'react-native'
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import HeaderWithbadge from '../../components/headers/HeaderWithBadge'
@@ -10,42 +10,54 @@ import CustomSearchBar from '../../components/inputs/CustomSearchBar';
 const { width, height } = Dimensions.get('window')
 
 const MerchantScreen = (props) => {
+  const [searchQuery, setsearchQuery] = useState('')
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container1}>
       <HeaderWithbadge title='Cửa hàng' />
-      <View style={styles.content}>
+      <View style={styles.container}>
+        <View style={styles.content}>
 
-        <View style={styles.tool}>
+          <View style={styles.tool}>
+            <CustomSearchBar
+              placeholder="Tìm kiếm..."
+              searchQuery={searchQuery}
+              setSearchQuery={setsearchQuery}
+              onClearIconPress={() => setsearchQuery('')}
+              leftIcon="magnify"
+              rightIcon="close"
+              style={{ flex: 1, elevation: 3 }}
+            />
 
-       
-          <View style={styles.map}>
-            <Icon source="google-maps" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
-            <Text style={styles.textMap}>
-              Bản đồ
-            </Text>
+            <View style={styles.map}>
+              <Icon source="google-maps" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
+              <Text style={styles.textMap}>
+                Bản đồ
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.mechant1}>
+          <View style={styles.mechant1}>
+            <Text style={styles.tittle}>
+              Cửa hàng gần bạn
+            </Text>
+            <FlatList
+              data={data.slice(0, 1)}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
           <Text style={styles.tittle}>
-            Cửa hàng gần bạn
+            Cửa hàng Khác
           </Text>
           <FlatList
-            data={data.slice(0, 1)}
+            data={data}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
           />
         </View>
-        <Text style={styles.tittle}>
-          Cửa hàng Khác
-        </Text>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
       </View>
+
     </SafeAreaView>
 
   )
@@ -122,8 +134,14 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.white,
   },
+  container1: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: colors.white,
+
+  },
   content: {
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    flex: 1,
   },
   tool: {
     flexDirection: 'row',
@@ -131,7 +149,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    marginHorizontal:16
   },
   map: {
     flexDirection: 'row',
@@ -145,6 +164,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     marginVertical: 10,
+    marginHorizontal:16
   },
   distance: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
@@ -165,25 +185,27 @@ const styles = StyleSheet.create({
 
   },
   imageItem: {
-    width: 80,
-    height: 80,
+    width: width/4,
+    height: height/10,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
+    resizeMode:'cover'
   },
 
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     marginBottom: 8,
-    borderWidth: 1,
-    borderColor: colors.gray300,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    backgroundColor:colors.white,
+    shadowColor: colors.black,
+    borderRadius: GLOBAL_KEYS.PADDING_DEFAULT,
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 4,
+    shadowRadius: 8,
+    elevation: 3,
+    marginHorizontal:16
+
   },
 })
 
