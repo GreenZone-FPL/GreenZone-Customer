@@ -193,9 +193,9 @@ const CustomRow = ({
 }) => {
     return (
         <View style={styles.row}>
-            <Text style={[styles.leftText, { color: leftColor, fontWeight: leftTextFontWeight }]}>{leftText}</Text>
+            <Text style={[styles.normalText, { color: leftColor, fontWeight: leftTextFontWeight }]}>{leftText}</Text>
             <Pressable onPress={onRightPress}>
-                <Text style={[styles.rightText, { color: rightColor, fontWeight: rightTextFontWeight }]}>{rightText}</Text>
+                <Text style={[styles.normalText, { color: rightColor, fontWeight: rightTextFontWeight }]}>{rightText}</Text>
             </Pressable>
 
         </View>
@@ -218,7 +218,7 @@ const VoucherRow = ({
                     <Text style={[styles.normalText, { color: badgeTextColor }]}>{quantityOfVoucher}</Text>
                 </View>
 
-                <Text style={[styles.greenText, { color: textColor, marginRight: 8 }]}>Ưu đãi</Text>
+                <Text style={[styles.normalText, { color: textColor, marginRight: 8 }]}>Ưu đãi</Text>
                 <AntDesign name="down" color={colors.primary} size={14} />
 
             </Pressable>
@@ -281,10 +281,12 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        color: colors.primary
+        color: colors.primary,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     },
     greenText: {
-        color: colors.primary
+        color: colors.primary,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     },
     normalText: {
         textAlign: 'justify',

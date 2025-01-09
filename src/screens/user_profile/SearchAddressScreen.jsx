@@ -22,7 +22,7 @@ const SearchAddressScreen = (props) => {
                         size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                     />
                 </Pressable>
-                
+
                 <CustomSearchBar
                     placeholder="Tìm kiếm..."
                     searchQuery={searchQuery}
@@ -44,7 +44,7 @@ const SearchAddressScreen = (props) => {
                     color={colors.primary}
                     size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                 />
-                <Text>Chọn trên bản đồ</Text>
+                <Text style={styles.normalText}>Chọn trên bản đồ</Text>
                 <Icon
                     source="chevron-right"
                     color={colors.primary}
@@ -84,5 +84,9 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         elevation: 4,
     },
+    normalText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.black
+    }
 
 })

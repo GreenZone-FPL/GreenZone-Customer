@@ -104,6 +104,7 @@ const ProductDetailSheet = (props) => {
                 }}
                 totalPrice={68000}
                 addToCart={() => { }}
+                buttonTitle='Thêm vào giỏ hàng'
             />
         </View>
     );

@@ -48,7 +48,7 @@ const MerchantScreen = props => {
               size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
               color={colors.primary}
             />
-            <Text style={styles.textMap}>Bản đồ</Text>
+            <Text style={styles.normalText}>Bản đồ</Text>
           </View>
         </View>
 
@@ -216,6 +216,10 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
+  normalText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black
+  }
 });
 
 export default MerchantScreen;

@@ -5,11 +5,12 @@ import NormalHeader from '../../components/headers/NormalHeader';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SelectAddressScreen = (props) => {
     const navigation = props.navigation
     return (
-        <ScrollView style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <LightStatusBar />
             <NormalHeader
                 title='Chọn địa chỉ'
@@ -17,10 +18,10 @@ const SelectAddressScreen = (props) => {
                 rightIcon='magnify'
                 enableRightIcon={true} />
 
-            <View style={styles.content}>
+            <ScrollView style={styles.content}>
                 <Image
                     source={require('../../assets/images/map.png')}
-                    style={{ height: 500, width: '100%' }}
+                    style={{ height: 500, width: '100%', marginBottom: 8 }}
                 />
                 <Card
                     location="Đ. Lê Trọng Tấn, Sơn Kỳ, Tân Phú, Hồ Chí Minh, Việt Nam"
@@ -32,9 +33,9 @@ const SelectAddressScreen = (props) => {
                     distance='1.00 km'
                     onPress={() => { }}
                 />
-            </View>
+            </ScrollView>
 
-        </ScrollView>
+        </SafeAreaView>
     )
 }
 const Card = ({ location, onPress, distance }) => (
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         backgroundColor: colors.white,
-        gap: 16
     },
     content: {
         paddingHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 4,
         elevation: 2,
+        marginBottom: 8
     },
     location: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

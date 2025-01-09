@@ -22,9 +22,9 @@ const OrderHistoryScreen = (props) => {
     ]);
 
     const renderScene = SceneMap({
-        picked: () => (<OrderListView 
-        onItemPress = {() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
-        status="Picked" 
+        picked: () => (<OrderListView
+            onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+            status="Picked"
         />),
         completed: () => <OrderListView status="Completed" />,
         cancelled: () => <OrderListView status="Cancelled" />,
@@ -50,6 +50,7 @@ const OrderHistoryScreen = (props) => {
                         style={{ backgroundColor: colors.white }}
                         activeColor={colors.primary}
                         inactiveColor={colors.gray700}
+                        labelStyle={{ fontSize: 12 }}
                     />
                 )}
             />
@@ -235,11 +236,11 @@ const styles = StyleSheet.create({
     orderItem: {
         backgroundColor: '#fff',
         borderRadius: 8,
-        paddingVertical: 16,
+        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
         paddingHorizontal: 8,
         gap: 6,
         shadowColor: colors.black,
-        shadowOffset:{width: 5, height: 4},
+        shadowOffset: { width: 5, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 4,
@@ -249,25 +250,23 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     orderStatus: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.pink500,
         fontWeight: '500'
 
     },
     orderTotal: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.pink500,
         fontWeight: 'bold',
         textAlign: 'right'
     },
     orderTime: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.gray850,
 
     },
-    productList: {
 
-    },
     productItem: {
         width: 80,
         maxHeight: 120,
@@ -281,17 +280,18 @@ const styles = StyleSheet.create({
 
     },
     productName: {
-        fontSize: 12,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
         color: '#333', // Màu chữ mặc định cho tên sản phẩm
         textAlign: 'center',
     },
     normalText: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.gray850
     },
     estimatedTime: {
         fontWeight: '400',
-        color: colors.primary
+        color: colors.primary,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     }
 });
 

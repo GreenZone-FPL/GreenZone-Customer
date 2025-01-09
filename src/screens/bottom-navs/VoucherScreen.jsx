@@ -1,15 +1,14 @@
 import React from 'react';
-import { StyleSheet, Image, SafeAreaView, ImageBackground, Pressable, Alert } from 'react-native';
-import { View, Text } from 'react-native';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import { Image, ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
 import { Icon } from 'react-native-paper';
+import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import colors from '../../constants/color';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 
 
 const VoucherScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       <LightStatusBar />
       <ImageBackground
         source={require('../../assets/images/bgvoucher.png')}
@@ -31,7 +30,7 @@ const VoucherScreen = () => {
           </View>
           <View style={styles.barCode}>
             <Image source={require('../../assets/images/barcode.png')} style={styles.imgcode} />
-            <Text>M41352236</Text>
+            <Text style={styles.code}>M41352236</Text>
           </View>
         </View>
       </ImageBackground>
@@ -75,7 +74,7 @@ const VoucherScreen = () => {
 
 
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -175,11 +174,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingVertical: 6
+    paddingVertical: 6,
+
   },
   textBtn: {
     color: colors.white,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
+  code: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    color: colors.black
+  }
 });
 
 
