@@ -23,6 +23,8 @@ const screens = {
   ProfileStackScreen: 'ProfileStackScreen',
   UpdateProfileScreen: 'UpdateProfileScreen',
 
+  ProductDetailSheet: 'ProductDetailSheet',
+
 
   // Cart, Order
   CheckoutScreen: 'CheckoutScreen',

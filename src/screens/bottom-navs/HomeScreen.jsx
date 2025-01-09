@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import { default as React, default as React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Dimensions,
@@ -17,10 +17,10 @@ import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import ScreenEnum from '../../constants/screenEnum';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -47,7 +47,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({lat, long}) => {
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -71,7 +71,7 @@ const HomeScreen = props => {
         }}
         isHome={true}
       />
-      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)}/>
+      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
 
       <CategoryMenu />
 
