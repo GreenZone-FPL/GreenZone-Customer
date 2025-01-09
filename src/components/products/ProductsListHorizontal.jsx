@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     width: width,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   headerContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
