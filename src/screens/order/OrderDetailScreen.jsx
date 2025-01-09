@@ -9,7 +9,7 @@ import CheckoutFooter from '../../components/footer/CheckoutFooter';
 import { Icon } from 'react-native-paper';
 import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
 
-const CheckoutScreen = (props) => {
+const OrderDetailScreen = (props) => {
 
     const { navigation } = props;
     const [quantity, setQuantity] = useState(1);
@@ -29,8 +29,8 @@ const CheckoutScreen = (props) => {
                     rightText={'Thay đổi'}
                     leftColor={colors.primary}
                     rightColor={colors.primary}
-                    onRightPress={() => {setIsVisibleModal(true)}}
                     leftTextFontWeight='700'
+                    onRightPress={() => setIsVisibleModal(true)}
                 />
 
                 <AddressSection />
@@ -371,5 +371,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CheckoutScreen
+export default OrderDetailScreen;
 

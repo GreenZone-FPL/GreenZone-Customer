@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import QuantityButton from '../buttons/QuantityButton';
-import QuantitySelector from '../buttons/QuantitySelector';
+import QuantitySelector from '../buttons/QuantitySelector'
 import PropTypes from 'prop-types';
 
 

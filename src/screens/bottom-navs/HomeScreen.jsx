@@ -17,8 +17,9 @@ import CategoryMenu from '../../components/category/CategoryMenu';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 
+
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -45,7 +46,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({lat, long}) => {
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -69,10 +70,7 @@ const HomeScreen = props => {
         }}
         isHome={true}
       />
-      <Button
-        title="Checkout Screen"
-        onPress={() => navigation.navigate('CheckoutScreen')}
-      />
+      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
 
       <CategoryMenu />
 

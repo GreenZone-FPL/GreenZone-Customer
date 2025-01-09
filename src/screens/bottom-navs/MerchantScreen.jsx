@@ -11,30 +11,31 @@ import {
   SectionList,
   Dimensions,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import HeaderWithbadge from '../../components/headers/HeaderWithBadge';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import CustomSearchBar from '../../components/inputs/CustomSearchBar';
 
-// commit again Duong branch
+
 
 const height = Dimensions.get('window').height;
-// const { width, height } = Dimensions.get('window')
+
 console.log('Height:', height);
 
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');
 
-  const {navigation} = props;
+  const { navigation } = props;
 
   const handleMerchant = item => {
-    navigation.navigate('MerchantDetailSheet', {item: item});
+    navigation.navigate('MerchantDetailSheet', { item: item });
   };
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithbadge title="Cửa hàng" />
+
       <View style={styles.content}>
         <View style={styles.tool}>
           <CustomSearchBar
@@ -44,7 +45,7 @@ const MerchantScreen = props => {
             onClearIconPress={() => setsearchQuery('')}
             leftIcon="magnify"
             rightIcon="close"
-            style={{flex: 1, elevation: 3}}
+            style={{ flex: 1, elevation: 3 }}
           />
           <View style={styles.map}>
             <Icon
@@ -60,7 +61,7 @@ const MerchantScreen = props => {
           <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
           <FlatList
             data={data.slice(0, 1)}
-            renderItem={({item}) => renderItem({handleMerchant, item})}
+            renderItem={({ item }) => renderItem({ handleMerchant, item })}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
           />
@@ -68,17 +69,18 @@ const MerchantScreen = props => {
         <Text style={styles.tittle}>Cửa hàng Khác</Text>
         <FlatList
           data={data}
-          renderItem={({item}) => renderItem({handleMerchant, item})}
+          renderItem={({ item }) => renderItem({ handleMerchant, item })}
           keyExtractor={item => item.id}
+          scrollEnabled={true}
         />
       </View>
     </SafeAreaView>
   );
 };
 
-const renderItem = ({item, handleMerchant}) => (
+const renderItem = ({ item, handleMerchant }) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{uri: item.image}} style={styles.imageItem} />
+    <Image source={{ uri: item.image }} style={styles.imageItem} />
     <View style={styles.infoItem}>
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.location}>{item.location}</Text>
@@ -154,6 +156,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    flex: 1
   },
   tool: {
     flexDirection: 'row',
@@ -162,6 +165,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     justifyContent: 'space-between',
+    gap: GLOBAL_KEYS.GAP_DEFAULT
   },
   map: {
     flexDirection: 'row',
@@ -206,11 +210,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     marginBottom: 8,
-    borderWidth: 1,
-    borderColor: colors.gray300,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,

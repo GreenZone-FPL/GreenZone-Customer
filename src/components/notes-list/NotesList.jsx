@@ -81,4 +81,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotesList;
+export default NotesList

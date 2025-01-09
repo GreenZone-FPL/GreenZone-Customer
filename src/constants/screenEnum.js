@@ -1,4 +1,5 @@
 const screens = {
+  MainNavigation: 'MainNavigation',
   // auth
   SplashScreen: 'SplashScreen',
   LoginScreen: 'LoginScreen',
@@ -22,6 +23,18 @@ const screens = {
   ProfileStackScreen: 'ProfileStackScreen',
   UpdateProfileScreen: 'UpdateProfileScreen',
 
+  ProductDetailSheet: 'ProductDetailSheet',
+  
+  AddressScreen : 'AddressScreen',
+  NewAddressScreen : 'NewAddressScreen',
+  SearchAddressScreen : 'SearchAddressScreen',
+  SelectAddressScreen: 'SelectAddressScreen',
+
+
+  // Cart, Order
+  CheckoutScreen: 'CheckoutScreen',
+  OrderHistoryScreen: 'OrderHistoryScreen',
+  
   // Cart, Order
 
   // sheet
