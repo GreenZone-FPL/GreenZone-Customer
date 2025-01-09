@@ -13,11 +13,11 @@ import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
 import {Icon} from 'react-native-paper';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
+
 const width = Dimensions.get('window').width;
 
 const MerchantDetailSheet = props => {
   const {navigation, route} = props;
-
   const {item} = route.params;
 
   const handleGoBack = () => {
@@ -25,7 +25,7 @@ const MerchantDetailSheet = props => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: colors.overlay}}>
+    <View style={styles.screen}>
       <View style={styles.container}>
         <OverlayStatusBar />
         <Slider item={item} handleGoBack={handleGoBack} />
@@ -36,15 +36,15 @@ const MerchantDetailSheet = props => {
 };
 
 const Slider = ({item, handleGoBack}) => (
-  <View style={styles.Slider}>
+  <View>
     <Image source={{uri: item.image}} style={styles.image} />
     <TouchableOpacity
       style={styles.goBackButton}
       onPress={() => handleGoBack()}>
       <Icon
         source="close"
-        color={colors.primary}
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        color={colors.gray700}
+        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
       />
     </TouchableOpacity>
   </View>
@@ -55,8 +55,7 @@ const Body = ({item}) => (
     <View style={styles.body}>
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.location}>{item.location}</Text>
-      <Text style={styles.openingHours}>Giờ mở cửa: 07:00-22:00</Text>
-
+      <Text style={styles.openingHours}>Giờ mở cửa: 07:00 - 22:00</Text>
       <View style={styles.infoContainer}>
         <Icon
           source="navigation-variant-outline"
@@ -97,55 +96,55 @@ const Body = ({item}) => (
 );
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.overlay,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.white,
     marginTop: StatusBar.currentHeight + 40,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
-  Slider: {
-    width: width,
-  },
+
   image: {
     width: width,
     height: width * 0.8,
     resizeMode: 'cover',
   },
   goBackButton: {
-    padding: 4,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
     backgroundColor: colors.green100,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
     end: 0,
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: 4,
   },
   body: {
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
   },
   location: {
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '600',
   },
   openingHours: {
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
   },
   infoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   infoText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    fontWeight: '400',
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });
