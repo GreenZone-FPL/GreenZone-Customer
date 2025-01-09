@@ -28,23 +28,23 @@ const MerchantDetailSheet = props => {
     <View style={{flex: 1, backgroundColor: colors.overlay}}>
       <View style={styles.container}>
         <OverlayStatusBar />
-        <Header item={item} handleGoBack={handleGoBack} />
+        <Slider item={item} handleGoBack={handleGoBack} />
         <Body item={item} />
       </View>
     </View>
   );
 };
 
-const Header = ({item, handleGoBack}) => (
-  <View style={styles.header}>
+const Slider = ({item, handleGoBack}) => (
+  <View style={styles.Slider}>
     <Image source={{uri: item.image}} style={styles.image} />
     <TouchableOpacity
       style={styles.goBackButton}
       onPress={() => handleGoBack()}>
       <Icon
         source="close"
-        color={colors.gray700}
-        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+        color={colors.primary}
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
       />
     </TouchableOpacity>
   </View>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     marginTop: StatusBar.currentHeight + 40,
   },
-  header: {
+  Slider: {
     width: width,
   },
   image: {
@@ -111,9 +111,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   goBackButton: {
-    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
+    padding: 4,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 4,
     backgroundColor: colors.green100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -126,13 +125,13 @@ const styles = StyleSheet.create({
   },
   title: {
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
   },
   location: {
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   openingHours: {
     marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,

@@ -21,17 +21,15 @@ const ProductsListVertical = props => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Món Mới Phải Thử</Text>
-      <View style={styles.flatListWrapper}>
-        <FlatList
-          data={productsNewDish}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <ItemProduct item={item} onItemClick={onItemClick} />
-          )}
-          contentContainerStyle={styles.flatListContentContainer}
-          scrollEnabled={false}
-        />
-      </View>
+      <FlatList
+        data={productsNewDish}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item}) => (
+          <ItemProduct item={item} onItemClick={onItemClick} />
+        )}
+        contentContainerStyle={styles.flatListContentContainer}
+        scrollEnabled={false}
+      />
     </View>
   );
 };
@@ -85,16 +83,14 @@ const productsNewDish = [
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
     color: colors.black,
   },
-  flatListWrapper: {
-    marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
+
   flatListContentContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },

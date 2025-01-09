@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   timeText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     color: colors.primary,
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     width: 157,
     height: 235,
     resizeMode: 'cover',
-    opacity: 0.5,
+    opacity: 0.7,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   priceContainer: {
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   priceText: {
     color: colors.primary,
     padding: GLOBAL_KEYS.PADDING_SMALL,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
   },
   productNameText: {
@@ -147,15 +147,13 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     position: 'absolute',
-    bottom: '15%',
+    bottom: '20%',
   },
   addButtonContainer: {
     position: 'absolute',
     bottom: 0,
     end: 0,
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     backgroundColor: colors.white,
   },
