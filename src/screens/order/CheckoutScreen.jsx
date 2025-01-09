@@ -29,8 +29,8 @@ const CheckoutScreen = (props) => {
                     rightText={'Thay đổi'}
                     leftColor={colors.primary}
                     rightColor={colors.primary}
+                    onRightPress={() => {setIsVisibleModal(true)}}
                     leftTextFontWeight='700'
-                    onRightPress={() => setIsVisibleModal(true)}
                 />
 
                 <AddressSection />

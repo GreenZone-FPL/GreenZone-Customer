@@ -12,6 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ScreenEnum from './src/constants/screenEnum';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
+import CheckoutScreen from './src/screens/order/CheckoutScreen';
 
 
 
@@ -31,6 +32,7 @@ function App() {
         <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
         <BaseStack.Screen name={ScreenEnum.OrderHistoryScreen} component={OrderHistoryScreen} />
+        <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
 
 
 
