@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     borderRadius: 34,
   },
   itemName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
     marginTop: GLOBAL_KEYS.GAP_SMALL,
     textAlign: 'center',
@@ -98,4 +98,4 @@ const categories = [
   },
 ];
 
-export default CategoryMenu
+export default CategoryMenu;
