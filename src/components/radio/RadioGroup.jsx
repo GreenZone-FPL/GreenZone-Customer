@@ -1,15 +1,32 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import RadioButton from './RadioButton';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import colors from '../../constants/color';
+import PropTypes from 'prop-types';
+
+
+const RadioGroupPropTypes = {
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+  selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onValueChange: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  required: PropTypes.bool,
+  note: PropTypes.string,
+};
 
 const RadioGroup = ({
   items,
   selectedValue,
   onValueChange,
   title,
-  required = false, // Bắt buộc chọn hay không
+  required = false,
   note
 }) => {
   return (
@@ -25,21 +42,25 @@ const RadioGroup = ({
 
       {/* Danh sách Radio Buttons */}
       {items.map((item) => {
-        const { value, label, additionalInfo } = item;
+        const { id, name, price } = item;
 
         return (
           <RadioButton
-            key={value}
-            label={label}
-            selected={selectedValue === value}
-            onPress={() => onValueChange(value)}
-            additionalInfo={additionalInfo}
+            key={id}
+            label={name}
+            selected={selectedValue === id}
+            onPress={() => onValueChange(id)}
+            price={price}
           />
         );
       })}
     </View>
   );
 };
+
+RadioGroup.propTypes = RadioGroupPropTypes
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -55,9 +76,13 @@ const styles = StyleSheet.create({
     color: colors.red800,
   },
   note: {
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '400',
-  },
+  }
 });
 
+
+
+
 export default RadioGroup;
+

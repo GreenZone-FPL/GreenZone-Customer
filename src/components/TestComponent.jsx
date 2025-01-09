@@ -1,75 +1,56 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
-import colors from '../constants/color';
-import FlatInput from './inputs/FlatInput';
+import Geolocation from '@react-native-community/geolocation';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {View} from 'react-native';
+import GLOBAL_KEYS from '../constants/globalKeys';
+import DeliveryButton from './buttons/DeliveryButton';
 
-import GLOBAL_KEYS from '../constants/global_keys';
+const TestComponent = props => {
+  const {navigation} = props;
+  const [currentLocation, setCurrenLocation] = useState('');
+  useEffect(() => {
+    Geolocation.getCurrentPosition(position => {
+      console.log(position);
+      if (position.coords) {
+        reverseGeocode({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
+      }
+    });
+  }, []);
 
+  const reverseGeocode = async ({lat, long}) => {
+    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
-const TestComponent = () => {
-  const [fullname, setFullname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [errors, setErrors] = useState({
-    fullname: '',
-    email: '',
-    password: '',
-  });
-
-  const validateInputs = () => {
-    const newErrors = {
-      fullname: fullname.trim() === '' ? 'Fullname is required' : '',
-      email: email.trim() === '' ? 'Email is required' : '',
-      password: password.trim() === '' ? 'Password is required' : '',
-    };
-    setErrors(newErrors);
+    try {
+      const res = await axios(api);
+      if (res && res.status === 200 && res.data) {
+        const items = res.data.items;
+        setCurrenLocation(items[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <FlatInput
-        label="Fullname"
-        value={fullname}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, fullname: '' }));
-          setFullname(value);
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+      }}>
+      <DeliveryButton
+        title="Đi giao đến"
+        address={currentLocation && currentLocation.address.label}
+        onPress={() => {
+          console.log('DeliveryButton clicked');
         }}
-        message={errors.fullname}
       />
-      <FlatInput
-        label="Email"
-        value={email}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, email: '' }));
-          setEmail(value);
-        }}
-        message={errors.email}
-      />
-      <FlatInput
-        label="Password"
-        value={password}
-        setValue={(value) => {
-          setErrors((prev) => ({ ...prev, password: '' }));
-          setPassword(value);
-        }}
-        message={errors.password}
-        secureTextEntry
-        isPasswordVisible={isPasswordVisible}
-        setIsPasswordVisible={setIsPasswordVisible}
-      />
-      <Button title="Validate" onPress={validateInputs} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-});
-
-export default TestComponent
+export default TestComponent;

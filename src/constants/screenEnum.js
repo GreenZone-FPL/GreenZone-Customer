@@ -1,35 +1,48 @@
 const screens = {
-    // auth
-    SplashScreen: 'SplashScreen',
-    LoginScreen: 'LoginScreen',
-    MainScreen: 'MainScreen',
-    ProductDetail: 'ProductDetail',
+  MainNavigation: 'MainNavigation',
+  // auth
+  SplashScreen: 'SplashScreen',
+  LoginScreen: 'LoginScreen',
+  MainScreen: 'MainScreen',
+  ProductDetail: 'ProductDetail',
 
-    // bottom_navs_screen
-    HomeScreen: 'HomeScreen',
-    OrderScreen: 'OrderScreen',
-    MerchantScreen: 'MerchantScreen',
-    VoucherScreen: 'VoucherScreen',
-    ProfileScreen: 'ProfileScreen',
+  // bottom_navs_screen
+  HomeScreen: 'HomeScreen',
+  OrderScreen: 'OrderScreen',
+  MerchantScreen: 'MerchantScreen',
+  VoucherScreen: 'VoucherScreen',
+  ProfileScreen: 'ProfileScreen',
+
+  // bottom_navs_stack
+  HomeStackScreen: 'HomeStackScreen',
+  OrderStackScreen: 'OrderStackScreen',
+  MerchantStackScreen: 'MerchantStackScreen',
+  VoucherStackScreen: 'VoucherStackScreen',
+
+  // ProfileScreen
+  ProfileStackScreen: 'ProfileStackScreen',
+  UpdateProfileScreen: 'UpdateProfileScreen',
+
+  ProductDetailSheet: 'ProductDetailSheet',
+  
+  AddressScreen : 'AddressScreen',
+  NewAddressScreen : 'NewAddressScreen',
+  SearchAddressScreen : 'SearchAddressScreen',
+  SelectAddressScreen: 'SelectAddressScreen',
 
 
-     // bottom_navs_stack
-     HomeStackScreen: 'HomeStackScreen',
-     OrderStackScreen: 'OrderStackScreen',
-     MerchantStackScreen: 'MerchantStackScreen',
-     VoucherStackScreen: 'VoucherStackScreen',
-     ProfileStackScreen: 'ProfileStackScreen'
+  // Cart, Order
+  CheckoutScreen: 'CheckoutScreen',
+  OrderHistoryScreen: 'OrderHistoryScreen',
+  
+  // Cart, Order
 
-
-
-
-
-
-
-}
+  // sheet
+  MerchantDetailSheet: 'MerchantDetailSheet',
+};
 
 const ScreenEnum = Object.freeze({
-    ...screens
+  ...screens,
 });
 
 export default ScreenEnum;

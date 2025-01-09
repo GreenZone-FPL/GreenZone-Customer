@@ -1,17 +1,29 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
+import PropTypes from 'prop-types';
+
+
+const RadioButtonPropTypes = {
+    label: PropTypes.string.isRequired,
+    selected: PropTypes.bool,
+    onPress: PropTypes.func.isRequired,
+    price: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number,
+    ]),
+};
+
 
 const RadioButton = ({
     label,
     selected,
-    additionalInfo,
     onPress,
+    price
 }) => {
-    const radioColor = selected ? colors.primary : colors.gray700
+    const radioColor = selected ? colors.primary : colors.gray400
     const textColor = selected ? colors.primary : colors.black
-
     return (
 
         <Pressable style={styles.radioContainer} onPress={onPress}>
@@ -25,14 +37,18 @@ const RadioButton = ({
 
             {/* Thông tin thêm */}
 
-            {additionalInfo && (
-                <Text style={[styles.additionalInfo, { color: textColor }]}>
-                    {additionalInfo}
+            {price && (
+                <Text style={[styles.price, { color: textColor }]}>
+                    {price}
                 </Text>
             )}
         </Pressable>
     );
 };
+
+RadioButton.propTypes = RadioButtonPropTypes;
+
+
 
 const styles = StyleSheet.create({
     radioContainer: {
@@ -45,7 +61,7 @@ const styles = StyleSheet.create({
         width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
         height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
         borderRadius: GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2,
-        borderWidth: 2,
+        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: GLOBAL_KEYS.PADDING_SMALL,
@@ -60,7 +76,7 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         flex: 1
     },
-    additionalInfo: {
+    price: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     },
 });

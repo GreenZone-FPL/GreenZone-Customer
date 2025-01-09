@@ -3,13 +3,21 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { Badge } from 'react-native-paper';
 import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/global_keys';
+import GLOBAL_KEYS from '../../constants/globalKeys';
+import PropTypes from 'prop-types'
+
+
+const IconWithBadgePropTypes = {
+    quantity: PropTypes.number,
+    onPress: PropTypes.func,
+};
 
 const IconWithBadge = (props) => {
     const {
         quantity = 10,
         onPress
     } = props
+
     return (
         <Pressable
             onPress={onPress}
@@ -29,6 +37,9 @@ const IconWithBadge = (props) => {
         </Pressable>
     );
 };
+
+IconWithBadge.propTypes = IconWithBadgePropTypes;
+
 
 const styles = StyleSheet.create({
     container: {
