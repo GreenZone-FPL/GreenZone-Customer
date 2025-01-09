@@ -28,8 +28,12 @@ const screens = {
 
   // Cart, Order
   CheckoutScreen: 'CheckoutScreen',
-  OrderHistoryScreen: 'OrderHistoryScreen'
+  OrderHistoryScreen: 'OrderHistoryScreen',
   
+  // Cart, Order
+
+  // sheet
+  MerchantDetailSheet: 'MerchantDetailSheet',
 };
 
 const ScreenEnum = Object.freeze({

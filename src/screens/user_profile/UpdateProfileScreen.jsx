@@ -1,61 +1,71 @@
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Text,
+} from 'react-native';
 import React, {useState} from 'react';
 import NormalHeader from '../../components/headers/NormalHeader';
 import colors from '../../constants/color';
 import {Icon} from 'react-native-paper';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import {Dimensions} from 'react-native';
-import FlatInput from '../../components/inputs/FlatInput';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import {CustomFlatInput} from '../../components/inputs/FlatInput';
+import FlatInput from '../../components/inputs/FlatInput';
 
 const {width} = Dimensions.get('window');
 const UpdateProfileScreen = props => {
   const {navigation} = props;
-  const {dob, setDob} = useState('');
-  const {sex, setSex} = useState('');
+  const [lastName, setLastName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [email, setEmail] = useState('');
+  const [dob, setDob] = useState('');
+  const [gender, setGender] = useState('');
 
   return (
-    <View style={styles.container}>
-      <NormalHeader
-        title={'Cập nhập thông tin'}
-        onLeftPress={() => navigation.goBack()}
-      />
-      <View style={styles.avatarContainer}>
-        <View style={styles.avatar}>
-          <Image
-            style={styles.avatarImage}
-            source={{
-              uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/User_icon-cp.png/618px-User_icon-cp.png',
-            }}
-          />
-          <View style={styles.cameraIconContainer}>
-            <Icon
-              source="camera"
-              color={colors.primary}
-              size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+    <KeyboardAvoidingView style={styles.container}>
+      <ScrollView>
+        <NormalHeader
+          title={'Cập nhập thông tin'}
+          onLeftPress={() => navigation.goBack()}
+        />
+        <View style={styles.avatarContainer}>
+          <View style={styles.avatar}>
+            <Image
+              style={styles.avatarImage}
+              source={{
+                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/User_icon-cp.png/618px-User_icon-cp.png',
+              }}
             />
+            <View style={styles.cameraIconContainer}>
+              <Icon
+                source="camera"
+                color={colors.primary}
+                size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+              />
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.formContainer}>
-        <FlatInput label={'Họ'} />
-        <FlatInput label={'Tên'} />
-        <FlatInput label={'Email'} />
-        <CustomFlatInput label={'Ngày sinh'} value={dob} setValue={setDob} />
-        <CustomFlatInput
-          label={'Giới tính'}
-          value={sex}
-          setValue={setSex}
-          rightIcon="arrow-down-thin"
-        />
-        <PrimaryButton title={'Cập nhật tài khoản'} />
-      </View>
-    </View>
+        <View style={styles.formContainer}>
+          <FlatInput label={'Họ'} value={lastName} setValue={setLastName} />
+          <FlatInput label={'Tên'} value={firstName} setValue={setFirstName} />
+          <FlatInput label={'Email'} value={email} setValue={setEmail} />
+          <CustomFlatInput label={'Ngày sinh'} value={dob} setValue={setDob} />
+          <CustomFlatInput
+            label={'Giới tính'}
+            value={gender}
+            setValue={setGender}
+            rightIcon="arrow-down-drop-circle-outline"
+          />
+          <PrimaryButton title={'Cập nhật tài khoản'} />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
-
-const Calendar = () => {};
 
 const styles = StyleSheet.create({
   container: {
@@ -98,4 +108,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UpdateProfileScreen
+export default UpdateProfileScreen;
