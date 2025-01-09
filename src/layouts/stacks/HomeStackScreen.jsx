@@ -1,10 +1,10 @@
-import React, {useContext} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ScreenEnum from '../../constants/screenEnum';
-import HomeScreen from '../../screens/bottom-navs/HomeScreen';
-import LoginScreen from '../../screens/auth/LoginScreen';
+import React from 'react';
 import ProductDetailSheet from '../../components/bottom-sheets/ProductDetailSheet';
 import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
+import ScreenEnum from '../../constants/screenEnum';
+import LoginScreen from '../../screens/auth/LoginScreen';
+import HomeScreen from '../../screens/bottom-navs/HomeScreen';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -29,7 +29,7 @@ const HomeStackScreen = () => {
         name="DialogShippingMethod"
         component={DialogShippingMethod}
         options={{
-          animation: 'none',
+          animation: 'simple_push',
           presentation: 'transparentModal',
           headerShown: false,
         }}

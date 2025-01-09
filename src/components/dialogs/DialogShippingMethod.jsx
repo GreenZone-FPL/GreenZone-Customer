@@ -1,20 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Modal,
-  StyleSheet,
-  Text,
-  Image,
-  Pressable,
-  TouchableOpacity,
-} from 'react-native';
-import {Icon} from 'react-native-paper';
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
+import PropTypes from 'prop-types';
+import React, {useEffect, useState} from 'react';
+import {
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Icon} from 'react-native-paper';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
-import PropTypes from 'prop-types';
 
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,

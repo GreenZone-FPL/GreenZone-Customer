@@ -9,13 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 
 
 const LoginScreen = (props) => {
-<<<<<<< HEAD
-  const [value, setValue] = useState()
-=======
  
-  
-
->>>>>>> dai/setup-bottom-navigation
   return (
     <ScrollView style={styles.container}>
       <KeyboardAvoidingView>

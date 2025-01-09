@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import { default as React, default as React, useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   Dimensions,
