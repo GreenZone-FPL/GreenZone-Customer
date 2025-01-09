@@ -12,9 +12,8 @@ const { width, height } = Dimensions.get('window')
 const MerchantScreen = (props) => {
   const [searchQuery, setsearchQuery] = useState('')
   return (
-    <SafeAreaView style={styles.container1}>
+    <SafeAreaView style={styles.container}>
       <HeaderWithbadge title='Cửa hàng' />
-      <View style={styles.container}>
         <View style={styles.content}>
 
           <View style={styles.tool}>
@@ -56,8 +55,6 @@ const MerchantScreen = (props) => {
             keyExtractor={(item) => item.id}
           />
         </View>
-      </View>
-
     </SafeAreaView>
 
   )
@@ -134,12 +131,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.white,
   },
-  container1: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-
-  },
   content: {
     flex: 1,
   },
@@ -205,7 +196,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     marginHorizontal:16
-
   },
 })
 
