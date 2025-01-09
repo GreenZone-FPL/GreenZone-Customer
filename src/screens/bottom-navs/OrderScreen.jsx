@@ -1,6 +1,6 @@
 import {StyleSheet, Image, SafeAreaView} from 'react-native';
 import React from 'react';
-import {Appbar} from 'react-native-paper';
+
 
 const OrderScreen = props => {
   return (
@@ -13,7 +13,7 @@ const OrderScreen = props => {
   );
 };
 
-export default OrderScreen;
+export default OrderScreen
 
 const styles = StyleSheet.create({
   container: {
