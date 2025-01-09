@@ -30,7 +30,7 @@ const ProfileScreen = props => {
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => alert('Địa chỉ!')}
+              onPress={() => navigation.navigate('AddressScreen')}
             />
           </View>
           <View style={styles.accountContainer}>
@@ -76,14 +76,14 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

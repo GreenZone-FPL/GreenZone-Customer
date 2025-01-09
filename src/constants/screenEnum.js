@@ -24,6 +24,11 @@ const screens = {
   UpdateProfileScreen: 'UpdateProfileScreen',
 
   ProductDetailSheet: 'ProductDetailSheet',
+  
+  AddressScreen : 'AddressScreen',
+  NewAddressScreen : 'NewAddressScreen',
+  SearchAddressScreen : 'SearchAddressScreen',
+  SelectAddressScreen: 'SelectAddressScreen',
 
 
   // Cart, Order

@@ -16,7 +16,7 @@ const VoucherScreen = () => {
         resizeMode="cover"
         style={styles.imageBg}
       >
-        <View style={styles.padding}>
+        <View style={styles.column}>
           <Text style={styles.title}>Ưu đãi</Text>
           <View style={styles.content}>
             <Text style={styles.title}>Mới</Text>
@@ -36,7 +36,7 @@ const VoucherScreen = () => {
         </View>
       </ImageBackground>
 
-      <View style={styles.paddingBody}>
+      <View style={styles.column}>
         <View style={styles.row}>
           <Card
             iconName="crown"
@@ -92,16 +92,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     flexDirection: 'column',
+    gap: 16
   },
   imageBg: {
-    overflow: 'hidden',
+    width: '100%',
+    height: 360
   },
-  padding: {
-    flexDirection: 'column',
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  paddingBody: {
+  column: {
     flexDirection: 'column',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -120,18 +117,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
   },
   textVoucher: {
     color: colors.primary,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   barCode: {
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 6,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    marginTop: GLOBAL_KEYS.GAP_SMALL,
     alignItems: 'center',
   },
   imgcode: {
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: 24,
   },
   card: {
     flex: 1,
@@ -150,15 +149,14 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
-    shadowColor: colors.gray700,
-    shadowOffset: { width: 0, height: 3 },
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
-    elevation: 3,
+    elevation: 4,
   },
   cardText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
     color: colors.black,
   },
   ticket: {
@@ -168,15 +166,16 @@ const styles = StyleSheet.create({
   },
   ticketTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '900',
-    color: colors.gray900,
+    fontWeight: 'bold',
+    color: colors.black,
   },
   btnTicket: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.green500,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    backgroundColor: colors.primary,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingVertical: 6
   },
   textBtn: {
     color: colors.white,

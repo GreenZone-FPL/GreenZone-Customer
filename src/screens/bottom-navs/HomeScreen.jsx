@@ -16,7 +16,7 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import CategoryMenu from '../../components/category/CategoryMenu';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-import ScreenEnum from '../../constants/screenEnum';
+
 
 const HomeScreen = props => {
   const { navigation } = props;
