@@ -1,12 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState } from 'react';
-import {
-  View,
-  Button,
-  SafeAreaView,
-  StyleSheet
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Button, SafeAreaView, StyleSheet, ScrollView} from 'react-native';
 
 import ScreenEnum from '../../constants/screenEnum';
 import DeliveryButton from '../../components/buttons/DeliveryButton';
@@ -16,10 +11,11 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import CategoryMenu from '../../components/category/CategoryMenu';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-
+import ProductsListHorizontal from '../../components/products/ProductsListHorizontal';
+import ProductsListVertical from '../../components/products/ProductsListVertical';
 
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -46,7 +42,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({ lat, long }) => {
+  const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -61,33 +57,41 @@ const HomeScreen = props => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LightStatusBar />
-      <HeaderWithBadge
-        title="Home"
-        onBadgePress={() => {
-          navigation.navigate('ProductDetailSheet');
-        }}
-        isHome={true}
-      />
-      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
-
-      <CategoryMenu />
-
-      <View style={styles.deliverybuttom}>
-        <DeliveryButton
-          title="Đi giao đến"
-          address={currentLocation && currentLocation.address.label}
-          onPress={() => setIsModalVisible(true)}
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
+        <LightStatusBar />
+        <HeaderWithBadge
+          title="Home"
+          onBadgePress={() => {
+            navigation.navigate('ProductDetailSheet');
+          }}
+          isHome={true}
         />
-        <DialogShippingMethod
-          isVisible={isModalVisible}
-          selectedOption={selectedOption}
-          onHide={handleCloseDialog}
-          onOptionSelect={handleOptionSelect}
+        {/* <Button title="Checkout Screen" /> */}
+
+        <CategoryMenu />
+        <ProductsListHorizontal
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
         />
-      </View>
-    </SafeAreaView>
+        <ProductsListVertical
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+        />
+
+        <View style={styles.deliverybuttom}>
+          <DeliveryButton
+            title="Đi giao đến"
+            address={currentLocation && currentLocation.address.label}
+            onPress={() => setIsModalVisible(true)}
+          />
+          <DialogShippingMethod
+            isVisible={isModalVisible}
+            selectedOption={selectedOption}
+            onHide={handleCloseDialog}
+            onOptionSelect={handleOptionSelect}
+          />
+        </View>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 
@@ -105,4 +109,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
