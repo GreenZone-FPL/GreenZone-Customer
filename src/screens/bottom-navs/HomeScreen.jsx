@@ -1,22 +1,21 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import { default as React, default as React, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import {
+  View,
   Button,
-  Dimensions,
   SafeAreaView,
-  StyleSheet,
-  View
+  StyleSheet
 } from 'react-native';
+
+import ScreenEnum from '../../constants/screenEnum';
 import DeliveryButton from '../../components/buttons/DeliveryButton';
-import CategoryMenu from '../../components/category/CategoryMenu';
 import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import CategoryMenu from '../../components/category/CategoryMenu';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-
-const {width} = Dimensions.get('window');
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -108,3 +107,4 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+

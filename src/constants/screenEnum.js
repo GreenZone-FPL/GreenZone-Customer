@@ -22,9 +22,10 @@ const screens = {
   ProfileStackScreen: 'ProfileStackScreen',
   UpdateProfileScreen: 'UpdateProfileScreen',
 
-
   // Cart, Order
-  
+
+  // sheet
+  MerchantDetailSheet: 'MerchantDetailSheet',
 };
 
 const ScreenEnum = Object.freeze({
