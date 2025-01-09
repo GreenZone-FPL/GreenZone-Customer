@@ -1,24 +1,19 @@
+import React, {useState} from 'react';
 import {
-  StyleSheet,
+  Dimensions,
+  FlatList,
   Image,
   SafeAreaView,
+  StyleSheet,
   Text,
-  View,
-  ScrollView,
   TouchableOpacity,
-  FlatList,
-  TextInput,
-  SectionList,
-  Dimensions,
+  View,
 } from 'react-native';
-import React, { useState } from 'react';
+import {Icon} from 'react-native-paper';
+import HeaderWithbadge from '../../components/headers/HeaderWithBadge';
+import CustomSearchBar from '../../components/inputs/CustomSearchBar';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-import HeaderWithbadge from '../../components/headers/HeaderWithBadge';
-import { Icon } from 'react-native-paper';
-import CustomSearchBar from '../../components/inputs/CustomSearchBar';
-
-
 
 const height = Dimensions.get('window').height;
 
@@ -27,10 +22,10 @@ console.log('Height:', height);
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');
 
-  const { navigation } = props;
+  const {navigation} = props;
 
   const handleMerchant = item => {
-    navigation.navigate('MerchantDetailSheet', { item: item });
+    navigation.navigate('MerchantDetailSheet', {item: item});
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +40,7 @@ const MerchantScreen = props => {
             onClearIconPress={() => setsearchQuery('')}
             leftIcon="magnify"
             rightIcon="close"
-            style={{ flex: 1, elevation: 3 }}
+            style={{flex: 1, elevation: 3}}
           />
           <View style={styles.map}>
             <Icon
@@ -61,7 +56,7 @@ const MerchantScreen = props => {
           <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
           <FlatList
             data={data.slice(0, 1)}
-            renderItem={({ item }) => renderItem({ handleMerchant, item })}
+            renderItem={({item}) => renderItem({handleMerchant, item})}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
           />
@@ -69,7 +64,7 @@ const MerchantScreen = props => {
         <Text style={styles.tittle}>Cửa hàng Khác</Text>
         <FlatList
           data={data}
-          renderItem={({ item }) => renderItem({ handleMerchant, item })}
+          renderItem={({item}) => renderItem({handleMerchant, item})}
           keyExtractor={item => item.id}
           scrollEnabled={true}
         />
@@ -78,9 +73,9 @@ const MerchantScreen = props => {
   );
 };
 
-const renderItem = ({ item, handleMerchant }) => (
+const renderItem = ({item, handleMerchant}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{ uri: item.image }} style={styles.imageItem} />
+    <Image source={{uri: item.image}} style={styles.imageItem} />
     <View style={styles.infoItem}>
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.location}>{item.location}</Text>
@@ -155,8 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   content: {
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    flex: 1
+    flex: 1,
   },
   tool: {
     flexDirection: 'row',
@@ -165,7 +159,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     justifyContent: 'space-between',
-    gap: GLOBAL_KEYS.GAP_DEFAULT
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   map: {
     flexDirection: 'row',
@@ -179,6 +174,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     marginVertical: 10,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   distance: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
@@ -208,16 +204,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     marginBottom: 8,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
-  mechant1: {},
 });
 
 export default MerchantScreen;
