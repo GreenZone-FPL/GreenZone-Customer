@@ -127,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductsListVertical;
+export default ProductsListVertical
