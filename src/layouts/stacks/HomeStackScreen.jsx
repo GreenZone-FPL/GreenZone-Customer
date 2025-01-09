@@ -16,8 +16,6 @@ const HomeStackScreen = () => {
 
       <HomeStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
-     
-
       <HomeStack.Screen
         name={ScreenEnum.ProductDetailSheet}
         component={ProductDetailSheet}

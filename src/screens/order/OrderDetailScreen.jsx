@@ -21,8 +21,9 @@ const OrderDetailScreen = (props) => {
 
         <View style={styles.container}>
             <LightStatusBar />
-            <NormalHeader title='Xác nhận đơn hàng' onLeftPress={() => navigation.goBack()} />
+            <NormalHeader title='Chi tiết đơn hàng' onLeftPress={() => navigation.goBack()} />
 
+            
             <ScrollView style={styles.containerContent}>
                 <CustomRow
                     leftText={'GIAO HÀNG'}

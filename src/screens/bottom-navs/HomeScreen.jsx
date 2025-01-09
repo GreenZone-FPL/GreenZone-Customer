@@ -1,13 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState } from 'react';
-import {
-  View,
-  Button,
-  SafeAreaView,
-  StyleSheet
-} from 'react-native';
-
+import React, { useEffect, useState } from 'react';
+import { View, Button, SafeAreaView, StyleSheet, ScrollView } from 'react-native';
 import ScreenEnum from '../../constants/screenEnum';
 import DeliveryButton from '../../components/buttons/DeliveryButton';
 import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
@@ -16,7 +10,8 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import CategoryMenu from '../../components/category/CategoryMenu';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-
+import ProductsListHorizontal from '../../components/products/ProductsListHorizontal';
+import ProductsListVertical from '../../components/products/ProductsListVertical';
 
 const HomeScreen = props => {
   const { navigation } = props;
@@ -63,30 +58,34 @@ const HomeScreen = props => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-      <HeaderWithBadge
-        title="Home"
-        onBadgePress={() => {
-          navigation.navigate('ProductDetailSheet');
-        }}
-        isHome={true}
+      <ScrollView style={styles.containerContent}>
+        <HeaderWithBadge
+          title="Home"
+          onBadgePress={() => {
+            navigation.navigate('ProductDetailSheet');
+          }}
+          isHome={true}
+        />
+        <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
+
+        <CategoryMenu />
+        <ProductsListHorizontal onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)} />
+        <ProductsListVertical onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)} />
+      </ScrollView>
+
+
+      <DeliveryButton
+        title="Đi giao đến"
+        address={currentLocation && currentLocation.address.label}
+        onPress={() => setIsModalVisible(true)}
+        style={styles.deliverybutton}
       />
-      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
-
-      <CategoryMenu />
-
-      <View style={styles.deliverybuttom}>
-        <DeliveryButton
-          title="Đi giao đến"
-          address={currentLocation && currentLocation.address.label}
-          onPress={() => setIsModalVisible(true)}
-        />
-        <DialogShippingMethod
-          isVisible={isModalVisible}
-          selectedOption={selectedOption}
-          onHide={handleCloseDialog}
-          onOptionSelect={handleOptionSelect}
-        />
-      </View>
+      <DialogShippingMethod
+        isVisible={isModalVisible}
+        selectedOption={selectedOption}
+        onHide={handleCloseDialog}
+        onOptionSelect={handleOptionSelect}
+      />
     </SafeAreaView>
   );
 };
@@ -98,11 +97,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.white,
+    position: 'relative'
   },
-  deliverybuttom: {
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    justifyContent: 'flex-end',
+  containerContent: {
+    flexDirection: 'column',
     flex: 1,
+    marginBottom: 90
+  },
+  deliverybutton: {
+    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    position: 'absolute',
+    bottom: 0
   },
 });
 

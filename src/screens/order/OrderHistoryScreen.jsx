@@ -5,6 +5,7 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import NormalHeader from '../../components/headers/NormalHeader';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import ScreenEnum from '../../constants/screenEnum';
 
 const width = Dimensions.get('window').width;
 
@@ -21,7 +22,10 @@ const OrderHistoryScreen = (props) => {
     ]);
 
     const renderScene = SceneMap({
-        picked: () => <OrderListView status="Picked" />,
+        picked: () => (<OrderListView 
+        onItemPress = {() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+        status="Picked" 
+        />),
         completed: () => <OrderListView status="Completed" />,
         cancelled: () => <OrderListView status="Cancelled" />,
     });
@@ -157,7 +161,7 @@ const orders = [
 
 
 // Màn hình từng trạng thái
-const OrderListView = ({ status }) => {
+const OrderListView = ({ status, onItemPress }) => {
     const filteredOrders = orders.filter((order) => order.status === status);
 
     return (
@@ -169,7 +173,7 @@ const OrderListView = ({ status }) => {
                     contentContainerStyle={{ gap: 8 }}
                     renderItem={({ item }) =>
                         <OrderItem
-                            onPress={() => { }}
+                            onPress={() => { onItemPress() }}
                             order={item} />
                     }
                 />
