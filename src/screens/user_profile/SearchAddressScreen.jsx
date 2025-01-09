@@ -5,6 +5,7 @@ import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import CustomSearchBar from '../../components/inputs/CustomSearchBar';
+import ScreenEnum from '../../constants/screenEnum';
 
 const SearchAddressScreen = (props) => {
     const navigation = props.navigation
@@ -21,6 +22,7 @@ const SearchAddressScreen = (props) => {
                         size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                     />
                 </Pressable>
+                
                 <CustomSearchBar
                     placeholder="Tìm kiếm..."
                     searchQuery={searchQuery}
@@ -34,7 +36,7 @@ const SearchAddressScreen = (props) => {
 
             <Pressable
                 style={styles.map}
-                onPress={() => navigation.navigate('SelectAddressScreen')
+                onPress={() => navigation.navigate(ScreenEnum.SelectAddressScreen)
                 }>
 
                 <Icon

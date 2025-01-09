@@ -6,39 +6,57 @@ import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import FlatInput from '../../components/inputs/FlatInput';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
+import ScreenEnum from '../../constants/screenEnum';
 
 
 const NewAddressScreen = (props) => {
     const [home, setHome] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
-    const [title, setTitle] = useState('');
+    const [note, setNote] = useState('');
     const navigation = props.navigation
     return (
 
         <SafeAreaView style={styles.container}>
             <LightStatusBar />
-            <NormalHeader title='Thêm địa chỉ mới'
-                onLeftPress={() => navigation.goBack()}/>
-                <View style={styles.formContainer}>
-                    <FlatInput label={'Tên địa chỉ'} 
-                                setValue={setHome} 
-                                placeholder='Nhà'/>
-                    <Pressable style={styles.location}
-                        onPress={() => navigation.navigate('SearchAddressScreen')}>
-                        <Text>Chọn địa chỉ...</Text>
-                    </Pressable>
-                    <FlatInput label={'Ghi chú'}
-                        setValue={setTitle} 
-                        placeholder='Ghi chú'/>
-                    <FlatInput label={'Người nhận'}
-                        setValue={setName} 
-                        placeholder='Họ tên'/>
-                    <FlatInput label={'Số điện thoại'}
-                        setValue={setPhone} 
-                        placeholder='(+84)'/>
-                    <PrimaryButton title='Lưu' />
-                </View>
+            
+            <NormalHeader
+                title='Thêm địa chỉ mới'
+                onLeftPress={() => navigation.goBack()} />
+
+            <View style={styles.formContainer}>
+                <FlatInput
+                    label={'Tên địa chỉ'}
+                    value={home}
+                    setValue={setHome}
+                    placeholder='Nhà' />
+
+                <Pressable
+                    style={styles.location}
+                    onPress={() => navigation.navigate(ScreenEnum.SearchAddressScreen)}>
+                    <Text>Chọn địa chỉ...</Text>
+                </Pressable>
+
+                <FlatInput
+                    label={'Ghi chú'}
+                    setValue={setNote}
+                    value={note}
+                    placeholder='Ghi chú' />
+
+                <FlatInput
+                    label={'Người nhận'}
+                    setValue={setName}
+                    value={name}
+                    placeholder='Họ tên' />
+
+                <FlatInput
+                    label={'Số điện thoại'}
+                    setValue={setPhone}
+                    value={phone}
+                    placeholder='(+84)' />
+
+                <PrimaryButton title='Lưu' onPress={() => { }} />
+            </View>
         </SafeAreaView>
     )
 }

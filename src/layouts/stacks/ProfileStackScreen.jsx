@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
 import ScreenEnum from '../../constants/screenEnum';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
-import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
 import AddressScreen from '../../screens/user_profile/AddressScreen';
 import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
 import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
 import SelectAddressScreen from '../../screens/user_profile/SelectAddressScreen';
+import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
 
 const ProfileStack = createNativeStackNavigator();
 

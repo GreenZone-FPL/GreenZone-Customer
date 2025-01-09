@@ -1,15 +1,14 @@
-import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Icon } from 'react-native-paper';
+import React from 'react';
 import { Text } from 'react-native';
+import { Icon } from 'react-native-paper';
 import colors from '../constants/color';
+import GLOBAL_KEYS from '../constants/globalKeys';
 import ScreenEnum from '../constants/screenEnum';
 import HomeStackScreen from './stacks/HomeStackScreen';
+import MerchantStackScreen from './stacks/MerchantStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
-import MerchantStackScreen from './stacks/MerchantStackScreen';
-import OrderStackScreen from './stacks/OrderStackScreen';
-import GLOBAL_KEYS from '../constants/globalKeys';
 
 const BottomTab = createBottomTabNavigator();
 

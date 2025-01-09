@@ -1,10 +1,10 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
+import NormalHeader from '../../components/headers/NormalHeader';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-import NormalHeader from '../../components/headers/NormalHeader';
 
 const SelectAddressScreen = (props) => {
     const navigation = props.navigation
@@ -16,6 +16,7 @@ const SelectAddressScreen = (props) => {
                 onLeftPress={() => navigation.goBack()}
                 rightIcon='magnify'
                 enableRightIcon={true} />
+
             <View style={styles.content}>
                 <Image
                     source={require('../../assets/images/map.png')}
@@ -23,13 +24,13 @@ const SelectAddressScreen = (props) => {
                 />
                 <Card
                     location="Đ. Lê Trọng Tấn, Sơn Kỳ, Tân Phú, Hồ Chí Minh, Việt Nam"
-                    distance='0.00km'
-                    onPress={() => console.log('thêm địa chỉ')}
+                    distance='0.00 km'
+                    onPress={() => { }}
                 />
                 <Card
                     location="Đ. Lê Trọng Tấn/3 Hẻm 221, Khu Phố 2, Tân Phú, Hồ Chí Minh, Việt Nam"
-                    distance='1.00km'
-                    onPress={() => console.log('thêm địa chỉ')}
+                    distance='1.00 km'
+                    onPress={() => { }}
                 />
             </View>
 
@@ -64,12 +65,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: GLOBAL_KEYS.PADDING_SMALL,
         backgroundColor: colors.white,
-        borderRadius: 8, 
-        shadowColor: colors.black, 
+        borderRadius: 8,
+        shadowColor: colors.black,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2, 
+        shadowOpacity: 0.2,
         shadowRadius: 4,
-        elevation: 2, 
+        elevation: 2,
     },
     location: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
