@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image, FlatList, Pressable } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import NormalHeader from '../../components/headers/NormalHeader';
@@ -54,8 +54,13 @@ const OrderHistoryScreen = (props) => {
 };
 
 
-const OrderItem = ({ order }) => (
-    <View style={styles.orderItem}>
+const OrderItem = ({
+    order,
+    onPress
+}) => (
+    <Pressable
+        onPress={onPress}
+        style={styles.orderItem}>
         <View style={styles.row}>
             <Text style={styles.orderName}>#{order.orderId}</Text>
             <Text style={styles.orderTotal}>{order.totalAmount}đ</Text>
@@ -97,7 +102,7 @@ const OrderItem = ({ order }) => (
             contentContainerStyle={{ gap: 8 }}
             style={styles.productList}
         />
-    </View>
+    </Pressable>
 );
 
 // Dữ liệu đơn hàng (mẫu)
@@ -162,7 +167,11 @@ const OrderListView = ({ status }) => {
                     data={filteredOrders}
                     keyExtractor={(item) => item.orderId}
                     contentContainerStyle={{ gap: 8 }}
-                    renderItem={({ item }) => <OrderItem order={item} />}
+                    renderItem={({ item }) =>
+                        <OrderItem
+                            onPress={() => { }}
+                            order={item} />
+                    }
                 />
             ) : (
                 <EmptyView
