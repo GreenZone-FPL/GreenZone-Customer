@@ -1,48 +1,93 @@
+import Geolocation from '@react-native-community/geolocation';
+import axios from 'axios';
+import React, {useEffect, useState } from 'react';
 import {
-  Image,
-  SafeAreaView,
   View,
-  Text,
   Button,
-  FlatList,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
+  SafeAreaView,
+  StyleSheet
 } from 'react-native';
-import React from 'react';
+
 import ScreenEnum from '../../constants/screenEnum';
+import DeliveryButton from '../../components/buttons/DeliveryButton';
+import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
-import colors from '../../constants/color';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import OverlayStatusBar from '../../components/status-bars/OverlayStatusBar';
 import CategoryMenu from '../../components/category/CategoryMenu';
-import ProductsComboScreen from '../../components/products/ProductsListHorizontal';
-import ProductsNewDishScreen from '../../components/products/ProductsListVertical';
-const {width} = Dimensions.get('window');
+import colors from '../../constants/color';
+import GLOBAL_KEYS from '../../constants/globalKeys';
+
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
+  const [currentLocation, setCurrenLocation] = useState('');
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');
+
+  // Hàm xử lý khi đóng dialog
+  const handleCloseDialog = () => {
+    setIsModalVisible(false);
+  };
+
+  // Hàm xử lý khi chọn phương thức giao hàng
+  const handleOptionSelect = option => {
+    setSelectedOption(option);
+    setIsModalVisible(false); // Đóng dialog sau khi chọn
+  };
+  useEffect(() => {
+    Geolocation.getCurrentPosition(position => {
+      console.log(position);
+      if (position.coords) {
+        reverseGeocode({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
+      }
+    });
+  }, []);
+
+  const reverseGeocode = async ({ lat, long }) => {
+    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+
+    try {
+      const res = await axios(api);
+      if (res && res.status === 200 && res.data) {
+        const items = res.data.items;
+        setCurrenLocation(items[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.container}>
-        <LightStatusBar />
-        <HeaderWithBadge
-          title="Home"
-          onBadgePress={() => console.log('Click badge')}
-          isHome={true}
-        />
+    <SafeAreaView style={styles.container}>
+      <LightStatusBar />
+      <HeaderWithBadge
+        title="Home"
+        onBadgePress={() => {
+          navigation.navigate('ProductDetailSheet');
+        }}
+        isHome={true}
+      />
+      <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
 
-        <CategoryMenu />
-        <ProductsComboScreen
-          onItemClick={() => navigation.navigate('ProductDetailSheet')}
+      <CategoryMenu />
+
+      <View style={styles.deliverybuttom}>
+        <DeliveryButton
+          title="Đi giao đến"
+          address={currentLocation && currentLocation.address.label}
+          onPress={() => setIsModalVisible(true)}
         />
-        <ProductsNewDishScreen
-          onItemClick={() => navigation.navigate('ProductDetailSheet')}
+        <DialogShippingMethod
+          isVisible={isModalVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
         />
-      </SafeAreaView>
-    </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -54,4 +99,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.white,
   },
+  deliverybuttom: {
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    justifyContent: 'flex-end',
+    flex: 1,
+  },
 });
+

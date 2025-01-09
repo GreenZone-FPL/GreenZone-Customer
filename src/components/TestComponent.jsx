@@ -1,58 +1,56 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Button } from 'react-native';
-import colors from '../constants/color';
+import Geolocation from '@react-native-community/geolocation';
+import axios from 'axios';
+import React, {useEffect, useState} from 'react';
+import {View} from 'react-native';
 import GLOBAL_KEYS from '../constants/globalKeys';
-import DialogShippingMethod from './dialogs/DialogShippingMethod';
+import DeliveryButton from './buttons/DeliveryButton';
 
+const TestComponent = props => {
+  const {navigation} = props;
+  const [currentLocation, setCurrenLocation] = useState('');
+  useEffect(() => {
+    Geolocation.getCurrentPosition(position => {
+      console.log(position);
+      if (position.coords) {
+        reverseGeocode({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
+      }
+    });
+  }, []);
 
-const TestComponent = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const reverseGeocode = async ({lat, long}) => {
+    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
-  const handleShow = () => setIsVisible(true);
-  const handleHide = () => setIsVisible(false);
-  const handleEdit = (option) => console.log(`Editing ${option}`);
-  const handleOptionSelect = (option) => setSelectedOption(option);
+    try {
+      const res = await axios(api);
+      if (res && res.status === 200 && res.data) {
+        const items = res.data.items;
+        setCurrenLocation(items[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Button title='Open Modal' onPress={handleShow} />
-      <DialogShippingMethod
-        isVisible={isVisible}
-        selectedOption={selectedOption}
-        onHide={handleHide}
-        onEditOption={handleEdit}
-        onOptionSelect={handleOptionSelect}
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+      }}>
+      <DeliveryButton
+        title="Đi giao đến"
+        address={currentLocation && currentLocation.address.label}
+        onPress={() => {
+          console.log('DeliveryButton clicked');
+        }}
       />
     </View>
   );
 };
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
-  searchBarContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  mapContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  mapText: {
-    fontSize: 16,
-    color: colors.primary,
-    marginRight: 8,
-    fontWeight: 'bold',
-  },
-  mapIcon: {
-    marginRight: 8,
-  },
-
-});
 
 export default TestComponent;

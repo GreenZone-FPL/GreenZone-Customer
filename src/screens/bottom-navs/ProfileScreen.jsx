@@ -1,17 +1,10 @@
-import React, {useState} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Text,
-  View,
-  Pressable,
-  Alert,
-} from 'react-native';
-import {Icon} from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import React from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
+import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import colors from '../../constants/color';
+import GLOBAL_KEYS from '../../constants/globalKeys';
 import ScreenEnum from '../../constants/screenEnum';
 
 const ProfileScreen = props => {
@@ -19,8 +12,10 @@ const ProfileScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
+
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
+
       <View style={styles.body}>
         <Text style={styles.sectionTitle}>Tài khoản</Text>
         <View>
@@ -37,7 +32,7 @@ const ProfileScreen = props => {
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => alert('Địa chỉ!')}
+              onPress={() => navigation.navigate(ScreenEnum.AddressScreen)}
             />
           </View>
           <View style={styles.accountContainer}>
@@ -45,7 +40,7 @@ const ProfileScreen = props => {
               icon="file-document-edit"
               color={colors.orange700}
               title="Lịch sử đơn hàng"
-              onPress={() => alert('Lịch sử đơn hàng!')}
+              onPress={() => { navigation.navigate(ScreenEnum.OrderHistoryScreen) }}
             />
           </View>
         </View>
@@ -55,25 +50,25 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="cog"
             title="Cài đặt"
-            onPress={() => alert('Cài đặt!')}
+            onPress={() => { }}
           />
           <View style={styles.separator} />
           <CardUtiliti
             icon="chat"
             title="Liên hệ góp ý"
-            onPress={() => alert('Liên hệ góp ý!')}
+            onPress={() => { }}
           />
           <View style={styles.separator} />
           <CardUtiliti
             icon="star"
             title="Đánh giá đơn hàn"
-            onPress={() => alert('Đánh giá đơn hàn!')}
+            onPress={() => { }}
           />
           <View style={styles.separator} />
           <CardUtiliti
             icon="logout"
             title="Đăng xuất"
-            onPress={() => navigation.navigate('LoginScreen')}
+            onPress={() => navigation.navigate(ScreenEnum.LoginScreen)}
           />
         </View>
       </View>
@@ -83,14 +78,14 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon
@@ -114,7 +109,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   accountContainer: {
     flexDirection: 'row',
