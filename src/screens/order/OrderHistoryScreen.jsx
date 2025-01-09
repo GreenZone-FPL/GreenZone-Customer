@@ -8,96 +8,7 @@ import GLOBAL_KEYS from '../../constants/globalKeys';
 
 const width = Dimensions.get('window').width;
 
-// Dữ liệu đơn hàng (mẫu)
-const orders = [
-    {
-        orderId: '22124-3772987543535',
-        totalAmount: 150000,
-        status: 'Picked', // Đang thực hiện
-        createdAt: '10:16, 22/12/2024',
-        estimatedTime: '10:30',
-        items: [
-            { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
-            { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
-            { id: '3', name: 'Kem Cheese', quantity: 2, price: 20000 },
-            { id: '4', name: 'Kem Cheese', quantity: 2, price: 20000 },
-        ],
-    },
 
-    {
-        orderId: '22124-3772987543537',
-        totalAmount: 200000,
-        status: 'Completed', // Đã hoàn thành
-        createdAt: '10:16, 22/12/2024',
-        estimatedTime: null,
-        items: [{ id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000 }],
-    },
-    {
-        orderId: '22124-3772987543538',
-        totalAmount: 80000,
-        status: 'Cancelled', // Đã hủy
-        createdAt: '10:16, 22/12/2024',
-        estimatedTime: null,
-        items: [{ id: '4', name: 'Trà Đào Cam Sả', quantity: 1, price: 80000 }],
-    },
-    {
-        orderId: '22124-3772987543539',
-        totalAmount: 150000,
-        status: 'Picked',
-        createdAt: '10:16, 22/12/2024',
-        estimatedTime: '10:30',
-        items: [
-            { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
-            { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
-            { id: '3', name: 'Kem Cheese', quantity: 2, price: 20000 },
-            { id: '4', name: 'Kem Cheese', quantity: 2, price: 20000 },
-        ],
-    },
-];
-
-
-
-
-
-// Màn hình từng trạng thái
-const OrderListView = ({ status }) => {
-    const filteredOrders = orders.filter((order) => order.status === status);
-
-    return (
-        <View style={styles.scene}>
-            {filteredOrders.length > 0 ? (
-                <FlatList
-                    data={filteredOrders}
-                    keyExtractor={(item) => item.orderId}
-                    contentContainerStyle={{ gap: 8 }}
-                    renderItem={({ item }) => <OrderItem order={item} />}
-                />
-            ) : (
-                <EmptyView
-                    message={
-                        status === 'Picked'
-                            ? 'Chưa có đơn hàng cần thực hiện'
-                            : status === 'Completed'
-                                ? 'Chưa có đơn hàng hoàn thành'
-                                : 'Chưa có đơn hàng đã hủy'
-                    }
-                />
-            )}
-        </View>
-    );
-};
-
-// Component trống
-const EmptyView = ({ message }) => (
-    <View style={styles.emptyContainer}>
-        <Image
-            style={styles.image}
-            resizeMode="cover"
-            source={require('../../assets/images/logo.png')}
-        />
-        <Text>{message}</Text>
-    </View>
-);
 
 // Màn hình chính
 const OrderHistoryScreen = (props) => {
@@ -186,6 +97,97 @@ const OrderItem = ({ order }) => (
             contentContainerStyle={{ gap: 8 }}
             style={styles.productList}
         />
+    </View>
+);
+
+// Dữ liệu đơn hàng (mẫu)
+const orders = [
+    {
+        orderId: '22124-3772987543535',
+        totalAmount: 150000,
+        status: 'Picked', // Đang thực hiện
+        createdAt: '10:16, 22/12/2024',
+        estimatedTime: '10:30',
+        items: [
+            { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
+            { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
+            { id: '3', name: 'Kem Cheese', quantity: 2, price: 20000 },
+            { id: '4', name: 'Kem Cheese', quantity: 2, price: 20000 },
+        ],
+    },
+
+    {
+        orderId: '22124-3772987543537',
+        totalAmount: 200000,
+        status: 'Completed', // Đã hoàn thành
+        createdAt: '10:16, 22/12/2024',
+        estimatedTime: null,
+        items: [{ id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000 }],
+    },
+    {
+        orderId: '22124-3772987543538',
+        totalAmount: 80000,
+        status: 'Cancelled', // Đã hủy
+        createdAt: '10:16, 22/12/2024',
+        estimatedTime: null,
+        items: [{ id: '4', name: 'Trà Đào Cam Sả', quantity: 1, price: 80000 }],
+    },
+    {
+        orderId: '22124-3772987543539',
+        totalAmount: 150000,
+        status: 'Picked',
+        createdAt: '10:16, 22/12/2024',
+        estimatedTime: '10:30',
+        items: [
+            { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
+            { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
+            { id: '3', name: 'Kem Cheese', quantity: 2, price: 20000 },
+            { id: '4', name: 'Kem Cheese', quantity: 2, price: 20000 },
+        ],
+    },
+];
+
+
+
+
+
+// Màn hình từng trạng thái
+const OrderListView = ({ status }) => {
+    const filteredOrders = orders.filter((order) => order.status === status);
+
+    return (
+        <View style={styles.scene}>
+            {filteredOrders.length > 0 ? (
+                <FlatList
+                    data={filteredOrders}
+                    keyExtractor={(item) => item.orderId}
+                    contentContainerStyle={{ gap: 8 }}
+                    renderItem={({ item }) => <OrderItem order={item} />}
+                />
+            ) : (
+                <EmptyView
+                    message={
+                        status === 'Picked'
+                            ? 'Chưa có đơn hàng cần thực hiện'
+                            : status === 'Completed'
+                                ? 'Chưa có đơn hàng hoàn thành'
+                                : 'Chưa có đơn hàng đã hủy'
+                    }
+                />
+            )}
+        </View>
+    );
+};
+
+// Component trống
+const EmptyView = ({ message }) => (
+    <View style={styles.emptyContainer}>
+        <Image
+            style={styles.image}
+            resizeMode="cover"
+            source={require('../../assets/images/logo.png')}
+        />
+        <Text>{message}</Text>
     </View>
 );
 
