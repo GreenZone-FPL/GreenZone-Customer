@@ -179,7 +179,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: colors.gray300,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,

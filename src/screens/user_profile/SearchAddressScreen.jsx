@@ -32,7 +32,7 @@ const SearchAddressScreen = (props) => {
                 />
             </View>
 
-            <Pressable style={styles.map} onPress={() => navigation.navigate('MapAddressScreen')}>
+            <Pressable style={styles.map} onPress={() => navigation.navigate('SelectAddressScreen')}>
                     <Icon
                         source="map-search"
                         color={colors.primary}

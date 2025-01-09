@@ -21,17 +21,22 @@ const NewAddressScreen = (props) => {
             <NormalHeader title='Thêm địa chỉ mới'
                 onLeftPress={() => navigation.goBack()}/>
                 <View style={styles.formContainer}>
-                    <FlatInput label={'Tên địa chỉ'} setValue={setHome} />
+                    <FlatInput label={'Tên địa chỉ'} 
+                                setValue={setHome} 
+                                placeholder='Nhà'/>
                     <Pressable style={styles.location}
                         onPress={() => navigation.navigate('SearchAddressScreen')}>
                         <Text>Chọn địa chỉ...</Text>
                     </Pressable>
                     <FlatInput label={'Ghi chú'}
-                        setValue={setTitle} />
-                    <FlatInput label={'Họ tên người nhận'}
-                        setValue={setName} />
-                    <FlatInput label={'(+84)'}
-                        setValue={setPhone} />
+                        setValue={setTitle} 
+                        placeholder='Ghi chú'/>
+                    <FlatInput label={'Người nhận'}
+                        setValue={setName} 
+                        placeholder='Họ tên'/>
+                    <FlatInput label={'Số điện thoại'}
+                        setValue={setPhone} 
+                        placeholder='(+84)'/>
                     <PrimaryButton title='Lưu' />
                 </View>
         </SafeAreaView>
@@ -49,11 +54,10 @@ const styles = StyleSheet.create({
     formContainer: {
         flex: 1,
         marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
-        gap: 24,
+        gap: 32,
         marginBottom: GLOBAL_KEYS.GAP_DEFAULT,
     },
     location: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         backgroundColor: colors.white,
         elevation: 4,
         shadowColor: colors.primary,

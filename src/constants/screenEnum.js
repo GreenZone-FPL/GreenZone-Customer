@@ -26,7 +26,7 @@ const screens = {
   AddressScreen : 'AddressScreen',
   NewAddressScreen : 'NewAddressScreen',
   SearchAddressScreen : 'SearchAddressScreen',
-  MapAddressScreen: 'MapAddressScreen',
+  SelectAddressScreen: 'SelectAddressScreen',
   // Cart, Order
  
 };

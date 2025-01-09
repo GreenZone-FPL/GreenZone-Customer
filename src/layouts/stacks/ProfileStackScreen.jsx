@@ -7,7 +7,7 @@ import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen'
 import AddressScreen from '../../screens/user_profile/AddressScreen';
 import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
 import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
-import MapAddressScreen from '../../screens/user_profile/MapAddressScreen';
+import SelectAddressScreen from '../../screens/user_profile/SelectAddressScreen';
 
 const ProfileStack = createNativeStackNavigator();
 // Navigation Container Can chung cu
@@ -48,8 +48,8 @@ const ProfileStackScreen = () => {
         component={SearchAddressScreen}
       />
       <ProfileStack.Screen
-        name={ScreenEnum.MapAddressScreen}
-        component={MapAddressScreen}
+        name={ScreenEnum.SelectAddressScreen}
+        component={SelectAddressScreen}
       />
     </ProfileStack.Navigator>
   );
