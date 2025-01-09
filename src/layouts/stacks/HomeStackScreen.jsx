@@ -4,8 +4,7 @@ import ScreenEnum from '../../constants/screenEnum';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProductDetailSheet from '../../components/bottom-sheets/ProductDetailSheet';
-import ProductsListHorizontal from '../../components/products/ProductsListHorizontal';
-import ProductsListVertical from '../../components/products/ProductsListVertical';
+
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
   return (
