@@ -95,12 +95,11 @@ const productsCombo = [
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
-    width: width,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   headerContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    margin: GLOBAL_KEYS.GAP_DEFAULT,
+    margin: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   headerTextContainer: {
     flexDirection: 'row',
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: colors.black,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
   },
   timeText: {
