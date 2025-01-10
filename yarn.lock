@@ -5960,10 +5960,10 @@ react-native-hmac@^0.1.1:
   resolved "https://registry.npmjs.org/react-native-hmac/-/react-native-hmac-0.1.1.tgz"
   integrity sha512-lelBCwpb2kEFgcf7uY/xzNX099vW918Low6F57+iXTuuDB2S/R5GWwtaGbc0FsSAyPo9pqAuC8ZtLiXWlHesqQ==
 
-react-native-image-picker@^7.2.2:
-  version "7.2.2"
-  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.2.2.tgz"
-  integrity sha512-hcSaD/ohDac1ooDbZyKltfmOEAWrQOrPbusKEfbJQ7EfGveBEIF5wfmZsCjXRc0HNpGdQ71P1x2JZckkqu7IRw==
+react-native-image-picker@^7.2.3:
+  version "7.2.3"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-7.2.3.tgz"
+  integrity sha512-zKIZUlQNU3EtqizsXSH92zPeve4vpUrsqHu2kkpCxWE9TZhJFZBb+irDsBOY8J21k0+Edgt06TMQGJ+iPUIXyA==
 
 react-native-material-kit@^0.6.0-beta.1:
   version "0.6.0-beta.1"
@@ -6046,7 +6046,7 @@ react-native-webview@^13.12.5:
     escape-string-regexp "^4.0.0"
     invariant "2.2.4"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@>=0.50.0, react-native@0.76.3:
+react-native@*, "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, react-native@>=0.50.0:
   version "0.76.3"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.76.3.tgz"
   integrity sha512-0TUhgmlouRNf6yuDIIAdbQl0g1VsONgCMsLs7Et64hjj5VLMCA7np+4dMrZvGZ3wRNqzgeyT9oWJsUm49AcwSQ==
