@@ -8,6 +8,7 @@ import NormalHeader from '../../components/headers/NormalHeader';
 import CheckoutFooter from '../../components/footer/CheckoutFooter';
 import { Icon } from 'react-native-paper';
 import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
+import { PaymentMethodRow, HorizontalProductItem, DualTextRow } from '../../components';
 
 const CheckoutScreen = (props) => {
 
@@ -24,13 +25,12 @@ const CheckoutScreen = (props) => {
             <NormalHeader title='Xác nhận đơn hàng' onLeftPress={() => navigation.goBack()} />
 
             <ScrollView style={styles.containerContent}>
-                <CustomRow
+                <DualTextRow
                     leftText={'GIAO HÀNG'}
                     rightText={'Thay đổi'}
-                    leftColor={colors.primary}
-                    rightColor={colors.primary}
-                    onRightPress={() => {setIsVisibleModal(true)}}
-                    leftTextFontWeight='700'
+                    leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
+                    rightTextStyle={{ color: colors.primary }}
+                    onRightPress={() => setIsVisibleModal(true)}
                 />
 
                 <AddressSection />
@@ -41,7 +41,7 @@ const CheckoutScreen = (props) => {
                     data={products}
                     keyExtractor={item => item.id.toString()}
                     renderItem={({ item }) => (
-                        <ItemProduct item={item} onItemClick={() => { }} />
+                        <HorizontalProductItem item={item} enableAction={true} />
                     )}
                     contentContainerStyle={styles.flatListContentContainer}
                     scrollEnabled={false}
@@ -86,12 +86,11 @@ const CheckoutScreen = (props) => {
 
 const RecipientInfo = () => (
     <>
-        <CustomRow
-            leftText={'Thông tin người nhận'}
-            rightText={'Thay đổi'}
-            leftColor={colors.black}
-            rightColor={colors.primary}
-            leftTextFontWeight='600'
+        <DualTextRow
+            leftText="Thông tin người nhận"
+            rightText="Thay đổi"
+            leftTextStyle={{ color: colors.black, fontWeight: '600' }}
+            rightTextStyle={{ color: colors.primary }}
         />
         <Text style={styles.normalText}>Ngọc Đại | 012345678</Text>
     </>
@@ -99,7 +98,12 @@ const RecipientInfo = () => (
 
 const AddressSection = () => (
     <>
-        <CustomRow leftText="Địa chỉ nhận hàng" leftTextFontWeight='600' onRightPress={() => setIsVisibleModal(true)} />
+        <DualTextRow
+            leftText="Địa chỉ nhận hàng"
+            leftTextStyle={{ fontWeight: '600' }}
+            onRightPress={() => setIsVisibleModal(true)}
+            rightText=""
+        />
         <Text style={styles.normalText}>
             FPT Polytechnic TP. HCM - Tòa F, Công Viên Phần Mềm Quang Trung, Tòa nhà GenPacific Lô 3 đường 16, Trung Mỹ Tây, Quận 12, Hồ Chí Minh
         </Text>
@@ -109,7 +113,10 @@ const AddressSection = () => (
 
 const PaymentDetails = () => (
     <>
-        <CustomRow leftText="CHI TIẾT THANH TOÁN" leftTextFontWeight='700' leftColor={colors.primary} />
+        <DualTextRow
+            leftText="CHI TIẾT THANH TOÁN"
+            leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
+        />
         {[
             { leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ' },
             { leftText: 'Phí giao hàng', rightText: '18.000đ' },
@@ -117,7 +124,7 @@ const PaymentDetails = () => (
             { leftText: 'Giảm 5K', rightText: '-5.000đ', rightColor: colors.primary },
             { leftText: 'Tổng số tiền', rightText: '68.000đ', leftTextFontWeight: '700', rightTextFontWeight: '700' },
         ].map((item, index) => (
-            <CustomRow key={index} {...item} />
+            <DualTextRow key={index} {...item} />
         ))}
         <VoucherRow />
         <PaymentMethodRow />
@@ -181,26 +188,6 @@ const products = [
     },
 ];
 
-const CustomRow = ({
-    leftText,
-    rightText,
-    leftColor = colors.black,
-    leftTextFontWeight = '400',
-    rightTextFontWeight = '400',
-    rightColor = colors.black,
-    onRightPress
-}) => {
-    return (
-        <View style={styles.row}>
-            <Text style={[styles.normalText, { color: leftColor, fontWeight: leftTextFontWeight }]}>{leftText}</Text>
-            <Pressable onPress={onRightPress}>
-                <Text style={[styles.normalText, { color: rightColor, fontWeight: rightTextFontWeight }]}>{rightText}</Text>
-            </Pressable>
-
-        </View>
-    );
-};
-
 
 const VoucherRow = ({
     textColor = colors.primary,
@@ -229,32 +216,6 @@ const VoucherRow = ({
         </View>
     );
 };
-
-
-const PaymentMethodRow = ({
-    onChange,
-    money = 19000
-}) => {
-    return (
-        <View style={styles.row}>
-            <Text style={styles.normalText}>Phương thức thanh toán</Text>
-            <Pressable style={styles.row} onPress={onChange}>
-                <Image
-                    source={require('../../assets/images/logo_momo.png')}
-                    style={{
-                        width: 30,
-                        height: 30,
-                        resizeMode: 'contain',
-                    }} />
-                < Text style={[styles.normalText, { marginRight: 8 }]}>Momo</Text>
-                <AntDesign name="down" color={colors.primary} size={14} />
-
-            </Pressable>
-
-        </View >
-    );
-};
-
 
 
 const styles = StyleSheet.create({
@@ -309,67 +270,7 @@ const styles = StyleSheet.create({
 
     flatListContentContainer: {
         marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
-    },
-    itemProduct: {
-        flexDirection: 'row',
-        borderBottomColor: colors.gray200,
-        borderBottomWidth: 2,
-        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
-        gap: GLOBAL_KEYS.GAP_SMALL
-    },
-    itemImage: {
-        width: 50,
-        height: 50,
-        resizeMode: 'cover',
-        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    },
-    productInfo: {
-        flexDirection: 'column',
-        flex: 1,
-        gap: 5,
-    },
-    productName: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        fontWeight: '500',
-
-    },
-    productPrice: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black,
-        fontWeight: '500'
-    },
-
-    imageWrapper: {
-        position: 'relative',
-    },
-    quantityBadge: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        backgroundColor: colors.green100,
-        borderColor: colors.white,
-        borderWidth: 2,
-        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        width: 20,
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    quantityText: {
-        color: colors.black,
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        fontWeight: '500',
-    },
-    priceContainer: {
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'flex-end'
-    },
-    lineThroughText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.gray700,
-        textDecorationLine: 'line-through',
-    },
+    }
 });
 
 export default CheckoutScreen
