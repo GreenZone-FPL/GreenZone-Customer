@@ -1,4 +1,5 @@
 
+
 export const ScreenEnum = Object.freeze({
   MainNavigation: 'MainNavigation',
   // auth
@@ -44,5 +45,7 @@ export const ScreenEnum = Object.freeze({
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
 });
+
+
 
 

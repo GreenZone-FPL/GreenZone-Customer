@@ -53,12 +53,12 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="chat"
             title="Liên hệ góp ý"
-            onPress={() => { }}
+            onPress={() => { navigation.navigate(ScreenEnum.ContactScreen) }}
           />
           <View style={styles.separator} />
           <CardUtiliti
             icon="star"
-            title="Đánh giá đơn hàn"
+            title="Đánh giá đơn hàng"
             onPress={() => { }}
           />
           <View style={styles.separator} />
