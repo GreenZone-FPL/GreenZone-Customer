@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
 import React, {useState} from 'react';
 import NormalHeader from '../../components/headers/NormalHeader';
@@ -91,7 +92,7 @@ const Body = ({data}) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     <View style={styles.bodyContainer}>
       <Text style={styles.bodyHeader}>
-        {data.length > 0 ? 'Sẵn sàng sử dụng' : 'Hiện không có Voucher nào'}
+        {data.length > 0 ? 'Sẵn sàng sử dụng' : ''}
       </Text>
       <FlatList
         data={data}
@@ -101,7 +102,6 @@ const Body = ({data}) => (
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
       />
-      <View style={styles.itemDetails}></View>
     </View>
   </ScrollView>
 );
@@ -109,12 +109,6 @@ const Body = ({data}) => (
 const ItemVoucher = ({item}) => (
   <View style={styles.itemVoucher}>
     <Image source={{uri: item.image}} style={styles.itemImage} />
-    <View style={styles.itemIcons}>
-      <Icon source="checkbox-blank-circle" color={colors.gray300} />
-      <Icon source="checkbox-blank-circle" color={colors.gray300} />
-      <Icon source="checkbox-blank-circle" color={colors.gray300} />
-      <Icon source="checkbox-blank-circle" color={colors.gray300} />
-    </View>
     <View style={styles.itemDetails}>
       <Text style={styles.itemTitle}>{item.name}</Text>
       <Text style={styles.itemTime}>Hết hạn {item.time}</Text>
@@ -235,6 +229,7 @@ const styles = StyleSheet.create({
   bodyContainer: {
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
+    marginBottom: StatusBar.currentHeight + 90,
   },
   bodyHeader: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
@@ -262,19 +257,12 @@ const styles = StyleSheet.create({
     height: width / 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
-  itemIcons: {
-    height: width / 3,
-    flexDirection: 'column',
-    gap: GLOBAL_KEYS.GAP_SMALL,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
   itemDetails: {
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     flex: 1,
-    height: width / 3,
+    height: '100%',
   },
   itemTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
