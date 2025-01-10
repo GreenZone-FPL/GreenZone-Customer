@@ -1,11 +1,8 @@
 import React from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { Icon } from 'react-native-paper';
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { LightStatusBar, NormalHeader } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
 const SelectAddressScreen = (props) => {
     const navigation = props.navigation

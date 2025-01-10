@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Text } from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import PrimaryButton from '../buttons/PrimaryButton';
-import QuantitySelector from '../buttons/QuantitySelector';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { PrimaryButton } from '../buttons/PrimaryButton';
+import { QuantitySelector } from '../buttons/QuantitySelector';
 
 
 const CheckoutFooterPropTypes = {
@@ -36,7 +35,7 @@ const CheckoutFooterPropTypes = {
         onButtonPress={() => { console.log('Thêm vào giỏ hàng') }}
     />
  */
-const CheckoutFooter = ({
+export const CheckoutFooter = ({
     quantity,
     handlePlus,
     handleMinus,
@@ -46,7 +45,7 @@ const CheckoutFooter = ({
     backgroundColor = colors.green100
 }) => {
     return (
-        <View style={[styles.footer, {backgroundColor: backgroundColor}]}>
+        <View style={[styles.footer, { backgroundColor: backgroundColor }]}>
             <View style={[styles.row, { justifyContent: 'space-between' }]}>
                 <View style={[styles.column, { paddingHorizontal: 0 }]}>
                     <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
@@ -102,4 +101,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CheckoutFooter;
+

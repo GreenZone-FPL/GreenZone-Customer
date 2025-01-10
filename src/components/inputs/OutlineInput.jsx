@@ -1,10 +1,9 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TextInput } from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
-const OutlineInput = ({ label, value, setValue, message, setIsPasswordVisible, isPasswordVisible = false, secureTextEntry = false }) => {
+export const  OutlineInput = ({ label, value, setValue, message, setIsPasswordVisible, isPasswordVisible = false, secureTextEntry = false }) => {
     return (
         <View style={styles.inputContainer}>
             <TextInput
@@ -51,4 +50,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OutlineInput;
+

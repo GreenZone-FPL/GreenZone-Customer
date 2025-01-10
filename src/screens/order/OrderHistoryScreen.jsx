@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, FlatList, Pressable } from 'react-native';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import NormalHeader from '../../components/headers/NormalHeader';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import ScreenEnum from '../../constants/screenEnum';
+import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { LightStatusBar, NormalHeader } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const width = Dimensions.get('window').width;
 
@@ -21,14 +18,24 @@ const OrderHistoryScreen = (props) => {
         { key: 'cancelled', title: 'Đã hủy' },
     ]);
 
-    const renderScene = SceneMap({
-        picked: () => (<OrderListView
-            onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
-            status="Picked"
-        />),
-        completed: () => <OrderListView status="Completed" />,
-        cancelled: () => <OrderListView status="Cancelled" />,
-    });
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'picked':
+                return (
+                    <OrderListView
+                        onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                        status="Picked"
+                    />
+                );
+            case 'completed':
+                return <OrderListView status="Completed" />;
+            case 'cancelled':
+                return <OrderListView status="Cancelled" />;
+            default:
+                return null;
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -43,6 +50,12 @@ const OrderHistoryScreen = (props) => {
                 onIndexChange={setIndex}
                 initialLayout={{ width }}
                 swipeEnabled={false}
+                lazy // Kích hoạt chế độ lazy
+                renderLazyPlaceholder={() => (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text>Đang tải...</Text>
+                    </View>
+                )}
                 renderTabBar={(props) => (
                     <TabBar
                         {...props}
@@ -54,6 +67,7 @@ const OrderHistoryScreen = (props) => {
                     />
                 )}
             />
+
         </View>
     );
 };
@@ -105,7 +119,7 @@ const OrderItem = ({
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 8 }}
-            style={styles.productList}
+            removeClippedSubviews={true}
         />
     </Pressable>
 );

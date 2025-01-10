@@ -1,17 +1,10 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, Button, SafeAreaView, StyleSheet, ScrollView } from 'react-native';
-import ScreenEnum from '../../constants/screenEnum';
-import DeliveryButton from '../../components/buttons/DeliveryButton';
-import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
-import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import CategoryMenu from '../../components/category/CategoryMenu';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import ProductsListHorizontal from '../../components/products/ProductsListHorizontal';
-import ProductsListVertical from '../../components/products/ProductsListVertical';
+import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+
+import { ProductsListHorizontal, ProductsListVertical, DeliveryButton, CategoryMenu, DialogShippingMethod, HeaderWithBadge, LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const HomeScreen = props => {
   const { navigation } = props;

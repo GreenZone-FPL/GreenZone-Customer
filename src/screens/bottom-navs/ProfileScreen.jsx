@@ -1,11 +1,8 @@
 import React from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import HeaderWithBadge from '../../components/headers/HeaderWithBadge';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import ScreenEnum from '../../constants/screenEnum';
+import { LightStatusBar, HeaderWithBadge } from '../../components';
+import { GLOBAL_KEYS, colors, ScreenEnum } from '../../constants';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;

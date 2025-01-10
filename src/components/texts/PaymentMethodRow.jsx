@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import React from 'react';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 export const PaymentMethodRow = ({

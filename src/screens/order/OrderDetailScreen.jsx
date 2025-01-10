@@ -1,11 +1,8 @@
 import React from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DualTextRow, HorizontalProductItem, PaymentMethodRow } from '../../components';
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 const OrderDetailScreen = (props) => {
 

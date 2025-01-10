@@ -1,9 +1,8 @@
-import { StyleSheet, Text, View, Pressable, Image } from 'react-native'
-import React from 'react'
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import { Icon } from 'react-native-paper';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 
 const HorizontalProductItemPropTypes = {

@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import React from 'react';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
 
 const DualTextRowPropTypes = {

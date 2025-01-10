@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ScreenEnum from '../../constants/screenEnum';
+import React from 'react';
+import { MerchantDetailSheet } from '../../components';
+import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import MerchantScreen from '../../screens/bottom-navs/MerchantScreen';
-import MerchantDetailSheet from '../../components/bottom-sheets/MerchantDetailSheet';
 
 const MerchantStack = createNativeStackNavigator();
 const MerchantStackScreen = () => {

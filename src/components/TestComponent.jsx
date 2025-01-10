@@ -1,9 +1,9 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
-import GLOBAL_KEYS from '../constants/globalKeys';
-import DeliveryButton from './buttons/DeliveryButton';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
+import { GLOBAL_KEYS } from '../constants';
+import { DeliveryButton } from './buttons/DeliveryButton';
 
 const TestComponent = props => {
   const {navigation} = props;

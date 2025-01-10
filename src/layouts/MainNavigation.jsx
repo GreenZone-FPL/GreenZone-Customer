@@ -2,12 +2,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { Text } from 'react-native';
 import { Icon } from 'react-native-paper';
-import colors from '../constants/color';
-import GLOBAL_KEYS from '../constants/globalKeys';
-import ScreenEnum from '../constants/screenEnum';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../constants';
+
 import HomeStackScreen from './stacks/HomeStackScreen';
-import OrderStackScreen from './stacks/OrderStackScreen';
 import MerchantStackScreen from './stacks/MerchantStackScreen';
+import OrderStackScreen from './stacks/OrderStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
 

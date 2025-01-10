@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import { Icon } from 'react-native-paper'
 import PropTypes from 'prop-types'
 
@@ -18,7 +17,7 @@ const NormalHeaderPropTypes = {
   style: PropTypes.object,
 };
 
-const NormalHeader = ({
+export const  NormalHeader = ({
   title = 'Default Title',
   leftIcon = 'arrow-left',
   rightIcon = 'shopping-outline',
@@ -77,4 +76,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NormalHeader;
+

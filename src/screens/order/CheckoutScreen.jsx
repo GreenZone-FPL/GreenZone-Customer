@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, FlatList, } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import NormalHeader from '../../components/headers/NormalHeader';
-import CheckoutFooter from '../../components/footer/CheckoutFooter';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
-import DialogShippingMethod from '../../components/dialogs/DialogShippingMethod';
-import { PaymentMethodRow, HorizontalProductItem, DualTextRow } from '../../components';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import { CheckoutFooter, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, PaymentMethodRow } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
 const CheckoutScreen = (props) => {
 

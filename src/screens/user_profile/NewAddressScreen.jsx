@@ -1,12 +1,7 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import FlatInput from '../../components/inputs/FlatInput';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
-import ScreenEnum from '../../constants/screenEnum';
+import React, { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { LightStatusBar, FlatInput, NormalHeader, PrimaryButton } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 
 const NewAddressScreen = (props) => {
