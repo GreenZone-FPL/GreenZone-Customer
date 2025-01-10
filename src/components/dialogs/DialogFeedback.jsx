@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -14,21 +14,22 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Icon } from 'react-native-paper';
+import {Icon} from 'react-native-paper';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import PrimaryButton from '../buttons/PrimaryButton';
+import NormalText from '../texts/NormalText';
 
-const { height, width } = Dimensions.get('window');
+const {height, width} = Dimensions.get('window');
 
 const DialogFeedbackPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 
-const DialogFeedback = ({ isVisible, onHide }) => {
+const DialogFeedback = ({isVisible, onHide}) => {
   const [value, setValue] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false); // Modal state
@@ -38,10 +39,10 @@ const DialogFeedback = ({ isVisible, onHide }) => {
       saveToPhotos: true,
       mediaType: 'photo',
     };
-    launchCamera(options, (response) => {
+    launchCamera(options, response => {
       if (response.didCancel || response.errorCode) return;
 
-      setSelectedImages((prev) => {
+      setSelectedImages(prev => {
         const newImages = response?.assets[0]?.uri;
         if (prev.length < 3) {
           return [...prev, newImages];
@@ -57,116 +58,134 @@ const DialogFeedback = ({ isVisible, onHide }) => {
       mediaType: 'photo',
       selectionLimit: 3 - selectedImages.length,
     };
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary(options, response => {
       if (response.didCancel || response.errorCode) return;
 
-      setSelectedImages((prev) => {
-        const newImages = response.assets.map((asset) => asset.uri);
+      setSelectedImages(prev => {
+        const newImages = response.assets.map(asset => asset.uri);
         return [...prev, ...newImages].slice(0, 3);
       });
     });
     setImagePickerVisible(false); // Hide modal
   };
 
-  const removeImage = (index) => {
-    setSelectedImages((prevImages) =>
-      prevImages.filter((_, i) => i !== index)
-    );
+  const removeImage = index => {
+    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
   const isButtonDisabled = value.trim() === '';
 
   return (
-    
-
-      
-    
-    <Modal visible={isVisible} animationType="fade" transparent={true} onRequestClose={onHide}>
-      
+    <Modal
+      visible={isVisible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={onHide}>
       <View style={styles.overlay}>
         <View style={styles.modalContainer}>
           <OverlayStatusBar />
-          <KeyboardAvoidingView
-                behavior="position">
-          <ScrollView>
-          <View style={styles.header}>
-            <View style={styles.placeholderIcon} />
-            <Text style={styles.titleText}>Gửi góp ý về ứng dụng</Text>
-            <TouchableOpacity onPress={onHide}>
-              <Icon source="close" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
-            </TouchableOpacity>
-          </View>
+          <KeyboardAvoidingView behavior="position">
+            <ScrollView>
+              <View style={styles.header}>
+                <View style={styles.placeholderIcon} />
+                <Text style={styles.titleText}>Gửi góp ý về ứng dụng</Text>
+                <TouchableOpacity onPress={onHide}>
+                  <Icon
+                    source="close"
+                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+              </View>
 
-          
-          <View style={styles.feedbackContainer}>
-            <Text style={styles.textTitle}>Đối với GreenZone, mọi góp ý của bạn đều quý giá</Text>
-            <View style={styles.viewInputFeedback}>
-              <TextInput
-                placeholder="Chia sẻ cảm nghĩ của bạn về ứng dụng cho GreenZone tại đây"
-                placeholderTextColor={colors.gray400}
-                multiline
-                style={styles.inputFeedback}
-                value={value}
-                onChangeText={setValue}
-              />
-            </View>
-            <View style={styles.imageContainer}>
-              {selectedImages.map((imageUri, index) => (
-                <View key={index} style={styles.imageWrapper}>
-                  <Image style={styles.imagePreview} source={{ uri: imageUri }} resizeMode="cover" />
-                  <TouchableOpacity
-                    style={styles.removeButton}
-                    onPress={() => removeImage(index)}>
-                    <Icon source="close" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.green750} />
-                  </TouchableOpacity>
+              <View style={styles.feedbackContainer}>
+                <Text style={styles.textTitle}>
+                  Đối với GreenZone, mọi góp ý của bạn đều quý giá
+                </Text>
+                <View style={styles.viewInputFeedback}>
+                  <TextInput
+                    placeholder="Chia sẻ cảm nghĩ của bạn về ứng dụng cho GreenZone tại đây"
+                    placeholderTextColor={colors.gray400}
+                    multiline
+                    style={styles.inputFeedback}
+                    value={value}
+                    onChangeText={setValue}
+                  />
                 </View>
-              ))}
-            </View>
-            {selectedImages.length < 3 && (
-              <Pressable style={styles.btnUploadImage} onPress={() => setImagePickerVisible(true)}>
-                <Icon source="camera" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
-                <Text>Tải lên hình ảnh</Text>
-              </Pressable>
-            )}
-            <PrimaryButton
-              title="Gửi phản hồi"
-              onPress={() => {
-                if (!isButtonDisabled) {
-                  console.log('Phản hồi:', value);
-                  console.log('Hình ảnh đã chọn:', selectedImages);
-                }
-              }}
-              style={{
-                backgroundColor: isButtonDisabled ? colors.gray400 : colors.primary,
-              }}
-              disabled={isButtonDisabled}
-            />
-          </View>
-          </ScrollView>
+                <View style={styles.imageContainer}>
+                  {selectedImages.map((imageUri, index) => (
+                    <View key={index} style={styles.imageWrapper}>
+                      <Image
+                        style={styles.imagePreview}
+                        source={{uri: imageUri}}
+                        resizeMode="cover"
+                      />
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => removeImage(index)}>
+                        <Icon
+                          source="close"
+                          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                          color={colors.green750}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+                {selectedImages.length < 3 && (
+                  <Pressable
+                    style={styles.btnUploadImage}
+                    onPress={() => setImagePickerVisible(true)}>
+                    <Icon
+                      source="camera"
+                      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                      color={colors.primary}
+                    />
+                    <Text>Tải lên hình ảnh</Text>
+                  </Pressable>
+                )}
+                <PrimaryButton
+                  title="Gửi phản hồi"
+                  onPress={() => {
+                    if (!isButtonDisabled) {
+                      console.log('Phản hồi:', value);
+                      console.log('Hình ảnh đã chọn:', selectedImages);
+                    }
+                  }}
+                  style={{
+                    backgroundColor: isButtonDisabled
+                      ? colors.gray400
+                      : colors.primary,
+                  }}
+                  disabled={isButtonDisabled}
+                />
+              </View>
+            </ScrollView>
           </KeyboardAvoidingView>
-
         </View>
       </View>
-      
-      <Modal visible={isImagePickerVisible} animationType="slide" transparent={true}>
+
+      <Modal
+        visible={isImagePickerVisible}
+        animationType="slide"
+        transparent={true}>
         <View style={styles.imagePickerOverlay}>
           <View style={styles.imagePickerContainer}>
             <TouchableOpacity style={styles.option} onPress={openCamera}>
-              <Text>Chụp ảnh mới</Text>
+              <NormalText text="Chụp ảnh mới" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.option} onPress={openImageLibrary}>
-              <Text>Chọn từ thư viện ảnh</Text>
+              <NormalText text="Chọn ảnh từ thư viện" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.option} onPress={() => setImagePickerVisible(false)}>
-              <Text>Hủy bỏ</Text>
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => setImagePickerVisible(false)}>
+              <NormalText text="Hủy bỏ" />
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
     </Modal>
-
-
-
   );
 };
 
@@ -183,7 +202,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,
