@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import Selectable from './Selectable';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Selectable } from './Selectable';
 import PropTypes from 'prop-types';
 
 
@@ -29,7 +28,7 @@ const SelectableGroupPropTypes = {
     activeTextColor: PropTypes.string
 };
 
-const SelectableGroup = ({
+export const SelectableGroup = ({
     items,
     title = "Default title",
     selectedGroup,
@@ -127,4 +126,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SelectableGroup;
+

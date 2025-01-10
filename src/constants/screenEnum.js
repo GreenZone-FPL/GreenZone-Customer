@@ -1,6 +1,6 @@
 
 
-const screens = {
+export const ScreenEnum = Object.freeze({
   MainNavigation: 'MainNavigation',
   // auth
   SplashScreen: 'SplashScreen',
@@ -39,15 +39,13 @@ const screens = {
   CheckoutScreen: 'CheckoutScreen',
   OrderHistoryScreen: 'OrderHistoryScreen',
   OrderDetailScreen: 'OrderDetailScreen',
-  
+
 
 
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
-};
-
-const ScreenEnum = Object.freeze({
-  ...screens,
 });
 
-export default ScreenEnum;
+
+
+

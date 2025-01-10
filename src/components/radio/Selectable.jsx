@@ -1,10 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import QuantityButton from '../buttons/QuantityButton';
-import QuantitySelector from '../buttons/QuantitySelector'
 import PropTypes from 'prop-types';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import {QuantityButton} from '../buttons/QuantityButton';
+import {QuantitySelector} from '../buttons/QuantitySelector';
 
 
 const SelectablePropTypes = {
@@ -21,7 +20,7 @@ const SelectablePropTypes = {
 };
 
 
-const Selectable = ({
+export const Selectable = ({
   item,
   quantity,
   selected,
@@ -91,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Selectable;
+

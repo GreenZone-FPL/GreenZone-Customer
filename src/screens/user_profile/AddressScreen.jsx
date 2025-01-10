@@ -1,11 +1,9 @@
 import React from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import ScreenEnum from '../../constants/screenEnum';
+
+import { LightStatusBar, NormalHeader } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 
 const AddressScreen = (props) => {

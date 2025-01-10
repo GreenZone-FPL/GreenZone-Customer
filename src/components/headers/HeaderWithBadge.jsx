@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import IconWithBadge from './IconWithBadge';
-import colors from '../../constants/color';
 import { Icon } from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import {IconWithBadge} from './IconWithBadge';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types'
 
 
@@ -13,7 +12,7 @@ const HeaderWithBadgePropTypes = {
   isHome: PropTypes.bool,
 };
 
-const HeaderWithBadge = (props) => {
+export const  HeaderWithBadge = (props) => {
   const { title, onBadgePress, isHome } = props;
   return (
     <View style={styles.header}>
@@ -81,4 +80,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default HeaderWithBadge
+

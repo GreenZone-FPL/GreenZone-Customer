@@ -12,9 +12,8 @@ import {
   View,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import OverlayStatusBar from '../status-bars/OverlayStatusBar';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -24,7 +23,7 @@ const DialogShippingMethodPropTypes = {
   onOptionSelect: PropTypes.func,
 };
 
-const DialogShippingMethod = ({
+export const  DialogShippingMethod = ({
   isVisible,
   selectedOption,
   onHide,
@@ -229,4 +228,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DialogShippingMethod;
+

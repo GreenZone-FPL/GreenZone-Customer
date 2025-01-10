@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import ScreenEnum from '../../constants/screenEnum';
+import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
 import AddressScreen from '../../screens/user_profile/AddressScreen';

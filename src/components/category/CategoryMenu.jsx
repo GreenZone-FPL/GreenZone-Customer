@@ -1,12 +1,11 @@
 import {View, Text, FlatList, Image, StyleSheet} from 'react-native';
 import React from 'react';
 import {Dimensions} from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 const width = Dimensions.get('window').width;
 
-const CategoryMenu = () => {
+export const  CategoryMenu = () => {
   return (
     <View style={styles.container}>
       <FlatList
@@ -98,4 +97,4 @@ const categories = [
   },
 ];
 
-export default CategoryMenu;
+
