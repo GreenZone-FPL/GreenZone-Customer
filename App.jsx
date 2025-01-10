@@ -32,6 +32,7 @@ function App() {
         <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
         <BaseStack.Screen name={ScreenEnum.OrderHistoryScreen} component={OrderHistoryScreen} />
+
         <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
 
 

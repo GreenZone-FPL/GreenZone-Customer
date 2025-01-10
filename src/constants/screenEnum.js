@@ -34,8 +34,9 @@ const screens = {
   // Cart, Order
   CheckoutScreen: 'CheckoutScreen',
   OrderHistoryScreen: 'OrderHistoryScreen',
+  OrderDetailScreen: 'OrderDetailScreen',
   
-  // Cart, Order
+
 
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',

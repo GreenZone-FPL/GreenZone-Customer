@@ -6,6 +6,7 @@ import colors from '../constants/color';
 import GLOBAL_KEYS from '../constants/globalKeys';
 import ScreenEnum from '../constants/screenEnum';
 import HomeStackScreen from './stacks/HomeStackScreen';
+import OrderStackScreen from './stacks/OrderStackScreen';
 import MerchantStackScreen from './stacks/MerchantStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
@@ -30,9 +31,9 @@ const MainNavigation = () => {
           if (route.name === ScreenEnum.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
           } 
-          // else if (route.name === ScreenEnum.OrderStackScreen) {
-          //   iconName = focused ? 'food' : 'food-outline';
-          // } 
+          else if (route.name === ScreenEnum.OrderStackScreen) {
+            iconName = focused ? 'food' : 'food-outline';
+          } 
           else if (route.name === ScreenEnum.MerchantStackScreen) {
             iconName = focused ? 'store' : 'store-outline';
           } else if (route.name === ScreenEnum.VoucherStackScreen) {
@@ -55,9 +56,9 @@ const MainNavigation = () => {
           if (route.name === ScreenEnum.HomeStackScreen) {
             label = 'Trang chủ';
           } 
-          // else if (route.name === ScreenEnum.OrderStackScreen) {
-          //   label = 'Đặt hàng';
-          // }
+          else if (route.name === ScreenEnum.OrderStackScreen) {
+            label = 'Đặt hàng';
+          }
            else if (route.name === ScreenEnum.MerchantStackScreen) {
             label = 'Cửa hàng';
           } else if (route.name === ScreenEnum.VoucherStackScreen) {
@@ -67,7 +68,7 @@ const MainNavigation = () => {
           }
 
           return (
-            <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: 12 }}>
+            <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL }}>
               {label}
             </Text>
           );
@@ -80,10 +81,10 @@ const MainNavigation = () => {
         component={HomeStackScreen}
       
       />
-      {/* <BottomTab.Screen
+      <BottomTab.Screen
         name={ScreenEnum.OrderStackScreen}
         component={OrderStackScreen}
-      /> */}
+      />
       <BottomTab.Screen
         name={ScreenEnum.MerchantStackScreen}
         component={MerchantStackScreen}

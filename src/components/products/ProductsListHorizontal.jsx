@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     width: 157,
     height: 235,
     resizeMode: 'cover',
-    opacity: 0.7,
+    opacity: 0.6,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   priceContainer: {
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductsListHorizontal;
+export default ProductsListHorizontal

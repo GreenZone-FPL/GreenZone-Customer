@@ -13,6 +13,7 @@ import NormalHeader from '../../components/headers/NormalHeader';
 import LightStatusBar from '../../components/status-bars/LightStatusBar';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
+import ScreenEnum from '../../constants/screenEnum';
 
 const width = Dimensions.get('window').width;
 
@@ -26,11 +27,14 @@ const OrderHistoryScreen = props => {
     {key: 'cancelled', title: 'Đã hủy'},
   ]);
 
-  const renderScene = SceneMap({
-    picked: () => <OrderListView status="Picked" />,
-    completed: () => <OrderListView status="Completed" />,
-    cancelled: () => <OrderListView status="Cancelled" />,
-  });
+    const renderScene = SceneMap({
+        picked: () => (<OrderListView 
+        onItemPress = {() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+        status="Picked" 
+        />),
+        completed: () => <OrderListView status="Completed" />,
+        cancelled: () => <OrderListView status="Cancelled" />,
+    });
 
   return (
     <View style={styles.container}>
@@ -156,31 +160,35 @@ const orders = [
 ];
 
 // Màn hình từng trạng thái
-const OrderListView = ({status}) => {
-  const filteredOrders = orders.filter(order => order.status === status);
+const OrderListView = ({ status, onItemPress }) => {
+    const filteredOrders = orders.filter((order) => order.status === status);
 
-  return (
-    <View style={styles.scene}>
-      {filteredOrders.length > 0 ? (
-        <FlatList
-          data={filteredOrders}
-          keyExtractor={item => item.orderId}
-          contentContainerStyle={{gap: 8}}
-          renderItem={({item}) => <OrderItem onPress={() => {}} order={item} />}
-        />
-      ) : (
-        <EmptyView
-          message={
-            status === 'Picked'
-              ? 'Chưa có đơn hàng cần thực hiện'
-              : status === 'Completed'
-              ? 'Chưa có đơn hàng hoàn thành'
-              : 'Chưa có đơn hàng đã hủy'
-          }
-        />
-      )}
-    </View>
-  );
+    return (
+        <View style={styles.scene}>
+            {filteredOrders.length > 0 ? (
+                <FlatList
+                    data={filteredOrders}
+                    keyExtractor={(item) => item.orderId}
+                    contentContainerStyle={{ gap: 8 }}
+                    renderItem={({ item }) =>
+                        <OrderItem
+                            onPress={() => { onItemPress() }}
+                            order={item} />
+                    }
+                />
+            ) : (
+                <EmptyView
+                    message={
+                        status === 'Picked'
+                            ? 'Chưa có đơn hàng cần thực hiện'
+                            : status === 'Completed'
+                                ? 'Chưa có đơn hàng hoàn thành'
+                                : 'Chưa có đơn hàng đã hủy'
+                    }
+                />
+            )}
+        </View>
+    );
 };
 
 // Component trống
