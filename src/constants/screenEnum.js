@@ -1,3 +1,5 @@
+
+
 const screens = {
   MainNavigation: 'MainNavigation',
   // auth
@@ -24,6 +26,8 @@ const screens = {
   UpdateProfileScreen: 'UpdateProfileScreen',
 
   ProductDetailSheet: 'ProductDetailSheet',
+
+  ContactScreen: 'ContactScreen',
   
   AddressScreen : 'AddressScreen',
   NewAddressScreen : 'NewAddressScreen',

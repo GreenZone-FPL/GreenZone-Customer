@@ -8,6 +8,7 @@ import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
 import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
 import SelectAddressScreen from '../../screens/user_profile/SelectAddressScreen';
 import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
+import ContactScreen from '../../screens/user_profile/ContactScreen';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -35,6 +36,14 @@ const ProfileStackScreen = () => {
         name={ScreenEnum.AddressScreen}
         component={AddressScreen}
       />
+
+      <ProfileStack.Screen
+        name={ScreenEnum.ContactScreen}
+        component={ContactScreen}
+      />
+
+
+
       <ProfileStack.Screen
         name={ScreenEnum.NewAddressScreen}
         component={NewAddressScreen}

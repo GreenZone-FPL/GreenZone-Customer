@@ -42,7 +42,7 @@ const OrderHistoryScreen = (props) => {
                 renderScene={renderScene}
                 onIndexChange={setIndex}
                 initialLayout={{ width }}
-                swipeEnabled={false}
+                swipeEnabled={true}
                 renderTabBar={(props) => (
                     <TabBar
                         {...props}
