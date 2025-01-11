@@ -15,8 +15,8 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Icon} from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import {GLOBAL_KEYS} from '../../constants/globalKeys';
+import {colors} from '../../constants/color';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import PrimaryButton from '../buttons/PrimaryButton';
@@ -29,7 +29,7 @@ const DialogFeedbackPropTypes = {
   onHide: PropTypes.func.isRequired,
 };
 
-const DialogFeedback = ({isVisible, onHide}) => {
+export const DialogFeedback = ({isVisible, onHide}) => {
   const [value, setValue] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false); // Modal state
@@ -301,5 +301,3 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray200,
   },
 });
-
-export default DialogFeedback;

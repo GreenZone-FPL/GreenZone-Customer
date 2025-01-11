@@ -1,13 +1,17 @@
-import { SafeAreaView, StyleSheet, Text, View, Pressable, Linking } from 'react-native';
-import React, { useState } from 'react';
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import { Icon } from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import DialogFeedback from '../../components/dialogs/DialogFeedback';
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  Linking,
+} from 'react-native';
+import React, {useState} from 'react';
+import {LightStatusBar, NormalHeader, DialogFeedback} from '../../components';
+import {Icon} from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
-const ContactScreen = (props) => {
+const ContactScreen = props => {
   const navigation = props.navigation;
   const [isDialogVisible, setDialogVisible] = useState(false);
 
@@ -37,7 +41,10 @@ const ContactScreen = (props) => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-      <NormalHeader title="Liên hệ và góp ý" onLeftPress={() => navigation.goBack()} />
+      <NormalHeader
+        title="Liên hệ và góp ý"
+        onLeftPress={() => navigation.goBack()}
+      />
       <View style={styles.content}>
         <Card
           icon="phone"
@@ -80,9 +87,13 @@ const ContactScreen = (props) => {
   );
 };
 
-const Card = ({ icon, name, path, onPress }) => (
+const Card = ({icon, name, path, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
-    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.gray700} />
+    <Icon
+      source={icon}
+      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+      color={colors.gray700}
+    />
     <View>
       <Text style={styles.textName}>{name}</Text>
       <Text style={styles.textPath}>{path}</Text>
@@ -119,4 +130,3 @@ const styles = StyleSheet.create({
     color: colors.gray400,
   },
 });
-
