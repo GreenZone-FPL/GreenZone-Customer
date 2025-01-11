@@ -1,13 +1,21 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
-import { ProductsListHorizontal, ProductsListVertical, DeliveryButton, CategoryMenu, DialogShippingMethod, HeaderWithBadge, LightStatusBar } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import {
+  ProductsListHorizontal,
+  ProductsListVertical,
+  DeliveryButton,
+  CategoryMenu,
+  DialogShippingMethod,
+  HeaderWithBadge,
+  LightStatusBar,
+} from '../../components';
+import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
 
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -34,7 +42,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({ lat, long }) => {
+  const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -59,13 +67,19 @@ const HomeScreen = props => {
           }}
           isHome={true}
         />
-        <Button title='Checkout Screen' onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)} />
+        <Button
+          title="Checkout Screen"
+          onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)}
+        />
 
         <CategoryMenu />
-        <ProductsListHorizontal onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)} />
-        <ProductsListVertical onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)} />
+        <ProductsListHorizontal
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+        />
+        <ProductsListVertical
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+        />
       </ScrollView>
-
 
       <DeliveryButton
         title="Đi giao đến"
@@ -90,17 +104,16 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.white,
-    position: 'relative'
+    position: 'relative',
   },
   containerContent: {
     flexDirection: 'column',
     flex: 1,
-    marginBottom: 90
+    marginBottom: 90,
   },
   deliverybutton: {
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
 });
-

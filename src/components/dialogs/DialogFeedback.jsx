@@ -20,12 +20,14 @@ import { PrimaryButton } from '../buttons/PrimaryButton';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { NormalText } from '../texts/NormalText';
 
+
 const { height, width } = Dimensions.get('window');
 
 const DialogFeedbackPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
 };
+
 
 export const DialogFeedback = ({ isVisible, onHide }) => {
   const [value, setValue] = useState('');
@@ -305,5 +307,3 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray200,
   },
 });
-
-
