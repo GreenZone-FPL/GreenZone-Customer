@@ -1,35 +1,33 @@
-import React, {useState} from 'react';
+import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import {
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Text,
-  TextInput,
-  Pressable,
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  Modal,
+  Pressable,
   ScrollView,
-  TouchableWithoutFeedback,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import PropTypes from 'prop-types';
-import {Icon} from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import OverlayStatusBar from '../status-bars/OverlayStatusBar';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import PrimaryButton from '../buttons/PrimaryButton';
-import NormalText from '../texts/NormalText';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { PrimaryButton } from '../buttons/PrimaryButton';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import { NormalText } from '../texts/NormalText';
 
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 
 const DialogFeedbackPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 
-const DialogFeedback = ({isVisible, onHide}) => {
+export const DialogFeedback = ({ isVisible, onHide }) => {
   const [value, setValue] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false); // Modal state
@@ -117,7 +115,7 @@ const DialogFeedback = ({isVisible, onHide}) => {
                     <View key={index} style={styles.imageWrapper}>
                       <Image
                         style={styles.imagePreview}
-                        source={{uri: imageUri}}
+                        source={{ uri: imageUri }}
                         resizeMode="cover"
                       />
                       <TouchableOpacity
@@ -141,7 +139,9 @@ const DialogFeedback = ({isVisible, onHide}) => {
                       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                       color={colors.primary}
                     />
-                    <Text>Tải lên hình ảnh</Text>
+
+                    <NormalText text='Tải lên hình ảnh' />
+
                   </Pressable>
                 )}
                 <PrimaryButton
@@ -202,14 +202,14 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '600',
     color: colors.primary,
     textAlign: 'center',
@@ -237,7 +237,10 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
   },
   textTitle: {
-    fontWeight: '700',
+    fontWeight: '600',
+    color: colors.pink500,
+    textAlign: 'center',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER
   },
   viewInputFeedback: {
     borderWidth: 1,
@@ -251,6 +254,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     textAlignVertical: 'top',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   imageContainer: {
     flexDirection: 'row',
@@ -287,7 +291,7 @@ const styles = StyleSheet.create({
   imagePickerOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
   },
   imagePickerContainer: {
     backgroundColor: colors.white,
@@ -302,4 +306,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DialogFeedback;
+
