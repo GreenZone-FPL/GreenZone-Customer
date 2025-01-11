@@ -4,6 +4,7 @@ import {ScreenEnum} from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
 import AllVoucherScreen from '../../screens/voucher/MyVoucherScreen';
+import VoucherDetailSheet from '../../components/bottom-sheets/VoucherDetailSheet';
 
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {
@@ -23,6 +24,16 @@ const VoucherStackScreen = () => {
       <VoucherStack.Screen
         name={ScreenEnum.AllVoucherScreen}
         component={AllVoucherScreen}
+      />
+
+      <VoucherStack.Screen
+        name={ScreenEnum.VoucherDetailSheet}
+        component={VoucherDetailSheet}
+        options={{
+          animation: 'slide_from_bottom',
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
       />
     </VoucherStack.Navigator>
   );
