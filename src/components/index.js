@@ -35,8 +35,8 @@ export * from './items/HorizontalProductItem';
 export * from './notes-list/NotesList';
 
 // producs
-export * from './products/ProductsListHorizontal';
-export * from './products/ProductsListVertical';
+export * from './flastlists/ProductsListHorizontal';
+export * from './flastlists/ProductsListVertical';
 
 // radio
 export * from './radio/RadioButton';
