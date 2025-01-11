@@ -1,23 +1,23 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
   Dimensions,
-  ScrollView,
   FlatList,
   Image,
+  ScrollView,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native';
-import {TabView, TabBar} from 'react-native-tab-view';
-import {NormalHeader, LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { TabBar, TabView } from 'react-native-tab-view';
+import { LightStatusBar, NormalHeader } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const MyVoucherScreen = ({navigation}) => {
+const MyVoucherScreen = ({ navigation }) => {
   const [index, setIndex] = useState(0);
 
-  const renderScene = ({route}) => {
+  const renderScene = ({ route }) => {
     switch (route.key) {
       case 'delivery':
         return <Body data={voucherData.delivery} />;
@@ -31,9 +31,9 @@ const MyVoucherScreen = ({navigation}) => {
   };
 
   const routes = [
-    {key: 'delivery', title: 'Giao hàng'},
-    {key: 'merchant', title: 'Tại cửa hàng'},
-    {key: 'takeAway', title: 'Mang đi'},
+    { key: 'delivery', title: 'Giao hàng' },
+    { key: 'merchant', title: 'Tại cửa hàng' },
+    { key: 'takeAway', title: 'Mang đi' },
   ];
 
   return (
@@ -44,10 +44,10 @@ const MyVoucherScreen = ({navigation}) => {
         onLeftPress={() => navigation.goBack()}
       />
       <TabView
-        navigationState={{index, routes}}
+        navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
-        initialLayout={{width}}
+        initialLayout={{ width }}
         style={styles.tabView}
         renderTabBar={props => (
           <TabBar
@@ -66,7 +66,7 @@ const MyVoucherScreen = ({navigation}) => {
   );
 };
 
-const Body = ({data}) => (
+const Body = ({ data }) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     <View style={styles.bodyContainer}>
       {data.length > 0 && (
@@ -75,7 +75,7 @@ const Body = ({data}) => (
       <FlatList
         data={data}
         keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => <ItemVoucher item={item} />}
+        renderItem={({ item }) => <ItemVoucher item={item} />}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
       />
@@ -83,9 +83,9 @@ const Body = ({data}) => (
   </ScrollView>
 );
 
-const ItemVoucher = ({item}) => (
+const ItemVoucher = ({ item }) => (
   <View style={styles.itemVoucher}>
-    <Image source={{uri: item.image}} style={styles.itemImage} />
+    <Image source={{ uri: item.image }} style={styles.itemImage} />
     <View style={styles.itemDetails}>
       <Text style={styles.itemTitle}>{item.name}</Text>
       <Text style={styles.itemTime}>Hết hạn {item.time}</Text>
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   bodyContainer: {
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 8,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
   },
@@ -195,18 +195,19 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     color: colors.black,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT
   },
   itemVoucher: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 4,
-    margin: GLOBAL_KEYS.PADDING_SMALL,
+    elevation: 3,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   itemDetails: {
     flexDirection: 'column',
     justifyContent: 'space-evenly',
-    height: width / 4.5,
+    gap: 8,
     flex: 1,
   },
   itemTitle: {
