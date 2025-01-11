@@ -8,22 +8,27 @@ import {
   Image,
   StyleSheet,
 } from 'react-native';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import NormalHeader from '../../components/headers/NormalHeader';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
+import {TabView, TabBar} from 'react-native-tab-view';
+import {NormalHeader, LightStatusBar} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
 const {width} = Dimensions.get('window');
 
 const AllVoucherScreen = ({navigation}) => {
   const [index, setIndex] = useState(0);
 
-  const renderScene = SceneMap({
-    delivery: () => <Body data={voucherData.delivery} />,
-    merchant: () => <Body data={voucherData.merchant} />,
-    takeAway: () => <Body data={voucherData.takeAway} />,
-  });
+  const renderScene = ({route}) => {
+    switch (route.key) {
+      case 'delivery':
+        return <Body data={voucherData.delivery} />;
+      case 'merchant':
+        return <Body data={voucherData.merchant} />;
+      case 'takeAway':
+        return <Body data={voucherData.takeAway} />;
+      default:
+        return null;
+    }
+  };
 
   const routes = [
     {key: 'delivery', title: 'Giao hàng'},
@@ -65,13 +70,12 @@ const Body = ({data}) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     <View style={styles.bodyContainer}>
       {data.length > 0 && (
-        <Text style={styles.bodyHeader}>Sẵn sàng sử dụng</Text>
+        <Text style={styles.bodyHeader}>Voucher khả dụng</Text>
       )}
       <FlatList
         data={data}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => <ItemVoucher item={item} />}
-        contentContainerStyle={styles.flatListContent}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
       />
@@ -163,8 +167,6 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray300,
   },
   indicatorStyle: {
     backgroundColor: colors.primary,
@@ -185,26 +187,25 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   bodyContainer: {
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
+    backgroundColor: colors.white,
   },
   bodyHeader: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     color: colors.black,
   },
-  flatListContent: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
   itemVoucher: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderWidth: 1,
-    borderColor: colors.gray300,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT * 2,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray300,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
   },
   itemImage: {
     width: width / 4.5,
