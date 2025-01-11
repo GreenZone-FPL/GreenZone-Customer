@@ -1,20 +1,17 @@
+import React, { useState } from 'react';
 import {
-  StyleSheet,
   Image,
-  Alert,
-  View,
-  Text,
   KeyboardAvoidingView,
-  ScrollView,
   Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
-import React, {useState} from 'react';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import FlatInput from '../../components/inputs/FlatInput';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { FlatInput, LightStatusBar, PrimaryButton } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+
 
 const LoginScreen = props => {
   const [value, setValue] = useState();
@@ -32,14 +29,14 @@ const LoginScreen = props => {
             <Text style={styles.title}>GREEN ZONE</Text>
             <FlatInput
               label="Nhập số điện thoại"
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
               placeholder="Nhập số điện thoại của bạn..."
               setValue={setValue}
             />
             <PrimaryButton
               title="Đăng nhập"
               onPress={() => console.log('đăng nhập')}
-              style={{width: '100%'}}
+              style={{ width: '100%' }}
             />
             <View style={styles.row}>
               <View style={styles.separator}></View>

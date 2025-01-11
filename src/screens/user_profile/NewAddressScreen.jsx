@@ -1,12 +1,7 @@
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import NormalHeader from '../../components/headers/NormalHeader';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import FlatInput from '../../components/inputs/FlatInput';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
-import ScreenEnum from '../../constants/screenEnum';
+import React, { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { LightStatusBar, FlatInput, NormalHeader, PrimaryButton } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 
 const NewAddressScreen = (props) => {
@@ -19,7 +14,7 @@ const NewAddressScreen = (props) => {
 
         <SafeAreaView style={styles.container}>
             <LightStatusBar />
-            
+
             <NormalHeader
                 title='Thêm địa chỉ mới'
                 onLeftPress={() => navigation.goBack()} />
@@ -34,7 +29,7 @@ const NewAddressScreen = (props) => {
                 <Pressable
                     style={styles.location}
                     onPress={() => navigation.navigate(ScreenEnum.SearchAddressScreen)}>
-                    <Text>Chọn địa chỉ...</Text>
+                    <Text style={styles.normalText}>Chọn địa chỉ...</Text>
                 </Pressable>
 
                 <FlatInput
@@ -86,5 +81,9 @@ const styles = StyleSheet.create({
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         borderBottomColor: colors.primary,
         borderBottomWidth: 1,
+    },
+    normalText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.black
     }
 })

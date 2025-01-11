@@ -1,21 +1,20 @@
+import React from 'react';
 import {
-  View,
-  Text,
   Dimensions,
-  Image,
   FlatList,
-  TouchableOpacity,
+  Image,
   StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import React, {useState} from 'react';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import formatVND from '../../utils/formatVND';
-import {Icon} from 'react-native-paper';
 
 const width = Dimensions.get('window').width;
 
-const ProductsListVertical = props => {
+export const  ProductsListVertical = props => {
   const {onItemClick} = props;
 
   return (
@@ -127,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductsListVertical
+

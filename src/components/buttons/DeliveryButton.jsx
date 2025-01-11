@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
-const DeliveryButton = ({title, address, onPress, style}) => {
+
+export const DeliveryButton = ({title, address, onPress, style}) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
       <View
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeliveryButton;
+

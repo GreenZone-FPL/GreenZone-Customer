@@ -2,8 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { Badge } from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types'
 
 
@@ -12,7 +11,7 @@ const IconWithBadgePropTypes = {
     onPress: PropTypes.func,
 };
 
-const IconWithBadge = (props) => {
+export const  IconWithBadge = (props) => {
     const {
         quantity = 10,
         onPress
@@ -74,4 +73,3 @@ const styles = StyleSheet.create({
 });
 
 
-export default IconWithBadge;
