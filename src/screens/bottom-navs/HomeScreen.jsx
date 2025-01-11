@@ -55,7 +55,7 @@ const HomeScreen = props => {
         <HeaderWithBadge
           title="Home"
           onBadgePress={() => {
-            navigation.navigate('ProductDetailSheet');
+            navigation.navigate('NotificationScreen');
           }}
           isHome={true}
         />

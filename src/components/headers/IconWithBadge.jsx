@@ -32,7 +32,6 @@ export const  IconWithBadge = (props) => {
                     <Badge style={styles.badge}>00</Badge>
             }
 
-
         </Pressable>
     );
 };

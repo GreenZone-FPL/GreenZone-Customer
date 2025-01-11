@@ -4,6 +4,7 @@ import { ProductDetailSheet } from '../../components';
 import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
+import NotificationScreen from '../../screens/notification/NotificationScreen';
 
 
 const HomeStack = createNativeStackNavigator();
@@ -25,6 +26,7 @@ const HomeStackScreen = () => {
           headerShown: false,
         }}
       />
+      <HomeStack.Screen name={ScreenEnum.NotificationScreen} component={NotificationScreen} />
     </HomeStack.Navigator>
   );
 };
