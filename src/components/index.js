@@ -15,6 +15,10 @@ export * from './category/CategoryMenu';
 export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 
+// flatlists
+export * from './flatlists/ProductsListHorizontal';
+export * from './flatlists/ProductsListVertical';
+
 // footer
 export * from './footer/CheckoutFooter';
 
@@ -33,10 +37,6 @@ export * from './items/HorizontalProductItem';
 
 // notes-list
 export * from './notes-list/NotesList';
-
-// producs
-export * from './flastlists/ProductsListHorizontal';
-export * from './flastlists/ProductsListVertical';
 
 // radio
 export * from './radio/RadioButton';
