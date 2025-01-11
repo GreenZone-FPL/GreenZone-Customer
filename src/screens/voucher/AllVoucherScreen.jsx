@@ -1,99 +1,72 @@
+import React, {useState} from 'react';
 import {
   View,
   Text,
   Dimensions,
-  TouchableOpacity,
+  ScrollView,
   FlatList,
   Image,
-  ScrollView,
   StyleSheet,
-  StatusBar,
 } from 'react-native';
-import React, {useState} from 'react';
+import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import NormalHeader from '../../components/headers/NormalHeader';
 import colors from '../../constants/color';
 import GLOBAL_KEYS from '../../constants/globalKeys';
-import {Icon} from 'react-native-paper';
+import LightStatusBar from '../../components/status-bars/LightStatusBar';
 
-const width = Dimensions.get('window').width;
+const {width} = Dimensions.get('window');
 
 const AllVoucherScreen = ({navigation}) => {
-  const [selectMenu, setSelectMenu] = useState(1);
-  const selectedData =
-    selectMenu === 1
-      ? voucherData.delivery
-      : selectMenu === 2
-      ? voucherData.merchant
-      : voucherData.takeAway;
+  const [index, setIndex] = useState(0);
+
+  const renderScene = SceneMap({
+    delivery: () => <Body data={voucherData.delivery} />,
+    merchant: () => <Body data={voucherData.merchant} />,
+    takeAway: () => <Body data={voucherData.takeAway} />,
+  });
+
+  const routes = [
+    {key: 'delivery', title: 'Giao hàng'},
+    {key: 'merchant', title: 'Tại cửa hàng'},
+    {key: 'takeAway', title: 'Mang đi'},
+  ];
 
   return (
     <View style={styles.container}>
+      <LightStatusBar />
       <NormalHeader
         title="Phiếu ưu đãi của bạn"
         onLeftPress={() => navigation.goBack()}
       />
-      <View style={styles.menuContainer}>
-        <TabMenu selectMenu={selectMenu} setSelectMenu={setSelectMenu} />
-        <Body data={selectedData} />
-      </View>
+      <TabView
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{width}}
+        style={styles.tabView}
+        renderTabBar={props => (
+          <TabBar
+            {...props}
+            style={styles.tabBar}
+            indicatorStyle={styles.indicatorStyle}
+            activeColor={colors.primary}
+            inactiveColor={colors.black}
+            labelStyle={styles.labelStyle}
+            activeLabelStyle={styles.activeLabelStyle}
+            inactiveLabelStyle={styles.inactiveLabelStyle}
+          />
+        )}
+      />
     </View>
   );
 };
-
-const TabMenu = ({selectMenu, setSelectMenu}) => {
-  const tabs = [
-    {index: 1, title: 'Giao hàng', count: voucherData.delivery.length},
-    {index: 2, title: 'Tại cửa hàng', count: voucherData.merchant.length},
-    {index: 3, title: 'Mang đi', count: voucherData.takeAway.length},
-  ];
-
-  return (
-    <View style={styles.tabMenuContainer}>
-      {tabs.map(({index, title, count}) => (
-        <ItemTabMenu
-          key={index}
-          selectMenu={selectMenu}
-          setSelectMenu={setSelectMenu}
-          index={index}
-          title={title}
-          count={count}
-        />
-      ))}
-    </View>
-  );
-};
-
-const ItemTabMenu = ({selectMenu, setSelectMenu, index, title, count}) => (
-  <TouchableOpacity onPress={() => setSelectMenu(index)} style={styles.tabItem}>
-    <View style={styles.tabItemContent}>
-      <Text
-        style={[
-          styles.tabTitle,
-          {color: selectMenu === index ? colors.primary : null},
-        ]}>
-        {title}
-      </Text>
-      <Text style={styles.tabCount}>{count.toString()}</Text>
-    </View>
-    <View
-      style={[
-        styles.tabIndicator,
-        {
-          backgroundColor:
-            selectMenu === index ? colors.primary : colors.gray300,
-          height: selectMenu === index ? 2 : 1,
-        },
-      ]}
-    />
-  </TouchableOpacity>
-);
 
 const Body = ({data}) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     <View style={styles.bodyContainer}>
-      <Text style={styles.bodyHeader}>
-        {data.length > 0 ? 'Sẵn sàng sử dụng' : ''}
-      </Text>
+      {data.length > 0 && (
+        <Text style={styles.bodyHeader}>Sẵn sàng sử dụng</Text>
+      )}
       <FlatList
         data={data}
         keyExtractor={item => item.id.toString()}
@@ -115,6 +88,7 @@ const ItemVoucher = ({item}) => (
     </View>
   </View>
 );
+
 const voucherData = {
   delivery: [
     {
@@ -126,50 +100,50 @@ const voucherData = {
     },
     {
       id: 2,
-      name: 'Voucher Giảm Giá 10%',
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-03-20',
+      time: '2025-02-15',
     },
     {
-      id: 3,
-      name: 'Voucher Tặng Quà Tặng',
+      id: 12,
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-04-05',
+      time: '2025-02-15',
     },
     {
-      id: 4,
-      name: 'Voucher Khuyến Mãi Lớn',
+      id: 13,
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-05-10',
+      time: '2025-02-15',
     },
     {
-      id: 5,
-      name: 'Voucher Giảm Giá 20%',
+      id: 14,
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-06-12',
+      time: '2025-02-15',
     },
     {
-      id: 6,
-      name: 'Voucher Miễn Phí Giao Hàng',
+      id: 15,
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-07-15',
+      time: '2025-02-15',
     },
     {
-      id: 7,
-      name: 'Voucher Tích Lũy Điểm',
+      id: 16,
+      name: 'Voucher Miễn Phí Vận Chuyển',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
-      time: '2025-08-20',
+      time: '2025-02-15',
     },
   ],
   merchant: [
     {
-      id: 1,
+      id: 17,
       name: 'Voucher Giảm Giá 15%',
       image:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
@@ -178,58 +152,41 @@ const voucherData = {
   ],
   takeAway: [],
 };
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: colors.white,
-    flex: 1,
   },
-  menuContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  tabView: {
+    backgroundColor: colors.white,
   },
-  tabMenuContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: colors.gray300,
+  tabBar: {
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray300,
   },
-  tabItem: {
-    width: (width - GLOBAL_KEYS.PADDING_DEFAULT * 2) / 3,
-    flexDirection: 'column',
-    paddingTop: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingBottom: GLOBAL_KEYS.PADDING_DEFAULT,
-    flex: 1,
-  },
-  tabItemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
-  },
-  tabCount: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-    color: 'white',
+  indicatorStyle: {
     backgroundColor: colors.primary,
-    textAlign: 'center',
-    borderRadius: 7,
-    width: 14,
-    height: 14,
-    lineHeight: 14,
-    marginLeft: GLOBAL_KEYS.PADDING_SMALL / 2,
-    fontWeight: '500',
   },
-  tabIndicator: {
-    height: 2,
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
+  labelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+    color: colors.black,
+  },
+  activeLabelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  inactiveLabelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+    color: colors.black,
   },
   bodyContainer: {
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    margin: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    marginBottom: StatusBar.currentHeight + 90,
   },
   bodyHeader: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
@@ -237,40 +194,37 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   flatListContent: {
-    gap: GLOBAL_KEYS.GAP_SMALL,
-  },
-  itemVoucher: {
-    width: '100%',
-    height: width / 3,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderWidth: 1,
-    borderColor: colors.gray200,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
+  itemVoucher: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    borderWidth: 1,
+    borderColor: colors.gray300,
+    gap: GLOBAL_KEYS.GAP_DEFAULT * 2,
+  },
   itemImage: {
-    width: width / 4,
-    height: width / 4,
+    width: width / 4.5,
+    height: width / 4.5,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   itemDetails: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    justifyContent: 'space-evenly',
+    height: width / 4.5,
     flex: 1,
-    height: '100%',
   },
   itemTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    fontWeight: '600',
+    color: colors.black,
   },
   itemTime: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    fontWeight: '400',
   },
 });
 
