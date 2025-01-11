@@ -14,8 +14,17 @@ export * from './buttons/QuantitySelector'
 export * from './category/CategoryMenu'
 
 
+
+// containers
+export * from './containers/Column'
+export * from './containers/Row'
+
+
+
 // dialogs
 export * from './dialogs/DialogShippingMethod'
+export * from './dialogs/DialogFeedback'
+
 
 
 // footer
@@ -66,5 +75,6 @@ export * from './status-bars/OverlayStatusBar'
 // texts
 export * from './texts/DualTextRow'
 export * from './texts/PaymentMethodRow'
+export * from './texts/NormalText'
 
 
