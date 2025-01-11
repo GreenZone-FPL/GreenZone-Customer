@@ -99,7 +99,7 @@ const voucherData = {
       id: 1,
       name: 'Voucher Miễn Phí Vận Chuyển',
       image:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnIScARb-Vu_kGsKjpId-oCyaNsvGT0LCnZg&s',
+        'https://promacprinting.com/wp-content/uploads/2019/12/phieu-giam-gia-tra-sua.jpg',
       time: '2025-02-15',
     },
     {
@@ -199,18 +199,22 @@ const styles = StyleSheet.create({
   itemVoucher: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    backgroundColor: 'white',
     paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT * 2,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray300,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
+    margin: GLOBAL_KEYS.PADDING_SMALL,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemImage: {
     width: width / 4.5,
     height: width / 4.5,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    resizeMode: 'cover',
   },
   itemDetails: {
     flexDirection: 'column',
