@@ -5,7 +5,7 @@ import { colors } from '../../constants';
 import { NormalHeader } from '../../components';
 import { LightStatusBar } from '../../components';
 import { NormalText } from '../../components';
-import { IconWithBadge } from '../../components';
+import { PrimaryButton } from '../../components';
 
 const { height, width } = Dimensions.get('window');
 
@@ -60,9 +60,7 @@ const NotificationScreen = (props) => {
               <Image source={{ uri: selectedItems[selectedItems.length - 1].image }} style={styles.modalImage} />
               <Text style={styles.modalTitle}>{selectedItems[selectedItems.length - 1].title}</Text>
               <Text style={styles.modalMessage}>{selectedItems[selectedItems.length - 1].message}</Text>
-              <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                <Text style={styles.closeButtonText}>Đồng ý</Text>
-              </TouchableOpacity>
+                  <PrimaryButton title="Đã xem" onPress={closeModal}/>
             </View>
           </View>
         </Modal>
@@ -99,7 +97,7 @@ const data = [
     id: '1',
     title: 'Chào bạn mới',
     date: '14/1',
-    message: 'Lần đầu đến với Nhà, Nhà mong bạn có thật nhiều niềm vui nhé!',
+    message: 'Lần đầu đến với GreenZone, mong bạn có thật nhiều niềm vui nhé!',
     image: 'https://retaildesignblog.net/wp-content/uploads/2018/04/The-Coffee-House-Signature-by-BODC-Ho-Chi-Minh-City-Vietnam-720x480.jpg',
   },
   {
@@ -143,18 +141,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   title: {
-    fontSize: 16,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
   date: {
-    fontSize: 12,
-    color: '#888',
-    marginBottom: 5,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.gray850,
   },
   message: {
-    fontSize: 14,
-    color: '#333',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.gray850,
   },
   modalContainer: {
     flex: 1,
@@ -166,34 +162,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    alignItems: 'center',
+    gap: GLOBAL_KEYS.GAP_SMALL,
   },
   modalImage: {
     width: '100%',
     height: height / 4,
     resizeMode: 'cover',
-    marginBottom: 20,
   },
   modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
   },
   modalMessage: {
     fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  closeButton: {
-    backgroundColor: colors.primary,
-    padding: 15,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    alignItems: 'center',
-    width: '100%',
-  },
-  closeButtonText: {
-    color: colors.white,
-    fontWeight: 'bold',
+    color: colors.gray700,
   },
 });
