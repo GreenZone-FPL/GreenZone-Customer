@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     backgroundColor: colors.gray200,
-    marginTop: StatusBar.currentHeight,
+    marginTop: StatusBar.currentHeight + 40,
     borderTopLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     flex: 1,
