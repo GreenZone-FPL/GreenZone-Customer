@@ -26,9 +26,13 @@ const OrderHistoryScreen = (props) => {
                     />
                 );
             case 'completed':
-                return <OrderListView status="Completed" />;
+                return <OrderListView
+                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    status="Completed" />;
             case 'cancelled':
-                return <OrderListView status="Cancelled" />;
+                return <OrderListView
+                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    status="Cancelled" />;
             default:
                 return null;
         }
@@ -81,7 +85,7 @@ const OrderItem = ({
 
         <DualTextRow
             leftText={order.orderId}
-            rightText={order.totalAmount}
+            rightText={`${order.totalAmount}`}
             leftTextStyle={styles.orderName}
             rightTextStyle={styles.orderTotal}
             style={{ marginVertical: 0 }}
