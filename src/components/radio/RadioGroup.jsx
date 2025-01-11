@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import RadioButton from './RadioButton';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import {RadioButton} from './RadioButton';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
 
 
@@ -21,7 +20,7 @@ const RadioGroupPropTypes = {
   note: PropTypes.string,
 };
 
-const RadioGroup = ({
+export const RadioGroup = ({
   items,
   selectedValue,
   onValueChange,
@@ -84,5 +83,5 @@ const styles = StyleSheet.create({
 
 
 
-export default RadioGroup;
+
 

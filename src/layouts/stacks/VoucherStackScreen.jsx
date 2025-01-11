@@ -1,7 +1,7 @@
 
-import React, { useContext } from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import ScreenEnum from '../../constants/screenEnum';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
 

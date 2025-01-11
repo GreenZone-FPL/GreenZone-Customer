@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, FlatList, Pressable } from 'react-native';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import NormalHeader from '../../components/headers/NormalHeader';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { TabBar, TabView } from 'react-native-tab-view';
+import { Column, DualTextRow, LightStatusBar, NormalHeader, NormalText, Row } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const width = Dimensions.get('window').width;
 
 
-
-// Màn hình chính
 const OrderHistoryScreen = (props) => {
     const { navigation } = props;
     const [index, setIndex] = useState(0);
@@ -20,11 +16,24 @@ const OrderHistoryScreen = (props) => {
         { key: 'cancelled', title: 'Đã hủy' },
     ]);
 
-    const renderScene = SceneMap({
-        picked: () => <OrderListView status="Picked" />,
-        completed: () => <OrderListView status="Completed" />,
-        cancelled: () => <OrderListView status="Cancelled" />,
-    });
+    const renderScene = ({ route }) => {
+        switch (route.key) {
+            case 'picked':
+                return (
+                    <OrderListView
+                        onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                        status="Picked"
+                    />
+                );
+            case 'completed':
+                return <OrderListView status="Completed" />;
+            case 'cancelled':
+                return <OrderListView status="Cancelled" />;
+            default:
+                return null;
+        }
+    };
+
 
     return (
         <View style={styles.container}>
@@ -39,6 +48,13 @@ const OrderHistoryScreen = (props) => {
                 onIndexChange={setIndex}
                 initialLayout={{ width }}
                 swipeEnabled={true}
+                lazy // Kích hoạt chế độ lazy
+                renderLazyPlaceholder={() => (
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text>Đang tải...</Text>
+                    </View>
+                )}
+
                 renderTabBar={(props) => (
                     <TabBar
                         {...props}
@@ -49,6 +65,7 @@ const OrderHistoryScreen = (props) => {
                     />
                 )}
             />
+
         </View>
     );
 };
@@ -61,25 +78,22 @@ const OrderItem = ({
     <Pressable
         onPress={onPress}
         style={styles.orderItem}>
-        <View style={styles.row}>
-            <Text style={styles.orderName}>#{order.orderId}</Text>
-            <Text style={styles.orderTotal}>{order.totalAmount}đ</Text>
-        </View>
-        <View style={styles.row}>
-            <Text style={styles.orderStatus}>{order.status}</Text>
-            <Text style={styles.normalText}>4 items</Text>
-        </View>
 
+        <DualTextRow
+            leftText={order.orderId}
+            rightText={order.totalAmount}
+            leftTextStyle={styles.orderName}
+            rightTextStyle={styles.orderTotal}
+            style={{ marginVertical: 0 }}
+        />
 
-
-        <Text style={styles.orderTime}>{order.createdAt}</Text>
-        {order.estimatedTime && (
-            <View style={styles.column} >
-                <Text style={styles.normalText}>Đơn hàng đang được giao đến bạn</Text>
-                <Text style={styles.estimatedTime}>Dự kiến đến nơi vào {order.estimatedTime} hôm nay</Text>
-            </View>
-        )}
-
+        <DualTextRow
+            leftText={order.status}
+            rightText="4 items"
+            leftTextStyle={styles.orderStatus}
+            rightTextStyle={styles.normalText}
+            style={{ marginVertical: 0 }}
+        />
 
 
         {/* FlatList con: Hiển thị danh sách sản phẩm */}
@@ -87,21 +101,41 @@ const OrderItem = ({
             data={order.items}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-                <View style={styles.productItem}>
+                <Column style={styles.productItem}>
                     <Image
-                        source={{ uri: 'https://static.vecteezy.com/system/resources/previews/019/199/710/non_2x/bubble-milk-tea-pearl-milk-tea-png.png' }}
+                        source={{ uri: 'https://www.onicifood.com/cdn/shop/products/332594556_3485601318363625_7384526670140317642_n.png?v=1677766982&width=1445' }}
                         style={styles.productImage}
                     />
                     <Text style={styles.productName} numberOfLines={2} ellipsizeMode="tail">
                         {item.name}
                     </Text>
-                </View>
+                </Column>
             )}
-            horizontal
+            horizontal={true}
+            scrollEnabled={true}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8 }}
-            style={styles.productList}
+            contentContainerStyle={{ gap: 16 }}
         />
+
+        <Row style={{ alignItems: 'flex-start', justifyContent: 'space-between' }}>
+
+            <NormalText
+                style={{ color: colors.gray850 }}
+                text={order.createdAt} />
+
+            {order.estimatedTime && (
+
+                <Column>
+                    <NormalText text='Đơn hàng đang được giao đến bạn' />
+
+                    <NormalText
+                        style={{ color: colors.primary }}
+                        text={`Dự kiến đến nơi vào ${order.estimatedTime} hôm nay`} />
+                </Column>
+
+
+            )}
+        </Row>
     </Pressable>
 );
 
@@ -157,7 +191,7 @@ const orders = [
 
 
 // Màn hình từng trạng thái
-const OrderListView = ({ status }) => {
+const OrderListView = ({ status, onItemPress }) => {
     const filteredOrders = orders.filter((order) => order.status === status);
 
     return (
@@ -169,7 +203,7 @@ const OrderListView = ({ status }) => {
                     contentContainerStyle={{ gap: 8 }}
                     renderItem={({ item }) =>
                         <OrderItem
-                            onPress={() => { }}
+                            onPress={() => { onItemPress() }}
                             order={item} />
                     }
                 />
@@ -222,20 +256,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        // backgroundColor: 'green'
     },
     column: {
         flexDirection: 'column',
         gap: 6
     },
     orderItem: {
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        paddingVertical: 16,
-        paddingHorizontal: 8,
+        backgroundColor: colors.white,
+        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+        paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
         gap: 6,
         shadowColor: colors.black,
-        shadowOffset:{width: 5, height: 4},
+        shadowOffset: { width: 5, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
         elevation: 4,
@@ -245,49 +278,49 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     orderStatus: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.pink500,
         fontWeight: '500'
 
     },
     orderTotal: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.pink500,
         fontWeight: 'bold',
         textAlign: 'right'
     },
     orderTime: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.gray850,
 
     },
-    productList: {
 
-    },
     productItem: {
         width: 80,
         maxHeight: 120,
         alignItems: 'center',
-        marginRight: 16,
+        gap: 5
     },
     productImage: {
         width: 80,
         height: 80,
-        borderRadius: 8,
+        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
 
     },
     productName: {
-        fontSize: 12,
-        color: '#333', // Màu chữ mặc định cho tên sản phẩm
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+        color: colors.black,
         textAlign: 'center',
+        overflow: 'hidden'
     },
     normalText: {
-        fontSize: 14,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.gray850
     },
     estimatedTime: {
         fontWeight: '400',
-        color: colors.primary
+        color: colors.primary,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     }
 });
 

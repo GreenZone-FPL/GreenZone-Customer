@@ -1,5 +1,5 @@
 
-const GLOBAL_KEYS = Object.freeze({
+export const GLOBAL_KEYS = Object.freeze({
     USER_KEY: 'User',
     MAX_QUANTITY: 99,
     MIN_QUANTITY: 0,
@@ -14,14 +14,15 @@ const GLOBAL_KEYS = Object.freeze({
     PADDING_DEFAULT: 16,
     PADDING_SMALL: 8,
 
-    TEXT_SIZE_SMALL: 12,
-    TEXT_SIZE_DEFAULT: 14,
-    TEXT_SIZE_HEADER: 16,
+    TEXT_SIZE_SMALL: 10,
+    TEXT_SIZE_DEFAULT: 12,
+    TEXT_SIZE_HEADER: 14,
 
     GAP_DEFAULT: 16,
     GAP_SMALL: 8,
 
-    LIGHT_HEIGHT_DEFAULT: 22
+    LIGHT_HEIGHT_DEFAULT: 20
 });
 
-export default GLOBAL_KEYS
+
+

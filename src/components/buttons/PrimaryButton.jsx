@@ -1,10 +1,9 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types'
 
-const PrimaryButton = props => {
+export const PrimaryButton = props => {
   const {
     title = 'Default title',
     onPress = () => { },
@@ -39,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PrimaryButton
+

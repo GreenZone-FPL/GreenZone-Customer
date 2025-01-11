@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import Feather from 'react-native-vector-icons/Feather';
 import PropTypes from 'prop-types';
 
@@ -23,7 +22,7 @@ const QuantityButtonPropTypes = {
          iconColor={colors.primary}
     />
  */
-const QuantityButton = ({
+export const QuantityButton = ({
     iconName,
     onPress,
     iconColor,
@@ -51,4 +50,3 @@ const styles = StyleSheet.create({
         borderColor: colors.gray400,
     }
 });
-export default QuantityButton

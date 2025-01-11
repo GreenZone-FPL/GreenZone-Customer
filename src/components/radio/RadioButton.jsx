@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
 
 
@@ -16,7 +15,7 @@ const RadioButtonPropTypes = {
 };
 
 
-const RadioButton = ({
+export const  RadioButton = ({
     label,
     selected,
     onPress,
@@ -81,4 +80,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RadioButton;
+

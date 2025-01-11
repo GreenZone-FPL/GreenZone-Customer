@@ -1,24 +1,23 @@
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  StyleSheet,
-  StatusBar,
-  ScrollView,
-} from 'react-native';
 import React from 'react';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import {Icon} from 'react-native-paper';
-import OverlayStatusBar from '../status-bars/OverlayStatusBar';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 
 const width = Dimensions.get('window').width;
 
-const MerchantDetailSheet = props => {
-  const {navigation, route} = props;
-  const {item} = route.params;
+export const MerchantDetailSheet = props => {
+  const { navigation, route } = props;
+  const { item } = route.params;
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -35,9 +34,9 @@ const MerchantDetailSheet = props => {
   );
 };
 
-const Slider = ({item, handleGoBack}) => (
+const Slider = ({ item, handleGoBack }) => (
   <View>
-    <Image source={{uri: item.image}} style={styles.image} />
+    <Image source={{ uri: item.image }} style={styles.image} />
     <TouchableOpacity
       style={styles.goBackButton}
       onPress={() => handleGoBack()}>
@@ -50,7 +49,7 @@ const Slider = ({item, handleGoBack}) => (
   </View>
 );
 
-const Body = ({item}) => (
+const Body = ({ item }) => (
   <ScrollView>
     <View style={styles.body}>
       <Text style={styles.title}>{item.name}</Text>
@@ -149,4 +148,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MerchantDetailSheet;
+
+

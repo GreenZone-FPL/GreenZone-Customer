@@ -1,11 +1,8 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import LightStatusBar from '../../components/status-bars/LightStatusBar';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import CustomSearchBar from '../../components/inputs/CustomSearchBar';
-import ScreenEnum from '../../constants/screenEnum';
+import { CustomSearchBar, LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const SearchAddressScreen = (props) => {
     const navigation = props.navigation
@@ -22,7 +19,7 @@ const SearchAddressScreen = (props) => {
                         size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                     />
                 </Pressable>
-                
+
                 <CustomSearchBar
                     placeholder="Tìm kiếm..."
                     searchQuery={searchQuery}
@@ -44,7 +41,7 @@ const SearchAddressScreen = (props) => {
                     color={colors.primary}
                     size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                 />
-                <Text>Chọn trên bản đồ</Text>
+                <Text style={styles.normalText}>Chọn trên bản đồ</Text>
                 <Icon
                     source="chevron-right"
                     color={colors.primary}
@@ -84,5 +81,9 @@ const styles = StyleSheet.create({
         shadowRadius: 6,
         elevation: 4,
     },
+    normalText: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.black
+    }
 
 })

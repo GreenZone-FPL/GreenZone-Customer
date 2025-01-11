@@ -1,4 +1,4 @@
-const colors = Object.freeze({
+export const colors = Object.freeze({
     primary: '#299345',
     green750: '#28A745',
     green700: '#31A569',
@@ -33,4 +33,3 @@ const colors = Object.freeze({
     overlay: 'rgba(0, 0, 0, 0.5)'
    
 })
-export default colors

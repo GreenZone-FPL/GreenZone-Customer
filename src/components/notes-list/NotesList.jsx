@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
-const NotesList = ({
+export const NotesList = ({
   title = "Danh sách ghi chú",
   items,
   selectedNotes,
@@ -81,4 +80,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotesList
+

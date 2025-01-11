@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import QuantityButton from './QuantityButton';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { QuantityButton } from './QuantityButton';
 import PropTypes from 'prop-types';
 
 
@@ -14,7 +13,7 @@ const QuantitySelectorPropTypes = {
   handleMinus: PropTypes.func,
 }
 
-const QuantitySelector = ({
+export const QuantitySelector = ({
   quantity,
   iconColor = colors.primary,
   textColor = colors.black,
@@ -53,4 +52,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QuantitySelector;
+

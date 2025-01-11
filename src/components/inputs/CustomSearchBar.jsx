@@ -1,9 +1,8 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, Pressable } from 'react-native';
 import PropTypes from 'prop-types'; // Import thư viện PropTypes
-import colors from '../../constants/color';
+import React from 'react';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 
 
@@ -34,7 +33,7 @@ const CustomSearchBarPropTypes = {
     />
  *
  */
-const CustomSearchBar = ({
+export const CustomSearchBar = ({
   placeholder = "Search",
   searchQuery,
   setSearchQuery,
@@ -93,4 +92,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomSearchBar;
+
