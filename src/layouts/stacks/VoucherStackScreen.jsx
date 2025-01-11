@@ -3,7 +3,7 @@ import React from 'react';
 import {ScreenEnum} from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
-import AllVoucherScreen from '../../screens/voucher/AllVoucherScreen';
+import AllVoucherScreen from '../../screens/voucher/MyVoucherScreen';
 
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {

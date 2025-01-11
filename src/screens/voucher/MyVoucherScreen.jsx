@@ -40,7 +40,7 @@ const AllVoucherScreen = ({navigation}) => {
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader
-        title="Phiếu ưu đãi của bạn"
+        title="Phiếu ưu đãi của tôi"
         onLeftPress={() => navigation.goBack()}
       />
       <TabView
