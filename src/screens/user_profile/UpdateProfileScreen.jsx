@@ -1,24 +1,19 @@
+import React, { useState } from 'react';
 import {
-  View,
+  Dimensions,
   Image,
-  StyleSheet,
   KeyboardAvoidingView,
   ScrollView,
-  Text,
+  StyleSheet,
+  View
 } from 'react-native';
-import React, {useState} from 'react';
-import NormalHeader from '../../components/headers/NormalHeader';
-import colors from '../../constants/color';
-import {Icon} from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import {Dimensions} from 'react-native';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
-import {CustomFlatInput} from '../../components/inputs/FlatInput';
-import FlatInput from '../../components/inputs/FlatInput';
+import { Icon } from 'react-native-paper';
+import { FlatInput, CustomFlatInput, NormalHeader, PrimaryButton } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const UpdateProfileScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');

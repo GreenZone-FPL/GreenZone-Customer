@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
-const DeliveryButton = ({title, address, onPress}) => {
+
+export const DeliveryButton = ({title, address, onPress, style}) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
       <View
         style={{
           flexDirection: 'row',
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    width: '100%',
+    flex: 1
   },
 
   icon: {
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeliveryButton;
+

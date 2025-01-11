@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar } from 'react-native';
 import { IconButton, Icon } from 'react-native-paper';
-import GLOBAL_KEYS from '../../constants/globalKeys';
-import colors from '../../constants/color';
-import RadioGroup from '../radio/RadioGroup';
-import OverlayStatusBar from '../status-bars/OverlayStatusBar';
-import SelectableGroup from '../radio/SelectableGroup';
-import CheckoutFooter from '../footer/CheckoutFooter';
-import NotesList from '../notes-list/NotesList';
+
+import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFooter } from '../../components'
+import { colors, GLOBAL_KEYS } from '../../constants';
 
 
 
 
-
-const ProductDetailSheet = (props) => {
+export const ProductDetailSheet = (props) => {
 
     const { navigation } = props;
     const [showFullDescription, setShowFullDescription] = useState(false);
@@ -70,8 +65,8 @@ const ProductDetailSheet = (props) => {
                     selectedGroup={selectedGroup}
                     setSelectedGroup={setSelectedGroup}
                     note="Tối đa 3 toppings"
-                    activeIconColor = {colors.primary}
-                    activeTextColor = {colors.primary}
+                    activeIconColor={colors.primary}
+                    activeTextColor={colors.primary}
                 />
 
                 <NotesList
@@ -104,6 +99,7 @@ const ProductDetailSheet = (props) => {
                 }}
                 totalPrice={68000}
                 addToCart={() => { }}
+                buttonTitle='Thêm vào giỏ hàng'
             />
         </View>
     );
@@ -327,5 +323,5 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ProductDetailSheet;
+
 

@@ -1,9 +1,8 @@
-import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { TextInput } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 // PropTypes cho FlatInput
 const FlatInputPropTypes = {
@@ -61,7 +60,7 @@ const CustomFlatInputPropTypes = {
  *    keyboardType="email-address"
  * />
  */
-const FlatInput = ({
+export const FlatInput = ({
   label = 'Default label',
   placeholder = 'Default place holder',
   value,
@@ -119,7 +118,7 @@ FlatInput.propTypes = FlatInputPropTypes;
  *    keyboardType="email-address"
  * />
  */
-const CustomFlatInput = ({
+export const CustomFlatInput = ({
   label = 'Default label',
   placeholder = 'Default place holder',
   value,
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     elevation: 3,
     shadowColor: colors.primary,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
@@ -185,5 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FlatInput;
-export {CustomFlatInput};
+
