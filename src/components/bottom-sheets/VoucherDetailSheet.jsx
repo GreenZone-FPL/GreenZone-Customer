@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import React, {useState} from 'react';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
@@ -29,6 +30,10 @@ const VoucherDetailSheet = props => {
     setTimeout(() => {
       setShowAlert(false);
     }, 2000);
+  };
+
+  const handleTermsText = () => {
+    Linking.openURL(item.homepage);
   };
 
   return (
@@ -83,7 +88,9 @@ const VoucherDetailSheet = props => {
               ))}
               <Text style={styles.termsText}>
                 Xem thêm các điều khoản sử dụng dịch vụ tại:
-                <Text style={styles.termsLink}>{item.homepage}</Text>
+                <TouchableOpacity onPress={() => handleTermsText()}>
+                  <Text style={styles.termsLink}>{item.homepage}</Text>
+                </TouchableOpacity>
               </Text>
             </View>
           </ScrollView>
@@ -194,7 +201,7 @@ const styles = StyleSheet.create({
     color: colors.blue600,
   },
   orderButton: {
-    backgroundColor: colors.black,
+    backgroundColor: colors.primary,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   orderButtonText: {
