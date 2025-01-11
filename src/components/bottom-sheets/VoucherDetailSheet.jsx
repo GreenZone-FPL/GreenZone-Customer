@@ -149,7 +149,6 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT * 2,
     marginBottom: GLOBAL_KEYS.PADDING_DEFAULT * 2,
     marginTop: GLOBAL_KEYS.PADDING_DEFAULT,
-
     overflow: 'hidden',
   },
   contentContainer: {
