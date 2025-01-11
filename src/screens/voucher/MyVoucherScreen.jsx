@@ -14,7 +14,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 
 const {width} = Dimensions.get('window');
 
-const AllVoucherScreen = ({navigation}) => {
+const MyVoucherScreen = ({navigation}) => {
   const [index, setIndex] = useState(0);
 
   const renderScene = ({route}) => {
@@ -233,4 +233,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllVoucherScreen;
+export default MyVoucherScreen;
