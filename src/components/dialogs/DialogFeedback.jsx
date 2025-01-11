@@ -11,7 +11,6 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
-  TouchableWithoutFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Icon } from 'react-native-paper';
@@ -163,6 +162,7 @@ const DialogFeedback = ({ isVisible, onHide }) => {
           </View>
         </View>
       </Modal>
+
     </Modal>
 
 
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   imagePickerOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
   },
   imagePickerContainer: {
     backgroundColor: colors.white,
