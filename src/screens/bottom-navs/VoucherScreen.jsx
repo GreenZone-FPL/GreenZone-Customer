@@ -1,19 +1,27 @@
 import React from 'react';
-import { Image, ImageBackground, Pressable, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { LightStatusBar } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {LightStatusBar} from '../../components';
+import {GLOBAL_KEYS, colors, ScreenEnum} from '../../constants';
 
-
-const VoucherScreen = () => {
+const VoucherScreen = props => {
+  const {navigation} = props;
   return (
     <ScrollView style={styles.container}>
       <LightStatusBar />
       <ImageBackground
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
-        style={styles.imageBg}
-      >
+        style={styles.imageBg}>
         <View style={styles.column}>
           <Text style={styles.title}>Ưu đãi</Text>
           <View style={styles.content}>
@@ -28,7 +36,10 @@ const VoucherScreen = () => {
             </Pressable>
           </View>
           <View style={styles.barCode}>
-            <Image source={require('../../assets/images/barcode.png')} style={styles.imgcode} />
+            <Image
+              source={require('../../assets/images/barcode.png')}
+              style={styles.imgcode}
+            />
             <Text style={styles.code}>M41352236</Text>
           </View>
         </View>
@@ -66,21 +77,25 @@ const VoucherScreen = () => {
 
         <View style={styles.ticket}>
           <Text style={styles.ticketTitle}>Phiếu ưu đãi của bạn</Text>
-          <Pressable style={styles.btnTicket}>
+          <Pressable
+            onPress={() => navigation.navigate(ScreenEnum.AllVoucherScreen)}
+            style={styles.btnTicket}>
             <Text style={styles.textBtn}>Xem tất cả</Text>
           </Pressable>
         </View>
-
-
       </View>
     </ScrollView>
   );
 };
 
-const Card = ({ iconName, color, title, onPress }) => {
+const Card = ({iconName, color, title, onPress}) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
-      <Icon source={iconName} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
+      <Icon
+        source={iconName}
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        color={color}
+      />
       <Text style={styles.cardText}>{title}</Text>
     </Pressable>
   );
@@ -90,11 +105,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     flexDirection: 'column',
-    gap: 16
+    gap: 16,
   },
   imageBg: {
     width: '100%',
-    height: 360
+    height: 360,
   },
   column: {
     flexDirection: 'column',
@@ -122,7 +137,7 @@ const styles = StyleSheet.create({
   },
   textVoucher: {
     color: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   barCode: {
     backgroundColor: colors.white,
@@ -133,7 +148,7 @@ const styles = StyleSheet.create({
   },
   imgcode: {
     width: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   row: {
     flexDirection: 'row',
@@ -148,7 +163,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 4,
@@ -174,17 +189,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     paddingVertical: 6,
-
   },
   textBtn: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   code: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    color: colors.black
-  }
+    color: colors.black,
+  },
 });
-
 
 export default VoucherScreen;

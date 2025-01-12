@@ -42,4 +42,6 @@ export const ScreenEnum = Object.freeze({
 
   // membership
   MembershipCard: 'MembershipCard',
+  // voucher
+  AllVoucherScreen: ' AllVoucherScreen',
 });

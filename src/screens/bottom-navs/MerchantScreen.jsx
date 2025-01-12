@@ -13,10 +13,6 @@ import { Icon } from 'react-native-paper';
 import { CustomSearchBar, HeaderWithBadge } from '../../components';
 import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
-const height = Dimensions.get('window').height;
-
-console.log('Height:', height);
-
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');
 
