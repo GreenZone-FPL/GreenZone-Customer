@@ -27,6 +27,31 @@ const CustomTabViewPropTypes = {
   ]),
 };
 
+/**
+ *
+ * Usage example
+ *  <CustomTabView
+      tabIndex={tabIndex}
+      setTabIndex={setTabIndex}
+      tabBarConfig={{
+        titles: ['Tab A', 'Tab B', 'Tab C'],
+      }}
+    >
+      <View>
+        <Text>Đây là nội dung của Tab A</Text>
+      </View>
+
+      <View>
+        <Text>Đây là nội dung của Tab B</Text>
+      </View>
+
+      <View>
+        <Text>Đây là nội dung của Tab C</Text>
+      </View>
+
+    </CustomTabView>
+ */
+
 export const CustomTabView = ({
   tabIndex = 0,
   setTabIndex = () => { },
