@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   deliverybutton: {
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
     position: 'absolute',
     bottom: 0,
+    marginHorizontal:GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });

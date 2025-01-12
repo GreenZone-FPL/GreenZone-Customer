@@ -37,9 +37,10 @@ const ProfileScreen = props => {
               icon="file-document-edit"
               color={colors.orange700}
               title="Lịch sử đơn hàng"
-              onPress={() => { navigation.navigate(ScreenEnum.OrderHistoryScreen) }}
+              onPress={() => { navigation.navigate(ScreenEnum.OrderHistoryScreen); }}
             />
           </View>
+
         </View>
 
         <Text style={styles.sectionTitle}>Tiện ích</Text>

@@ -1,8 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
-
+const {width} = Dimensions.get('window');
 export const DeliveryButton = ({title, address, onPress, style}) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
@@ -39,7 +46,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    flex: 1
+    width: width - GLOBAL_KEYS.PADDING_DEFAULT * 2,
   },
 
   icon: {
@@ -58,5 +65,3 @@ const styles = StyleSheet.create({
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
 });
-
-

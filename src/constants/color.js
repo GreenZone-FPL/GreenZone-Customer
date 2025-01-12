@@ -4,6 +4,7 @@ export const colors = Object.freeze({
   green700: '#31A569',
   green600: '#43D685',
   green500: '#97C93C',
+  green200: '#E7FFCE',
   green100: '#EFFDEE',
   teal900: '#018786',
   teal700: '#06988B',

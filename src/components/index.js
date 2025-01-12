@@ -61,5 +61,15 @@ export * from './texts/DualTextRow'
 export * from './texts/PaymentMethodRow'
 export * from './texts/NormalText'
 
+// ranks
+export * from './ranks/NewRank';
+export * from './ranks/BronzeRank';
+export * from './ranks/SilveRank';
+export * from './ranks/DiamonRank';
+export * from './ranks/GoldRank';
+export * from './ranks/CardRank';
+
+
+
 
 

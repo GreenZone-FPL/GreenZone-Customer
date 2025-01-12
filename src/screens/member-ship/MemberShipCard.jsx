@@ -1,10 +1,20 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import ProgressBar from 'react-native-progress/Bar';
-import {colors} from '../../constants';
+import {Tab, TabView} from '@rneui/themed';
 import {Bucket} from 'iconsax-react-native';
-import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
-import {NormalHeader} from '../../components';
+import React, {useState} from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import ProgressBar from 'react-native-progress/Bar';
+import {
+  NormalHeader,
+  NewRank,
+  BronzeRank,
+  SilveRank,
+  GoldRank,
+  DiamonRank,
+} from '../../components';
+
+import {colors, GLOBAL_KEYS} from '../../constants';
+
+const width = Dimensions.get('window').width;
 
 // Component con cho Header của Card
 const CardHeader = ({rank, bean}) => (
@@ -54,65 +64,18 @@ const InfoContainer = ({messages}) => (
   </View>
 );
 
-// Các nội dung cho từng tab
-const FirstRoute = () => (
-  <View style={[styles.scene, {backgroundColor: colors.white}]}>
-    <Text style={styles.tabText}>Tab 1 Content</Text>
-  </View>
-);
-const SecondRoute = () => (
-  <View style={[styles.scene, {backgroundColor: colors.white}]}>
-    <Text style={styles.tabText}>Tab 2 Content</Text>
-  </View>
-);
-const ThirdRoute = () => (
-  <View style={[styles.scene, {backgroundColor: colors.white}]}>
-    <Text style={styles.tabText}>Tab 3 Content</Text>
-  </View>
-);
-const FourthRoute = () => (
-  <View style={[styles.scene, {backgroundColor: colors.white}]}>
-    <Text style={styles.tabText}>Tab 4 Content</Text>
-  </View>
-);
-const FifthRoute = () => (
-  <View style={[styles.scene, {backgroundColor: colors.white}]}>
-    <Text style={styles.tabText}>Tab 5 Content</Text>
-  </View>
-);
-
-const MembershipCard = () => {
+const MembershipCard = props => {
+  const {navigation} = props;
   const progress = 0.5;
-  const progressBarWidth = 260; // Width of the progress bar
+  const progressBarWidth = width - 4 * GLOBAL_KEYS.PADDING_DEFAULT;
   const [index, setIndex] = useState(0);
-  const [routes] = useState([
-    {key: 'first', title: 'Mới'},
-    {key: 'second', title: 'Đồng'},
-    {key: 'third', title: 'Bạc'},
-    {key: 'fourth', title: 'Vàng'},
-    {key: 'fifth', title: 'Kim cương'},
-  ]);
-
-  const renderScene = ({route}) => {
-    switch (route.key) {
-      case 'first':
-        return <FirstRoute />;
-      case 'second':
-        return <SecondRoute />;
-      case 'third':
-        return <ThirdRoute />;
-      case 'fourth':
-        return <FourthRoute />;
-      case 'fifth':
-        return <FifthRoute />;
-      default:
-        return null;
-    }
-  };
 
   return (
     <View style={styles.container}>
-      <NormalHeader title="Hạng thành viên" />
+      <NormalHeader
+        title="Hạng thành viên"
+        onLeftPress={() => navigation.goBack()}
+      />
 
       {/* Card container */}
       <View style={styles.cardContainer}>
@@ -131,22 +94,81 @@ const MembershipCard = () => {
       </View>
 
       {/* TabView container */}
+      <Tab
+        value={index}
+        onChange={e => setIndex(e)}
+        indicatorStyle={styles.indicatorStyle}
+        containerStyle={[styles.tabContainer, {width: width}]}
+        variant="primary"
+        scrollable={true}>
+        <Tab.Item
+          title="Mới"
+          titleStyle={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: index === 0 ? colors.primary : colors.gray700,
+          }}
+          containerStyle={styles.tabItemContainer}
+        />
+        <Tab.Item
+          title="Đồng"
+          titleStyle={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: index === 1 ? colors.primary : colors.gray700,
+          }}
+          containerStyle={styles.tabItemContainer}
+        />
+        <Tab.Item
+          title="Bạc"
+          titleStyle={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: index === 2 ? colors.primary : colors.gray700,
+          }}
+          containerStyle={styles.tabItemContainer}
+        />
+        <Tab.Item
+          title="Vàng"
+          titleStyle={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: index === 3 ? colors.primary : colors.gray700,
+          }}
+          containerStyle={styles.tabItemContainer}
+        />
+        <Tab.Item
+          title="Kim cương"
+          titleStyle={{
+            fontSize: 12,
+            fontWeight: '500',
+            color: index === 4 ? colors.primary : colors.gray700,
+          }}
+          containerStyle={styles.tabItemContainer}
+        />
+      </Tab>
+
       <TabView
-        navigationState={{index, routes}}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        style={[styles.tabView, styles.shadowStyle,]}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            indicatorStyle={{backgroundColor: colors.primary, height: 2}}
-            style={[{backgroundColor: colors.white}]}
-            activeColor={colors.primary}
-            inactiveColor={colors.gray700}
-            tabStyle={{width: 'auto'}}
-          />
-        )}
-      />
+        value={index}
+        onChange={setIndex}
+        animationType="spring"
+        containerStyle={styles.tabViewContainer}>
+        <TabView.Item style={styles.tabViewItem}>
+          <NewRank/>
+        </TabView.Item>
+        <TabView.Item style={styles.tabViewItem}>
+          <BronzeRank />
+        </TabView.Item>
+        <TabView.Item style={styles.tabViewItem}>
+          <SilveRank />
+        </TabView.Item>
+        <TabView.Item style={styles.tabViewItem}>
+          <GoldRank />
+        </TabView.Item>
+        <TabView.Item style={styles.tabViewItem}>
+          <DiamonRank />
+        </TabView.Item>
+      </TabView>
     </View>
   );
 };
@@ -154,34 +176,36 @@ const MembershipCard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.gray200,
   },
   cardContainer: {
     backgroundColor: colors.primary,
-    borderTopEndRadius: 12,
-    borderTopStartRadius: 12,
-    padding: 20,
-    marginHorizontal: 16,
+    borderTopEndRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
+    borderTopStartRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginTop: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   rankText: {
-    color: '#FFFFFF',
+    color: colors.white,
     fontWeight: 'bold',
     fontSize: 24,
   },
   beanText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: colors.white,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   progressBarContainer: {
     position: 'relative',
     height: 10,
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: GLOBAL_KEYS.PADDING_SMALL,
   },
   iconContainer: {
     position: 'absolute',
@@ -190,43 +214,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   progressText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    color: colors.white,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   progressBar: {
     flex: 1,
   },
   infoContainer: {
-    marginTop: 10,
+    marginTop: GLOBAL_KEYS.PADDING_SMALL,
   },
   infoText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    marginBottom: 5,
+    color: colors.white,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    marginBottom: GLOBAL_KEYS.PADDING_SMALL,
   },
-  tabView: {
-    flex: 1,
-    borderTopEndRadius: 20,
-    borderTopStartRadius: 20,
+  indicatorStyle: {
+    backgroundColor: colors.primary,
+    height: 3,
   },
-  scene: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabText: {
-    color: '#000',
-    fontSize: 16,
-  },
-  shadowStyle: {
+  tabContainer: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
+    borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
+    overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+
+  tabItemContainer: {
+    backgroundColor: colors.white,
+  },
+  tabViewContainer: {
+    backgroundColor: colors.gray200,
+  },
+  tabViewItem: {
+    backgroundColor: colors.gray200,
   },
 });
 
