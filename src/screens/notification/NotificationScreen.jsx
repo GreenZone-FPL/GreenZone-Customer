@@ -1,27 +1,33 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, FlatList, Image, Dimensions, Modal, TouchableOpacity } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { NormalHeader, LightStatusBar, NormalText , PrimaryButton} from '../../components';
+import { NormalHeader, LightStatusBar, NormalText, PrimaryButton } from '../../components';
 
 const { height, width } = Dimensions.get('window');
 
 const NotificationScreen = (props) => {
   const navigation = props.navigation;
 
-  const [modalVisible, setModalVisible] = useState(false); // Quản lý trạng thái Modal
-  const [selectedItems, setSelectedItems] = useState([]); // Lưu trữ danh sách các item được chọn
+  const [modalVisible, setModalVisible] = useState(false); 
+  const [selectedItems, setSelectedItems] = useState({}); 
 
   const handleItemPress = (item) => {
-    // Kiểm tra nếu item đã được chọn, nếu chưa thì thêm vào danh sách selectedItems
-    if (!selectedItems.some(selectedItem => selectedItem.id === item.id)) {
-      setSelectedItems([...selectedItems, item]); // Thêm item vào danh sách các item đã chọn
+    if (!selectedItems[item.id]) {
+      setSelectedItems({
+        ...selectedItems,
+        [item.id]: item, 
+      });
     }
-    setModalVisible(true); // Hiển thị Modal
+    setModalVisible(true); 
   };
 
   const closeModal = () => {
-    setModalVisible(false); // Đóng Modal
+    setModalVisible(false);
   };
+
+
+  const selectedItemArray = Object.values(selectedItems);
+  const lastSelectedItem = selectedItemArray[selectedItemArray.length - 1]; 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,15 +42,16 @@ const NotificationScreen = (props) => {
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleItemPress(item)}>
-            <Card item={item} selectedItems={selectedItems} />
-          </TouchableOpacity>
+          <Card
+            item={item}
+            selectedItems={selectedItems} 
+            handleItemPress={handleItemPress} 
+          />
         )}
         contentContainerStyle={styles.listContainer}
       />
 
-      {/* Modal hiển thị chi tiết */}
-      {selectedItems.length > 0 && (
+      {selectedItemArray.length > 0 && (
         <Modal
           visible={modalVisible}
           animationType="fade" // Hiệu ứng hiện Modal
@@ -53,10 +60,10 @@ const NotificationScreen = (props) => {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Image source={{ uri: selectedItems[selectedItems.length - 1].image }} style={styles.modalImage} />
-              <Text style={styles.modalTitle}>{selectedItems[selectedItems.length - 1].title}</Text>
-              <Text style={styles.modalMessage}>{selectedItems[selectedItems.length - 1].message}</Text>
-              <PrimaryButton title="Đã xem" onPress={closeModal}/>
+              <Image source={{ uri: lastSelectedItem.image }} style={styles.modalImage} />
+              <Text style={styles.modalTitle}>{lastSelectedItem.title}</Text>
+              <Text style={styles.modalMessage}>{lastSelectedItem.message}</Text>
+              <PrimaryButton title="Đã xem" onPress={closeModal} />
             </View>
           </View>
         </Modal>
@@ -65,10 +72,11 @@ const NotificationScreen = (props) => {
   );
 };
 
-const Card = ({ item, selectedItems }) => {
-  const isSelected = selectedItems.some(selectedItem => selectedItem.id === item.id); // Kiểm tra nếu item hiện tại là item đã được chọn
+const Card = ({ item, selectedItems, handleItemPress }) => {
+  const isSelected = !!selectedItems[item.id]; // Kiểm tra nếu item đã được chọn
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => handleItemPress(item)}
       style={[
         styles.itemContainer,
         {
@@ -84,7 +92,7 @@ const Card = ({ item, selectedItems }) => {
         </View>
         <NormalText text={item.message} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -170,7 +178,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   modalMessage: {
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
   },
 });
