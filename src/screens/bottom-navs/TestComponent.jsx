@@ -1,73 +1,34 @@
 import React from 'react';
-import { Tab, Text, TabView } from '@rneui/themed';
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { CustomTabView } from '../../components';
 import { colors } from '../../constants';
-import { NormalText } from '../../components';
 
-const width = Dimensions.get('window').width;
 
 const TestComponent = () => {
-  const [index, setIndex] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   return (
     <>
-      {/* Tab configuration */}
-      <Tab
-        value={index}
-        onChange={(e) => setIndex(e)}
-        indicatorStyle={styles.indicatorStyle}
-        containerStyle={[styles.tabContainer, { width: width }]}
-        variant="primary"
-        scrollable={false}
+      <CustomTabView
+        tabIndex={tabIndex}
+        setTabIndex={setTabIndex}
+        tabBarConfig={{
+          titles: ['Tab A', 'Tab B', 'Tab C'],
+        }}
       >
-        <Tab.Item
-          title="Recent"
-          titleStyle={{
-            fontSize: 12,
-            fontWeight: '500',
-            color: index === 0 ? colors.primary : colors.gray700,
-          }}
-          containerStyle={styles.tabItemContainer}
-        />
-        <Tab.Item
-          title="Favorite"
-          titleStyle={{
-            fontSize: 12,
-            fontWeight: '500',
-            color: index === 1 ? colors.primary : colors.gray700,
-          }}
-          containerStyle={styles.tabItemContainer}
-        />
-        <Tab.Item
-          title="Cart"
-          titleStyle={{
-            fontSize: 12,
-            fontWeight: '500',
-            color: index === 2 ? colors.primary : colors.gray700,
-          }}
-          containerStyle={styles.tabItemContainer}
-        />
-      </Tab>
+        <View>
+          <Text>Đây là nội dung của Tab A</Text>
+        </View>
 
-      {/* TabView configuration */}
-      <TabView
-        value={index}
-        onChange={setIndex}
-        animationType="spring"
-        containerStyle={styles.tabViewContainer}
-      >
-        <TabView.Item style={styles.tabViewItem}>
-          <Text h1>Recent</Text>
-        </TabView.Item>
+        <View>
+          <Text>Đây là nội dung của Tab B</Text>
+        </View>
 
-        <TabView.Item style={styles.tabViewItem}>
-          <Text h1>Favorite</Text>
-        </TabView.Item>
+        <View>
+          <Text>Đây là nội dung của Tab C</Text>
+        </View>
         
-        <TabView.Item style={styles.tabViewItem}>
-          <NormalText text="Cart" />
-        </TabView.Item>
-      </TabView>
+      </CustomTabView>
     </>
   );
 };
@@ -93,4 +54,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TestComponent;
+export default TestComponent

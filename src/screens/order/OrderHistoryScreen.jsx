@@ -1,15 +1,13 @@
-import { Tab, TabView } from '@rneui/themed';
 import React, { useState } from 'react';
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Column, DualTextRow, LightStatusBar, NormalHeader, NormalText, Row } from '../../components';
+import { Column, CustomTabView, DualTextRow, LightStatusBar, NormalHeader, NormalText, Row } from '../../components';
 import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const width = Dimensions.get('window').width;
 
-
 const OrderHistoryScreen = (props) => {
     const { navigation } = props;
-    const [index, setIndex] = useState(0);
+    const [tabIndex, setTabIndex] = useState(0);
 
     return (
         <View style={styles.container}>
@@ -18,72 +16,27 @@ const OrderHistoryScreen = (props) => {
                 title="Lịch sử đơn hàng"
                 onLeftPress={() => navigation.goBack()}
             />
-            {/* Tab configuration */}
-            
-            <Tab
-                value={index}
-                onChange={(e) => setIndex(e)}
-                indicatorStyle={styles.indicatorStyle}
-                containerStyle={[styles.tabContainer, { width: width }]}
-                variant="primary"
-                scrollable={false}  
+
+            <CustomTabView
+                tabIndex={tabIndex}
+                setTabIndex={setTabIndex}
+                tabBarConfig={{
+                    titles: ['Picked', 'Completed', 'Cancelled'],
+                    titleActiveColor: colors.primary,
+                    titleInActiveColor: colors.gray700,
+                }}
             >
-
-                <Tab.Item
-                    title="Picked"
-                    titleStyle={{
-                        fontSize: 12,
-                        fontWeight: '500',
-                        color: index === 0 ? colors.primary : colors.gray700,
-                    }}
-                    containerStyle={styles.tabItemContainer}
+                <OrderListView
+                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    status="Picked"
                 />
-                <Tab.Item
-                    title="Completed"
-                    titleStyle={{
-                        fontSize: 12,
-                        fontWeight: '500',
-                        color: index === 1 ? colors.primary : colors.gray700,
-                    }}
-                    containerStyle={styles.tabItemContainer}
-                />
-                <Tab.Item
-                    title="Cancelled"
-                    titleStyle={{
-                        fontSize: 12,
-                        fontWeight: '500',
-                        color: index === 2 ? colors.primary : colors.gray700,
-                    }}
-                    containerStyle={styles.tabItemContainer}
-                />
-            </Tab>
-
-            {/* TabView configuration */}
-            <TabView
-                value={index}
-                onChange={setIndex}
-                animationType="spring"
-                containerStyle={styles.tabViewContainer}
-            >
-                <TabView.Item style={styles.tabViewItem}>
-                    <OrderListView
-                        onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
-                        status="Picked"
-                    />
-                </TabView.Item>
-
-                <TabView.Item style={styles.tabViewItem}>
-                    <OrderListView
-                        onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
-                        status="Completed" />
-                </TabView.Item>
-
-                <TabView.Item style={styles.tabViewItem}>
-                    <OrderListView
-                        onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
-                        status="Cancelled" />
-                </TabView.Item>
-            </TabView>
+                <OrderListView
+                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    status="Completed" />
+                <OrderListView
+                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    status="Cancelled" />
+            </CustomTabView>
 
         </View>
     );
@@ -144,7 +97,7 @@ const OrderItem = ({
 
             {order.estimatedTime && (
 
-                <Column>
+                <Column style={{alignItems: 'flex-end'}}>
                     <NormalText text='Đơn hàng đang được giao đến bạn' />
 
                     <NormalText
@@ -249,13 +202,13 @@ const OrderListView = ({ status, onItemPress }) => {
                 <FlatList
                     data={filteredOrders}
                     keyExtractor={(item) => item.orderId}
-                    contentContainerStyle={{ gap: 6 }}
+                    contentContainerStyle={{}}
                     renderItem={({ item }) =>
                         <OrderItem
                             onPress={() => { onItemPress() }}
                             order={item} />
                     }
-                
+
                 />
             ) : (
                 <EmptyView
@@ -287,11 +240,12 @@ const EmptyView = ({ message }) => (
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: colors.white
     },
     scene: {
-        flex: 1,
-        backgroundColor: colors.white,
-        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+        width: '100%',
+        backgroundColor: colors.grayBg,
+        paddingTop: GLOBAL_KEYS.PADDING_DEFAULT,
     },
     emptyContainer: {
         flex: 1,
@@ -302,43 +256,13 @@ const styles = StyleSheet.create({
         width: width / 2,
         height: width / 2,
     },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    column: {
-        flexDirection: 'column',
-        gap: 6
-    },
-    indicatorStyle: {
-        backgroundColor: colors.primary,
-        height: 3,
-    },
-    tabContainer: {
-        backgroundColor: 'white',
-    },
-    tabItemContainer: {
-        backgroundColor: 'white',
-    },
-    tabViewContainer: {
-        backgroundColor: 'white',
-    },
-    tabViewItem: {
-        backgroundColor: 'white',
-        width: '100%',
-    },
     orderItem: {
         backgroundColor: colors.white,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
         gap: 6,
-        shadowColor: colors.black,
-        shadowOffset: { width: 5, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        borderBottomColor: colors.grayBg,
+        borderBottomWidth: 8
     },
     orderName: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
