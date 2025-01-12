@@ -77,35 +77,6 @@ const data = [
     },
 ];
 
-const dataProduct = [
-    {
-        id: '1',
-        name: 'Smootthie xoài Nhiệt đới Granola',
-        size: 'Vừa',
-        price: '28.000đ',
-    },
-    {
-        id: '2',
-        name: 'Trà sữa ô long chân châu',
-        size: 'lớn',
-        price: '32.000đ',
-    },
-    {
-        id: '3',
-        name: 'Smootthie xoài Nhiệt đới Granola',
-        size: 'Vừa',
-        price: '28.000đ',
-    },
-    {
-        id: '4',
-        name: 'Trà sữa chân châu đường đen',
-        size: 'lớn',
-        price: '40.000đ',
-    },
-]
-
-
-
 export default RatingOrderScreen;
 
 const styles = StyleSheet.create({

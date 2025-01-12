@@ -20,7 +20,7 @@ import { NormalText } from '../texts/NormalText';
 import { Row } from '../containers/Row';
 import { Column } from '../containers/Column';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const DialogReviewOderPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -43,6 +43,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
   const starIconFilled = (<Icon source="star" size={35} color={colors.yellow500} />);
   const starIconCorner = (<Icon source="star-outline" size={35} color={colors.yellow500} />);
 
+
   const CustomRatingBar = () => {
     return (
       <View style={styles.ratingContainer}>
@@ -52,7 +53,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
               <TouchableOpacity
                 key={key}
                 activeOpacity={1}
-                onPress={() => setDefaultRating(item)} // Cập nhật điểm đánh giá
+                onPress={() => setDefaultRating(item)}
               >
                 {defaultRating >= item ? starIconFilled : starIconCorner}
               </TouchableOpacity>
@@ -164,10 +165,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
               <CustomRatingBar />
               <PrimaryButton
                 title="Gửi đánh giá"
-                style={[
-                  styles.btnVote,
-                  defaultRating === 0 ? { backgroundColor: colors.gray200 } : {},
-                ]}
+                style={defaultRating === 0 ? {  backgroundColor: colors.gray200 } }
                 onPress={() => {
                   if (defaultRating > 0) {
                     setVoteRating(false);
@@ -300,10 +298,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  body:{
+  body: {
     gap: GLOBAL_KEYS.GAP_DEFAULT
   },
-  btnVote:{
-    width: '100%',
-  }
 });
