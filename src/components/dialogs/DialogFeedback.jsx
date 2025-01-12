@@ -32,7 +32,7 @@ const DialogFeedbackPropTypes = {
 export const DialogFeedback = ({ isVisible, onHide }) => {
   const [value, setValue] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
-  const [isImagePickerVisible, setImagePickerVisible] = useState(false); // Modal state
+  const [isImagePickerVisible, setImagePickerVisible] = useState(false); 
 
   const openCamera = () => {
     const options = {
@@ -141,9 +141,7 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
                       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                       color={colors.primary}
                     />
-
                     <NormalText text='Tải lên hình ảnh' />
-
                   </Pressable>
                 )}
                 <PrimaryButton

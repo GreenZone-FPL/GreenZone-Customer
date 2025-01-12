@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, FlatList, Image, Dimensions, Modal, TouchableOpacity } from 'react-native';
-import { GLOBAL_KEYS } from '../../constants';
-import { colors } from '../../constants';
-import { NormalHeader } from '../../components';
-import { LightStatusBar } from '../../components';
-import { NormalText } from '../../components';
-import { PrimaryButton } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { NormalHeader, LightStatusBar, NormalText , PrimaryButton} from '../../components';
 
 const { height, width } = Dimensions.get('window');
 

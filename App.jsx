@@ -14,6 +14,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import CheckoutScreen from './src/screens/order/CheckoutScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen'
+import RatingOrderScreen from './src/screens/order/RatingOrderScreen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const BaseStack = createNativeStackNavigator()
@@ -36,6 +37,7 @@ function App() {
 
           <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
           <BaseStack.Screen name={ScreenEnum.OrderDetailScreen} component={OrderDetailScreen} />
+          <BaseStack.Screen name={ScreenEnum.RatingOrderScreen} component={RatingOrderScreen} />
 
 
 

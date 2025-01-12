@@ -24,7 +24,7 @@ const RatingOrderScreen = (props) => {
     return (
         <SafeAreaView style={styles.container}>
             <LightStatusBar />
-            <NormalHeader title='Đánh giá đơn hàng' onPress={() => navigation.goBack()} />
+            <NormalHeader title='Đánh giá đơn hàng' onLeftPress={() => navigation.goBack()} />
             <FlatList
                 data={data}
                 renderItem={({ item }) => <Card item={item} onPress={() => handleItemPress(item)} />}
@@ -49,14 +49,60 @@ const Card = ({ item, onPress }) => (
             />
             <View style={styles.infoContainer}>
                 <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.textInfo}>{item.createdAt}</Text>
+                <View style={styles.rowtime}>
+                    <Text style={styles.textInfo}>{item.time}</Text>
+                    <Text style={styles.textInfo}> - </Text>
+                    <Text style={styles.textInfo}>{item.date}</Text>
+                </View>
             </View>
             <Text style={styles.price}>{item.price}</Text>
         </View>
     </TouchableOpacity>
 );
 
+const data = [
+    {
+        id: '1',
+        title: 'Smootthie xoài Nhiệt đới Granola',
+        date: '14/1',
+        time: '11:50',
+        price: '58.000đ',
+    },
+    {
+        id: '2',
+        title: 'Trà sữa ô long chân châu',
+        date: '14/1',
+        time: '18:50',
+        price: '100.000đ',
+    },
+];
 
+const dataProduct = [
+    {
+        id: '1',
+        name: 'Smootthie xoài Nhiệt đới Granola',
+        size: 'Vừa',
+        price: '28.000đ',
+    },
+    {
+        id: '2',
+        name: 'Trà sữa ô long chân châu',
+        size: 'lớn',
+        price: '32.000đ',
+    },
+    {
+        id: '3',
+        name: 'Smootthie xoài Nhiệt đới Granola',
+        size: 'Vừa',
+        price: '28.000đ',
+    },
+    {
+        id: '4',
+        name: 'Trà sữa chân châu đường đen',
+        size: 'lớn',
+        price: '40.000đ',
+    },
+]
 
 
 

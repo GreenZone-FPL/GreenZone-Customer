@@ -13,7 +13,6 @@ import {
   LightStatusBar,
 } from '../../components';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-
 const HomeScreen = props => {
   const {navigation} = props;
   const [currentLocation, setCurrenLocation] = useState('');
@@ -66,6 +65,7 @@ const HomeScreen = props => {
             navigation.navigate(ScreenEnum.NotificationScreen);
           }}
           isHome={true}
+          
         />
         <Button
           title="Checkout Screen"
