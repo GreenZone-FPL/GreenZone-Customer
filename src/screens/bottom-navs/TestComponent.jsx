@@ -19,12 +19,15 @@ const TestComponent = () => {
         <View>
           <Text>Đây là nội dung của Tab A</Text>
         </View>
+
         <View>
           <Text>Đây là nội dung của Tab B</Text>
         </View>
+
         <View>
           <Text>Đây là nội dung của Tab C</Text>
         </View>
+        
       </CustomTabView>
     </>
   );
