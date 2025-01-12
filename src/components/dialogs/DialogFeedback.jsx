@@ -15,8 +15,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import {Icon} from 'react-native-paper';
-import colors from '../../constants/color';
-import GLOBAL_KEYS from '../../constants/globalKeys';
+import {GLOBAL_KEYS, colors} from '../../constants';
 import OverlayStatusBar from '../status-bars/OverlayStatusBar';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import PrimaryButton from '../buttons/PrimaryButton';
