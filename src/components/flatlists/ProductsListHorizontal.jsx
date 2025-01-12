@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import formatVND from '../../utils/formatVND';
+import { TextFormatter } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -46,7 +46,7 @@ const ItemProduct = ({item, onItemClick}) => {
     <View style={styles.itemProduct}>
       <Image source={item.image} style={styles.itemImage} />
       <View style={styles.priceContainer}>
-        <Text style={styles.priceText}>{formatVND(item.price)}</Text>
+        <Text style={styles.priceText}>{TextFormatter.formatCurrency(item.price)}</Text>
       </View>
       <Text numberOfLines={4} style={styles.productNameText}>
         {item.name}
