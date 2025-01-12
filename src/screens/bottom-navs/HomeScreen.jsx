@@ -115,5 +115,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     marginHorizontal:GLOBAL_KEYS.PADDING_DEFAULT,
+
   },
 });
