@@ -161,7 +161,12 @@ const orders = [
         status: 'Completed', // Đã hoàn thành
         createdAt: '10:16, 22/12/2024',
         estimatedTime: null,
-        items: [{ id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000 }],
+        items: [
+            { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
+            { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
+            { id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000 }
+        
+        ],
     },
     {
         orderId: '22124-3772987543538',
@@ -186,7 +191,32 @@ const orders = [
     },
 ];
 
+const OrderListComplete = ({ status, onItemPress }) => {
+    const filteredOrders = orders.filter((order) => order.status === status);
 
+    return (
+        <View style={styles.scene}>
+            {filteredOrders.length > 0 ? (
+                <FlatList
+                    data={filteredOrders}
+                    keyExtractor={(item) => item.orderId}
+                    contentContainerStyle={{ gap: 8 }}
+                    renderItem={({ item }) =>
+                        <OrderItem
+                            onPress={() => { 
+                                navigation.navigate('RatingOrderScreen', { order: item })  // Truyền dữ liệu vào params
+                            }}
+                            order={item} />
+                    }
+                />
+            ) : (
+                <EmptyView
+                    message={status === 'Completed' ? 'Chưa có đơn hàng hoàn thành' : 'Chưa có đơn hàng cần thực hiện'}
+                />
+            )}
+        </View>
+    );
+};
 
 
 

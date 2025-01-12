@@ -63,7 +63,7 @@ const HomeScreen = props => {
         <HeaderWithBadge
           title="Home"
           onBadgePress={() => {
-            navigation.navigate('NotificationScreen');
+            navigation.navigate(ScreenEnum.NotificationScreen);
           }}
           isHome={true}
         />

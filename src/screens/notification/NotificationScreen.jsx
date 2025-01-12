@@ -60,7 +60,7 @@ const NotificationScreen = (props) => {
               <Image source={{ uri: selectedItems[selectedItems.length - 1].image }} style={styles.modalImage} />
               <Text style={styles.modalTitle}>{selectedItems[selectedItems.length - 1].title}</Text>
               <Text style={styles.modalMessage}>{selectedItems[selectedItems.length - 1].message}</Text>
-                  <PrimaryButton title="Đã xem" onPress={closeModal}/>
+              <PrimaryButton title="Đã xem" onPress={closeModal}/>
             </View>
           </View>
         </Modal>
@@ -76,7 +76,7 @@ const Card = ({ item, selectedItems }) => {
       style={[
         styles.itemContainer,
         {
-          backgroundColor: isSelected ? colors.white : colors.gray200, // Giữ màu trắng cho item đã được chọn
+          backgroundColor: isSelected ? colors.white : colors.gray200, 
         },
       ]}
     >
