@@ -56,6 +56,11 @@ export * from './radio/SelectableGroup';
 export * from './status-bars/LightStatusBar';
 export * from './status-bars/OverlayStatusBar';
 
+
+
+//tabviews
+export * from './tabviews/CustomTabView';
+
 // texts
 export * from './texts/DualTextRow'
 export * from './texts/PaymentMethodRow'
