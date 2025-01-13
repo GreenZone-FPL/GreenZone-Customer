@@ -1,8 +1,7 @@
 import { ToastAndroid } from 'react-native'
-const MyToast = {
+export const Toaster = {
     show(message){
         ToastAndroid.show(message, ToastAndroid.SHORT)
     }
 }
 
-export default MyToast
