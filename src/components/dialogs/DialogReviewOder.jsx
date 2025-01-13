@@ -165,7 +165,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
               <CustomRatingBar />
               <PrimaryButton
                 title="Gửi đánh giá"
-                style={defaultRating === 0 ? {  backgroundColor: colors.gray200 } }
+                style={defaultRating === 0 ? {  backgroundColor: colors.gray200 }: {  backgroundColor: colors.primary } }
                 onPress={() => {
                   if (defaultRating > 0) {
                     setVoteRating(false);

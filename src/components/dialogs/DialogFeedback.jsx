@@ -66,7 +66,7 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
         return [...prev, ...newImages].slice(0, 3);
       });
     });
-    setImagePickerVisible(false); // Hide modal
+    setImagePickerVisible(false); 
   };
 
   const removeImage = index => {
