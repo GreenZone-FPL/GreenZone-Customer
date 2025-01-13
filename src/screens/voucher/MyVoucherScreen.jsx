@@ -7,10 +7,12 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 import {TabBar, TabView} from 'react-native-tab-view';
 import {LightStatusBar, NormalHeader} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
+import {ScreenEnum} from '../../constants';
 
 const {width} = Dimensions.get('window');
 
