@@ -1,17 +1,27 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {GLOBAL_KEYS} from '../../constants/globalKeys';
-import {colors} from '../../constants/color';
+import PropTypes from 'prop-types'
+import React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { GLOBAL_KEYS, colors } from '../../constants'
 
-const NormalText = ({text = 'Normal text', style}) => {
+
+const NormalTextPropTypes = {
+  text: PropTypes.string,
+  style: PropTypes.object
+}
+
+
+export const NormalText = ({
+  text = 'Normal text',
+  style
+}) => {
   return (
     <View>
       <Text style={[styles.text, style]}>{text}</Text>
     </View>
-  );
-};
+  )
+}
 
-export default NormalText;
+NormalText.propTypes = NormalTextPropTypes
 
 const styles = StyleSheet.create({
   text: {
@@ -19,3 +29,4 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
 });
+

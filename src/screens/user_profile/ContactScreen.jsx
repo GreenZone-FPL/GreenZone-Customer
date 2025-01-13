@@ -1,15 +1,9 @@
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  Linking,
-} from 'react-native';
-import React, {useState} from 'react';
-import {LightStatusBar, NormalHeader, DialogFeedback} from '../../components';
-import {Icon} from 'react-native-paper';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import React, { useState } from 'react';
+import { Linking, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { DialogFeedback, LightStatusBar, NormalHeader } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+
 
 const ContactScreen = props => {
   const navigation = props.navigation;
@@ -111,22 +105,32 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'column',
-    margin: 16,
+    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.white,
+    gap: 8
+
   },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingHorizontal: 8,
+    elevation: 4,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    backgroundColor: colors.white
   },
   textName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
+    marginBottom: 5
   },
   textPath: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray400,
   },
 });

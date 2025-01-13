@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import formatVND from '../../utils/formatVND';
+import { TextFormatter } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -39,7 +39,7 @@ const ItemProduct = ({item, onItemClick}) => {
       <Image style={styles.itemImage} source={item.image} />
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>{formatVND(item.price)}</Text>
+        <Text style={styles.productPrice}>{TextFormatter.formatCurrency(item.price)}</Text>
       </View>
       <TouchableOpacity onPress={() => onItemClick()} style={styles.addButton}>
         <Icon

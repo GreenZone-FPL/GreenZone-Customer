@@ -14,34 +14,37 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import CheckoutScreen from './src/screens/order/CheckoutScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen'
-
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const BaseStack = createNativeStackNavigator()
 function App() {
   return (
 
 
-    <NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
 
 
-      <BaseStack.Navigator
-        screenOptions={{ headerShown: false }}>
+        <BaseStack.Navigator
+          screenOptions={{ headerShown: false }}>
 
-        <BaseStack.Screen name={ScreenEnum.MainNavigation} component={MainNavigation} />
+          <BaseStack.Screen name={ScreenEnum.MainNavigation} component={MainNavigation} />
 
-        <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
+          <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
 
-        <BaseStack.Screen name={ScreenEnum.OrderHistoryScreen} component={OrderHistoryScreen} />
+          <BaseStack.Screen name={ScreenEnum.OrderHistoryScreen} component={OrderHistoryScreen} />
 
-        <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
-        <BaseStack.Screen name={ScreenEnum.OrderDetailScreen} component={OrderDetailScreen} />
-
-
-
-      </BaseStack.Navigator>
+          <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
+          <BaseStack.Screen name={ScreenEnum.OrderDetailScreen} component={OrderDetailScreen} />
 
 
-    </NavigationContainer>
+
+        </BaseStack.Navigator>
+
+
+      </NavigationContainer>
+    </SafeAreaProvider>
+
 
 
   );

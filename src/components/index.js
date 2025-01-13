@@ -11,9 +11,17 @@ export * from './buttons/QuantitySelector';
 // category
 export * from './category/CategoryMenu';
 
+
+// containers
+export * from './containers/Column'
+export * from './containers/Row'
+
+
+
 // dialogs
-export * from './dialogs/DialogShippingMethod';
-export * from './dialogs/DialogFeedback';
+export * from './dialogs/DialogShippingMethod'
+export * from './dialogs/DialogFeedback'
+
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';
@@ -48,6 +56,15 @@ export * from './radio/SelectableGroup';
 export * from './status-bars/LightStatusBar';
 export * from './status-bars/OverlayStatusBar';
 
+
+
+//tabviews
+export * from './tabviews/CustomTabView';
+
 // texts
-export * from './texts/DualTextRow';
-export * from './texts/PaymentMethodRow';
+export * from './texts/DualTextRow'
+export * from './texts/PaymentMethodRow'
+export * from './texts/NormalText'
+
+
+
