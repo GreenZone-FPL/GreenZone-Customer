@@ -56,7 +56,7 @@ const NewAddressScreen = (props) => {
     )
 }
 
-export default NewAddressScreen
+export default NewAddressScreen;
 
 const styles = StyleSheet.create({
     container: {

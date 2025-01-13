@@ -3,12 +3,12 @@ import React from 'react';
 import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
-import AddressScreen from '../../screens/user_profile/AddressScreen';
-import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
-import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
-import SelectAddressScreen from '../../screens/user_profile/SelectAddressScreen';
-import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
-import ContactScreen from '../../screens/user_profile/ContactScreen';
+import AddressScreen from '../../screens/user-profile/AddressScreen';
+import NewAddressScreen from '../../screens/address/NewAddressScreen';
+import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
+import SelectAddressScreen from '../../screens/address/SelectAddressScreen';
+import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
+import ContactScreen from '../../screens/user-profile/ContactScreen';
 
 const ProfileStack = createNativeStackNavigator();
 
