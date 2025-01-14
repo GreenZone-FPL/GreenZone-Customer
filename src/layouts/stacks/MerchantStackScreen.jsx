@@ -3,7 +3,7 @@ import React from 'react';
 import { MerchantDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import MerchantScreen from '../../screens/bottom-navs/MerchantScreen';
-import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
+import { AppGraph, AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
 
 const MerchantStack = createNativeStackNavigator();
 const MerchantStackScreen = () => {
@@ -22,7 +22,7 @@ const MerchantStackScreen = () => {
       />
 
       <MerchantStack.Screen
-        name={ShoppingGraph.MerchantDetailSheet}
+        name={AppGraph.MerchantDetailSheet}
         component={MerchantDetailSheet}
         options={{
           animation: 'slide_from_bottom',

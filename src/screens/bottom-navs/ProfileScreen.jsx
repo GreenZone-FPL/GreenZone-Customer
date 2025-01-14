@@ -3,7 +3,7 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { HeaderWithBadge, LightStatusBar } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, AuthGraph, UserGraph } from '../../layouts/graphs';
+import { AppGraph, AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
@@ -23,7 +23,7 @@ const ProfileScreen = props => {
               color={colors.primary}
               title="Thông tin cá nhân"
               onPress={() => {
-                navigation.navigate(AppGraph.UpdateProfileScreen);
+                navigation.navigate(UserGraph.UpdateProfileScreen);
               }}
             />
             <CardAccount
@@ -38,7 +38,7 @@ const ProfileScreen = props => {
               icon="file-document-edit"
               color={colors.orange700}
               title="Lịch sử đơn hàng"
-              onPress={() => { navigation.navigate(UserGraph.OrderHistoryScreen) }}
+              onPress={() => { navigation.navigate(OrderGraph.OrderHistoryScreen) }}
             />
           </View>
         </View>
