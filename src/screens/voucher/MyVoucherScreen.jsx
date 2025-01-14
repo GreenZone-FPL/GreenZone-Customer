@@ -9,8 +9,7 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import {TabBar, TabView} from 'react-native-tab-view';
-import {LightStatusBar, NormalHeader} from '../../components';
+import {LightStatusBar, NormalHeader, CustomTabView} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {ScreenEnum} from '../../constants';
 
@@ -18,45 +17,11 @@ const {width} = Dimensions.get('window');
 
 const MyVoucherScreen = props => {
   const {navigation} = props;
-  const [index, setIndex] = useState(0);
+  const [tabIndex, setTabIndex] = useState(0);
 
   const navigateToVoucherDetail = item => {
     navigation.navigate(ScreenEnum.VoucherDetailSheet, {item});
   };
-
-  const renderScene = ({route}) => {
-    switch (route.key) {
-      case 'delivery':
-        return (
-          <Body
-            data={voucherData.delivery}
-            handleGoVoucherDetail={navigateToVoucherDetail}
-          />
-        );
-      case 'merchant':
-        return (
-          <Body
-            data={voucherData.merchant}
-            handleGoVoucherDetail={navigateToVoucherDetail}
-          />
-        );
-      case 'takeAway':
-        return (
-          <Body
-            data={voucherData.takeAway}
-            handleGoVoucherDetail={navigateToVoucherDetail}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
-  const routes = [
-    {key: 'delivery', title: 'Giao hàng'},
-    {key: 'merchant', title: 'Tại cửa hàng'},
-    {key: 'takeAway', title: 'Mang đi'},
-  ];
 
   return (
     <View style={styles.container}>
@@ -65,25 +30,30 @@ const MyVoucherScreen = props => {
         title="Phiếu ưu đãi của tôi"
         onLeftPress={() => navigation.goBack()}
       />
-      <TabView
-        navigationState={{index, routes}}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{width}}
-        style={styles.tabView}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            style={styles.tabBar}
-            indicatorStyle={styles.indicatorStyle}
-            activeColor={colors.primary}
-            inactiveColor={colors.black}
-            labelStyle={styles.labelStyle}
-            activeLabelStyle={styles.activeLabelStyle}
-            inactiveLabelStyle={styles.inactiveLabelStyle}
-          />
-        )}
-      />
+      <CustomTabView
+        tabIndex={tabIndex}
+        setTabIndex={setTabIndex}
+        tabBarConfig={{
+          titles: ['Giao hàng', 'Tại cửa hàng', 'Mang đi'],
+          titleActiveColor: colors.primary,
+          titleInActiveColor: colors.gray700,
+        }}>
+        <Body
+          key="delivery"
+          data={voucherData.delivery}
+          handleGoVoucherDetail={navigateToVoucherDetail}
+        />
+        <Body
+          key="merchant"
+          data={voucherData.merchant}
+          handleGoVoucherDetail={navigateToVoucherDetail}
+        />
+        <Body
+          key="takeAway"
+          data={voucherData.takeAway}
+          handleGoVoucherDetail={navigateToVoucherDetail}
+        />
+      </CustomTabView>
     </View>
   );
 };
@@ -141,7 +111,7 @@ const voucherData = {
         'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
         'Liên hệ tổng đài để biết thêm chi tiết.',
       ],
-      homepage: 'https://www.example.com/delivery-voucher-1', // Liên kết tới trang chủ
+      homepage: 'https://www.example.com/delivery-voucher-1',
       time: '2025-02-15',
     },
     {
@@ -194,30 +164,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
-  },
-  tabView: {
-    backgroundColor: colors.white,
-  },
-  tabBar: {
-    backgroundColor: colors.white,
-  },
-  indicatorStyle: {
-    backgroundColor: colors.primary,
-  },
-  labelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '700',
-    color: colors.black,
-  },
-  activeLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  inactiveLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '700',
-    color: colors.black,
   },
   bodyContainer: {
     paddingVertical: 8,

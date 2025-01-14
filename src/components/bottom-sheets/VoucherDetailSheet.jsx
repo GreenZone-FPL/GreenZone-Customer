@@ -14,7 +14,6 @@ import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
 import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
 import {Icon} from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Global} from 'iconsax-react-native';
 
 const width = Dimensions.get('window').width;
 
