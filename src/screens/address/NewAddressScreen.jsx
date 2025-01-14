@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { LightStatusBar, FlatInput, NormalHeader, PrimaryButton } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { FlatInput, LightStatusBar, NormalHeader, PrimaryButton } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { UserGraph } from '../../layouts/graphs';
 
 
 const NewAddressScreen = (props) => {
@@ -28,7 +29,7 @@ const NewAddressScreen = (props) => {
 
                 <Pressable
                     style={styles.location}
-                    onPress={() => navigation.navigate(ScreenEnum.SearchAddressScreen)}>
+                    onPress={() => navigation.navigate(UserGraph.SearchAddressScreen)}>
                     <Text style={styles.normalText}>Chọn địa chỉ...</Text>
                 </Pressable>
 

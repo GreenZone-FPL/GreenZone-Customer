@@ -3,15 +3,15 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
+  View
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {LightStatusBar} from '../../components';
-import {GLOBAL_KEYS, colors, ScreenEnum} from '../../constants';
+import { Icon } from 'react-native-paper';
+import { LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { VoucherGraph } from '../../layouts/graphs';
 
 const VoucherScreen = props => {
   const {navigation} = props;
@@ -78,7 +78,7 @@ const VoucherScreen = props => {
         <View style={styles.ticket}>
           <Text style={styles.ticketTitle}>Phiếu ưu đãi của bạn</Text>
           <Pressable
-            onPress={() => navigation.navigate(ScreenEnum.AllVoucherScreen)}
+            onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
             style={styles.btnTicket}>
             <Text style={styles.textBtn}>Xem tất cả</Text>
           </Pressable>

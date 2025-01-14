@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { CustomSearchBar, LightStatusBar } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { UserGraph } from '../../layouts/graphs';
 
 const SearchAddressScreen = (props) => {
     const navigation = props.navigation
@@ -33,7 +34,7 @@ const SearchAddressScreen = (props) => {
 
             <Pressable
                 style={styles.map}
-                onPress={() => navigation.navigate(ScreenEnum.SelectAddressScreen)
+                onPress={() => navigation.navigate(UserGraph.SelectAddressScreen)
                 }>
 
                 <Icon

@@ -1,8 +1,8 @@
-import Graph from "./graph";
+import { AppGraph } from "./appGraph";
 
 // Graph chứa các màn hình đơn trên Bottom Navigation
 export const BottomGraph = Object.freeze({
-  graphName: Graph.BOTTOM,
+  graphName: AppGraph.BOTTOM,
 
   HomeScreen: 'HomeScreen',
   OrderScreen: 'OrderScreen',

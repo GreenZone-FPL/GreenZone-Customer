@@ -2,8 +2,9 @@ import React from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { LightStatusBar, NormalHeader } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
-import { AddressGraph } from '../../layouts/graphs';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { UserGraph } from '../../layouts/graphs';
+
 
 const AddressScreen = (props) => {
   const navigation = props.navigation
@@ -17,17 +18,17 @@ const AddressScreen = (props) => {
         <Card
           icon="plus-circle"
           title="Thêm địa chỉ công ty"
-          onPress={() => navigation.navigate(ScreenEnum.NewAddressScreen)}
+          onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}
         />
         <Card
           icon="plus-circle"
           title="Thêm địa chỉ nhà"
-          onPress={() => navigation.navigate(ScreenEnum.NewAddressScreen)}
+          onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}
         />
         <Card
           icon="plus-circle"
           title="Thêm địa chỉ mới"
-          onPress={() => navigation.navigate(ScreenEnum.NewAddressScreen)}
+          onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}
         />
       </View>
 

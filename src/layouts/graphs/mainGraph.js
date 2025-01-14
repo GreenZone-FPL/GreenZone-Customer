@@ -1,8 +1,8 @@
-import Graph from "./graph";
+import { AppGraph } from "./appGraph";
 
 // graph chứa các stacks navigator trên Bottom Navigation
 export const MainGraph = Object.freeze({
-  graphName: Graph.MAIN,
+  graphName: AppGraph.MAIN,
 
   HomeStackScreen: 'HomeStackScreen',
   OrderStackScreen: 'OrderStackScreen',

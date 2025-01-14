@@ -1,5 +1,6 @@
+import { AppGraph } from "./appGraph";
 export const UserGraph = Object.freeze({
-  graphName: Graph.USER,
+  graphName: AppGraph.USER,
 
   UpdateProfileScreen: 'UpdateProfileScreen',
   ContactScreen: 'ContactScreen',

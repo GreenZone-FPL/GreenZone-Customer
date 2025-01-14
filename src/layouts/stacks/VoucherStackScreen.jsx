@@ -1,10 +1,9 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import {ScreenEnum} from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
-import AllVoucherScreen from '../../screens/voucher/MyVoucherScreen';
-import { AuthGraph, BottomGraph, MainGraph } from '../graphs';
+import MyVoucherScreen from '../../screens/voucher/MyVoucherScreen';
+import { AuthGraph, BottomGraph, MainGraph, VoucherGraph } from '../graphs';
 
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {
@@ -22,8 +21,8 @@ const VoucherStackScreen = () => {
         component={LoginScreen}
       />
       <VoucherStack.Screen
-        name={ScreenEnum.AllVoucherScreen}
-        component={AllVoucherScreen}
+        name={VoucherGraph.MyVouchersScreen}
+        component={MyVoucherScreen}
       />
     </VoucherStack.Navigator>
   );

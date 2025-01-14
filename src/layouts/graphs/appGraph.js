@@ -1,6 +1,6 @@
 
 // App's Graph
-export default Graph = Object.freeze({
+export const AppGraph = Object.freeze({
     ROOT: 'RootGraph',
     AUTHENTICATION: 'AuthGraph',
     MAIN: 'MainGraph',
@@ -9,5 +9,5 @@ export default Graph = Object.freeze({
     ORDER: 'OrderGraph',
     USER: 'UserGraph',
     VOUCHER: 'VoucherGraph',
-    MerchantDetailScreen: 'MerchantDetailScreen',
+    MerchantDetailSheet: 'MerchantDetailSheet',
 });

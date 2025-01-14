@@ -1,8 +1,9 @@
 import React from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { LightStatusBar, HeaderWithBadge } from '../../components';
-import { GLOBAL_KEYS, colors, ScreenEnum } from '../../constants';
+import { HeaderWithBadge, LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph, AuthGraph, UserGraph } from '../../layouts/graphs';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
@@ -22,14 +23,14 @@ const ProfileScreen = props => {
               color={colors.primary}
               title="Thông tin cá nhân"
               onPress={() => {
-                navigation.navigate(ScreenEnum.UpdateProfileScreen);
+                navigation.navigate(AppGraph.UpdateProfileScreen);
               }}
             />
             <CardAccount
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => navigation.navigate(ScreenEnum.AddressScreen)}
+              onPress={() => navigation.navigate(UserGraph.AddressScreen)}
             />
           </View>
           <View style={styles.accountContainer}>
@@ -37,7 +38,7 @@ const ProfileScreen = props => {
               icon="file-document-edit"
               color={colors.orange700}
               title="Lịch sử đơn hàng"
-              onPress={() => { navigation.navigate(ScreenEnum.OrderHistoryScreen) }}
+              onPress={() => { navigation.navigate(UserGraph.OrderHistoryScreen) }}
             />
           </View>
         </View>
@@ -53,7 +54,7 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="chat"
             title="Liên hệ góp ý"
-            onPress={() => { navigation.navigate(ScreenEnum.ContactScreen) }}
+            onPress={() => { navigation.navigate(UserGraph.ContactScreen) }}
           />
           <View style={styles.separator} />
           <CardUtiliti
@@ -65,7 +66,7 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="logout"
             title="Đăng xuất"
-            onPress={() => navigation.navigate(ScreenEnum.LoginScreen)}
+            onPress={() => navigation.navigate(AuthGraph.LoginScreen)}
           />
         </View>
       </View>

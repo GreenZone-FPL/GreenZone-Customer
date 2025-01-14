@@ -1,18 +1,19 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {Button, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
 import {
-  ProductsListHorizontal,
-  ProductsListVertical,
-  DeliveryButton,
   CategoryMenu,
+  DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  ProductsListHorizontal,
+  ProductsListVertical,
 } from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -69,15 +70,15 @@ const HomeScreen = props => {
         />
         <Button
           title="Checkout Screen"
-          onPress={() => navigation.navigate(ScreenEnum.CheckoutScreen)}
+          onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
         />
 
         <CategoryMenu />
         <ProductsListHorizontal
-          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
         />
         <ProductsListVertical
-          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
         />
       </ScrollView>
 
