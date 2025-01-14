@@ -1,28 +1,28 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { MerchantDetailSheet } from '../../components';
-import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import MerchantScreen from '../../screens/bottom-navs/MerchantScreen';
+import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
 
 const MerchantStack = createNativeStackNavigator();
 const MerchantStackScreen = () => {
   return (
     <MerchantStack.Navigator
-      name={ScreenEnum.MerchantStackScreen}
+      name={MainGraph.MerchantStackScreen}
       screenOptions={{ headerShown: false }}>
       <MerchantStack.Screen
-        name={ScreenEnum.MerchantScreen}
+        name={BottomGraph.MerchantScreen}
         component={MerchantScreen}
       />
 
       <MerchantStack.Screen
-        name={ScreenEnum.LoginScreen}
+        name={AuthGraph.LoginScreen}
         component={LoginScreen}
       />
 
       <MerchantStack.Screen
-        name={ScreenEnum.MerchantDetailSheet}
+        name={ShoppingGraph.MerchantDetailSheet}
         component={MerchantDetailSheet}
         options={{
           animation: 'slide_from_bottom',

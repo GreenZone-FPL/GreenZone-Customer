@@ -1,0 +1,10 @@
+import Graph from "./graph";
+
+// Graph chứa các màn hình cho Authentication
+// Splash, Login, ChangePassword, OTP,...
+export const AuthGraph = Object.freeze({
+    graphName: Graph.AUTHENTICATION,
+
+    SplashScreen: 'SplashScreen',
+    LoginScreen: 'LoginScreen',
+});

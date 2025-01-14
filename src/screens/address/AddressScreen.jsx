@@ -1,10 +1,9 @@
 import React from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-
 import { LightStatusBar, NormalHeader } from '../../components';
 import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
-
+import { AddressGraph } from '../../layouts/graphs';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation
@@ -43,7 +42,7 @@ const Card = ({ icon, title, onPress }) => (
   </Pressable>
 );
 
-export default AddressScreen;
+export default AddressScreen
 
 const styles = StyleSheet.create({
   container: {
