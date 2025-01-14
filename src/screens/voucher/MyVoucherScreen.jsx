@@ -9,18 +9,55 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import {LightStatusBar, NormalHeader, CustomTabView} from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
+import {TabBar, TabView} from 'react-native-tab-view';
+import {LightStatusBar, NormalHeader} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {ScreenEnum} from '../../constants';
 
 const {width} = Dimensions.get('window');
 
 const MyVoucherScreen = props => {
   const {navigation} = props;
-  const [tabIndex, setTabIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
   const navigateToVoucherDetail = item => {
     navigation.navigate(ScreenEnum.VoucherDetailSheet, {item});
   };
+
+  const renderScene = ({route}) => {
+    switch (route.key) {
+      case 'delivery':
+        return (
+          <Body
+            data={voucherData.delivery}
+            handleGoVoucherDetail={navigateToVoucherDetail}
+          />
+        );
+      case 'merchant':
+        return (
+          <Body
+            data={voucherData.merchant}
+            handleGoVoucherDetail={navigateToVoucherDetail}
+          />
+        );
+      case 'takeAway':
+        return (
+          <Body
+            data={voucherData.takeAway}
+            handleGoVoucherDetail={navigateToVoucherDetail}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const routes = [
+    {key: 'delivery', title: 'Giao hàng'},
+    {key: 'merchant', title: 'Tại cửa hàng'},
+    {key: 'takeAway', title: 'Mang đi'},
+  ];
+
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -28,30 +65,25 @@ const MyVoucherScreen = props => {
         title="Phiếu ưu đãi của tôi"
         onLeftPress={() => navigation.goBack()}
       />
-      <CustomTabView
-        tabIndex={tabIndex}
-        setTabIndex={setTabIndex}
-        tabBarConfig={{
-          titles: ['Giao hàng', 'Tại cửa hàng', 'Mang đi'],
-          titleActiveColor: colors.primary,
-          titleInActiveColor: colors.gray700,
-        }}>
-        <Body
-          key="Giao hàng"
-          data={voucherData.delivery}
-          handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-        <Body
-          key="Tại cửa hàng"
-          data={voucherData.merchant}
-          handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-        <Body
-          key="Mang đi"
-          data={voucherData.takeAway}
-          handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-      </CustomTabView>
+      <TabView
+        navigationState={{index, routes}}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{width}}
+        style={styles.tabView}
+        renderTabBar={props => (
+          <TabBar
+            {...props}
+            style={styles.tabBar}
+            indicatorStyle={styles.indicatorStyle}
+            activeColor={colors.primary}
+            inactiveColor={colors.black}
+            labelStyle={styles.labelStyle}
+            activeLabelStyle={styles.activeLabelStyle}
+            inactiveLabelStyle={styles.inactiveLabelStyle}
+          />
+        )}
+      />
     </View>
   );
 };
@@ -109,7 +141,7 @@ const voucherData = {
         'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
         'Liên hệ tổng đài để biết thêm chi tiết.',
       ],
-      homepage: 'https://www.example.com/delivery-voucher-1',
+      homepage: 'https://www.example.com/delivery-voucher-1', // Liên kết tới trang chủ
       time: '2025-02-15',
     },
     {
