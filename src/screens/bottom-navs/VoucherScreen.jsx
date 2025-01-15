@@ -3,18 +3,17 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
+  View
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {LightStatusBar} from '../../components';
-import {GLOBAL_KEYS, colors, ScreenEnum} from '../../constants';
+import { Icon } from 'react-native-paper';
+import { LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 
 const VoucherScreen = props => {
-  const {navigation} = props;
+ const { navigation } = props;
   return (
     <ScrollView style={styles.container}>
       <LightStatusBar />
@@ -51,7 +50,7 @@ const VoucherScreen = props => {
             iconName="crown"
             color={colors.yellow700}
             title="Hạng thành viên"
-            onPress={() => alert('Hạng thành viên!')}
+            onPress={() => { navigation.navigate(ScreenEnum.MembershipCard) }}
           />
           <Card
             iconName="clock-edit"
