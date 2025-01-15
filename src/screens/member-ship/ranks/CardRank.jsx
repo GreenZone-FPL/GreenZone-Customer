@@ -21,7 +21,7 @@ export const CardRank = ({title, icon, style}) => {
     <Row style={[styles.container, style]}>
       <View style={styles.containerIcon}>
         {IconComponent ? (
-          <IconComponent size={44} color={colors.primary} variant="Bulk" />
+          <IconComponent size={38} color={colors.primary} variant="Bulk" />
         ) : (
           <Text>Icon not found</Text>
         )}
