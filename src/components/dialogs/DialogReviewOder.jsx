@@ -19,6 +19,7 @@ import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { NormalText } from '../texts/NormalText';
 import { Row } from '../containers/Row';
 import { Column } from '../containers/Column';
+import { DialogBasic } from './DialogBasic';
 
 const { width } = Dimensions.get('window');
 
@@ -38,109 +39,85 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
 
   const [voteRating, setVoteRating] = useState(false);
   const [defaultRating, setDefaultRating] = useState(0);
-  const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
 
-  const starIconFilled = (<Icon source="star" size={35} color={colors.yellow500} />);
-  const starIconCorner = (<Icon source="star-outline" size={35} color={colors.yellow500} />);
-
-
-  const CustomRatingBar = () => {
-    return (
-      <View style={styles.ratingContainer}>
-        {
-          maxRating.map((item, key) => {
-            return (
-              <TouchableOpacity
-                key={key}
-                activeOpacity={1}
-                onPress={() => setDefaultRating(item)}
-              >
-                {defaultRating >= item ? starIconFilled : starIconCorner}
-              </TouchableOpacity>
-            )
-          })
-        }
-      </View>
-    );
-  }
-
-  const handleVoteRating = () => {
-    setVoteRating(true);
-  };
-
+  const CustomRatingBar = () => (
+    <View style={styles.ratingContainer}>
+      {[1, 2, 3, 4, 5].map((rating, index) => (
+        <TouchableOpacity
+          key={index}
+          activeOpacity={1}
+          onPress={() => setDefaultRating(rating)}
+        >
+          <Icon
+            source={defaultRating >= rating ? "star" : "star-outline"}
+            size={35}
+            color={colors.yellow500}
+          />
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
   return (
-    <Modal
-      visible={isVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={onHide}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <OverlayStatusBar />
-          <KeyboardAvoidingView behavior="position">
-            <ScrollView>
-              <View style={styles.header}>
-                <View style={styles.placeholderIcon} />
-                <Text style={styles.titleText}>Trạng thái đơn hàng</Text>
-                <TouchableOpacity onPress={onHide}>
-                  <Icon
-                    source="close"
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    color={colors.primary}
-                  />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.modalContent}>
-                <View style={styles.bgImage}>
-                  <Image
-                    source={require('../../assets/images/ic_coffee_cup.png')}
-                  />
-                </View>
-                <NormalText text='Thời gian giao dự kiến' />
-                <Text style={styles.statusText}>Hoàn tất</Text>
-                <Row style={styles.support}>
-                  <PrimaryButton title='Đánh giá' style={styles.btnSupport} onPress={handleVoteRating} />
-                  <PrimaryButton title='Gọi hỗ trợ' style={styles.btnSupport} onPress={handlePress} />
-                </Row>
-                <Text style={styles.detailText}>Thông tin đơn hàng</Text>
-                <Row style={styles.detail}>
-                  <Column style={styles.column}>
-                    <NormalText text='Người nhận' />
-                    <Text>Nguyễn Văn A</Text>
-                  </Column>
-                  <Column style={{ paddingVertical: GLOBAL_KEYS.PADDING_SMALL }}>
-                    <NormalText text='Số điện thoại' />
-                    <Text>0987654321</Text>
-                  </Column>
-                </Row>
-                <NormalText text='đặt tại bàn' style={styles.detail} />
-                <Column style={styles.detail}>
-                  <NormalText text='Trạng thái thanh toán:' />
-                  <Row>
-                    <NormalText text='PAID' style={styles.pay} />
-                    <Text>Đã thanh toán</Text>
-                  </Row>
-                </Column>
-                <Column style={styles.detail}>
-                  <NormalText text='Mã đơn hàng:' />
-                  <Text>I923422332234</Text>
-                </Column>
-                <Text style={styles.detailText}>Sản phẩm đã chọn</Text>
-                <Row style={styles.row}>
-                  <Text style={styles.modalItemText}>1: {item.title}</Text>
-                  <Text style={styles.modalItemText}>Giá: {item.price}</Text>
-                </Row>
-                <Text style={styles.detailText}>Tổng cộng</Text>
-                <Row style={styles.row}>
-                  <Text>Thành tiền</Text>
-                  <Text>{item.price}</Text>
-                </Row>
-              </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
-        </View>
+    <DialogBasic isVisible={isVisible}
+      onHide={onHide}
+      title={'Trạng thái đơn hàng'}>
+      <View style={styles.bgImage}>
+        <Image
+          source={require('../../assets/images/ic_coffee_cup.png')}
+        />
       </View>
 
+
+      <NormalText text='Thời gian giao dự kiến' />
+      <Text style={styles.statusText}>Hoàn tất</Text>
+      <Row style={styles.support}>
+        <PrimaryButton title='Đánh giá' style={styles.btnSupport} onPress={() => setVoteRating(true)} />
+        <PrimaryButton title='Gọi hỗ trợ' style={styles.btnSupport} onPress={handlePress} />
+      </Row>
+
+
+      <Text style={styles.detailText}>Thông tin đơn hàng</Text>
+      <Row style={styles.detail}>
+        <Column style={styles.column}>
+          <NormalText text='Người nhận' />
+          <Text>Nguyễn Văn A</Text>
+        </Column>
+        <Column style={{ paddingVertical: GLOBAL_KEYS.PADDING_SMALL }}>
+          <NormalText text='Số điện thoại' />
+          <Text>0987654321</Text>
+        </Column>
+      </Row>
+      <NormalText text='đặt tại bàn' style={styles.detail} />
+      <Column style={styles.detail}>
+        <NormalText text='Trạng thái thanh toán:' />
+        <Row>
+          <NormalText text='PAID' style={styles.pay} />
+          <Text>Đã thanh toán</Text>
+        </Row>
+      </Column>
+      <Column style={styles.detail}>
+        <NormalText text='Mã đơn hàng:' />
+        <Text>I923422332234</Text>
+      </Column>
+
+
+
+      <Text style={styles.detailText}>Sản phẩm đã chọn</Text>
+      <Row style={styles.row}>
+        <NormalText text={item.title} />
+        <NormalText text={item.price} />
+      </Row>
+
+
+      <Text style={styles.detailText}>Tổng cộng</Text>
+      <Row style={styles.row}>
+        <NormalText text='Thành tiền' />
+        <NormalText text={item.price} />
+      </Row>
+
+
+
+      
       <Modal
         visible={voteRating}
         animationType="slide"
@@ -160,12 +137,12 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
               </TouchableOpacity>
             </View>
             <View style={styles.body}>
-              <Text>Tại cửa hàng</Text>
+              <NormalText text='Tại cửa hàng'/>
               <Text style={styles.modalItemText}>{item.title}</Text>
               <CustomRatingBar />
               <PrimaryButton
                 title="Gửi đánh giá"
-                style={defaultRating === 0 ? {  backgroundColor: colors.gray200 }: {  backgroundColor: colors.primary } }
+                style={defaultRating === 0 ? { backgroundColor: colors.gray200 } : { backgroundColor: colors.primary }}
                 onPress={() => {
                   if (defaultRating > 0) {
                     setVoteRating(false);
@@ -178,10 +155,10 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
           </View>
         </View>
       </Modal>
-    </Modal>
+    </DialogBasic>
   );
 };
-
+DialogReviewOder.propTypes = DialogReviewOderPropTypes;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
@@ -225,12 +202,10 @@ const styles = StyleSheet.create({
   btnSupport: {
     width: width / 2.5,
   },
-  modalContent: {
-    margin: 16,
-  },
   modalItemText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
+    fontWeight: '700'
   },
   closeButton: {
     marginTop: 16,

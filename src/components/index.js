@@ -21,6 +21,7 @@ export * from './containers/Row'
 // dialogs
 export * from './dialogs/DialogShippingMethod'
 export * from './dialogs/DialogFeedback'
+export * from './dialogs/DialogBasic'
 
 
 // flatlists
@@ -34,6 +35,8 @@ export * from './footer/CheckoutFooter';
 export * from './headers/HeaderWithBadge';
 export * from './headers/IconWithBadge';
 export * from './headers/NormalHeader';
+export * from './headers/HeaderOrder';
+
 
 // inputs
 export * from './inputs/CustomSearchBar';

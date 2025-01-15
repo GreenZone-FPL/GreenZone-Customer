@@ -1,33 +1,25 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, FlatList, Image, Dimensions, Modal, TouchableOpacity } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { NormalHeader, LightStatusBar, NormalText, PrimaryButton } from '../../components';
+import { NormalHeader, LightStatusBar, NormalText, PrimaryButton, DualTextRow } from '../../components';
 
 const { height, width } = Dimensions.get('window');
 
 const NotificationScreen = (props) => {
   const navigation = props.navigation;
 
-  const [modalVisible, setModalVisible] = useState(false); 
-  const [selectedItems, setSelectedItems] = useState({}); 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleItemPress = (item) => {
-    if (!selectedItems[item.id]) {
-      setSelectedItems({
-        ...selectedItems,
-        [item.id]: item, 
-      });
-    }
+    setSelectedItem(item);
     setModalVisible(true); 
   };
 
   const closeModal = () => {
-    setModalVisible(false);
+    setSelectedItem(null); 
+    setModalVisible(false); 
   };
-
-
-  const selectedItemArray = Object.values(selectedItems);
-  const lastSelectedItem = selectedItemArray[selectedItemArray.length - 1]; 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,25 +36,24 @@ const NotificationScreen = (props) => {
         renderItem={({ item }) => (
           <Card
             item={item}
-            selectedItems={selectedItems} 
-            handleItemPress={handleItemPress} 
+            handleItemPress={handleItemPress}
           />
         )}
         contentContainerStyle={styles.listContainer}
       />
 
-      {selectedItemArray.length > 0 && (
+      {selectedItem && (
         <Modal
           visible={modalVisible}
-          animationType="fade" // Hiệu ứng hiện Modal
+          animationType="fade"
           transparent={true}
           onRequestClose={closeModal}
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Image source={{ uri: lastSelectedItem.image }} style={styles.modalImage} />
-              <Text style={styles.modalTitle}>{lastSelectedItem.title}</Text>
-              <Text style={styles.modalMessage}>{lastSelectedItem.message}</Text>
+              <Image source={{ uri: selectedItem.image }} style={styles.modalImage} />
+              <Text style={styles.modalTitle}>{selectedItem.title}</Text>
+              <NormalText text={selectedItem.message}/>
               <PrimaryButton title="Đã xem" onPress={closeModal} />
             </View>
           </View>
@@ -72,24 +63,14 @@ const NotificationScreen = (props) => {
   );
 };
 
-const Card = ({ item, selectedItems, handleItemPress }) => {
-  const isSelected = !!selectedItems[item.id]; // Kiểm tra nếu item đã được chọn
+const Card = ({ item, handleItemPress }) => {
   return (
     <TouchableOpacity
       onPress={() => handleItemPress(item)}
-      style={[
-        styles.itemContainer,
-        {
-          backgroundColor: isSelected ? colors.white : colors.gray200, 
-        },
-      ]}
-    >
+      style={styles.itemContainer}>
       <Image source={{ uri: item.image }} style={styles.image} />
       <View style={styles.textContainer}>
-        <View style={styles.row}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.date}>{item.date}</Text>
-        </View>
+        <DualTextRow leftText={item.title} rightText={item.date} leftTextStyle={styles.title} />
         <NormalText text={item.message} />
       </View>
     </TouchableOpacity>
@@ -140,19 +121,11 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
   },
   date: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray850,
-  },
-  message: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray850,
   },
@@ -176,9 +149,5 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '700',
-  },
-  modalMessage: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray700,
   },
 });

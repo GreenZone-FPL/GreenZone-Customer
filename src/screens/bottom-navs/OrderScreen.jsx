@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet , Text} from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
 import {
   ProductsListHorizontal,
@@ -9,12 +9,11 @@ import {
   DeliveryButton,
   CategoryMenu,
   DialogShippingMethod,
-  HeaderWithBadge,
   LightStatusBar,
+  HeaderOrder,
+  DialogBasic,
 } from '../../components';
 import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
-import { HeaderOrder } from '../../components/headers/HeaderOrder';
-import { DialogBasic } from '../../components/dialogs/DialogBasic';
 
 const OrderScreen = props => {
   const { navigation } = props;

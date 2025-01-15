@@ -1,15 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
