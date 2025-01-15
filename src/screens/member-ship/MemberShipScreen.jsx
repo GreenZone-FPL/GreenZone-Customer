@@ -3,68 +3,13 @@ import {Bucket} from 'iconsax-react-native';
 import React, {useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
-import {
-  NormalHeader,
-  NewRank,
-  BronzeRank,
-  SilveRank,
-  GoldRank,
-  DiamonRank,
-} from '../../components';
-
+import {Column, NormalHeader, Row} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
+import {BronzeRank, DiamonRank, GoldRank, NewRank, SilverRank} from './ranks';
 
 const width = Dimensions.get('window').width;
 
-// Component con cho Header của Card
-const CardHeader = ({rank, bean}) => (
-  <View style={styles.headerContainer}>
-    <Text style={styles.rankText}>{rank}</Text>
-    <Text style={styles.beanText}>{bean} bean</Text>
-  </View>
-);
-
-// Component con cho ProgressBar và thông tin
-const ProgressSection = ({progress, progressBarWidth}) => (
-  <View>
-    <View style={styles.rank}>
-      <Text style={styles.progressText}>MỚi</Text>
-      <Text style={styles.progressText}>Đồng</Text>
-    </View>
-
-    <View style={styles.progressBarContainer}>
-      <ProgressBar
-        progress={progress}
-        width={progressBarWidth}
-        height={10}
-        color={colors.green500}
-        unfilledColor={colors.white}
-        borderWidth={0}
-        style={styles.progressBar}
-      />
-      <View
-        style={[
-          styles.iconContainer,
-          {left: progress * (progressBarWidth - 16)},
-        ]}>
-        <Bucket size="24" color={colors.yellow500} variant="Bold" />
-      </View>
-    </View>
-  </View>
-);
-
-// Component con cho các thông tin phía dưới
-const InfoContainer = ({messages}) => (
-  <View style={styles.infoContainer}>
-    {messages.map((msg, index) => (
-      <Text key={index} style={styles.infoText}>
-        {msg}
-      </Text>
-    ))}
-  </View>
-);
-
-const MembershipCard = props => {
+const MembershipScreen = props => {
   const {navigation} = props;
   const progress = 0.5;
   const progressBarWidth = width - 4 * GLOBAL_KEYS.PADDING_DEFAULT;
@@ -78,7 +23,7 @@ const MembershipCard = props => {
       />
 
       {/* Card container */}
-      <View style={styles.cardContainer}>
+      <Column style={styles.cardContainer}>
         <CardHeader rank="MỚi" bean="0" />
         <ProgressSection
           progress={progress}
@@ -91,7 +36,7 @@ const MembershipCard = props => {
             'Chưa tích điểm.',
           ]}
         />
-      </View>
+      </Column>
 
       {/* TabView container */}
       <Tab
@@ -154,13 +99,13 @@ const MembershipCard = props => {
         animationType="spring"
         containerStyle={styles.tabViewContainer}>
         <TabView.Item style={styles.tabViewItem}>
-          <NewRank/>
+          <NewRank />
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
           <BronzeRank />
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
-          <SilveRank />
+          <SilverRank />
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
           <GoldRank />
@@ -172,6 +117,54 @@ const MembershipCard = props => {
     </View>
   );
 };
+
+// Component con cho Header của Card
+const CardHeader = ({rank, bean}) => (
+  <Row style={styles.headerContainer}>
+    <Text style={styles.rankText}>{rank}</Text>
+    <Text style={styles.beanText}>{bean} Bean</Text>
+  </Row>
+);
+
+// Component con cho ProgressBar và thông tin
+const ProgressSection = ({progress, progressBarWidth}) => (
+  <Column>
+    <Row style={styles.rank}>
+      <Text style={styles.progressText}>MỚi</Text>
+      <Text style={styles.progressText}>Đồng</Text>
+    </Row>
+
+    <Column style={styles.progressBarContainer}>
+      <ProgressBar
+        progress={progress}
+        width={progressBarWidth}
+        height={10}
+        color={colors.green500}
+        unfilledColor={colors.white}
+        borderWidth={0}
+        style={styles.progressBar}
+      />
+      <Column
+        style={[
+          styles.iconContainer,
+          {left: progress * (progressBarWidth - 16)},
+        ]}>
+        <Bucket size="24" color={colors.yellow500} variant="Bold" />
+      </Column>
+    </Column>
+  </Column>
+);
+
+// Component con cho các thông tin phía dưới
+const InfoContainer = ({messages}) => (
+  <View style={styles.infoContainer}>
+    {messages.map((msg, index) => (
+      <Text key={index} style={styles.infoText}>
+        {msg}
+      </Text>
+    ))}
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -187,7 +180,6 @@ const styles = StyleSheet.create({
     marginTop: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   headerContainer: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
@@ -199,7 +191,6 @@ const styles = StyleSheet.create({
   },
   beanText: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   progressBarContainer: {
     position: 'relative',
@@ -211,7 +202,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   rank: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
@@ -258,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MembershipCard
+export default MembershipScreen;

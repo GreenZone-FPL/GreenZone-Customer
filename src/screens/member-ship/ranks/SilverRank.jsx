@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import {CardRank} from './CardRank';
 
-export const SilveRank = () => {
+export const SilverRank = () => {
   return (
     <View>
       <CardRank icon={'Cake'} title={'Tặng 01 phần bánh sinh nhật'} />

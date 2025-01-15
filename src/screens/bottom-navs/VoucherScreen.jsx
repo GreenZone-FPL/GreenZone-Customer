@@ -6,15 +6,15 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { LightStatusBar } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, VoucherGraph } from '../../layouts/graphs';
+import {Icon} from 'react-native-paper';
+import {LightStatusBar} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, VoucherGraph} from '../../layouts/graphs';
 
 const VoucherScreen = props => {
- const { navigation } = props;
+  const {navigation} = props;
   return (
     <ScrollView style={styles.container}>
       <LightStatusBar />
@@ -51,7 +51,9 @@ const VoucherScreen = props => {
             iconName="crown"
             color={colors.yellow700}
             title="Hạng thành viên"
-            onPress={() => { navigation.navigate(AppGraph.MembershipCard) }}
+            onPress={() => {
+              navigation.navigate(AppGraph.MembershipScreen);
+            }}
           />
           <Card
             iconName="clock-edit"
