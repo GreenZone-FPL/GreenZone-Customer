@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
+  KeyboardAvoidingView,
   Modal,
   ScrollView,
   StyleSheet,
@@ -32,6 +33,9 @@ export const DialogBasic = ({ isVisible, onHide, title , children}) => {
         <View style={styles.modalContainer}>
           <OverlayStatusBar />
             <ScrollView>
+              <KeyboardAvoidingView>
+
+              
               <View style={styles.header}>
                 <View style={styles.placeholderIcon} />
                 <Text style={styles.titleText}>{title}</Text>
@@ -46,6 +50,7 @@ export const DialogBasic = ({ isVisible, onHide, title , children}) => {
               <View style={styles.body}>
                 {children}
               </View>
+              </KeyboardAvoidingView>
             </ScrollView>
         </View>
       </View> 
