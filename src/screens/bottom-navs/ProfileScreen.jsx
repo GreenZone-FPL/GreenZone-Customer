@@ -41,6 +41,7 @@ const ProfileScreen = props => {
               onPress={() => { navigation.navigate(OrderGraph.OrderHistoryScreen) }}
             />
           </View>
+
         </View>
 
         <Text style={styles.sectionTitle}>Tiện ích</Text>

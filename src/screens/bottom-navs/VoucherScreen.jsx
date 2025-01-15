@@ -14,7 +14,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { VoucherGraph } from '../../layouts/graphs';
 
 const VoucherScreen = props => {
-  const {navigation} = props;
+ const { navigation } = props;
   return (
     <ScrollView style={styles.container}>
       <LightStatusBar />
@@ -51,7 +51,7 @@ const VoucherScreen = props => {
             iconName="crown"
             color={colors.yellow700}
             title="Hạng thành viên"
-            onPress={() => alert('Hạng thành viên!')}
+            onPress={() => { navigation.navigate(ScreenEnum.MembershipCard) }}
           />
           <Card
             iconName="clock-edit"
