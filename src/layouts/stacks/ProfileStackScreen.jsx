@@ -1,59 +1,59 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { ScreenEnum } from '../../constants';
+import AddressScreen from '../../screens/address/AddressScreen';
+import NewAddressScreen from '../../screens/address/NewAddressScreen';
+import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
+import SelectAddressScreen from '../../screens/address/SelectAddressScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
-import AddressScreen from '../../screens/user_profile/AddressScreen';
-import NewAddressScreen from '../../screens/user_profile/NewAddressScreen';
-import SearchAddressScreen from '../../screens/user_profile/SearchAddressScreen';
-import SelectAddressScreen from '../../screens/user_profile/SelectAddressScreen';
-import UpdateProfileScreen from '../../screens/user_profile/UpdateProfileScreen';
-import ContactScreen from '../../screens/user_profile/ContactScreen';
+import ContactScreen from '../../screens/user-profile/ContactScreen';
+import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
+import { AuthGraph, BottomGraph, MainGraph, UserGraph } from '../graphs';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator
-      name={ScreenEnum.ProfileStackScreen}
+      name={MainGraph.ProfileStackScreen}
       screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen
-        name={ScreenEnum.ProfileScreen}
+        name={BottomGraph.ProfileScreen}
         component={ProfileScreen}
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.LoginScreen}
+        name={AuthGraph.LoginScreen}
         component={LoginScreen}
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.UpdateProfileScreen}
+        name={UserGraph.UpdateProfileScreen}
         component={UpdateProfileScreen}
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.AddressScreen}
+        name={UserGraph.AddressScreen}
         component={AddressScreen}
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.ContactScreen}
+        name={UserGraph.ContactScreen}
         component={ContactScreen}
       />
 
 
 
       <ProfileStack.Screen
-        name={ScreenEnum.NewAddressScreen}
+        name={UserGraph.NewAddressScreen}
         component={NewAddressScreen}
       />
       <ProfileStack.Screen
-        name={ScreenEnum.SearchAddressScreen}
+        name={UserGraph.SearchAddressScreen}
         component={SearchAddressScreen}
       />
       <ProfileStack.Screen
-        name={ScreenEnum.SelectAddressScreen}
+        name={UserGraph.SelectAddressScreen}
         component={SelectAddressScreen}
       />
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Column, CustomTabView, DualTextRow, LightStatusBar, NormalHeader, NormalText, Row } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { OrderGraph } from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
 
@@ -27,14 +28,14 @@ const OrderHistoryScreen = (props) => {
                 }}
             >
                 <OrderListView
-                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Picked"
                 />
                 <OrderListView
-                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Completed" />
                 <OrderListView
-                    onItemPress={() => navigation.navigate(ScreenEnum.OrderDetailScreen)}
+                    onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Cancelled" />
             </CustomTabView>
 
