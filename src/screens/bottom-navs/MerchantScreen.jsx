@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   Image,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { CustomSearchBar, HeaderWithBadge } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph } from '../../layouts/graphs/appGraph';
+
 
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');
@@ -19,7 +20,7 @@ const MerchantScreen = props => {
   const { navigation } = props;
 
   const handleMerchant = item => {
-    navigation.navigate(ScreenEnum.MerchantDetailSheet, { item: item });
+    navigation.navigate(AppGraph.MerchantDetailSheet, { item: item });
   };
   return (
     <SafeAreaView style={styles.container}>
