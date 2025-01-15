@@ -11,7 +11,7 @@ import {
 import { Icon } from 'react-native-paper';
 import { LightStatusBar } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { VoucherGraph } from '../../layouts/graphs';
+import { AppGraph, VoucherGraph } from '../../layouts/graphs';
 
 const VoucherScreen = props => {
  const { navigation } = props;
@@ -51,7 +51,7 @@ const VoucherScreen = props => {
             iconName="crown"
             color={colors.yellow700}
             title="Hạng thành viên"
-            onPress={() => { navigation.navigate(ScreenEnum.MembershipCard) }}
+            onPress={() => { navigation.navigate(AppGraph.MembershipCard) }}
           />
           <Card
             iconName="clock-edit"

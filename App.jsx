@@ -22,8 +22,8 @@ function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <BaseStack.Navigator screenOptions={{headerShown: false}}>
-        
+        <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+
           <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 
           <BaseStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
@@ -34,13 +34,13 @@ function App() {
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
 
 
-          
+
           <BaseStack.Screen
             name={AppGraph.MembershipCard}
             component={MembershipCard}
           />
 
-        
+
         </BaseStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
