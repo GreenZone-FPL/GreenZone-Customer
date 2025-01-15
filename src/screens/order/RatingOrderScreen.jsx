@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, FlatList, Dimensions } from 'react-native';
-import { NormalHeader, LightStatusBar } from '../../components';
+import { NormalHeader, LightStatusBar, DialogReviewOder, Row } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { DialogReviewOder } from '../../components/dialogs/DialogReviewOder';
+
 
 const { height, width } = Dimensions.get('window');
 
@@ -42,21 +42,21 @@ const RatingOrderScreen = (props) => {
 
 const Card = ({ item, onPress }) => (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
-        <View style={styles.row}>
-            <Image
+        <Row>
+        <Image
                 source={require('../../assets/images/ic_take_away.png')}
                 style={styles.cardImage}
             />
-            <View style={styles.infoContainer}>
+            <View style={{flex: 1}}>
                 <Text style={styles.title}>{item.title}</Text>
-                <View style={styles.rowtime}>
+                <Row>
                     <Text style={styles.textInfo}>{item.time}</Text>
-                    <Text style={styles.textInfo}> - </Text>
-                    <Text style={styles.textInfo}>{item.date}</Text>
-                </View>
+                        <Text style={styles.textInfo}> - </Text>
+                        <Text style={styles.textInfo}>{item.date}</Text>
+                </Row>
             </View>
             <Text style={styles.price}>{item.price}</Text>
-        </View>
+        </Row>
     </TouchableOpacity>
 );
 
@@ -97,20 +97,6 @@ const styles = StyleSheet.create({
         width: width / 8,
         height: height / 14,
         resizeMode: 'contain',
-    },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flex: 1,
-        gap: GLOBAL_KEYS.GAP_SMALL,
-    },
-    rowtime: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    infoContainer: {
-        flex: 1,
     },
     title: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

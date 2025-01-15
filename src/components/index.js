@@ -22,6 +22,7 @@ export * from './containers/Row'
 export * from './dialogs/DialogShippingMethod'
 export * from './dialogs/DialogFeedback'
 export * from './dialogs/DialogBasic'
+export * from './dialogs/DialogReviewOder'
 
 
 // flatlists
