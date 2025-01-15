@@ -3,13 +3,13 @@ import {Bucket} from 'iconsax-react-native';
 import React, {useState} from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
+import {Column, NormalHeader, Row} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {BronzeRank, DiamonRank, GoldRank, NewRank, SilverRank} from './ranks';
-import {Column, NormalHeader, NormalText, Row} from '../../components';
 
 const width = Dimensions.get('window').width;
 
-const MembershipCard = props => {
+const MembershipScreen = props => {
   const {navigation} = props;
   const progress = 0.5;
   const progressBarWidth = width - 4 * GLOBAL_KEYS.PADDING_DEFAULT;
@@ -248,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MembershipCard
+export default MembershipScreen;
