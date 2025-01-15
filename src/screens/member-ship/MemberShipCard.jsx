@@ -1,18 +1,11 @@
-import {Tab, TabView} from '@rneui/themed';
-import {Bucket} from 'iconsax-react-native';
-import React, {useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { Tab, TabView } from '@rneui/themed';
+import { Bucket } from 'iconsax-react-native';
+import React, { useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
-import {
-  NormalHeader,
-  NewRank,
-  BronzeRank,
-  SilveRank,
-  GoldRank,
-  DiamonRank,
-} from '../../components';
-
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { BronzeRank, DiamonRank, GoldRank, NewRank, SilverRank } from './ranks';
+import { NormalHeader } from '../../components';
 
 const width = Dimensions.get('window').width;
 
@@ -154,13 +147,13 @@ const MembershipCard = props => {
         animationType="spring"
         containerStyle={styles.tabViewContainer}>
         <TabView.Item style={styles.tabViewItem}>
-          <NewRank/>
+          <NewRank />
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
           <BronzeRank />
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
-          <SilveRank />
+          <SilverRank/>
         </TabView.Item>
         <TabView.Item style={styles.tabViewItem}>
           <GoldRank />

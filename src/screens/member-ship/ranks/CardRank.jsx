@@ -1,8 +1,9 @@
+import * as Iconsax from 'iconsax-react-native';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
-import * as Iconsax from 'iconsax-react-native';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import {Row} from '../../../components';
+import {colors, GLOBAL_KEYS} from '../../../constants';
 
 const {width} = Dimensions.get('window');
 
@@ -17,21 +18,17 @@ export const CardRank = ({title, icon, style}) => {
   const IconComponent = Iconsax[icon];
 
   return (
-    <View style={[styles.container, style]}>
+    <Row style={[styles.container, style]}>
       <View style={styles.containerIcon}>
         {IconComponent ? (
-          <IconComponent
-            size={44}
-            color={colors.primary}
-            variant="Bulk" 
-          />
+          <IconComponent size={44} color={colors.primary} variant="Bulk" />
         ) : (
           <Text>Icon not found</Text>
         )}
       </View>
 
       <Text style={styles.title}>{title}</Text>
-    </View>
+    </Row>
   );
 };
 
@@ -39,7 +36,6 @@ CardRank.propTypes = CardRankPropTypes;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
     alignItems: 'center',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     backgroundColor: colors.white,
@@ -59,7 +55,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     color: colors.gray700,
+    fontSize: 12,
   },
 });
