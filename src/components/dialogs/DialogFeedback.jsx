@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.pink500,
     textAlign: 'center',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
   },
   viewInputFeedback: {
     borderWidth: 1,

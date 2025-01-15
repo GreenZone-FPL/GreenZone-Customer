@@ -172,17 +172,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   labelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '700',
     color: colors.black,
   },
   activeLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '700',
     color: colors.primary,
   },
   inactiveLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '700',
     color: colors.black,
   },
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   bodyHeader: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.black,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT

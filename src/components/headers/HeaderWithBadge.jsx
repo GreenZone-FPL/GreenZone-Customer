@@ -27,7 +27,7 @@ export const  HeaderWithBadge = (props) => {
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
             />
-            <Text style={styles.title}>Chào bạn mới</Text>
+            <Text style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>Chào bạn mới</Text>
             <Icon source='hand-wave' color={colors.yellow700} size={GLOBAL_KEYS.ICON_SIZE_SMALL} />
           </View>
 
@@ -51,7 +51,7 @@ HeaderWithBadge.propTypes = HeaderWithBadgePropTypes
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    paddingVertical: 4,
+    paddingTop: 10,
     backgroundColor: colors.white,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: 16,
     fontWeight: 'bold',
     color: colors.black,
   },

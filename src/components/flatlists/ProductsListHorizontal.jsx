@@ -106,11 +106,11 @@ const styles = StyleSheet.create({
   },
   headerText: {
     color: colors.black,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
   },
   timeText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     color: colors.primary,
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },

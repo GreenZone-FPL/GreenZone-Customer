@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         color: colors.black,
     },
     totalText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
         fontWeight: 'bold',
         color: colors.primary,
     },

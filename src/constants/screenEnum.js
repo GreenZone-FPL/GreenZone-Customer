@@ -27,6 +27,7 @@ export const ScreenEnum = Object.freeze({
   ContactScreen: 'ContactScreen',
 
 
+  // address
   AddressScreen: 'AddressScreen',
   NewAddressScreen: 'NewAddressScreen',
   SearchAddressScreen: 'SearchAddressScreen',
@@ -47,6 +48,8 @@ export const ScreenEnum = Object.freeze({
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
 
+  // membership
+  MembershipCard: 'MembershipCard',
   // voucher
   AllVoucherScreen: ' AllVoucherScreen',
 });
