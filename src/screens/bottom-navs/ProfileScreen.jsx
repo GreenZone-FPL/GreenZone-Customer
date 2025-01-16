@@ -1,8 +1,9 @@
 import React from 'react';
 import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Icon} from 'react-native-paper';
-import {LightStatusBar, HeaderWithBadge} from '../../components';
-import {GLOBAL_KEYS, colors, ScreenEnum} from '../../constants';
+import {HeaderWithBadge, LightStatusBar} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, AuthGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
@@ -21,14 +22,14 @@ const ProfileScreen = props => {
               color={colors.primary}
               title="Thông tin cá nhân"
               onPress={() => {
-                navigation.navigate(ScreenEnum.UpdateProfileScreen);
+                navigation.navigate(UserGraph.UpdateProfileScreen);
               }}
             />
             <CardAccount
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => navigation.navigate(ScreenEnum.AddressScreen)}
+              onPress={() => navigation.navigate(UserGraph.AddressScreen)}
             />
           </View>
           <View style={styles.accountContainer}>
@@ -37,7 +38,7 @@ const ProfileScreen = props => {
               color={colors.orange700}
               title="Lịch sử đơn hàng"
               onPress={() => {
-                navigation.navigate(ScreenEnum.OrderHistoryScreen);
+                navigation.navigate(OrderGraph.OrderHistoryScreen);
               }}
             />
           </View>
@@ -51,7 +52,7 @@ const ProfileScreen = props => {
             icon="chat"
             title="Liên hệ góp ý"
             onPress={() => {
-              navigation.navigate(ScreenEnum.ContactScreen);
+              navigation.navigate(UserGraph.ContactScreen);
             }}
           />
           <View style={styles.separator} />
@@ -64,7 +65,7 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="logout"
             title="Đăng xuất"
-            onPress={() => navigation.navigate(ScreenEnum.LoginScreen)}
+            onPress={() => navigation.navigate(AuthGraph.LoginScreen)}
           />
         </View>
       </View>
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   sectionTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
   },
   accountContainer: {

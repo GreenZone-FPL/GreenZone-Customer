@@ -1,9 +1,9 @@
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { ScreenEnum } from '../../constants';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import OrderScreen from '../../screens/bottom-navs/OrderScreen';
+import { AuthGraph, BottomGraph, MainGraph } from '../graphs';
 
 
 
@@ -15,11 +15,11 @@ const OrderStackScreen = () => {
     return (
 
         <OrderStack.Navigator
-            name={ScreenEnum.OrderStackScreen}
+            name={MainGraph.OrderStackScreen}
             screenOptions={{ headerShown: false }}>
-            <OrderStack.Screen name={ScreenEnum.OrderScreen} component={OrderScreen} />
+            <OrderStack.Screen name={BottomGraph.OrderScreen} component={OrderScreen} />
 
-            <OrderStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
+            <OrderStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
 
         </OrderStack.Navigator>
 

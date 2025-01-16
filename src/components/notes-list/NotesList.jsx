@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.black,
   },

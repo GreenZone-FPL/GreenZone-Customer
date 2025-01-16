@@ -165,13 +165,37 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
+  tabView: {
+    backgroundColor: colors.white,
+  },
+  tabBar: {
+    backgroundColor: colors.white,
+  },
+  indicatorStyle: {
+    backgroundColor: colors.primary,
+  },
+  labelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '700',
+    color: colors.black,
+  },
+  activeLabelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  inactiveLabelStyle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '700',
+    color: colors.black,
+  },
   bodyContainer: {
     paddingVertical: 8,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
   },
   bodyHeader: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.black,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,

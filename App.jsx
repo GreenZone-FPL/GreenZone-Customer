@@ -5,50 +5,57 @@
  * @format
  */
 
-import React from 'react';
-import MainNavigation from './src/layouts/MainNavigation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ScreenEnum } from './src/constants';
-import LoginScreen from './src/screens/auth/LoginScreen';
-import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
-import CheckoutScreen from './src/screens/order/CheckoutScreen';
-import OrderDetailScreen from './src/screens/order/OrderDetailScreen'
+import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppGraph, AuthGraph, MainGraph, OrderGraph, ShoppingGraph, UserGraph } from './src/layouts/graphs';
+import MainNavigation from './src/layouts/MainNavigation';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import CheckoutScreen from './src/screens/order/CheckoutScreen';
+import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
+import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
+import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 
-const BaseStack = createNativeStackNavigator()
+
+const BaseStack = createNativeStackNavigator();
 function App() {
   return (
-
-
     <SafeAreaProvider>
       <NavigationContainer>
+        <BaseStack.Navigator screenOptions={{headerShown: false}}>
+          <BaseStack.Screen
+            name={MainGraph.graphName}
+            component={MainNavigation}
+          />
 
+          <BaseStack.Screen
+            name={AuthGraph.LoginScreen}
+            component={LoginScreen}
+          />
 
-        <BaseStack.Navigator
-          screenOptions={{ headerShown: false }}>
+          <BaseStack.Screen
+            name={OrderGraph.OrderHistoryScreen}
+            component={OrderHistoryScreen}
+          />
 
-          <BaseStack.Screen name={ScreenEnum.MainNavigation} component={MainNavigation} />
+          <BaseStack.Screen
+            name={ShoppingGraph.CheckoutScreen}
+            component={CheckoutScreen}
+          />
+          <BaseStack.Screen
+            name={OrderGraph.OrderDetailScreen}
+            component={OrderDetailScreen}
+          />
 
-          <BaseStack.Screen name={ScreenEnum.LoginScreen} component={LoginScreen} />
-
-          <BaseStack.Screen name={ScreenEnum.OrderHistoryScreen} component={OrderHistoryScreen} />
-
-          <BaseStack.Screen name={ScreenEnum.CheckoutScreen} component={CheckoutScreen} />
-          <BaseStack.Screen name={ScreenEnum.OrderDetailScreen} component={OrderDetailScreen} />
-
-
-
+          <BaseStack.Screen
+            name={AppGraph.MembershipScreen}
+            component={MembershipScreen}
+          />
         </BaseStack.Navigator>
-
-
       </NavigationContainer>
     </SafeAreaProvider>
-
-
-
   );
 }
-
 
 export default App;

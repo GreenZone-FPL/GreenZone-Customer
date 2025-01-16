@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     marginTop: StatusBar.currentHeight + 40,
-    gap: GLOBAL_KEYS.GAP_DEFAULT + GLOBAL_KEYS.GAP_SMALL,
+    gap: 8,
   },
 
   image: {
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   },
   body: {
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT + GLOBAL_KEYS.GAP_SMALL,
+    gap: 24,
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

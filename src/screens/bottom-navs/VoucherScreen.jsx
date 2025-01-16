@@ -3,15 +3,15 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  ScrollView,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import {LightStatusBar} from '../../components';
-import {GLOBAL_KEYS, colors, ScreenEnum} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, VoucherGraph} from '../../layouts/graphs';
 
 const VoucherScreen = props => {
   const {navigation} = props;
@@ -53,7 +53,9 @@ const VoucherScreen = props => {
             iconName="crown"
             color={colors.yellow700}
             title="Hạng thành viên"
-            onPress={() => alert('Hạng thành viên!')}
+            onPress={() => {
+              navigation.navigate(AppGraph.MembershipScreen);
+            }}
           />
           <Card
             iconName="clock-edit"
@@ -80,7 +82,7 @@ const VoucherScreen = props => {
         <View style={styles.ticket}>
           <Text style={styles.ticketTitle}>Phiếu ưu đãi của bạn</Text>
           <Pressable
-            onPress={() => navigation.navigate(ScreenEnum.AllVoucherScreen)}
+            onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
             style={styles.btnTicket}>
             <Text style={styles.textBtn}>Xem tất cả</Text>
           </Pressable>
@@ -119,7 +121,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.white,
   },
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ticketTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     color: colors.black,
   },
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
   code: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     color: colors.black,
   },
 });

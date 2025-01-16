@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '600',
     color: colors.primary,
     textAlign: 'center',
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.pink500,
     textAlign: 'center',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
   },
   viewInputFeedback: {
     borderWidth: 1,
