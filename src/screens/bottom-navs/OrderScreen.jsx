@@ -1,22 +1,44 @@
-import {StyleSheet, Image, SafeAreaView} from 'react-native';
 import React from 'react';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
+import {
+  SaleProductsListHorizontal,
+  ProductsListVertical,
+  CategoryMenu,
+  LightStatusBar,
+} from '../../components';
+import {colors, ScreenEnum} from '../../constants';
 
 const OrderScreen = props => {
+  const {navigation} = props;
+
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require('../../assets/images/bottom_order.jpg')}
-        style={{width: '100%', height: '100%', resizeMode: 'cover'}}
-      />
+      <LightStatusBar />
+      <ScrollView style={styles.containerContent}>
+        <CategoryMenu />
+        <SaleProductsListHorizontal
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+        />
+        <ProductsListVertical
+          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default OrderScreen
+export default OrderScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: colors.white,
+    position: 'relative',
+  },
+  containerContent: {
+    flexDirection: 'column',
     flex: 1,
   },
 });

@@ -1,3 +1,4 @@
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,7 +10,6 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import React, {useState} from 'react';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
 import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
 import {Icon} from 'react-native-paper';
@@ -17,8 +17,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 
 const width = Dimensions.get('window').width;
 
-const VoucherDetailSheet = props => {
-  const {navigation, route} = props;
+const VoucherDetailSheet = ({navigation, route}) => {
   const {item} = route.params;
   const [showAlert, setShowAlert] = useState(false);
 
@@ -42,7 +41,9 @@ const VoucherDetailSheet = props => {
           <Text style={styles.alertText}>Sao chép thành công</Text>
         </View>
       )}
+
       <OverlayStatusBar />
+
       <View style={styles.mainContainer}>
         <View style={styles.closeButtonContainer}>
           <TouchableOpacity
@@ -55,19 +56,24 @@ const VoucherDetailSheet = props => {
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.borderConten}>
+
+        <View style={styles.borderContainer}>
           <ScrollView
             style={styles.contentContainer}
             showsVerticalScrollIndicator={false}>
             <View style={styles.voucherInfoContainer}>
               <Text style={styles.voucherTitle}>Green Zone</Text>
               <Text style={styles.voucherName}>{item.name}</Text>
+
               <View style={styles.separator} />
+
               <Image source={{uri: item.qrCode}} style={styles.qrCodeImage} />
               <Text style={styles.discountCode}>{item.discountCode}</Text>
-              <TouchableOpacity onPress={() => copyToClipboard()}>
+
+              <TouchableOpacity onPress={copyToClipboard}>
                 <Text style={styles.copyText}>Sao chép</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 style={styles.orderButton}
                 onPress={() => navigation.navigate(ScreenEnum.OrderScreen)}>
@@ -75,19 +81,23 @@ const VoucherDetailSheet = props => {
               </TouchableOpacity>
 
               <View style={styles.separator} />
+
               <View style={styles.expiryContainer}>
                 <Text style={styles.expiryText}>Ngày hết hạn:</Text>
                 <Text style={styles.expiryDate}>{item.time}</Text>
               </View>
+
               <View style={styles.separator} />
+
               {item.description.map((desc, index) => (
                 <Text style={styles.descriptionText} key={index}>
                   {index + 1}/ <Text>{desc}</Text>
                 </Text>
               ))}
+
               <Text style={styles.termsText}>
                 Xem thêm các điều khoản sử dụng dịch vụ tại:
-                <TouchableOpacity onPress={() => handleTermsText()}>
+                <TouchableOpacity onPress={handleTermsText}>
                   <Text style={styles.termsLink}>{item.homepage}</Text>
                 </TouchableOpacity>
               </Text>
@@ -138,7 +148,7 @@ const styles = StyleSheet.create({
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
   },
-  borderConten: {
+  borderContainer: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
@@ -153,7 +163,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
-
   voucherInfoContainer: {
     justifyContent: 'center',
     backgroundColor: 'white',
