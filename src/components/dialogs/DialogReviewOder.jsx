@@ -2,9 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
   Dimensions,
-  KeyboardAvoidingView,
   Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,7 +13,6 @@ import {
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { NormalText } from '../texts/NormalText';
 import { Row } from '../containers/Row';
 import { Column } from '../containers/Column';
@@ -150,21 +147,16 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
                 }}
                 disabled={defaultRating === 0}
               />
-
             </View>
           </View>
         </View>
       </Modal>
+
     </DialogBasic>
   );
 };
 DialogReviewOder.propTypes = DialogReviewOderPropTypes;
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: colors.overlay,
-  },
   modalContainer: {
     backgroundColor: colors.white,
     borderTopLeftRadius: 20,
@@ -206,10 +198,6 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
     fontWeight: '700'
-  },
-  closeButton: {
-    marginTop: 16,
-    width: '80%',
   },
   bgImage: {
     backgroundColor: colors.green100,

@@ -16,6 +16,9 @@ import CheckoutScreen from './src/screens/order/CheckoutScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import MembershipCard from './src/screens/member-ship/MemberShipCard';
+import ProfileScreen from './src/screens/bottom-navs/ProfileScreen';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
+
 
 const BaseStack = createNativeStackNavigator();
 function App() {
@@ -32,7 +35,7 @@ function App() {
 
           <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
           <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
-
+          <BaseStack.Screen name={UserGraph.Notification} component={NotificationScreen} />
 
 
           <BaseStack.Screen

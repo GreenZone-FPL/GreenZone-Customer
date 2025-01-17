@@ -41,10 +41,6 @@ export const ScreenEnum = Object.freeze({
   RatingOrderScreen: 'RatingOrderScreen',
 
 
-  //Notification
-  NotificationScreen: 'NotificationScreen',
-
-
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
 

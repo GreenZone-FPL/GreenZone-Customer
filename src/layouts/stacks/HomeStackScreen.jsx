@@ -4,7 +4,7 @@ import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
 import NotificationScreen from '../../screens/notification/NotificationScreen';
-import { AuthGraph, BottomGraph, ShoppingGraph } from '../graphs';
+import { AuthGraph, BottomGraph, ShoppingGraph, UserGraph } from '../graphs';
 
 
 
@@ -26,7 +26,7 @@ const HomeStackScreen = () => {
           headerShown: false,
         }}
       />
-      <HomeStack.Screen name={ScreenEnum.NotificationScreen} component={NotificationScreen} />
+      <HomeStack.Screen name={UserGraph.NotificationScreen} component={NotificationScreen} />
     </HomeStack.Navigator>
   );
 };

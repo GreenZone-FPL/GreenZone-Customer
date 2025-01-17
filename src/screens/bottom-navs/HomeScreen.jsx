@@ -14,7 +14,7 @@ import {
   ProductsListVertical,
 } from '../../components';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -65,7 +65,7 @@ const HomeScreen = props => {
         <HeaderWithBadge
           title="Home"
           onBadgePress={() => {
-            navigation.navigate(ScreenEnum.NotificationScreen);
+            navigation.navigate(UserGraph.Notification);
           }}
           isHome={true}
           
