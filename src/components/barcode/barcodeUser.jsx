@@ -9,8 +9,8 @@ import {
     Pressable,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { TitleText } from '../texts/TitleText'; // Import component TitleText
-import { colors, GLOBAL_KEYS } from '../../constants'; // Import các giá trị toàn cục
+import { TitleText } from '../texts/TitleText'; 
+import { colors, GLOBAL_KEYS } from '../../constants'; 
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
@@ -20,7 +20,7 @@ const BarcodeUserCardPropTypes = {
     nameUser: PropTypes.string, // Tên người dùng
     code: PropTypes.string, // Thông điệp mã
     codeId: PropTypes.string, // Mã vạch
-    onPress: PropTypes.func, // Hành động khi nhấn vào toàn bộ card
+    onPress: PropTypes.func, 
 };
 
 export const BarcodeUser = ({ imageBg, nameUser, code, codeId, onPress }) => {
@@ -37,16 +37,13 @@ export const BarcodeUser = ({ imageBg, nameUser, code, codeId, onPress }) => {
                         {/* Nội dung thông báo */}
                         <Row style={{justifyContent: 'space-between'}}>
                         <Column>
-                            <TitleText text={nameUser} color={colors.white} />
+                            <TitleText text={nameUser} color={colors.white}/>
                             <TitleText text='Mới' color={colors.white}/>
                             </Column>
-                            
                             <Pressable style={styles.btnBEAN} onPress={onPress}>
                                 <TitleText text='Đổi 0 Xu' color={colors.white}/>
                             </Pressable>
                         </Row>
-                           
-
                         {/* Mã vạch */}
                         <View style={styles.barCode}>
                             <Image
@@ -89,8 +86,8 @@ const styles = StyleSheet.create({
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
         gap: GLOBAL_KEYS.GAP_SMALL,
-        borderBottomStartRadius: 16,
-        borderStartStartRadius: 16,
+        borderBottomStartRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+        borderStartStartRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         marginRight: -16
     },
     barCode: {
@@ -101,6 +98,7 @@ const styles = StyleSheet.create({
     },
     imgcode: {
         width: '100%',
+        height: 70,
         resizeMode: 'contain',
     },
 });

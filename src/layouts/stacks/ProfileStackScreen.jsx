@@ -8,7 +8,8 @@ import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
 import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
-import { AuthGraph, BottomGraph, MainGraph, UserGraph } from '../graphs';
+import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
+import { AuthGraph, BottomGraph, MainGraph, UserGraph, OrderGraph } from '../graphs';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -52,6 +53,10 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen
         name={UserGraph.SelectAddressScreen}
         component={SelectAddressScreen}
+      />
+      <ProfileStack.Screen
+        name={OrderGraph.RatingOrderScreen}
+        component={RatingOrderScreen}
       />
 
 
