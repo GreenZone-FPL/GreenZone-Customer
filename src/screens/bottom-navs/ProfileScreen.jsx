@@ -61,7 +61,7 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="star"
             title="Đánh giá đơn hàng"
-            onPress={() => {navigation.navigate(ScreenEnum.RatingOrderScreen) }}
+            onPress={() => { }}
           />
           <View style={styles.separator} />
           <CardUtiliti

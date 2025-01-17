@@ -15,9 +15,6 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import CheckoutScreen from './src/screens/order/CheckoutScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
-import MembershipCard from './src/screens/member-ship/MemberShipCard';
-import ProfileScreen from './src/screens/bottom-navs/ProfileScreen';
-import NotificationScreen from './src/screens/notification/NotificationScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 
 

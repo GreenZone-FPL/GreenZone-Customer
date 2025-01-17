@@ -12,9 +12,12 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
+  BarcodeUser,
+  CategoryService
 } from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -65,17 +68,20 @@ const HomeScreen = props => {
         <HeaderWithBadge
           title="Home"
           onBadgePress={() => {
-            navigation.navigate(UserGraph.Notification);
+           
           }}
           isHome={true}
           
         />
+        <BarcodeUser
+            nameUser='User name'
+            codeId='M1678263323'
+        />
+        <CategoryService/>
         <Button
           title="Checkout Screen"
           onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
         />
-
-        <CategoryMenu />
         <ProductsListHorizontal
           onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
         />

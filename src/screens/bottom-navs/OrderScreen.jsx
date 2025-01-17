@@ -68,13 +68,13 @@ const OrderScreen = props => {
           title="Danh mục"
           onCategoryPress={openDialogCategoryPress}
         />
-        <CategoryMenu />
-        <ProductsListHorizontal
-          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
-        />
-        <ProductsListVertical
-          onItemClick={() => navigation.navigate(ScreenEnum.ProductDetailSheet)}
-        />
+               <CategoryMenu />
+               <ProductsListHorizontal
+                 onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+               />
+               <ProductsListVertical
+                 onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+               />
       </ScrollView>
 
       <DeliveryButton
