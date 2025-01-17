@@ -25,10 +25,8 @@ export const CategoryService = ({ navigation }) => {
 // Component Card Utility
 const CardUtility = ({ image, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
-    <Column>
       <Image source={image} style={styles.cardImage} />
       <TitleText text={title} style={styles.textTitle}/>
-    </Column>
   </Pressable>
 );
 
@@ -71,13 +69,14 @@ const styles = StyleSheet.create({
     borderColor: colors.gray200,
     marginHorizontal: 16,
     gap: GLOBAL_KEYS.GAP_DEFAULT, 
+    alignItems: 'center',
     justifyContent: 'center'
   },
   card: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: "22%", // Adjust width as necessary
-    marginHorizontal: 2, // Adjust spacing between cards
+    width: "22%",
+    marginHorizontal: 2, 
   },
   cardImage: {
     width: 50,
