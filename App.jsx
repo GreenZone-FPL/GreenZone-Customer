@@ -18,6 +18,7 @@ import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import MembershipCard from './src/screens/member-ship/MemberShipCard';
 import ProfileScreen from './src/screens/bottom-navs/ProfileScreen';
 import NotificationScreen from './src/screens/notification/NotificationScreen';
+import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -25,25 +26,35 @@ function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-
-          <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
-
-          <BaseStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
-
-          <BaseStack.Screen name={OrderGraph.OrderHistoryScreen} component={OrderHistoryScreen} />
-
-          <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
-          <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
-          <BaseStack.Screen name={UserGraph.Notification} component={NotificationScreen} />
-
-
+        <BaseStack.Navigator screenOptions={{headerShown: false}}>
           <BaseStack.Screen
-            name={AppGraph.MembershipCard}
-            component={MembershipCard}
+            name={MainGraph.graphName}
+            component={MainNavigation}
           />
 
+          <BaseStack.Screen
+            name={AuthGraph.LoginScreen}
+            component={LoginScreen}
+          />
 
+          <BaseStack.Screen
+            name={OrderGraph.OrderHistoryScreen}
+            component={OrderHistoryScreen}
+          />
+
+          <BaseStack.Screen
+            name={ShoppingGraph.CheckoutScreen}
+            component={CheckoutScreen}
+          />
+          <BaseStack.Screen
+            name={OrderGraph.OrderDetailScreen}
+            component={OrderDetailScreen}
+          />
+
+          <BaseStack.Screen
+            name={AppGraph.MembershipScreen}
+            component={MembershipScreen}
+          />
         </BaseStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

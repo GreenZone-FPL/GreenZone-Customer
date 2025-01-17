@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {CardRank} from './CardRank';
+import { CardRank } from './CardRank';
+
 
 export const BronzeRank = () => {
   return (
@@ -17,7 +18,5 @@ export const BronzeRank = () => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({});
