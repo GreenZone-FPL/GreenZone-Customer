@@ -11,10 +11,8 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  Banner,
-  IndicatorSmall,
-  IndicatorDeffault,
-  IndicatorLarge,
+  Carousel,
+  Indicator,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {ShoppingGraph} from '../../layouts/graphs';
@@ -79,11 +77,24 @@ const HomeScreen = props => {
 
         <CategoryMenu />
 
-        <IndicatorSmall />
-        <IndicatorDeffault />
-        <IndicatorLarge />
+        <Indicator
+          color={colors.primary}
+          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        />
+        <Carousel
+          data={dataBanner}
+          time={3000}
+          dotFlexDirection={'row'}
+          dotJustifyContent={'center'}
+          dotMarginVertical={GLOBAL_KEYS.PADDING_DEFAULT}
+          dotWidth={GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2}
+          dotHeight={GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2}
+          dotBorderRadius={GLOBAL_KEYS.BORDER_RADIUS_DEFAULT}
+          dotBackgroundColor={colors.blue500}
+          dotMarginHorizontal={GLOBAL_KEYS.PADDING_DEFAULT}
+          dotSelectedBackgroundColor={colors.red800}
+        />
 
-        <Banner data={dataBaner} time={3000} />
         <ProductsListHorizontal
           onItemClick={() =>
             navigation.navigate(ShoppingGraph.ProductDetailSheet)
@@ -133,7 +144,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const dataBaner = [
+const dataBanner = [
   {
     id: 1,
     image: 'https://intphcm.com/data/upload/banner-tet.jpg',

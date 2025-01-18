@@ -1,8 +1,8 @@
 // activity-indicator
-export * from './activity-indicator/Indicator';
+export * from './indicators/Indicator';
 
 // banner
-export * from './banner/Banner';
+export * from './banner/Carousel';
 
 // bottom-sheets
 export * from './bottom-sheets/MerchantDetailSheet';
