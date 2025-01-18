@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
 import {
   CategoryMenu,
@@ -11,9 +11,13 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
+  Banner,
+  IndicatorSmall,
+  IndicatorDeffault,
+  IndicatorLarge,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {ShoppingGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -74,11 +78,21 @@ const HomeScreen = props => {
         />
 
         <CategoryMenu />
+
+        <IndicatorSmall />
+        <IndicatorDeffault />
+        <IndicatorLarge />
+
+        <Banner data={dataBaner} time={3000} />
         <ProductsListHorizontal
-          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
         />
         <ProductsListVertical
-          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
         />
       </ScrollView>
 
@@ -115,6 +129,22 @@ const styles = StyleSheet.create({
   deliverybutton: {
     position: 'absolute',
     bottom: 0,
-    marginHorizontal:GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });
+
+const dataBaner = [
+  {
+    id: 1,
+    image: 'https://intphcm.com/data/upload/banner-tet.jpg',
+  },
+  {
+    id: 2,
+    image: 'https://rubee.com.vn/wp-content/uploads/2022/04/banner-la-gi.jpg',
+  },
+  {
+    id: 3,
+    image:
+      'https://rubicmarketing.com/wp-content/uploads/2022/03/thiet-ke-banner-quang-cao-online-1.jpg',
+  },
+];

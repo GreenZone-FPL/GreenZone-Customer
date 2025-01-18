@@ -1,3 +1,9 @@
+// activity-indicator
+export * from './activity-indicator/Indicator';
+
+// banner
+export * from './banner/Banner';
+
 // bottom-sheets
 export * from './bottom-sheets/MerchantDetailSheet';
 export * from './bottom-sheets/ProductDetailSheet';
