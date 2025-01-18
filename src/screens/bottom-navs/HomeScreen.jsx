@@ -187,6 +187,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     width: 75,
     textAlign: 'center',
+    fontWeight: '400'
   },
   card: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
