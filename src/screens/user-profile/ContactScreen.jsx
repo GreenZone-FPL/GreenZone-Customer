@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Linking, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DialogFeedback, LightStatusBar, NormalHeader } from '../../components';
+import { DialogFeedback, LightStatusBar, NormalHeader, Column } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 
 
@@ -88,10 +88,10 @@ const Card = ({icon, name, path, onPress}) => (
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
       color={colors.gray700}
     />
-    <View>
+    <Column>
       <Text style={styles.textName}>{name}</Text>
       <Text style={styles.textPath}>{path}</Text>
-    </View>
+    </Column>
   </Pressable>
 );
 
@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   textName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
-    marginBottom: 5
   },
   textPath: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

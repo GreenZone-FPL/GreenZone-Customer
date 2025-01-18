@@ -1,3 +1,6 @@
+//barcode
+export * from './barcode/barcodeUser';
+
 // bottom-sheets
 export * from './bottom-sheets/MerchantDetailSheet';
 export * from './bottom-sheets/ProductDetailSheet';
@@ -21,6 +24,8 @@ export * from './containers/Row'
 // dialogs
 export * from './dialogs/DialogShippingMethod'
 export * from './dialogs/DialogFeedback'
+export * from './dialogs/DialogBasic'
+export * from './dialogs/DialogReviewOder'
 
 
 // flatlists
@@ -34,6 +39,8 @@ export * from './footer/CheckoutFooter';
 export * from './headers/HeaderWithBadge';
 export * from './headers/IconWithBadge';
 export * from './headers/NormalHeader';
+export * from './headers/HeaderOrder';
+
 
 // inputs
 export * from './inputs/CustomSearchBar';
@@ -65,6 +72,9 @@ export * from './tabviews/CustomTabView';
 export * from './texts/DualTextRow'
 export * from './texts/PaymentMethodRow'
 export * from './texts/NormalText'
+export * from './texts/TitleText'
+
+
 
 
 
