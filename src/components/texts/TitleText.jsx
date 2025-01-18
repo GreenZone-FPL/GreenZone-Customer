@@ -16,7 +16,7 @@ export const TitleText = ({
 }) => {
   return (
     <View>
-      <Text style={[styles.text, { color }, style]}>{text}</Text>
+      <Text style={[styles.text, { color }, style]} >{text}</Text>
     </View>
   );
 };

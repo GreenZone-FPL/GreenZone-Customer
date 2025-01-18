@@ -13,7 +13,6 @@ export * from './buttons/QuantitySelector';
 
 // category
 export * from './category/CategoryMenu';
-export * from './category/CategoryService';
 
 
 // containers
@@ -73,6 +72,7 @@ export * from './tabviews/CustomTabView';
 export * from './texts/DualTextRow'
 export * from './texts/PaymentMethodRow'
 export * from './texts/NormalText'
+export * from './texts/TitleText'
 
 
 
