@@ -1,9 +1,6 @@
 // activity-indicator
 export * from './indicators/Indicator';
 
-// banner
-export * from './banner/Carousel';
-
 // bottom-sheets
 export * from './bottom-sheets/MerchantDetailSheet';
 export * from './bottom-sheets/ProductDetailSheet';
@@ -13,6 +10,9 @@ export * from './buttons/DeliveryButton';
 export * from './buttons/PrimaryButton';
 export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
+
+// carousel
+export * from './carousel/Carousel';
 
 // category
 export * from './category/CategoryMenu';
