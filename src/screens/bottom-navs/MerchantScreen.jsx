@@ -12,7 +12,7 @@ import { Icon } from 'react-native-paper';
 import { CustomSearchBar, HeaderWithBadge } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs/appGraph';
-
+import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
 
 const MerchantScreen = props => {
   const [searchQuery, setsearchQuery] = useState('');

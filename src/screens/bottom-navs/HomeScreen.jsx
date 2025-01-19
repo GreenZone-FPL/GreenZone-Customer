@@ -1,19 +1,22 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Button, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Image, View } from 'react-native';
+
 
 import {
-  CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
+  BarcodeUser,
+  TitleText, 
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -64,16 +67,20 @@ const HomeScreen = props => {
         <HeaderWithBadge
           title="Home"
           onBadgePress={() => {
-            navigation.navigate('ProductDetailSheet');
+           
           }}
           isHome={true}
+          
         />
+        <BarcodeUser
+            nameUser='User name'
+            codeId='M1678263323'
+        />
+        <CardCategory/>
         <Button
           title="Checkout Screen"
           onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
         />
-
-        <CategoryMenu />
         <ProductsListHorizontal
           onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
         />
@@ -98,6 +105,56 @@ const HomeScreen = props => {
   );
 };
 
+const Item = ({imagePath, title, onPress}) => (
+  <TouchableOpacity onPress={onPress} style={styles.item}>
+    <Image source={imagePath} style={styles.itemImage} />
+    <TitleText text={title} style={styles.textTitle} numberOfLines={1}/>
+  </TouchableOpacity>
+);
+
+const CardCategory = () => {
+  return (
+    <View style={styles.card}>
+    <ScrollView         
+        horizontal={true} // Cuộn ngang
+        showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
+        contentContainerStyle={{gap: GLOBAL_KEYS.GAP_DEFAULT}}
+        >
+            <Item
+              imagePath={require('../../assets/images/image-Service/ic_delivery.png')}
+              title='Giao hàng'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/ic_take_away.png')}
+              title='Mang đi'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/voucher.png')}
+              title='Voucher'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/coin.png')}
+              title='Đổi xu'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/order.png')}
+              title='Đơn Hàng'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/feedback.png')}
+              title='Góp ý'
+            />
+            <Item
+              imagePath={require('../../assets/images/image-Service/vip.png')}
+              title='Hạng thành viên'
+            />
+    </ScrollView>
+    </View>
+  );
+};
+
+
+
 export default HomeScreen;
 
 const styles = StyleSheet.create({
@@ -116,5 +173,28 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     marginHorizontal:GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  item: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  itemImage: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+  },
+  textTitle:{
+    flexWrap: 'wrap',
+    width: 75,
+    textAlign: 'center',
+    fontWeight: '400'
+  },
+  card: {
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    marginHorizontal: 16,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    justifyContent: 'space-around',
   },
 });

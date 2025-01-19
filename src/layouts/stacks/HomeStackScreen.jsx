@@ -3,7 +3,7 @@ import React from 'react';
 import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
-import { AuthGraph, BottomGraph, ShoppingGraph } from '../graphs';
+import { AuthGraph, BottomGraph, ShoppingGraph, UserGraph } from '../graphs';
 
 
 
@@ -25,6 +25,7 @@ const HomeStackScreen = () => {
           headerShown: false,
         }}
       />
+
     </HomeStack.Navigator>
   );
 };

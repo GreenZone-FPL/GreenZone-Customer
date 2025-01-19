@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
 import {IconWithBadge} from './IconWithBadge';
 import { GLOBAL_KEYS, colors } from '../../constants';
@@ -38,9 +38,9 @@ export const  HeaderWithBadge = (props) => {
         )}
 
 
-      <View style={styles.right}>
+      <TouchableOpacity style={styles.right}>
         <IconWithBadge onPress={onBadgePress} />
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

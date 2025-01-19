@@ -17,8 +17,8 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { NormalText } from '../texts/NormalText';
+import { DialogBasic } from './DialogBasic';
 
 
 const { height, width } = Dimensions.get('window');
@@ -32,7 +32,7 @@ const DialogFeedbackPropTypes = {
 export const DialogFeedback = ({ isVisible, onHide }) => {
   const [value, setValue] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
-  const [isImagePickerVisible, setImagePickerVisible] = useState(false); // Modal state
+  const [isImagePickerVisible, setImagePickerVisible] = useState(false);
 
   const openCamera = () => {
     const options = {
@@ -66,7 +66,7 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
         return [...prev, ...newImages].slice(0, 3);
       });
     });
-    setImagePickerVisible(false); // Hide modal
+    setImagePickerVisible(false);
   };
 
   const removeImage = index => {
@@ -76,96 +76,72 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
   const isButtonDisabled = value.trim() === '';
 
   return (
-    <Modal
-      visible={isVisible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={onHide}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <OverlayStatusBar />
-          <KeyboardAvoidingView behavior="position">
-            <ScrollView>
-              <View style={styles.header}>
-                <View style={styles.placeholderIcon} />
-                <Text style={styles.titleText}>Gửi góp ý về ứng dụng</Text>
-                <TouchableOpacity onPress={onHide}>
-                  <Icon
-                    source="close"
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    color={colors.primary}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.feedbackContainer}>
-                <Text style={styles.textTitle}>
-                  Đối với GreenZone, mọi góp ý của bạn đều quý giá
-                </Text>
-                <View style={styles.viewInputFeedback}>
-                  <TextInput
-                    placeholder="Chia sẻ cảm nghĩ của bạn về ứng dụng cho GreenZone tại đây"
-                    placeholderTextColor={colors.gray400}
-                    multiline
-                    style={styles.inputFeedback}
-                    value={value}
-                    onChangeText={setValue}
-                  />
-                </View>
-                <View style={styles.imageContainer}>
-                  {selectedImages.map((imageUri, index) => (
-                    <View key={index} style={styles.imageWrapper}>
-                      <Image
-                        style={styles.imagePreview}
-                        source={{ uri: imageUri }}
-                        resizeMode="cover"
-                      />
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => removeImage(index)}>
-                        <Icon
-                          source="close"
-                          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                          color={colors.green750}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-                {selectedImages.length < 3 && (
-                  <Pressable
-                    style={styles.btnUploadImage}
-                    onPress={() => setImagePickerVisible(true)}>
-                    <Icon
-                      source="camera"
-                      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                      color={colors.primary}
-                    />
-
-                    <NormalText text='Tải lên hình ảnh' />
-
-                  </Pressable>
-                )}
-                <PrimaryButton
-                  title="Gửi phản hồi"
-                  onPress={() => {
-                    if (!isButtonDisabled) {
-                      console.log('Phản hồi:', value);
-                      console.log('Hình ảnh đã chọn:', selectedImages);
-                    }
-                  }}
-                  style={{
-                    backgroundColor: isButtonDisabled
-                      ? colors.gray400
-                      : colors.primary,
-                  }}
-                  disabled={isButtonDisabled}
-                />
-              </View>
-            </ScrollView>
-          </KeyboardAvoidingView>
+    <DialogBasic isVisible={isVisible}
+      onHide={onHide}
+      title='Gửi góp ý về ứng dụng'>
+      <View style={styles.feedbackContainer}>
+        <Text style={styles.textTitle}>
+          Đối với GreenZone, mọi góp ý của bạn đều quý giá
+        </Text>
+        <View style={styles.viewInputFeedback}>
+          <TextInput
+            placeholder="Chia sẻ cảm nghĩ của bạn về ứng dụng cho GreenZone tại đây"
+            placeholderTextColor={colors.gray400}
+            multiline
+            style={styles.inputFeedback}
+            value={value}
+            onChangeText={setValue}
+          />
         </View>
+        <View style={styles.imageContainer}>
+          {selectedImages.map((imageUri, index) => (
+            <View key={index} style={styles.imageWrapper}>
+              <Image
+                style={styles.imagePreview}
+                source={{ uri: imageUri }}
+                resizeMode="cover"
+              />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removeImage(index)}>
+                <Icon
+                  source="close"
+                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                  color={colors.green750}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+        {selectedImages.length < 3 && (
+          <Pressable
+            style={styles.btnUploadImage}
+            onPress={() => setImagePickerVisible(true)}>
+            <Icon
+              source="camera"
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              color={colors.primary}
+            />
+            <NormalText text='Tải lên hình ảnh' />
+          </Pressable>
+        )}
+        <PrimaryButton
+          title="Gửi phản hồi"
+          onPress={() => {
+            if (!isButtonDisabled) {
+              console.log('Phản hồi:', value);
+              console.log('Hình ảnh đã chọn:', selectedImages);
+            }
+          }}
+          style={{
+            backgroundColor: isButtonDisabled
+              ? colors.gray400
+              : colors.primary,
+          }}
+          disabled={isButtonDisabled}
+        />
       </View>
+
 
       <Modal
         visible={isImagePickerVisible}
@@ -187,55 +163,16 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
           </View>
         </View>
       </Modal>
-    </Modal>
+
+    </DialogBasic>
   );
 };
 
 DialogFeedback.propTypes = DialogFeedbackPropTypes;
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: colors.overlay,
-  },
-  modalContainer: {
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 4,
-    paddingBottom: 24,
-  },
-  titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '600',
-    color: colors.primary,
-    textAlign: 'center',
-    flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomWidth: 2,
-    borderBottomColor: colors.gray200,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-  },
-  placeholderIcon: {
-    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    backgroundColor: colors.transparent,
-  },
   feedbackContainer: {
     flexDirection: 'column',
-    margin: 14,
     gap: GLOBAL_KEYS.GAP_SMALL,
   },
   textTitle: {
