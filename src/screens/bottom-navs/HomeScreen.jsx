@@ -11,8 +11,8 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  Carousel,
   Indicator,
+  CarouselBanner,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {ShoppingGraph} from '../../layouts/graphs';
@@ -81,19 +81,7 @@ const HomeScreen = props => {
           color={colors.primary}
           size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         />
-        <Carousel
-          data={dataBanner}
-          time={3000}
-          dotFlexDirection={'row'}
-          dotJustifyContent={'center'}
-          dotMarginVertical={GLOBAL_KEYS.PADDING_DEFAULT}
-          dotWidth={GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2}
-          dotHeight={GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2}
-          dotBorderRadius={GLOBAL_KEYS.BORDER_RADIUS_DEFAULT}
-          dotBackgroundColor={colors.blue500}
-          dotMarginHorizontal={GLOBAL_KEYS.PADDING_DEFAULT}
-          dotSelectedBackgroundColor={colors.red800}
-        />
+        <CarouselBanner data={dataBanner} />
 
         <ProductsListHorizontal
           onItemClick={() =>

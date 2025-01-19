@@ -12,7 +12,7 @@ export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
 
 // carousel
-export * from './carousel/Carousel';
+export * from './carousel/CarouselBanner';
 
 // category
 export * from './category/CategoryMenu';
