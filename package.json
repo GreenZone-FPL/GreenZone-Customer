@@ -35,6 +35,7 @@
     "react-native-gesture-handler": "^2.21.2",
     "react-native-hmac": "^0.1.1",
     "react-native-image-picker": "^7.2.3",
+    "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-material-kit": "^0.6.0-beta.1",
     "react-native-pager-view": "^6.6.1",
     "react-native-paper": "^5.12.5",
