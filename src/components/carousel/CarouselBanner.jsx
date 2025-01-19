@@ -53,6 +53,11 @@ const styles = StyleSheet.create({
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     overflow: 'hidden',
+    shadowColor: colors.black,
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   image: {
     width: '100%',
