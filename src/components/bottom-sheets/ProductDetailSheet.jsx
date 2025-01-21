@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar } from 'react-native';
+import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar , Button} from 'react-native';
 import { IconButton, Icon } from 'react-native-paper';
 
 import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFooter } from '../../components'
 import { colors, GLOBAL_KEYS } from '../../constants';
-
+import { DialogBasic } from '../../components';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 
 
@@ -19,6 +20,8 @@ export const ProductDetailSheet = (props) => {
     const [selectedGroup, setSelectedGroup] = useState([]);
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
+
+
 
     const totalPrice = quantity * product.price; // Tính tổng tiền
     return (
@@ -139,27 +142,44 @@ const product = {
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 
 
-const ProductImage = ({ hideModal }) => (
-    <View style={styles.imageContainer}>
-        <Image
+const ProductImage = ({ hideModal}) => {
+    const [isDialogVisible, setIsDialogVisible] = useState(false);
+    const images = [
+        {
+          url: '', 
+          props: {
+            source: require('../../assets/images/product1.png'),
+          },
+        },
+      ];
+    return (
+      <View style={styles.imageContainer}>
+        <Pressable onPress={() => setIsDialogVisible(true)}>
+          <Image
             source={require('../../assets/images/product1.png')}
             style={styles.productImage}
-
-            onError={() =>
-                // Set placeholder cho image
-                console.error('Failed to load image')
-            }
-        />
-
+            onError={() => console.error('Failed to load image')}
+          />
+        </Pressable>
         <IconButton
-            icon="close"
-            size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-            iconColor={colors.primary}
-            style={styles.closeButton}
-            onPress={hideModal}
+          icon="close"
+          size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+          iconColor={colors.primary}
+          style={styles.closeButton}
+          onPress={hideModal}
         />
-    </View>
-);
+        <DialogBasic
+          isVisible={isDialogVisible}
+          onHide={() => setIsDialogVisible(false)}
+          style={styles.height}
+        >
+          <View style={styles.imageZoomContainer}>
+            <ImageViewer imageUrls={images} renderIndicator={() => null}/>
+          </View>
+        </DialogBasic>
+      </View>
+    );
+  };
 
 const ProductInfo = ({ product, addToFavorite, showFullDescription, toggleDescription }) => (
     <View style={styles.infoContainer}>
@@ -197,8 +217,6 @@ const ProductInfo = ({ product, addToFavorite, showFullDescription, toggleDescri
         </View>
     </View>
 );
-
-
 const styles = StyleSheet.create({
     modalContainer: {
         backgroundColor: colors.overlay,
@@ -230,6 +248,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: GLOBAL_KEYS.PADDING_DEFAULT,
         right: GLOBAL_KEYS.PADDING_DEFAULT,
+        backgroundColor: colors.green100,
+    },
+    zoomButton: {
+        position: 'absolute',
+        bottom: GLOBAL_KEYS.PADDING_DEFAULT,
+        left: GLOBAL_KEYS.PADDING_DEFAULT,
         backgroundColor: colors.green100,
     },
     horizontalView: {
@@ -321,6 +345,13 @@ const styles = StyleSheet.create({
         color: colors.black,
         marginHorizontal: 8,
     },
+    height:{
+        height: '100%',
+        backgroundColor: '#000'
+    },
+    imageZoomContainer:{
+        height: 800, 
+    }
 });
 
 

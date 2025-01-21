@@ -18,10 +18,14 @@ const DialogBasicPropTypes = {
   onHide: PropTypes.func.isRequired,
   title: PropTypes.string,
   children: PropTypes.node,
+   style: PropTypes.oneOfType([
+          PropTypes.object,
+          PropTypes.array,
+      ]),
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title , children}) => {
+export const DialogBasic = ({ isVisible, onHide, title , children, style}) => {
 
   return (
     <Modal
@@ -30,12 +34,10 @@ export const DialogBasic = ({ isVisible, onHide, title , children}) => {
       transparent={true}
       onRequestClose={onHide}>
       <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer, style]}>
           <OverlayStatusBar />
             <ScrollView>
               <KeyboardAvoidingView>
-
-              
               <View style={styles.header}>
                 <View style={styles.placeholderIcon} />
                 <Text style={styles.titleText}>{title}</Text>
