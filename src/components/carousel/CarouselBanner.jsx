@@ -2,9 +2,18 @@ import React, {useState, useCallback} from 'react';
 import {View, StyleSheet, Dimensions, Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
 import Animated from 'react-native-reanimated';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from 'react-native-reanimated';
 import {GLOBAL_KEYS, colors} from '../../constants';
 
 const width = Dimensions.get('window').width;
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 const CarouselComponent = props => {
   const {
