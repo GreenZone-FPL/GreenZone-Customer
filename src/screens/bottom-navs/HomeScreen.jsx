@@ -210,15 +210,17 @@ const styles = StyleSheet.create({
 const dataBanner = [
   {
     id: 1,
-    image: 'https://intphcm.com/data/upload/banner-tet.jpg',
+    image:
+      'https://bizweb.dktcdn.net/100/260/688/articles/banner-khoa-tong-hop.jpg?v=1701944781280',
   },
   {
     id: 2,
-    image: 'https://rubee.com.vn/wp-content/uploads/2022/04/banner-la-gi.jpg',
+    image:
+      'https://printgo.vn/uploads/media/792227/banner-quang-cao-tra-sua-19_1623309814.jpg',
   },
   {
     id: 3,
     image:
-      'https://rubicmarketing.com/wp-content/uploads/2022/03/thiet-ke-banner-quang-cao-online-1.jpg',
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb7i1iQzn1uIYQ9UTr9OLxZT56U6zImYwslHbRwyfFkKqcP3KJBU8Qkw1msnSWr-tmGyk&usqp=CAU',
   },
 ];

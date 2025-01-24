@@ -16,15 +16,7 @@ configureReanimatedLogger({
 });
 
 const CarouselComponent = props => {
-  const {
-    data,
-    time,
-    zoom = false,
-    activeIndex,
-    setActiveIndex,
-    dotStyle,
-    dotsContainerStyle,
-  } = props;
+  const {data, time, zoom = false, activeIndex, setActiveIndex} = props;
 
   const handleSnapToItem = useCallback(
     index => {
@@ -37,7 +29,7 @@ const CarouselComponent = props => {
     <View style={styles.container}>
       <Carousel
         loop={true}
-        width={width}
+        width={width - GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2}
         height={width / 2.5}
         autoPlay={true}
         data={data}
@@ -58,11 +50,11 @@ const CarouselComponent = props => {
         )}
       />
 
-      <View style={dotsContainerStyle}>
+      <View style={styles.dotsContainer}>
         {data.map((_, index) => (
           <View
             key={index}
-            style={[dotStyle, activeIndex === index && styles.activeDot]}
+            style={[styles.dot, activeIndex === index && styles.activeDot]}
           />
         ))}
       </View>
@@ -80,8 +72,6 @@ export const ZoomCarousel = ({data, time}) => {
       zoom={true}
       activeIndex={activeIndex}
       setActiveIndex={setActiveIndex}
-      dotStyle={styles.dot}
-      dotsContainerStyle={styles.dotsContainer}
     />
   );
 };
@@ -96,8 +86,6 @@ export const ImageCarousel = ({data, time}) => {
       zoom={false}
       activeIndex={activeIndex}
       setActiveIndex={setActiveIndex}
-      dotStyle={styles.dot1}
-      dotsContainerStyle={styles.dotsContainer1}
     />
   );
 };
@@ -105,12 +93,16 @@ export const ImageCarousel = ({data, time}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT + GLOBAL_KEYS.PADDING_SMALL,
   },
   itemContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    margin: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     overflow: 'hidden',
     shadowColor: colors.black,
@@ -128,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: GLOBAL_KEYS.PADDING_DEFAULT,
+    bottom: GLOBAL_KEYS.PADDING_SMALL,
     width: '100%',
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_SMALL,
@@ -136,18 +128,6 @@ const styles = StyleSheet.create({
   dot: {
     width: GLOBAL_KEYS.ICON_SIZE_SMALL,
     height: GLOBAL_KEYS.ICON_SIZE_SMALL / 3,
-    backgroundColor: colors.gray200,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-  },
-  dotsContainer1: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: GLOBAL_KEYS.GAP_SMALL,
-  },
-  dot1: {
-    width: GLOBAL_KEYS.ICON_SIZE_SMALL / 2,
-    height: GLOBAL_KEYS.ICON_SIZE_SMALL / 2,
     backgroundColor: colors.gray200,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
