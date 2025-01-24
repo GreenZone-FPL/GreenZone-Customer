@@ -1,8 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, {useEffect, useState} from 'react';
-import {Button, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -21,12 +19,11 @@ import {
   ProductsListHorizontal,
   ProductsListVertical,
   Indicator,
-  CarouselBanner,
+  ZoomCarousel,
+  ImageCarousel,
   BarcodeUser,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {ShoppingGraph} from '../../layouts/graphs';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {ShoppingGraph, UserGraph} from '../../layouts/graphs';
 
@@ -84,13 +81,12 @@ const HomeScreen = props => {
           onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
         />
 
-        <CategoryMenu />
-
         <Indicator
           color={colors.primary}
           size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         />
-        <CarouselBanner data={dataBanner} />
+        <ZoomCarousel data={dataBanner} time={3000} />
+        <ImageCarousel data={dataBanner} time={2000} />
 
         <ProductsListHorizontal
           onItemClick={() =>

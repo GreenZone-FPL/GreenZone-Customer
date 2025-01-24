@@ -1,13 +1,28 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {View, StyleSheet, Dimensions, Image} from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
+import Animated from 'react-native-reanimated';
 import {GLOBAL_KEYS, colors} from '../../constants';
 
 const width = Dimensions.get('window').width;
 
-export const CarouselBanner = props => {
-  const {data} = props;
-  const [activeIndex, setActiveIndex] = useState(0);
+const CarouselComponent = props => {
+  const {
+    data,
+    time,
+    zoom = false,
+    activeIndex,
+    setActiveIndex,
+    dotStyle,
+    dotsContainerStyle,
+  } = props;
+
+  const handleSnapToItem = useCallback(
+    index => {
+      setActiveIndex(index);
+    },
+    [setActiveIndex],
+  );
 
   return (
     <View style={styles.container}>
@@ -17,28 +32,64 @@ export const CarouselBanner = props => {
         height={width / 2.5}
         autoPlay={true}
         data={data}
-        scrollAnimationDuration={2000}
-        onSnapToItem={index => setActiveIndex(index)}
-        renderItem={({item}) => (
-          <View style={styles.itemContainer}>
+        scrollAnimationDuration={time}
+        onSnapToItem={handleSnapToItem}
+        renderItem={({item, index}) => (
+          <Animated.View
+            style={[
+              styles.itemContainer,
+              zoom && {transform: [{scale: activeIndex === index ? 1 : 0.7}]},
+            ]}>
             <Image
               source={{uri: item.image}}
               style={styles.image}
               resizeMode="cover"
             />
-          </View>
+          </Animated.View>
         )}
       />
 
-      <View style={styles.dotsContainer}>
+      <View style={dotsContainerStyle}>
         {data.map((_, index) => (
           <View
             key={index}
-            style={[styles.dot, activeIndex === index && styles.activeDot]}
+            style={[dotStyle, activeIndex === index && styles.activeDot]}
           />
         ))}
       </View>
     </View>
+  );
+};
+
+export const ZoomCarousel = ({data, time}) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <CarouselComponent
+      data={data}
+      time={time}
+      zoom={true}
+      activeIndex={activeIndex}
+      setActiveIndex={setActiveIndex}
+      dotStyle={styles.dot}
+      dotsContainerStyle={styles.dotsContainer}
+    />
+  );
+};
+
+export const ImageCarousel = ({data, time}) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  return (
+    <CarouselComponent
+      data={data}
+      time={time}
+      zoom={false}
+      activeIndex={activeIndex}
+      setActiveIndex={setActiveIndex}
+      dotStyle={styles.dot1}
+      dotsContainerStyle={styles.dotsContainer1}
+    />
   );
 };
 
@@ -68,7 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-    bottom: GLOBAL_KEYS.PADDING_DEFAULT * 1.5,
+    bottom: GLOBAL_KEYS.PADDING_DEFAULT,
     width: '100%',
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_SMALL,
@@ -76,6 +127,18 @@ const styles = StyleSheet.create({
   dot: {
     width: GLOBAL_KEYS.ICON_SIZE_SMALL,
     height: GLOBAL_KEYS.ICON_SIZE_SMALL / 3,
+    backgroundColor: colors.gray200,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+  },
+  dotsContainer1: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: GLOBAL_KEYS.GAP_SMALL,
+  },
+  dot1: {
+    width: GLOBAL_KEYS.ICON_SIZE_SMALL / 2,
+    height: GLOBAL_KEYS.ICON_SIZE_SMALL / 2,
     backgroundColor: colors.gray200,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
