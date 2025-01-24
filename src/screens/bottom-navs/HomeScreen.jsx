@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 50,
     height: 50,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
   textTitle: {
     flexWrap: 'wrap',
