@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 
 import {
   ProductsListHorizontal,
@@ -13,10 +13,10 @@ import {
   HeaderOrder,
   DialogBasic,
 } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
 
 const OrderScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -44,7 +44,7 @@ const OrderScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({ lat, long }) => {
+  const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -68,13 +68,17 @@ const OrderScreen = props => {
           title="Danh mục"
           onCategoryPress={openDialogCategoryPress}
         />
-               <CategoryMenu />
-               <ProductsListHorizontal
-                 onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
-               />
-               <ProductsListVertical
-                 onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
-               />
+        <CategoryMenu />
+        <ProductsListHorizontal
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
+        />
+        <ProductsListVertical
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
+        />
       </ScrollView>
 
       <DeliveryButton
@@ -92,15 +96,14 @@ const OrderScreen = props => {
       <DialogBasic
         isVisible={isDialogVisible}
         onHide={() => setDialogVisible(false)}
-        title='Danh mục'
-      >
-       <CategoryMenu />
+        title="Danh mục">
+        <CategoryMenu />
       </DialogBasic>
     </SafeAreaView>
   );
 };
 
-export default OrderScreen
+export default OrderScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -119,6 +122,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    left: 0
+    left: 0,
   },
 });
