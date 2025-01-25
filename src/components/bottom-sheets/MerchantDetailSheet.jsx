@@ -9,15 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
 
 const width = Dimensions.get('window').width;
 
 export const MerchantDetailSheet = props => {
-  const { navigation, route } = props;
-  const { item } = route.params;
+  const {navigation, route} = props;
+  const {item} = route.params;
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -34,9 +34,9 @@ export const MerchantDetailSheet = props => {
   );
 };
 
-const Slider = ({ item, handleGoBack }) => (
+const Slider = ({item, handleGoBack}) => (
   <View>
-    <Image source={{ uri: item.image }} style={styles.image} />
+    <Image source={{uri: item.image}} style={styles.image} />
     <TouchableOpacity
       style={styles.goBackButton}
       onPress={() => handleGoBack()}>
@@ -49,7 +49,7 @@ const Slider = ({ item, handleGoBack }) => (
   </View>
 );
 
-const Body = ({ item }) => (
+const Body = ({item}) => (
   <ScrollView>
     <View style={styles.body}>
       <Text style={styles.title}>{item.name}</Text>
@@ -147,6 +147,3 @@ const styles = StyleSheet.create({
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });
-
-
-

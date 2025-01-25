@@ -1,8 +1,15 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { Button, SafeAreaView, ScrollView, StyleSheet, TouchableOpacity, Image, View } from 'react-native';
-
+import React, {useEffect, useState} from 'react';
+import {
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  View,
+} from 'react-native';
 
 import {
   DeliveryButton,
@@ -11,12 +18,14 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
+  Indicator,
+  ZoomCarousel,
+  ImageCarousel,
   BarcodeUser,
-  TitleText, 
+  TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-
+import {ShoppingGraph, UserGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -64,28 +73,30 @@ const HomeScreen = props => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <ScrollView style={styles.containerContent}>
-        <HeaderWithBadge
-          title="Home"
-          onBadgePress={() => {
-           
-          }}
-          isHome={true}
-          
-        />
-        <BarcodeUser
-            nameUser='User name'
-            codeId='M1678263323'
-        />
-        <CardCategory/>
-        <Button
+        <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
+        <BarcodeUser nameUser="User name" codeId="M1678263323" />
+        <CardCategory />
+        {/* <Button
           title="Checkout Screen"
           onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-        />
+        /> */}
+        {/* 
+        <Indicator
+          color={colors.primary}
+          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        /> */}
+
+        <ImageCarousel data={dataBanner} time={2000} />
+
         <ProductsListHorizontal
-          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
         />
         <ProductsListVertical
-          onItemClick={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)}
+          onItemClick={() =>
+            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          }
         />
       </ScrollView>
 
@@ -108,52 +119,49 @@ const HomeScreen = props => {
 const Item = ({imagePath, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     <Image source={imagePath} style={styles.itemImage} />
-    <TitleText text={title} style={styles.textTitle} numberOfLines={1}/>
+    <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
 
 const CardCategory = () => {
   return (
     <View style={styles.card}>
-    <ScrollView         
+      <ScrollView
         horizontal={true} // Cuộn ngang
         showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
-        contentContainerStyle={{gap: GLOBAL_KEYS.GAP_DEFAULT}}
-        >
-            <Item
-              imagePath={require('../../assets/images/image-Service/ic_delivery.png')}
-              title='Giao hàng'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/ic_take_away.png')}
-              title='Mang đi'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/voucher.png')}
-              title='Voucher'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/coin.png')}
-              title='Đổi xu'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/order.png')}
-              title='Đơn Hàng'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/feedback.png')}
-              title='Góp ý'
-            />
-            <Item
-              imagePath={require('../../assets/images/image-Service/vip.png')}
-              title='Hạng thành viên'
-            />
-    </ScrollView>
+        contentContainerStyle={{gap: GLOBAL_KEYS.GAP_DEFAULT}}>
+        <Item
+          imagePath={require('../../assets/images/image-Service/ic_delivery.png')}
+          title="Giao hàng"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/ic_take_away.png')}
+          title="Mang đi"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/voucher.png')}
+          title="Voucher"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/coin.png')}
+          title="Đổi xu"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/order.png')}
+          title="Đơn Hàng"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/feedback.png')}
+          title="Góp ý"
+        />
+        <Item
+          imagePath={require('../../assets/images/image-Service/vip.png')}
+          title="Hạng thành viên"
+        />
+      </ScrollView>
     </View>
   );
 };
-
-
 
 export default HomeScreen;
 
@@ -172,7 +180,7 @@ const styles = StyleSheet.create({
   deliverybutton: {
     position: 'absolute',
     bottom: 0,
-    marginHorizontal:GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   item: {
     alignItems: 'center',
@@ -181,13 +189,13 @@ const styles = StyleSheet.create({
   itemImage: {
     width: 50,
     height: 50,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
   },
-  textTitle:{
+  textTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
     fontWeight: '400',
-    marginTop: 10
+    marginTop: 10,
   },
   card: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
@@ -198,3 +206,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
+
+const dataBanner = [
+  {
+    id: 1,
+    image:
+      'https://bizweb.dktcdn.net/100/260/688/articles/banner-khoa-tong-hop.jpg?v=1701944781280',
+  },
+  {
+    id: 2,
+    image:
+      'https://printgo.vn/uploads/media/792227/banner-quang-cao-tra-sua-19_1623309814.jpg',
+  },
+  {
+    id: 3,
+    image:
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb7i1iQzn1uIYQ9UTr9OLxZT56U6zImYwslHbRwyfFkKqcP3KJBU8Qkw1msnSWr-tmGyk&usqp=CAU',
+  },
+];
