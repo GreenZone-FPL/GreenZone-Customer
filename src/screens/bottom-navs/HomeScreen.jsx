@@ -76,16 +76,16 @@ const HomeScreen = props => {
         <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
-        <Button
+        {/* <Button
           title="Checkout Screen"
           onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-        />
-
+        /> */}
+        {/* 
         <Indicator
           color={colors.primary}
           size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        />
-        <ZoomCarousel data={dataBanner} time={3000} />
+        /> */}
+
         <ImageCarousel data={dataBanner} time={2000} />
 
         <ProductsListHorizontal
