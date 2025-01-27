@@ -39,6 +39,7 @@
     "react-native-image-picker": "^7.2.3",
     "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-material-kit": "^0.6.0-beta.1",
+    "react-native-notifications": "^5.1.0",
     "react-native-pager-view": "^6.6.1",
     "react-native-paper": "^5.12.5",
     "react-native-progress": "^5.0.1",
@@ -50,7 +51,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^4.0.5",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-webview": "^13.12.5"
+    "react-native-webview": "^13.12.5",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
