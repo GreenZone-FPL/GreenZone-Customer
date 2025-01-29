@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
-const App = () => {
+const TestGorhom = () => {
   // ref
   const bottomSheetRef = useRef(null);
 
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default TestGorhom;
