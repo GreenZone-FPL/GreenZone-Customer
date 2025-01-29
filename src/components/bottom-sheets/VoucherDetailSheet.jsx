@@ -17,7 +17,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 
 const width = Dimensions.get('window').width;
 
-const VoucherDetailSheet = ({navigation, route}) => {
+export const VoucherDetailSheet = ({navigation, route}) => {
   const {item} = route.params;
   const [showAlert, setShowAlert] = useState(false);
 
@@ -251,4 +251,3 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VoucherDetailSheet;

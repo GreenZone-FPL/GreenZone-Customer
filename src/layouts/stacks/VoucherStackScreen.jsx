@@ -3,8 +3,9 @@ import React from 'react';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
 import MyVoucherScreen from '../../screens/voucher/MyVoucherScreen';
-import {AuthGraph, BottomGraph, MainGraph, VoucherGraph} from '../graphs';
 
+import {AppGraph, AuthGraph, BottomGraph, MainGraph, VoucherGraph} from '../graphs';
+import { VoucherDetailSheet } from '../../components';
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {
   return (
@@ -24,9 +25,10 @@ const VoucherStackScreen = () => {
         name={VoucherGraph.MyVouchersScreen}
         component={MyVoucherScreen}
       />
+ 
 
       <VoucherStack.Screen
-        name={ScreenEnum.VoucherDetailSheet}
+        name={AppGraph.VoucherDetailSheet}
         component={VoucherDetailSheet}
         options={{
           animation: 'slide_from_bottom',

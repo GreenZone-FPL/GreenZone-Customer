@@ -6,6 +6,7 @@ export * from './barcode/barcodeUser';
 // bottom-sheets
 export * from './bottom-sheets/MerchantDetailSheet';
 export * from './bottom-sheets/ProductDetailSheet';
+export * from './bottom-sheets/VoucherDetailSheet';
 
 // buttons
 export * from './buttons/DeliveryButton';

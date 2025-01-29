@@ -6,7 +6,7 @@ import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFoote
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { DialogBasic } from '../../components';
 import ImageViewer from 'react-native-image-zoom-viewer';
-
+import { ShoppingGraph } from '../../layouts/graphs';
 
 
 export const ProductDetailSheet = (props) => {
@@ -101,7 +101,7 @@ export const ProductDetailSheet = (props) => {
                     }
                 }}
                 totalPrice={68000}
-                addToCart={() => { }}
+                onButtonPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
                 buttonTitle='Thêm vào giỏ hàng'
             />
         </View>

@@ -28,7 +28,7 @@ const VoucherScreen = props => {
             <Text style={styles.title}>Mới</Text>
             <Pressable
               style={styles.myTicket}
-              onPress={() => navigation.navigate(ScreenEnum.AllVoucherScreen)}>
+              onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}>
               <Icon
                 source="ticket-confirmation-outline"
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}

@@ -14,6 +14,7 @@ import {
   DialogBasic,
 } from '../../components';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
 
 const OrderScreen = props => {
   const {navigation} = props;
