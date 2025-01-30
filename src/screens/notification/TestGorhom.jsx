@@ -1,7 +1,7 @@
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useMemo, useRef } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { Button, StyleSheet, Text } from "react-native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 const TestGorhom = () => {
   // ref
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: "grey",
   },
   contentContainer: {
-    flex: 1,
+    // flex: 1,
     alignItems: "center",
   },
 });

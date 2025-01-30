@@ -76,16 +76,6 @@ const HomeScreen = props => {
         <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
-        {/* <Button
-          title="Checkout Screen"
-          onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-        /> */}
-        {/* 
-        <Indicator
-          color={colors.primary}
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        /> */}
-
         <ImageCarousel data={dataBanner} time={2000} />
 
         <ProductsListHorizontal
@@ -106,12 +96,12 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
       />
-      <DialogShippingMethod
+      {/* <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
         onHide={handleCloseDialog}
         onOptionSelect={handleOptionSelect}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
