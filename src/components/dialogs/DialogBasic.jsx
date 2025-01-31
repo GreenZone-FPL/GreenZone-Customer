@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
@@ -12,20 +12,22 @@ import {
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import {Column} from '../containers/Column'
+import {Row} from '../containers/Row'
 
 const DialogBasicPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   title: PropTypes.string,
   children: PropTypes.node,
-   style: PropTypes.oneOfType([
-          PropTypes.object,
-          PropTypes.array,
-      ]),
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title , children, style}) => {
+export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
 
   return (
     <Modal
@@ -33,12 +35,12 @@ export const DialogBasic = ({ isVisible, onHide, title , children, style}) => {
       animationType="fade"
       transparent={true}
       onRequestClose={onHide}>
-      <View style={styles.overlay}>
-        <View style={[styles.modalContainer, style]}>
+      <Column style={styles.overlay}>
+        <Column style={[styles.modalContainer, style]}>
           <OverlayStatusBar />
-            <ScrollView>
-              <KeyboardAvoidingView>
-              <View style={styles.header}>
+          <ScrollView>
+            <KeyboardAvoidingView>
+              <Row style={styles.header}>
                 <View style={styles.placeholderIcon} />
                 <Text style={styles.titleText}>{title}</Text>
                 <TouchableOpacity onPress={onHide}>
@@ -48,14 +50,14 @@ export const DialogBasic = ({ isVisible, onHide, title , children, style}) => {
                     color={colors.primary}
                   />
                 </TouchableOpacity>
-              </View>
-              <View style={styles.body}>
+              </Row>
+              <Column style={styles.body}>
                 {children}
-              </View>
-              </KeyboardAvoidingView>
-            </ScrollView>
-        </View>
-      </View> 
+              </Column>
+            </KeyboardAvoidingView>
+          </ScrollView>
+        </Column>
+      </Column>
     </Modal>
   );
 };
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     backgroundColor: colors.transparent,
   },
-  body:{
+  body: {
     flexDirection: 'column',
     margin: 14,
     gap: GLOBAL_KEYS.GAP_SMALL,

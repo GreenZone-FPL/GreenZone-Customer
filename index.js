@@ -1,9 +1,9 @@
 import {AppRegistry} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
-import ChatScreen from './src/screens/order/ChatScreen';
-import TestNotificationScreen from './src/screens/notification/TestNotificationScreen';
-
-AppRegistry.registerComponent(appName, () => TestNotificationScreen);
+import TestGorhom from './src/screens/notification/TestGorhom';
+import TestPanel from './src/components/bottom-sheets/TestPanel';
+import ToggleView from './src/components/bottom-sheets/ToggleView';
+AppRegistry.registerComponent(appName, () => App);
 
 
