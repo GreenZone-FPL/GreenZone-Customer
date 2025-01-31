@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import { View, Text, Image, Button, StyleSheet, LayoutAnimation, UIManager, Platform } from "react-native";
-import Animated, { useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated";
+import React, { useState } from "react";
+import { Image, LayoutAnimation, Platform, RefreshControl, ScrollView, StyleSheet, Text, UIManager } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 // Kích hoạt LayoutAnimation trên Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -8,27 +8,37 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const ToggleView = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const isVertical = useSharedValue(0); // 0 = Horizontal, 1 = Vertical
+  const [isVerticalState, setIsVerticalState] = useState(0); // State để cập nhật UI ngay lập tức
 
-  const toggleLayout = useCallback(() => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); // Mượt UI khi thay đổi layout
-    isVertical.value = isVertical.value === 0 ? 1 : 0;
-  }, []);
+  // Toggle ngay lập tức khi kéo xuống, không chờ Refresh xong mới đổi
+  const onRefresh = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
-  // Animation cho container (đổi flexDirection & alignItems)
+    const newValue = isVertical.value === 0 ? 1 : 0;
+    isVertical.value = newValue;
+    setIsVerticalState(newValue); // Cập nhật UI ngay lập tức
+
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  };
+
+  // Animation cho container
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     flexDirection: isVertical.value ? "column" : "row",
-    alignItems: "center", // Canh giữa cho cả ảnh và text
-    justifyContent: "center", // Canh giữa các phần tử theo chiều dọc
-    overflow: "hidden", // Đảm bảo phần tử không bị tràn
+    alignItems: isVertical.value ? "flex-start" : "center",
+    justifyContent: "center",
   }));
 
   // Animation cho hình ảnh
   const imageAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateX: withSpring(isVertical.value ? 0 : -30, { damping: 15, stiffness: 120 }) },
-      { translateY: withSpring(isVertical.value ? -20 : 0, { damping: 15, stiffness: 120 }) },
-      { scale: withSpring(isVertical.value ? 1.1 : 1, { damping: 15, stiffness: 120 }) },
+      { translateX: withSpring(isVertical.value ? 0 : -30) },
+      { translateY: withSpring(isVertical.value ? -20 : 0) },
+      { scale: withSpring(isVertical.value ? 1.1 : 1) },
     ],
     opacity: withSpring(isVertical.value ? 1 : 0.9),
   }));
@@ -36,50 +46,75 @@ const ToggleView = () => {
   // Animation cho text
   const textAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateX: withSpring(isVertical.value ? 0 : 30, { damping: 15, stiffness: 120 }) },
-      { translateY: withSpring(isVertical.value ? 20 : 0, { damping: 15, stiffness: 120 }) },
+      { translateX: withSpring(isVertical.value ? 0 : 30) },
+      { translateY: withSpring(isVertical.value ? 20 : 0) },
     ],
     opacity: withSpring(isVertical.value ? 1 : 0.9),
   }));
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <Animated.View style={[styles.box, containerAnimatedStyle]}>
-        <Animated.Image
-          source={{ uri: "https://www.odtap.com/wp-content/uploads/2018/10/food-delivery.jpg" }}
-          style={[styles.image, imageAnimatedStyle]}
-        />
+        {isVerticalState ? ( // Sử dụng isVerticalState thay vì isVertical.value
+          // Khi isVertical = 1: Hiển thị view ngang chứa ảnh + "Deliver to"
+          <Animated.View style={[styles.horizontalContainer, imageAnimatedStyle]}>
+            <Image
+              source={{ uri: "https://www.odtap.com/wp-content/uploads/2018/10/food-delivery.jpg" }}
+              style={styles.image}
+            />
+            <Text style={styles.deliverText}>Deliver to</Text>
+          </Animated.View>
+        ) : (
+          // Khi isVertical = 0: Hiển thị ảnh như cũ
+          <Animated.Image
+            source={{ uri: "https://www.odtap.com/wp-content/uploads/2018/10/food-delivery.jpg" }}
+            style={[styles.image, imageAnimatedStyle]}
+          />
+        )}
+
         <Animated.Text style={[styles.text, textAnimatedStyle]}>
           Hello, React Native!
         </Animated.Text>
       </Animated.View>
-      <Button title="Toggle Layout" onPress={toggleLayout} />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  scrollView: {
+    flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   box: {
     backgroundColor: "#ddd",
-    padding: 40, // Tăng padding để tạo không gian thoải mái
+    padding: 40,
     borderRadius: 10,
-    alignItems: "center", // Đảm bảo ảnh và text canh giữa
-    justifyContent: "center", // Canh giữa theo chiều dọc
-    flexWrap: "wrap", // Cho phép các phần tử con tự wrap khi cần
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  horizontalContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   image: {
     width: 100,
     height: 100,
-    marginBottom: 10, // Thêm marginBottom để có khoảng cách giữa ảnh và text
+    marginBottom: 10,
+  },
+  deliverText: {
+    fontSize: 18,
+    marginLeft: 10,
+    fontWeight: "bold",
   },
   text: {
     fontSize: 18,
-    textAlign: "center", // Căn giữa văn bản nếu cần
+    textAlign: "center",
   },
 });
 
