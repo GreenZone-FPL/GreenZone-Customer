@@ -29,22 +29,24 @@ const MyFavoriteProducts = ({navigation}) => {
           title="Sản phẩm yêu thích"
           onLeftPress={() => navigation.goBack()}
         />
-        <Body navigateProductDetail={navigateProductDetail} />
       </View>
+      <Body navigateProductDetail={navigateProductDetail} />
     </Column>
   );
 };
 
 const Body = ({navigateProductDetail}) => {
   return (
-    <FlatList
-      data={productsFavorite}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({item}) => (
-        <Item item={item} navigateProductDetail={navigateProductDetail} />
-      )}
-      contentContainerStyle={styles.flatListContainer}
-    />
+    <View style={styles.flatListContent}>
+      <FlatList
+        data={productsFavorite}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item}) => (
+          <Item item={item} navigateProductDetail={navigateProductDetail} />
+        )}
+        contentContainerStyle={styles.flatListContainer}
+      />
+    </View>
   );
 };
 
@@ -62,10 +64,12 @@ const Item = ({item, navigateProductDetail}) => {
       <Column>
         <Text style={styles.itemName}>{item.name}</Text>
         <Row>
-          <Text
-            style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
-            {TextFormatter.formatCurrency(item.price)}
-          </Text>
+          {item.discount > 0 && (
+            <Text
+              style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
+              {TextFormatter.formatCurrency(item.price)}
+            </Text>
+          )}
           <Text style={[styles.itemPrice, {fontWeight: 'bold'}]}>
             {TextFormatter.formatCurrency(
               item.price - (item.discount * item.price) / 100,
@@ -98,14 +102,18 @@ const styles = StyleSheet.create({
   flatListContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
+  flatListContent: {
+    backgroundColor: colors.grayBg,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    flex: 1,
+  },
   itemContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    backgroundColor: colors.green100,
+    backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     elevation: 1.7,
   },
   imageWrapper: {
-    backgroundColor: colors.green100,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
