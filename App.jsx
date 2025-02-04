@@ -16,6 +16,7 @@ import CheckoutScreen from './src/screens/order/CheckoutScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
+import OrderCartScreen from './src/screens/order/OrderCartScreen';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -46,6 +47,10 @@ function App() {
           <BaseStack.Screen
             name={OrderGraph.OrderDetailScreen}
             component={OrderDetailScreen}
+          />
+          <BaseStack.Screen
+            name={OrderGraph.OrderCartScreen}
+            component={OrderCartScreen}
           />
 
           <BaseStack.Screen

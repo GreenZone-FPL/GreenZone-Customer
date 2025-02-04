@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar , Button, Dimensions} from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar , Button} from 'react-native';
 import { IconButton, Icon } from 'react-native-paper';
 
 import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFooter } from '../../components'
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { DialogBasic } from '../../components';
 import ImageViewer from 'react-native-image-zoom-viewer';
-import Carousel from 'react-native-reanimated-carousel';
 
 
-const { width, height } = Dimensions.get('window');
 
 export const ProductDetailSheet = (props) => {
 
@@ -355,6 +353,3 @@ const styles = StyleSheet.create({
         height: 800, 
     }
 });
-
-
-

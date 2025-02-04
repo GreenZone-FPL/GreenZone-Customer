@@ -1,3 +1,4 @@
+
 import { AppGraph } from "./appGraph";
 
 // Graph chứa các màn hình cho Authentication
@@ -7,4 +8,5 @@ export const AuthGraph = Object.freeze({
 
     SplashScreen: 'SplashScreen',
     LoginScreen: 'LoginScreen',
+    PayOsScreen: 'PayOsScreen'
 });

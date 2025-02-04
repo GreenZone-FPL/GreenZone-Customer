@@ -25,6 +25,5 @@ Column.propTypes = ColumnPropTypes
 const styles = StyleSheet.create({
     column: {
         flexDirection: 'column',
-        gap: GLOBAL_KEYS.GAP_SMALL
     },
 });

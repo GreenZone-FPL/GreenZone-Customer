@@ -15,7 +15,7 @@ import {
   TitleText, 
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { ShoppingGraph, UserGraph , OrderGraph} from '../../layouts/graphs';
 
 
 const HomeScreen = props => {
@@ -94,6 +94,7 @@ const HomeScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
+        onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}
