@@ -1,4 +1,3 @@
-
 export const ScreenEnum = Object.freeze({
   MainNavigation: 'MainNavigation',
   // auth
@@ -26,13 +25,11 @@ export const ScreenEnum = Object.freeze({
   ProductDetailSheet: 'ProductDetailSheet',
   ContactScreen: 'ContactScreen',
 
-
   // address
   AddressScreen: 'AddressScreen',
   NewAddressScreen: 'NewAddressScreen',
   SearchAddressScreen: 'SearchAddressScreen',
   SelectAddressScreen: 'SelectAddressScreen',
-
 
   // Cart, Order
   CheckoutScreen: 'CheckoutScreen',
@@ -40,10 +37,12 @@ export const ScreenEnum = Object.freeze({
   OrderDetailScreen: 'OrderDetailScreen',
   RatingOrderScreen: 'RatingOrderScreen',
 
-
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
   VoucherDetailSheet: 'VoucherDetailSheet',
+  // favorite
+
+  MyFavoriteProducts: 'MyFavoriteProducts',
 
   // membership
   MembershipCard: 'MembershipCard',
