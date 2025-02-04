@@ -14,7 +14,7 @@ import {
   DialogBasic,
 } from '../../components';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import {ShoppingGraph} from '../../layouts/graphs';
 
 const OrderScreen = props => {
   const {navigation} = props;
@@ -68,6 +68,9 @@ const OrderScreen = props => {
         <HeaderOrder
           title="Danh mục"
           onCategoryPress={openDialogCategoryPress}
+          onFavoritePress={() =>
+            navigation.navigate(ScreenEnum.MyFavoriteProducts)
+          }
         />
         <CategoryMenu />
         <ProductsListHorizontal

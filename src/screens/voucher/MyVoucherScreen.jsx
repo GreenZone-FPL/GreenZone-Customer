@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import {LightStatusBar, NormalHeader, CustomTabView} from '../../components';
 import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import {} from '../../constants';
 
 const {width} = Dimensions.get('window');
 
