@@ -43,6 +43,7 @@ export const ScreenEnum = Object.freeze({
 
   // sheet
   MerchantDetailSheet: 'MerchantDetailSheet',
+  VoucherDetailSheet: 'VoucherDetailSheet',
 
   // membership
   MembershipCard: 'MembershipCard',

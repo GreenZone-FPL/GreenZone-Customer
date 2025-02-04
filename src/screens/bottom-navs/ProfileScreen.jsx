@@ -1,16 +1,15 @@
 import React from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { HeaderWithBadge, LightStatusBar } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {HeaderWithBadge, LightStatusBar} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, AuthGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
 
   return (
     <SafeAreaView style={styles.container}>
-
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
 
@@ -38,30 +37,31 @@ const ProfileScreen = props => {
               icon="file-document-edit"
               color={colors.orange700}
               title="Lịch sử đơn hàng"
-              onPress={() => { navigation.navigate(OrderGraph.OrderHistoryScreen) }}
+              onPress={() => {
+                navigation.navigate(OrderGraph.OrderHistoryScreen);
+              }}
             />
           </View>
-
         </View>
 
         <Text style={styles.sectionTitle}>Tiện ích</Text>
         <View style={styles.utilities}>
-          <CardUtiliti
-            icon="cog"
-            title="Cài đặt"
-            onPress={() => { }}
-          />
+          <CardUtiliti icon="cog" title="Cài đặt" onPress={() => {}} />
           <View style={styles.separator} />
           <CardUtiliti
             icon="chat"
             title="Liên hệ góp ý"
-            onPress={() => { navigation.navigate(UserGraph.ContactScreen) }}
+            onPress={() => {
+              navigation.navigate(UserGraph.ContactScreen);
+            }}
           />
           <View style={styles.separator} />
           <CardUtiliti
             icon="star"
             title="Đánh giá đơn hàng"
-            onPress={() => {navigation.navigate(OrderGraph.RatingOrderScreen) }}
+            onPress={() => {
+              navigation.navigate(OrderGraph.RatingOrderScreen);
+            }}
           />
           <View style={styles.separator} />
           <CardUtiliti
@@ -77,14 +77,14 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-const CardAccount = ({ icon, color, title, onPress }) => (
+const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({ icon, title, onPress }) => (
+const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon
