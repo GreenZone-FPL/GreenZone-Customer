@@ -6,5 +6,6 @@ export const OrderGraph = Object.freeze({
 
   OrderHistoryScreen: 'OrderHistoryScreen',
   OrderDetailScreen: 'OrderDetailScreen',
-  RatingOrderScreen: 'RatingOrderScreen'
+  RatingOrderScreen: 'RatingOrderScreen',
+  ChatScreen: 'ChatScreen'
 });
