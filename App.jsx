@@ -9,11 +9,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppGraph, AuthGraph, MainGraph, ShoppingGraph } from './src/layouts/graphs';
+import { AppGraph, AuthGraph, MainGraph, OrderGraph, ShoppingGraph } from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import CheckoutScreen from './src/screens/order/CheckoutScreen';
+import OrderCartScreen from './src/screens/order/OrderCartScreen';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -35,6 +36,11 @@ function App() {
           <BaseStack.Screen
             name={ShoppingGraph.CheckoutScreen}
             component={CheckoutScreen}
+          />
+        
+          <BaseStack.Screen
+            name={OrderGraph.OrderCartScreen}
+            component={OrderCartScreen}
           />
 
           <BaseStack.Screen
