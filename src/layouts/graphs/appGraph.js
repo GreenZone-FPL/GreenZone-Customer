@@ -11,5 +11,6 @@ export const AppGraph = Object.freeze({
     VOUCHER: 'VoucherGraph',
     MerchantDetailSheet: 'MerchantDetailSheet',
     MembershipScreen: 'MembershipScreen',
-    VoucherDetailSheet: 'VoucherDetailSheet'
+    VoucherDetailSheet: 'VoucherDetailSheet',
+    AdvertisingScreen: 'AdvertisingScreen'
 });
