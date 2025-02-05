@@ -8,5 +8,6 @@ export const OrderGraph = Object.freeze({
   OrderHistoryScreen: 'OrderHistoryScreen',
   OrderDetailScreen: 'OrderDetailScreen',
   RatingOrderScreen: 'RatingOrderScreen',
+  ChatScreen: 'ChatScreen',
   OrderCartScreen: 'OrderCartScreen'
 });

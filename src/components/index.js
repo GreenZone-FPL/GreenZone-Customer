@@ -34,6 +34,7 @@ export * from './dialogs/DialogReviewOder';
 export * from './flatlists/ProductsListHorizontal';
 export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
+export * from './flatlists/NotificationList';
 
 // footer
 export * from './footer/CheckoutFooter';

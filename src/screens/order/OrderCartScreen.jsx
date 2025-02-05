@@ -375,6 +375,7 @@ const PaymentMethod = () => {
       </DialogBasic>
     </Row>
   );
+
 };
 
 const PayOrder = () => {
@@ -496,3 +497,4 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
+
