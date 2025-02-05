@@ -159,7 +159,7 @@ const ProductsInfo = ({navigationGoback}) => {
   );
 };
 
-const SwipeableProduct = ({item, onDelete}) => {
+const SwipeableProduct = ({item, onDelete, onEdit}) => {
   return (
     <ListItem.Swipeable
       animation={{duration: 500, useNativeDriver: true}}
@@ -169,7 +169,7 @@ const SwipeableProduct = ({item, onDelete}) => {
         <Row>
           <TouchableOpacity
             onPress={() => {
-              //   onDelete(item.id);
+              //   onEdit();
               reset();
             }}
             style={styles.rightButton}>
