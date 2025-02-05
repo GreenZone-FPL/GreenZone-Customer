@@ -1,5 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
+import {ListItem} from '@rneui/themed';
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -8,6 +9,8 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Button,
+  Dimensions,
 } from 'react-native';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {
@@ -19,22 +22,28 @@ import {
   DialogBasic,
   PrimaryButton,
 } from '../../components';
+import {TextFormatter} from '../../utils';
 import {Icon, RadioButton} from 'react-native-paper';
 
+const width = Dimensions.get('window').width;
 const OrderCartScreen = props => {
   const navigation = props.navigation;
+
+  const navigationGoback = () => {
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader
         title="Xác nhận đơn hàng"
-        onLeftPress={() => navigation.goBack()}
+        onLeftPress={() => navigationGoback()}
       />
 
       <AddressInfo />
 
-      <ProductsInfo />
+      <ProductsInfo navigationGoback={navigationGoback} />
 
       <PaymentDetails />
 
@@ -122,39 +131,85 @@ const AddressInfo = () => {
   );
 };
 
-const ProductsInfo = () => {
+const ProductsInfo = ({navigationGoback}) => {
+  const [productList, setProductList] = useState(products);
+
+  useEffect(() => {
+    if (productList.length < 1) {
+      navigationGoback();
+    }
+  }, [productList]);
+
+  const handleDelete = id => {
+    setProductList(prevList => prevList.filter(item => item.id !== id));
+  };
+
   return (
     <View style={[styles.areaContainer, {borderBottomWidth: 0}]}>
       <FlatList
-        data={products}
+        data={productList}
         keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => <ProductItem item={item} />}
+        renderItem={({item}) => (
+          <SwipeableProduct item={item} onDelete={handleDelete} />
+        )}
         contentContainerStyle={styles.flatListContentContainer}
         scrollEnabled={false}
       />
     </View>
   );
 };
+
+const SwipeableProduct = ({item, onDelete}) => {
+  return (
+    <ListItem.Swipeable
+      animation={{duration: 500, useNativeDriver: true}}
+      rightStyle={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        backgroundColor: colors.gray200,
+      }}
+      containerStyle={{height: width / 6}}
+      rightContent={reset => (
+        <TouchableOpacity
+          onPress={() => {
+            onDelete(item.id);
+            reset();
+          }}
+          style={styles.rightButton}>
+          <Icon
+            source={'delete'}
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            color={colors.black}
+          />
+        </TouchableOpacity>
+      )}>
+      <ListItem.Content>
+        <ProductItem item={item} />
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem.Swipeable>
+  );
+};
+
 const ProductItem = ({item}) => {
   return (
-    <View style={styles.productItem}>
-      <Row>
-        <Image source={item.image} style={styles.productImage} />
-        <Column>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Column>
-            <Text style={styles.productSize}>{item.size}</Text>
-            <Text style={styles.productSize}>{item.topping}</Text>
-          </Column>
-        </Column>
-      </Row>
+    <Row style={styles.productItem}>
+      <Image source={item.image} style={styles.productImage} />
+      <Column style={{width: '60%'}}>
+        <Text style={styles.productName}>{item.name}</Text>
+        <Text style={styles.productSize}>{item.size}</Text>
+        <Text style={styles.productSize}>{item.topping}</Text>
+      </Column>
       <Column>
-        <Text style={styles.productPrice}>{item.price.toLocaleString()}đ</Text>
+        <Text style={styles.productPrice}>
+          {TextFormatter.formatCurrency(item.price)}
+        </Text>
         <Text style={styles.textDiscount}>
-          {item.discount.toLocaleString()}đ
+          {TextFormatter.formatCurrency(item.discount)}
         </Text>
       </Column>
-    </View>
+    </Row>
   );
 };
 
@@ -372,23 +427,22 @@ const styles = StyleSheet.create({
   },
   areaContainer: {
     borderColor: colors.gray200,
+    // marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
+    // padding: 10,
   },
   flatListContentContainer: {
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    // gap: GLOBAL_KEYS.PADDING_SMALL,
   },
   productItem: {
-    flexDirection: 'row',
-    marginVertical: 4,
-    marginHorizontal: 16,
+    borderColor: colors.gray200,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    width: '99%',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
-    borderColor: colors.gray200,
-    paddingBottom: GLOBAL_KEYS.PADDING_SMALL,
   },
   productImage: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
+    width: width / 7.5,
+    height: width / 7.5,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   productName: {
@@ -396,12 +450,17 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   productPrice: {
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: 'green',
   },
   productSize: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
     color: colors.gray700,
+  },
+  rightButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   textDiscount: {
     textDecorationLine: 'line-through',
