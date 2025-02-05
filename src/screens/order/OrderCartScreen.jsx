@@ -401,4 +401,4 @@ const styles = StyleSheet.create({
         height: 30,
         resizeMode: 'contain',
     },
-});
+})
