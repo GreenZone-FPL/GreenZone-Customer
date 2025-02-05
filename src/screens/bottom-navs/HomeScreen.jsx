@@ -25,7 +25,7 @@ import {
   TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {ShoppingGraph, UserGraph} from '../../layouts/graphs';
+import {ShoppingGraph, UserGraph, OrderGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
