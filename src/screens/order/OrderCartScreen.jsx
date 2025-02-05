@@ -163,28 +163,37 @@ const SwipeableProduct = ({item, onDelete}) => {
   return (
     <ListItem.Swipeable
       animation={{duration: 500, useNativeDriver: true}}
-      rightStyle={{
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        backgroundColor: colors.gray200,
-      }}
+      rightStyle={styles.rightStyle}
       containerStyle={{height: width / 6}}
       rightContent={reset => (
-        <TouchableOpacity
-          onPress={() => {
-            onDelete(item.id);
-            reset();
-          }}
-          style={styles.rightButton}>
-          <Icon
-            source={'delete'}
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.black}
-          />
-        </TouchableOpacity>
+        <Row>
+          <TouchableOpacity
+            onPress={() => {
+              //   onDelete(item.id);
+              reset();
+            }}
+            style={styles.rightButton}>
+            <Icon
+              source={'square-edit-outline'}
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              color={colors.black}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              onDelete(item.id);
+              reset();
+            }}
+            style={styles.rightButton}>
+            <Icon
+              source={'delete'}
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              color={colors.black}
+            />
+          </TouchableOpacity>
+        </Row>
       )}>
-      <ListItem.Content>
+      <ListItem.Content style={{padding: 0, margin: 0, height: '100%'}}>
         <ProductItem item={item} />
       </ListItem.Content>
       <ListItem.Chevron />
@@ -427,8 +436,14 @@ const styles = StyleSheet.create({
   },
   areaContainer: {
     borderColor: colors.gray200,
-    // marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
-    // padding: 10,
+    marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: GLOBAL_KEYS.GAP_SMALL,
+  },
+  rightStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '95%',
+    backgroundColor: colors.gray200,
   },
   flatListContentContainer: {
     // gap: GLOBAL_KEYS.PADDING_SMALL,
@@ -436,13 +451,14 @@ const styles = StyleSheet.create({
   productItem: {
     borderColor: colors.gray200,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    width: '99%',
+    width: '100%',
     justifyContent: 'space-between',
     borderBottomWidth: 1,
+    marginTop: 8,
   },
   productImage: {
-    width: width / 7.5,
-    height: width / 7.5,
+    width: width / 8,
+    height: width / 8,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   productName: {
