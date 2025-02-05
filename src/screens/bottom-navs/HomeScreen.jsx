@@ -18,14 +18,15 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  Indicator,
-  ZoomCarousel,
   ImageCarousel,
   BarcodeUser,
   TitleText,
+  NotificationList,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {ShoppingGraph, UserGraph, OrderGraph} from '../../layouts/graphs';
+
+import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
+
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -88,6 +89,10 @@ const HomeScreen = props => {
             navigation.navigate(ShoppingGraph.ProductDetailSheet)
           }
         />
+        <NotificationList onSeeMorePress={() =>
+            navigation.navigate(AppGraph.AdvertisingScreen)
+          }/>
+        
       </ScrollView>
 
       <DeliveryButton
@@ -97,12 +102,12 @@ const HomeScreen = props => {
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
       />
-      {/* <DialogShippingMethod
+      <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
         onHide={handleCloseDialog}
         onOptionSelect={handleOptionSelect}
-      /> */}
+      />
     </SafeAreaView>
   );
 };

@@ -286,6 +286,7 @@ const PaymentMethod = () => {
                             <RadioButton
                                 value={method.value}
                                 status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
+                                color={colors.primary}
                             />
                             <Image source={method.image} style={styles.image} />
                             <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
