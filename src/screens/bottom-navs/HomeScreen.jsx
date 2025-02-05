@@ -24,7 +24,9 @@ import {
   NotificationList,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
+
 import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
+
 
 const HomeScreen = props => {
   const {navigation} = props;
