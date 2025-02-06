@@ -72,7 +72,8 @@ export const FlatInput = ({
   style,
   editable = true,
   keyboardType = 'default',
-  onSubmitEditing
+  onSubmitEditing,
+  returnKeyType = "done"
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -101,7 +102,7 @@ export const FlatInput = ({
         editable={editable}
         keyboardType={keyboardType}
         onSubmitEditing={onSubmitEditing}
-        returnKeyType="send"    
+        returnKeyType={returnKeyType}
       />
       {message && <Text style={styles.errorText}>{message}</Text>}
     </View>

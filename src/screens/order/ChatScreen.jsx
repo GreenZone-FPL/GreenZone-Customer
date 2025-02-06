@@ -133,6 +133,7 @@ const ChatScreen = ({ navigation }) => {
                 style={{ flex: 1 }}
                 setValue={setMessage}
                 onSubmitEditing={() => sendMessage()}
+                returnKeyType="send"
               />
               <TouchableOpacity onPress={() => setImagePickerVisible(true)}>
                 <Icon
