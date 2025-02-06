@@ -8,5 +8,5 @@ export const AuthGraph = Object.freeze({
 
     SplashScreen: 'SplashScreen',
     LoginScreen: 'LoginScreen',
-    PayOsScreen: 'PayOsScreen'
+
 });
