@@ -1,4 +1,3 @@
-
 // App's Graph
 export const AppGraph = Object.freeze({
     ROOT: 'RootGraph',
@@ -11,4 +10,7 @@ export const AppGraph = Object.freeze({
     VOUCHER: 'VoucherGraph',
     MerchantDetailSheet: 'MerchantDetailSheet',
     MembershipScreen: 'MembershipScreen',
+    VoucherDetailSheet: 'VoucherDetailSheet',
+    AdvertisingScreen: 'AdvertisingScreen'
 });
+

@@ -8,11 +8,13 @@ import {
   View,
 } from 'react-native';
 import {GLOBAL_KEYS, colors} from '../../constants';
+import { Row } from '../containers/Row';
 
 const {width} = Dimensions.get('window');
-export const DeliveryButton = ({title, address, onPress, style}) => {
+export const DeliveryButton = ({title, address, onPress, style, onPressCart}) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+      
       <View
         style={{
           flexDirection: 'row',
@@ -23,13 +25,19 @@ export const DeliveryButton = ({title, address, onPress, style}) => {
           source={require('../../assets/images/ic_delivery.png')}
           style={styles.icon}
         />
-        <View style={styles.textContainer}>
+        <View>
           <Text style={styles.title}>{title}</Text>
         </View>
       </View>
+      <Row style={{flex: 1, }}>
       <Text numberOfLines={1} style={styles.address}>
         {address}
       </Text>
+      <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
+        <Text style={styles.quantity}>1</Text>
+        <Text style={styles.textOrder}>Đơn hàng</Text>
+      </TouchableOpacity>
+      </Row>
     </TouchableOpacity>
   );
 };
@@ -47,6 +55,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     width: width - GLOBAL_KEYS.PADDING_DEFAULT * 2,
+    flex: 1,
   },
 
   icon: {
@@ -63,5 +72,27 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+    width: width/1.8
   },
+  btnCart:{
+    flexDirection: 'row',
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    backgroundColor: colors.primary,
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: GLOBAL_KEYS.GAP_SMALL
+  },
+  quantity:{
+    borderRadius: 10,
+    backgroundColor: colors.white,
+    paddingHorizontal: 6,
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  textOrder:{
+    fontWeight: '700',
+    color: colors.white,
+  }
+
 });

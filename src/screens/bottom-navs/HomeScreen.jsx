@@ -18,14 +18,13 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  Indicator,
-  ZoomCarousel,
   ImageCarousel,
   BarcodeUser,
   TitleText,
+  NotificationList,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {ShoppingGraph, UserGraph} from '../../layouts/graphs';
+import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -76,16 +75,6 @@ const HomeScreen = props => {
         <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
-        {/* <Button
-          title="Checkout Screen"
-          onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-        /> */}
-        {/* 
-        <Indicator
-          color={colors.primary}
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        /> */}
-
         <ImageCarousel data={dataBanner} time={2000} />
 
         <ProductsListHorizontal
@@ -98,6 +87,10 @@ const HomeScreen = props => {
             navigation.navigate(ShoppingGraph.ProductDetailSheet)
           }
         />
+        <NotificationList onSeeMorePress={() =>
+            navigation.navigate(AppGraph.AdvertisingScreen)
+          }/>
+        
       </ScrollView>
 
       <DeliveryButton
@@ -105,6 +98,7 @@ const HomeScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
+        onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}

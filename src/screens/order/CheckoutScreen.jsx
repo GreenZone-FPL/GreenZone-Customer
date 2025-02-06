@@ -126,34 +126,7 @@ const PaymentDetails = () => (
     </>
 );
 
-const ItemProduct = ({ item }) => (
-    <View style={styles.itemProduct}>
-        <View style={styles.imageWrapper}>
-            <Image style={styles.itemImage} source={item.image} />
-            <View style={styles.quantityBadge}>
-                <Text style={styles.quantityText}>x5</Text>
-            </View>
-        </View>
 
-        <View style={styles.productInfo}>
-            <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.gray700Text}>Lớn</Text>
-            <Text style={styles.gray700Text}>Kem Phô Mai Macchiato</Text>
-        </View>
-
-        <View style={styles.priceContainer}>
-            <Text style={styles.productPrice}>{item.price}đ</Text>
-            <Text style={styles.lineThroughText}>70.000đ</Text>
-            <Pressable onPress={() => { }}>
-                <Icon
-                    source="square-edit-outline"
-                    size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-                    color={colors.primary}
-                />
-            </Pressable>
-        </View>
-    </View>
-);
 
 
 const products = [
