@@ -1,4 +1,3 @@
-
 // App's Graph
 export const AppGraph = Object.freeze({
     ROOT: 'RootGraph',

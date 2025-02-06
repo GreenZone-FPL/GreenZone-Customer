@@ -1,8 +1,9 @@
 import React from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar } from '../../components';
+import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar, Row, Column, NormalText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { OrderGraph } from '../../layouts/graphs';
 
 const OrderDetailScreen = (props) => {
 
@@ -28,6 +29,7 @@ const OrderDetailScreen = (props) => {
                     title={'Đơn hàng đang trên đường giao đến bạn'}
                     titleStyle={{ fontWeight: '500', marginVertical: 8 }}
                 />
+                <ShipperInfo messageClick = {() => navigation.navigate(OrderGraph.ChatScreen)}/>
                 <Image style={{ width: '100%', height: 400 }} source={require('../../assets/images/map.png')} />
 
                 <MerchantInfo />
@@ -48,6 +50,44 @@ const OrderDetailScreen = (props) => {
 
     );
 };
+
+const ShipperInfo = ({messageClick}) => {
+    return (
+        <Row style={{ gap: 16, marginVertical: 8 }}>
+            <Image style={{ width: 40, height: 40 }} source={require('../../assets/images/helmet.png')} />
+            <Column style={{ flex: 1 }}>
+                <NormalText text='Shipper' style={{ fontWeight: '500' }} />
+                <Row>
+                    <Icon
+                        source="star"
+                        color={colors.yellow700}
+                        size={20}
+                    />
+                    <NormalText text='5.0' />
+                    <NormalText text='60B7-40035' style={{ color: colors.yellow700 }} />
+
+                </Row>
+            </Column>
+
+            <Row style={{ gap: 24 }}>
+
+                <Icon
+                    source="phone-outline"
+                    color={colors.black}
+                    size={20}
+                />
+                <Pressable onPress={messageClick}>
+                    <Icon
+                        source="message-outline"
+                        color={colors.black}
+                        size={20}
+                    />
+                </Pressable>
+
+            </Row>
+        </Row>
+    )
+}
 
 const ProductsInfo = () => {
     return (

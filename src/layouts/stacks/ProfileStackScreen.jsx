@@ -6,10 +6,13 @@ import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
 import SelectAddressScreen from '../../screens/address/SelectAddressScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
+import ChatScreen from '../../screens/order/ChatScreen';
+import OrderDetailScreen from '../../screens/order/OrderDetailScreen';
+import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
+import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
 import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
-import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
-import { AuthGraph, BottomGraph, MainGraph, UserGraph, OrderGraph } from '../graphs';
+import { AuthGraph, BottomGraph, MainGraph, OrderGraph, UserGraph } from '../graphs';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -57,6 +60,19 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen
         name={OrderGraph.RatingOrderScreen}
         component={RatingOrderScreen}
+      />
+      <ProfileStack.Screen
+        name={OrderGraph.OrderHistoryScreen}
+        component={OrderHistoryScreen}
+      />
+
+      <ProfileStack.Screen
+        name={OrderGraph.OrderDetailScreen}
+        component={OrderDetailScreen}
+      />
+      <ProfileStack.Screen
+        name={OrderGraph.ChatScreen}
+        component={ChatScreen}
       />
 
 

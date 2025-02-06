@@ -28,13 +28,16 @@ const OrderHistoryScreen = (props) => {
                 }}
             >
                 <OrderListView
+                    key="1"
                     onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Picked"
                 />
                 <OrderListView
+                    key="2"
                     onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Completed" />
                 <OrderListView
+                    key="3"
                     onItemPress={() => navigation.navigate(OrderGraph.OrderDetailScreen)}
                     status="Cancelled" />
             </CustomTabView>
@@ -98,7 +101,7 @@ const OrderItem = ({
 
             {order.estimatedTime && (
 
-                <Column style={{alignItems: 'flex-end'}}>
+                <Column style={{ alignItems: 'flex-end' }}>
                     <NormalText text='Đơn hàng đang được giao đến bạn' />
 
                     <NormalText
@@ -138,7 +141,7 @@ const orders = [
             { id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000 },
             { id: '2', name: 'Kem Cheese', quantity: 2, price: 20000 },
             { id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000 }
-        
+
         ],
     },
     {
@@ -176,7 +179,7 @@ const OrderListComplete = ({ status, onItemPress }) => {
                     contentContainerStyle={{ gap: 8 }}
                     renderItem={({ item }) =>
                         <OrderItem
-                            onPress={() => { 
+                            onPress={() => {
                                 navigation.navigate('RatingOrderScreen', { order: item })  // Truyền dữ liệu vào params
                             }}
                             order={item} />
