@@ -1,62 +1,122 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
+import React, { useEffect, useState, useRef } from 'react';
 import {ListItem} from '@rneui/themed';
-import React, {useEffect, useState} from 'react';
 import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Button,
-  Dimensions,
+    View,
+    Text,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    ScrollView,
+    StyleSheet,
+    Dimensions,
 } from 'react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {
-  NormalHeader,
-  Row,
-  Column,
-  DualTextRow,
-  LightStatusBar,
-  DialogBasic,
-  PrimaryButton,
-} from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { NormalHeader, Row, Column, DualTextRow, LightStatusBar, DialogBasic, PrimaryButton } from '../../components';
+import { Icon, RadioButton } from 'react-native-paper';
 import {TextFormatter} from '../../utils';
-import {Icon, RadioButton} from 'react-native-paper';
 import {OrderGraph} from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
-const OrderCartScreen = props => {
-  const navigation = props.navigation;
 
-  const navigationGoback = () => {
-    navigation.goBack();
-  };
 
-  const navigationChangeRecipientInformationSheet = () => {
-    navigation.navigate(OrderGraph.ChangeRecipientInformationSheet);
-  };
+const OrderCartScreen = (props) => {
+    const navigation = props.navigation;
+    const navigationGoback = () => {
+      navigation.goBack();
+    };
+    const navigationChangeRecipientInformationSheet = () => {
+      navigation.navigate(OrderGraph.ChangeRecipientInformationSheet);
+    };
+    return (
+        <View style={styles.container}>
+            <LightStatusBar />
+            <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+            <ScrollView>
+            <AddressInfo navigation={navigationChangeRecipientInformationSheet} />
+                <Timegive />
+                <ProductsInfo navigationGoback={navigationGoback} />
 
-  return (
-    <View style={styles.container}>
-      <LightStatusBar />
-      <NormalHeader
-        title="Xác nhận đơn hàng"
-        onLeftPress={() => navigationGoback()}
-      />
+                <PaymentDetails />
 
-      <AddressInfo navigation={navigationChangeRecipientInformationSheet} />
+                <PayOrder />
+            </ScrollView>
 
-      <ProductsInfo navigationGoback={navigationGoback} />
-
-      <PaymentDetails />
-
-      <PayOrder />
+    
     </View>
   );
 };
 export default OrderCartScreen;
+
+
+const days = ["Hôm nay", "Ngày mai"];
+const timeSlots = Array.from({ length: 14 }, (_, i) => `${8 + Math.floor(i / 2)}:${i % 2 === 0 ? "00" : "30"}`);
+
+const Timegive = () => {
+    const [isVisible, setIsVisible] = useState(false);
+    const [selectedDay, setSelectedDay] = useState(days[0]); // Mặc định là "Hôm nay"
+    const [selectedTime, setSelectedTime] = useState(timeSlots[0]);
+    const timeListRef = useRef(null);
+
+    return (
+        <View style={{ paddingHorizontal: 16 }}>
+            <TouchableOpacity onPress={() => setIsVisible(true)}>
+                <Text style={styles.title}>Thời gian nhận</Text>
+                <Text style={styles.selectedTime}>{selectedDay} - {selectedTime}</Text>
+            </TouchableOpacity>
+            <DialogBasic isVisible={isVisible} onHide={() => setIsVisible(false)} title="Thời gian nhận">
+                <View style={styles.containerTime}>
+                    {/* Danh sách ngày */}
+                    <FlatList
+                        data={days}
+                        keyExtractor={(item) => item}
+                        scrollEnabled={false}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={[styles.dayItem, selectedDay === item && styles.selectedDay]}
+                                onPress={() => {
+                                    setSelectedDay(item);
+                                    setSelectedTime(timeSlots[0]); // Reset về 8:00 khi đổi ngày
+                                }}
+                            >
+                                <Text style={[styles.dayText, selectedDay === item && styles.selectedDayText]}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+
+                    {/* Danh sách giờ */}
+                    <FlatList
+                        ref={timeListRef}
+                        data={timeSlots}
+                        keyExtractor={(item) => item}
+                        showsVerticalScrollIndicator={false}
+                        snapToAlignment="center"
+                        nestedScrollEnabled={true}
+                        snapToInterval={50} // Điều chỉnh để căn giữa
+                        decelerationRate="fast"
+                        initialNumToRender={3} // Chỉ render trước 3 item
+                        maxToRenderPerBatch={3} // Render tối đa 3 item cùng lúc
+                        windowSize={3} // Giữ 3 item trong bộ nhớ để tối ưu hiệu suất
+                        style={{ maxHeight: 150 }} // Giới hạn chiều cao để chỉ hiển thị 3 item (50px mỗi item)
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={[styles.timeItem, selectedTime === item && styles.selectedTimeItem]}
+                                onPress={() => setSelectedTime(item)}
+                            >
+                                <Text style={[styles.timeText, selectedTime === item && styles.selectedTimeText]}>{item}</Text>
+                            </TouchableOpacity>
+                        )}
+                    />
+                </View>
+
+                {/* Nút Xác nhận */}
+                <PrimaryButton title='Xác nhận' onPress={() => setIsVisible(false)}/>
+            </DialogBasic>
+        </View>
+    );
+};
+
 
 const AddressInfo = ({navigation}) => {
   const [currentLocation, setCurrentLocation] = useState('');
@@ -99,7 +159,6 @@ const AddressInfo = ({navigation}) => {
       phone: 'Ngọc Đại | 012345678',
     },
   ];
-
   return (
     <View style={styles.optionsContainer}>
       <FlatList
@@ -337,172 +396,164 @@ const PaymentMethod = () => {
     setIsVisible(false);
   };
 
-  return (
-    <Row style={{justifyContent: 'space-between', marginVertical: 8}}>
-      <Text>Phương thức thanh toán</Text>
-      <TouchableOpacity
-        style={{flexDirection: 'row', alignItems: 'center'}}
-        onPress={() => setIsVisible(true)}>
-        <Image source={selectedMethod.image} style={styles.image} />
-        <Text style={{color: colors.gray700, marginLeft: 8}}>
-          {selectedMethod.name}
-        </Text>
-        <Icon
-          source="chevron-down"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.gray700}
-        />
-      </TouchableOpacity>
-
-      {/* Dialog chọn phương thức thanh toán */}
-      <DialogBasic
-        isVisible={isVisible}
-        onHide={() => setIsVisible(false)}
-        title="Chọn phương thức thanh toán">
-        <View style={{marginHorizontal: 16}}>
-          {paymentMethods.map(method => (
+    return (
+        <Row style={{ justifyContent: 'space-between', marginVertical: 8 }}>
+            <Text>Phương thức thanh toán</Text>
             <TouchableOpacity
-              key={method.value}
-              onPress={() => handleSelectMethod(method)}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 8,
-              }}>
-              <RadioButton
-                value={method.value}
-                status={
-                  selectedMethod.name === method.name ? 'checked' : 'unchecked'
-                }
-              />
-              <Image source={method.image} style={styles.image} />
-              <Text style={{color: colors.gray700, marginLeft: 8}}>
-                {method.name}
-              </Text>
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+                onPress={() => setIsVisible(true)}
+            >
+                <Image source={selectedMethod.image} style={styles.image} />
+                <Text style={{ color: colors.gray700, marginLeft: 8 }}>{selectedMethod.name}</Text>
+                <Icon
+                    source="chevron-down"
+                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                    color={colors.gray700}
+                />
             </TouchableOpacity>
-          ))}
-        </View>
-      </DialogBasic>
-    </Row>
-  );
+
+            {/* Dialog chọn phương thức thanh toán */}
+            <DialogBasic
+                isVisible={isVisible}
+                onHide={() => setIsVisible(false)}
+                title="Chọn phương thức thanh toán"
+            >
+                <View style={{ marginHorizontal: 16 }}>
+                    {paymentMethods.map((method) => (
+                        <TouchableOpacity
+                            key={method.value}
+                            onPress={() => handleSelectMethod(method)}
+                            style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                        >
+                            <RadioButton
+                                value={method.value}
+                                status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
+                                color={colors.primary}
+                            />
+                            <Image source={method.image} style={styles.image} />
+                            <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            </DialogBasic>
+        </Row>
+    );
 };
 
 const PayOrder = () => {
-  return (
-    <View
-      style={{
-        backgroundColor: colors.green200,
-        padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        justifyContent: 'flex-end',
-      }}>
-      <Row style={{justifyContent: 'space-between', marginBottom: 6}}>
-        <Text>2 sản phẩm</Text>
-        <Row>
-          <Text style={{fontWeight: '700', color: colors.primary}}>
-            68.000đ
-          </Text>
-          <Text style={styles.textDiscount}>69.000đ</Text>
-        </Row>
-      </Row>
-      <PrimaryButton title="Đặt hàng" />
-    </View>
-  );
+    return (
+        <View style={{ backgroundColor: colors.green200, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
+            <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
+                <Text>2 sản phẩm</Text>
+                <Row>
+                    <Text style={{ fontWeight: '700', color: colors.primary }}>68.000đ</Text>
+                    <Text style={styles.textDiscount}>69.000đ</Text>
+                </Row>
+            </Row>
+            <PrimaryButton title='Đặt hàng' />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  optionsContainer: {
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  optionItem: {
-    flexDirection: 'row',
-  },
-  optionContent: {
-    flex: 1,
-  },
-  optionLabel: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: 'bold',
-    color: colors.primary,
-  },
-  optionAddress: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray700,
-  },
-  optionPhone: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray700,
-  },
-  row: {
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-  title: {
-    fontWeight: '500',
-  },
-  areaContainer: {
-    borderColor: colors.gray200,
-    marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
-    padding: GLOBAL_KEYS.GAP_SMALL,
-  },
-  rightStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '95%',
-    backgroundColor: colors.gray200,
-  },
-  flatListContentContainer: {
-    // gap: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  productItem: {
-    borderColor: colors.gray200,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    width: '100%',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    marginTop: 8,
-  },
-  productImage: {
-    width: width / 8,
-    height: width / 8,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-  },
-  productName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
-  },
-  productPrice: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: 'green',
-  },
-  productSize: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-    color: colors.gray700,
-  },
-  rightButton: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  textDiscount: {
-    textDecorationLine: 'line-through',
-    color: colors.gray700,
-  },
-  textQuantity: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    backgroundColor: colors.primary,
-    color: colors.white,
-    paddingHorizontal: 6,
-    borderRadius: 10,
-  },
-  image: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
-  },
-});
+    container: {
+        flex: 1,
+        backgroundColor: colors.white,
+
+    },
+    optionsContainer: {
+        padding: GLOBAL_KEYS.PADDING_DEFAULT,
+        gap: GLOBAL_KEYS.GAP_DEFAULT,
+    },
+    optionItem: {
+        flexDirection: 'row',
+
+    },
+    optionContent: {
+        flex: 1,
+    },
+    optionLabel: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+        fontWeight: 'bold',
+        color: colors.primary,
+    },
+    optionAddress: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray700
+    },
+    optionPhone: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray700
+    },
+    row: {
+        justifyContent: 'space-between',
+        marginVertical: 8,
+    },
+    title: {
+        fontWeight: '500'
+    },
+    areaContainer: {
+        borderColor: colors.gray200,
+    },
+    flatListContentContainer: {
+        marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
+    },
+    productItem: {
+        flexDirection: 'row',
+        marginVertical: 4,
+        marginHorizontal: 16,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        borderColor: colors.gray200,
+        paddingBottom: GLOBAL_KEYS.PADDING_SMALL
+    },
+    productImage: {
+        width: 50,
+        height: 50,
+        marginRight: 10,
+        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT
+    },
+    productName: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '500',
+    },
+    productPrice: {
+        fontSize: 14,
+        color: 'green',
+    },
+    productSize: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+        color: colors.gray700
+    },
+    textDiscount: {
+        textDecorationLine: "line-through",
+        color: colors.gray700
+    },
+    textQuantity: {
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        backgroundColor: colors.primary,
+        color: colors.white,
+        paddingHorizontal: 6,
+        borderRadius: 10
+    },
+    image: {
+        width: 30,
+        height: 30,
+        resizeMode: 'contain',
+    },
+    selectedTime: { fontSize: 14, color: colors.gray700, marginTop: 4 },
+
+    containerTime: { flexDirection: "row", justifyContent: "space-between", padding: 10 },
+
+    dayItem: { padding: 12, alignItems: "center" },
+    selectedDay: { borderRadius: 5 },
+    dayText: { fontSize: 16, color: colors.gray700 },
+    selectedDayText: { color: colors.black, fontWeight: "bold" },
+
+    timeItem: { height: 50, justifyContent: "center", alignItems: "center" },
+    selectedTimeItem: {  borderRadius: 5 },
+    timeText: { fontSize: 16, color: colors.gray700 },
+    selectedTimeText: { color: "#333", fontWeight: "bold" },
+
+})

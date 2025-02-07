@@ -13,4 +13,3 @@ export const AppGraph = Object.freeze({
     VoucherDetailSheet: 'VoucherDetailSheet',
     AdvertisingScreen: 'AdvertisingScreen'
 });
-
