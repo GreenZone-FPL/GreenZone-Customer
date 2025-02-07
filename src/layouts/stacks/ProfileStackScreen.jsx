@@ -1,4 +1,4 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import AddressScreen from '../../screens/address/AddressScreen';
 import NewAddressScreen from '../../screens/address/NewAddressScreen';
@@ -6,11 +6,12 @@ import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
 import SelectAddressScreen from '../../screens/address/SelectAddressScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
-import ChatScreen from '../../screens/order/ChatScreen';
 import OrderDetailScreen from '../../screens/order/OrderDetailScreen';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
+import ChatScreen from '../../screens/shopping/ChatScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
+import SettingScreen from '../../screens/user-profile/SettingScreen';
 import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
 import {
   AuthGraph,
@@ -19,9 +20,6 @@ import {
   OrderGraph,
   UserGraph,
 } from '../graphs';
-import {ScreenEnum} from '../../constants';
-import SettingScreen from '../../screens/user-profile/SettingScreen';
-import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -29,7 +27,7 @@ const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator
       name={MainGraph.ProfileStackScreen}
-      screenOptions={{headerShown: false}}>
+      screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen
         name={BottomGraph.ProfileScreen}
         component={ProfileScreen}
@@ -56,7 +54,7 @@ const ProfileStackScreen = () => {
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.SettingScreen}
+        name={UserGraph.SettingScreen}
         component={SettingScreen}
       />
 

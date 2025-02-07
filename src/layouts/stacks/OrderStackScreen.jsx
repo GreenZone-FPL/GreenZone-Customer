@@ -1,20 +1,20 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import OrderScreen from '../../screens/bottom-navs/OrderScreen';
-import {ProductDetailSheet} from '../../components';
-import {AuthGraph, BottomGraph, MainGraph, ShoppingGraph} from '../graphs';
-import {ScreenEnum} from '../../constants';
-import MyFavoriteProducts from '../../screens/favorite/MyFavoriteProducts';
-import ProductsSearch from '../../screens/search/ProductsSearch';
-import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
+import FavoriteScreen from '../../screens/shopping/FavoriteScreen';
+import ProductsSearch from '../../screens/shopping/SearchProductScreen';
+import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
+import CheckoutScreen from '../../screens/shopping/CheckoutScreen';
+import RecipientInfoSheet from '../../screens/shopping/RecipientInfoSheet';
 
 const OrderStack = createNativeStackNavigator();
 const OrderStackScreen = () => {
   return (
     <OrderStack.Navigator
       name={MainGraph.OrderStackScreen}
-      screenOptions={{headerShown: false}}>
+      screenOptions={{ headerShown: false }}>
       <OrderStack.Screen
         name={BottomGraph.OrderScreen}
         component={OrderScreen}
@@ -26,13 +26,27 @@ const OrderStackScreen = () => {
         component={ProductDetailSheet}
       />
       <OrderStack.Screen
-        name={ScreenEnum.MyFavoriteProducts}
-        component={MyFavoriteProducts}
+        name={ShoppingGraph.FavoriteScreen}
+        component={FavoriteScreen}
       />
       <OrderStack.Screen
-        name={ScreenEnum.ProductsSearch}
+        name={ShoppingGraph.CheckoutScreen}
+        component={CheckoutScreen}
+      />
+      <OrderStack.Screen
+        name={ShoppingGraph.SearchProductScreen}
         component={ProductsSearch}
       />
+      <OrderStack.Screen
+        name={ShoppingGraph.RecipientInfoSheet}
+        component={RecipientInfoSheet}
+        options={{
+          animation: 'slide_from_bottom',
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
+      />
+
     </OrderStack.Navigator>
   );
 };

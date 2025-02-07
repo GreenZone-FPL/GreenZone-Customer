@@ -41,7 +41,7 @@ const CheckoutScreen = (props) => {
         <AddressSection />
 
         <RecipientInfo
-          onChangeRecipientInfo={() => navigation.navigate(OrderGraph.ChangeRecipientInformationSheet)}
+          onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
         />
         <TimeSection />
         <ProductsInfo onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
@@ -336,17 +336,15 @@ const PaymentDetails = () => (
     ))}
 
 
-    <Row style={{ justifyContent: 'space-between' }}>
-      <Row>
-        <Text style={styles.textQuantity}>3</Text>
-        <NormalText text='Ưu đãi' style={{ color: colors.primary }} />
-        <Icon
-          source="chevron-down"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
-        />
-      </Row>
-      <NormalText text='Tiết kiệm 19.000đ' style={{ color: colors.primary }} />
+
+    <Row>
+      <Text style={styles.textQuantity}>3</Text>
+      <NormalText text='Ưu đãi' style={{ color: colors.primary }} />
+      <Icon
+        source="chevron-down"
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        color={colors.primary}
+      />
     </Row>
 
     <PaymentMethod />
@@ -399,7 +397,7 @@ const PaymentMethod = () => {
       <NormalText text='Phương thức thanh toán' />
 
       <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center' }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
         onPress={() => setIsVisible(true)}
       >
         <Image source={selectedMethod.image} style={styles.image} />
@@ -479,7 +477,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     color: colors.white,
     paddingHorizontal: 6,
-    borderRadius: 10
+    borderRadius: 10,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   image: {
     width: 30,

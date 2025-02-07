@@ -3,6 +3,7 @@ import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
 
 
 const HorizontalProductItemPropTypes = {
@@ -46,8 +47,8 @@ export const HorizontalProductItem = ({
         </View>
 
         <View style={styles.priceContainer}>
-            <Text style={[styles.productPrice, priceStyle]}>{item.price}đ</Text>
-            <Text style={[styles.lineThroughText, oldPriceStyle]}>70.000đ</Text>
+            <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
+            <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
             {
                 enableAction &&
                 <Pressable onPress={onAction}>

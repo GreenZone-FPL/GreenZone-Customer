@@ -1,77 +1,45 @@
+import React from 'react';
 import {
+  Dimensions,
+  Image,
+  StyleSheet,
   View,
   Text,
-  TouchableOpacity,
-  StyleSheet,
-  Dimensions,
   FlatList,
-  Image,
+  TouchableOpacity,
 } from 'react-native';
-import React, {useState} from 'react';
 import {Icon} from 'react-native-paper';
-import {CustomSearchBar, LightStatusBar, Row, Column} from '../../components';
+import {Column, LightStatusBar, NormalHeader, Row} from '../../components';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {TextFormatter} from '../../utils';
 import {ShoppingGraph} from '../../layouts/graphs';
-import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
 
 const {width} = Dimensions.get('window');
 
-const ProductsSearch = props => {
-  const {navigation} = props;
-
-  const [searchQuery, setsearchQuery] = useState('');
-
-  const [filteredProducts, setFilteredProducts] = useState(productsFavorite);
-
-  const handleSearch = query => {
-    setsearchQuery(query);
-    if (query.trim() === '') {
-      setFilteredProducts(productsFavorite);
-    } else {
-      const filtered = productsFavorite.filter(item =>
-        item.name.toLowerCase().includes(query.toLowerCase()),
-      );
-      setFilteredProducts(filtered);
-    }
-  };
-
+const FavoriteScreen = ({navigation}) => {
   const navigateProductDetail = id => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, {id});
   };
 
   return (
-    <View style={styles.content}>
-      <LightStatusBar />
-      <Row style={{padding: GLOBAL_KEYS.PADDING_DEFAULT}}>
-        <CustomSearchBar
-          placeholder="Tìm kiếm..."
-          searchQuery={searchQuery}
-          setSearchQuery={handleSearch}
-          onClearIconPress={() => setsearchQuery('')}
-          leftIcon="magnify"
-          rightIcon="close"
-          style={{flex: 1, elevation: 3}}
+    <Column style={styles.container}>
+      <View style={styles.headerContainer}>
+        <LightStatusBar />
+        <NormalHeader
+          title="Sản phẩm yêu thích"
+          onLeftPress={() => navigation.goBack()}
         />
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <Text style={styles.canerText}>Huỷ</Text>
-        </TouchableOpacity>
-      </Row>
-      <Body
-        navigateProductDetail={navigateProductDetail}
-        filteredProducts={filteredProducts}
-      />
-    </View>
+      </View>
+      <Body navigateProductDetail={navigateProductDetail} />
+    </Column>
   );
 };
-const Body = ({navigateProductDetail, filteredProducts}) => {
+
+const Body = ({navigateProductDetail}) => {
   return (
     <View style={styles.flatListContent}>
       <FlatList
-        data={filteredProducts}
+        data={productsFavorite}
         keyExtractor={item => item.id.toString()}
         renderItem={({item}) => (
           <Item item={item} navigateProductDetail={navigateProductDetail} />
@@ -123,16 +91,13 @@ const Item = ({item, navigateProductDetail}) => {
 };
 
 const styles = StyleSheet.create({
-  content: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+  container: {
     backgroundColor: colors.white,
     flex: 1,
   },
-  canerText: {
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: 'bold',
-    color: colors.primary,
+  headerContainer: {
+    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    gap: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   flatListContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -202,7 +167,7 @@ const productsFavorite = [
   },
   {
     id: '2',
-    name: 'Combo 5 Olong Tea',
+    name: 'Combo 3 Olong Tea',
     image:
       'https://i.pinimg.com/736x/30/e2/4a/30e24a9f2fc4ca01b9b969b9aed83cad.jpg',
     price: 79000,
@@ -210,18 +175,18 @@ const productsFavorite = [
   },
   {
     id: '3',
-    name: 'Combo 4 Olong Tea',
+    name: 'Combo 3 Olong Tea',
     image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
     price: 79000,
     discount: 5,
   },
   {
     id: '4',
-    name: 'Combo 3 macao Tea',
+    name: 'Combo 3 Olong Tea',
     image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
     price: 79000,
     discount: 0,
   },
 ];
 
-export default ProductsSearch;
+export default FavoriteScreen;

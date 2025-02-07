@@ -19,7 +19,7 @@ import MainNavigation from './src/layouts/MainNavigation';
 import LoginScreen from './src/screens/auth/LoginScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
-import CheckoutScreen from './src/screens/order/CheckoutScreen';
+import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const BaseStack = createNativeStackNavigator();

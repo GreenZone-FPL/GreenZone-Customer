@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,15 +10,15 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
-import {Icon} from 'react-native-paper';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar';
+import { Icon } from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 const width = Dimensions.get('window').width;
 
-export const VoucherDetailSheet = ({navigation, route}) => {
-  const {item} = route.params;
+export const VoucherDetailSheet = ({ navigation, route }) => {
+  const { item } = route.params;
   const [showAlert, setShowAlert] = useState(false);
 
   const copyToClipboard = () => {
@@ -67,7 +67,7 @@ export const VoucherDetailSheet = ({navigation, route}) => {
 
               <View style={styles.separator} />
 
-              <Image source={{uri: item.qrCode}} style={styles.qrCodeImage} />
+              <Image source={{ uri: item.qrCode }} style={styles.qrCodeImage} />
               <Text style={styles.discountCode}>{item.discountCode}</Text>
 
               <TouchableOpacity onPress={copyToClipboard}>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   borderContainer: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,

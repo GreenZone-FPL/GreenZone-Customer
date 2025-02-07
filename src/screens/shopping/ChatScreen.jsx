@@ -4,7 +4,7 @@ import * as ImagePicker from "react-native-image-picker";
 import { launchCamera } from 'react-native-image-picker';
 import { Icon } from "react-native-paper";
 import io from "socket.io-client";
-import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components/";
+import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components";
 import { colors, GLOBAL_KEYS } from "../../constants";
 
 const socket = io("https://serversocket-4oew.onrender.com/");

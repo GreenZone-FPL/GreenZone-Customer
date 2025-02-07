@@ -1,12 +1,12 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {LightStatusBar, NormalHeader} from '../../components';
-import {Row} from '../../components';
-import {Icon} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { LightStatusBar, NormalHeader } from '../../components';
+import { Row } from '../../components';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 const SettingScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -21,7 +21,7 @@ const SettingScreen = props => {
   );
 };
 
-const Item = ({iconName, title, notification}) => {
+const Item = ({ iconName, title, notification }) => {
   return (
     <View style={styles.item}>
       <Row style={styles.row}>
@@ -56,7 +56,7 @@ const NotificationToggle = () => {
       onPress={() => toggleSwitch()}
       style={[
         styles.toggleButton,
-        {backgroundColor: isEnabled ? colors.primary : colors.gray200},
+        { backgroundColor: isEnabled ? colors.primary : colors.gray200 },
       ]}>
       <View
         style={[

@@ -1,47 +1,79 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
+  FlatList,
   Image,
   StyleSheet,
-  View,
   Text,
-  FlatList,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {Column, LightStatusBar, NormalHeader, Row} from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {TextFormatter} from '../../utils';
-import {ShoppingGraph} from '../../layouts/graphs';
+import { Icon } from 'react-native-paper';
+import { Column, CustomSearchBar, LightStatusBar, NormalText, Row } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
+import { TextFormatter } from '../../utils';
+import { color } from '@rneui/base';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const MyFavoriteProducts = ({navigation}) => {
+const SearchProductScreen = props => {
+  const { navigation } = props;
+
+  const [searchQuery, setsearchQuery] = useState('');
+
+  const [filteredProducts, setFilteredProducts] = useState(productsFavorite);
+
+  const handleSearch = query => {
+    setsearchQuery(query);
+    if (query.trim() === '') {
+      setFilteredProducts(productsFavorite);
+    } else {
+      const filtered = productsFavorite.filter(item =>
+        item.name.toLowerCase().includes(query.toLowerCase()),
+      );
+      setFilteredProducts(filtered);
+    }
+  };
+
   const navigateProductDetail = id => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {id});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { id });
   };
 
   return (
-    <Column style={styles.container}>
-      <View style={styles.headerContainer}>
-        <LightStatusBar />
-        <NormalHeader
-          title="Sản phẩm yêu thích"
-          onLeftPress={() => navigation.goBack()}
+    <View style={styles.content}>
+      <LightStatusBar />
+      <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, gap: 16 }}>
+        <CustomSearchBar
+          placeholder="Tìm kiếm..."
+          searchQuery={searchQuery}
+          setSearchQuery={handleSearch}
+          onClearIconPress={() => setsearchQuery('')}
+          leftIcon="magnify"
+          rightIcon="close"
+          style={{ flex: 1, elevation: 3, backgroundColor: colors.fbBg }}
         />
-      </View>
-      <Body navigateProductDetail={navigateProductDetail} />
-    </Column>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <NormalText text='Huỷ' style={{ color: colors.orange700, fontWeight: '500' }} />
+        </TouchableOpacity>
+      </Row>
+      <Body
+        navigateProductDetail={navigateProductDetail}
+        filteredProducts={filteredProducts}
+      />
+    </View>
   );
 };
-
-const Body = ({navigateProductDetail}) => {
+const Body = ({ navigateProductDetail, filteredProducts }) => {
   return (
     <View style={styles.flatListContent}>
       <FlatList
-        data={productsFavorite}
+        data={filteredProducts}
         keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <Item item={item} navigateProductDetail={navigateProductDetail} />
         )}
         contentContainerStyle={styles.flatListContainer}
@@ -50,11 +82,11 @@ const Body = ({navigateProductDetail}) => {
   );
 };
 
-const Item = ({item, navigateProductDetail}) => {
+const Item = ({ item, navigateProductDetail }) => {
   return (
     <Row style={styles.itemContainer}>
       <View style={styles.imageWrapper}>
-        <Image source={{uri: item.image}} style={styles.itemImage} />
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
         {item.discount > 0 && (
           <Text style={styles.discountBadge}>
             {TextFormatter.formatCurrency((item.discount * item.price) / 100)}
@@ -66,11 +98,11 @@ const Item = ({item, navigateProductDetail}) => {
         <Row>
           {item.discount > 0 && (
             <Text
-              style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
+              style={[styles.itemPrice, { textDecorationLine: 'line-through' }]}>
               {TextFormatter.formatCurrency(item.price)}
             </Text>
           )}
-          <Text style={[styles.itemPrice, {fontWeight: 'bold'}]}>
+          <Text style={[styles.itemPrice, { fontWeight: 'bold' }]}>
             {TextFormatter.formatCurrency(
               item.price - (item.discount * item.price) / 100,
             )}
@@ -91,13 +123,10 @@ const Item = ({item, navigateProductDetail}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  content: {
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
     flex: 1,
-  },
-  headerContainer: {
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   flatListContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -167,7 +196,7 @@ const productsFavorite = [
   },
   {
     id: '2',
-    name: 'Combo 3 Olong Tea',
+    name: 'Combo 5 Olong Tea',
     image:
       'https://i.pinimg.com/736x/30/e2/4a/30e24a9f2fc4ca01b9b969b9aed83cad.jpg',
     price: 79000,
@@ -175,18 +204,18 @@ const productsFavorite = [
   },
   {
     id: '3',
-    name: 'Combo 3 Olong Tea',
+    name: 'Combo 4 Olong Tea',
     image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
     price: 79000,
     discount: 5,
   },
   {
     id: '4',
-    name: 'Combo 3 Olong Tea',
+    name: 'Combo 3 macao Tea',
     image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
     price: 79000,
     discount: 0,
   },
 ];
 
-export default MyFavoriteProducts;
+export default SearchProductScreen;
