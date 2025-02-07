@@ -1,6 +1,4 @@
-
-import { AppGraph } from "./appGraph";
-
+import {AppGraph} from './appGraph';
 
 export const OrderGraph = Object.freeze({
   graphName: AppGraph.ORDER,
@@ -9,5 +7,6 @@ export const OrderGraph = Object.freeze({
   OrderDetailScreen: 'OrderDetailScreen',
   RatingOrderScreen: 'RatingOrderScreen',
   ChatScreen: 'ChatScreen',
-  OrderCartScreen: 'OrderCartScreen'
+  OrderCartScreen: 'OrderCartScreen',
+  ChangeRecipientInformationSheet: 'ChangeRecipientInformationSheet',
 });

@@ -24,6 +24,7 @@ import {
 } from '../../components';
 import {TextFormatter} from '../../utils';
 import {Icon, RadioButton} from 'react-native-paper';
+import {OrderGraph} from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
 const OrderCartScreen = props => {
@@ -31,6 +32,10 @@ const OrderCartScreen = props => {
 
   const navigationGoback = () => {
     navigation.goBack();
+  };
+
+  const navigationChangeRecipientInformationSheet = () => {
+    navigation.navigate(OrderGraph.ChangeRecipientInformationSheet);
   };
 
   return (
@@ -41,7 +46,7 @@ const OrderCartScreen = props => {
         onLeftPress={() => navigationGoback()}
       />
 
-      <AddressInfo />
+      <AddressInfo navigation={navigationChangeRecipientInformationSheet} />
 
       <ProductsInfo navigationGoback={navigationGoback} />
 
@@ -53,7 +58,7 @@ const OrderCartScreen = props => {
 };
 export default OrderCartScreen;
 
-const AddressInfo = () => {
+const AddressInfo = ({navigation}) => {
   const [currentLocation, setCurrentLocation] = useState('');
   const [locationAvailable, setLocationAvailable] = useState(false);
 
@@ -115,11 +120,16 @@ const AddressInfo = () => {
               <Text style={styles.optionAddress}>{item.address}</Text>
               <Row style={styles.row}>
                 <Text style={styles.title}>Thông tin người nhận</Text>
-                <Icon
-                  source="square-edit-outline"
-                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  color={colors.primary}
-                />
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation();
+                  }}>
+                  <Icon
+                    source="square-edit-outline"
+                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
               </Row>
 
               <Text style={styles.optionPhone}>{item.phone}</Text>
@@ -375,7 +385,6 @@ const PaymentMethod = () => {
       </DialogBasic>
     </Row>
   );
-
 };
 
 const PayOrder = () => {
@@ -497,4 +506,3 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-

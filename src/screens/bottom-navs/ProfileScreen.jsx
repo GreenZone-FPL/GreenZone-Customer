@@ -2,7 +2,7 @@ import React from 'react';
 import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Icon} from 'react-native-paper';
 import {HeaderWithBadge, LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
 import {AppGraph, AuthGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
 
 const ProfileScreen = props => {
@@ -46,7 +46,13 @@ const ProfileScreen = props => {
 
         <Text style={styles.sectionTitle}>Tiện ích</Text>
         <View style={styles.utilities}>
-          <CardUtiliti icon="cog" title="Cài đặt" onPress={() => {}} />
+          <CardUtiliti
+            icon="cog"
+            title="Cài đặt"
+            onPress={() => {
+              navigation.navigate(ScreenEnum.SettingScreen);
+            }}
+          />
           <View style={styles.separator} />
           <CardUtiliti
             icon="chat"

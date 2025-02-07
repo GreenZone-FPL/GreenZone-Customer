@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import AddressScreen from '../../screens/address/AddressScreen';
 import NewAddressScreen from '../../screens/address/NewAddressScreen';
@@ -12,7 +12,16 @@ import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
 import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
-import { AuthGraph, BottomGraph, MainGraph, OrderGraph, UserGraph } from '../graphs';
+import {
+  AuthGraph,
+  BottomGraph,
+  MainGraph,
+  OrderGraph,
+  UserGraph,
+} from '../graphs';
+import {ScreenEnum} from '../../constants';
+import SettingScreen from '../../screens/user-profile/SettingScreen';
+import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
 
 const ProfileStack = createNativeStackNavigator();
 
@@ -20,7 +29,7 @@ const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator
       name={MainGraph.ProfileStackScreen}
-      screenOptions={{ headerShown: false }}>
+      screenOptions={{headerShown: false}}>
       <ProfileStack.Screen
         name={BottomGraph.ProfileScreen}
         component={ProfileScreen}
@@ -45,6 +54,12 @@ const ProfileStackScreen = () => {
         name={UserGraph.ContactScreen}
         component={ContactScreen}
       />
+
+      <ProfileStack.Screen
+        name={ScreenEnum.SettingScreen}
+        component={SettingScreen}
+      />
+
       <ProfileStack.Screen
         name={UserGraph.NewAddressScreen}
         component={NewAddressScreen}
@@ -74,8 +89,6 @@ const ProfileStackScreen = () => {
         name={OrderGraph.ChatScreen}
         component={ChatScreen}
       />
-
-
     </ProfileStack.Navigator>
   );
 };
