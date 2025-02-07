@@ -21,6 +21,7 @@ import {
 } from '../graphs';
 import {ScreenEnum} from '../../constants';
 import SettingScreen from '../../screens/user-profile/SettingScreen';
+import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
 
 const ProfileStack = createNativeStackNavigator();
 

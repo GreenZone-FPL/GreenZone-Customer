@@ -64,8 +64,6 @@ const ProductsSearch = props => {
         navigateProductDetail={navigateProductDetail}
         filteredProducts={filteredProducts}
       />
-
-      <ChangeRecipientInformationSheet />
     </View>
   );
 };

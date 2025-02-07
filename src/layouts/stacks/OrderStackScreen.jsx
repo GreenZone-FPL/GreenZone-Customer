@@ -33,11 +33,6 @@ const OrderStackScreen = () => {
         name={ScreenEnum.ProductsSearch}
         component={ProductsSearch}
       />
-
-      <OrderStack.Screen
-        name={ScreenEnum.ChangeRecipientInformationSheet}
-        component={ChangeRecipientInformationSheet}
-      />
     </OrderStack.Navigator>
   );
 };
