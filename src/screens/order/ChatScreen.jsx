@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from "react";
-import {
-  Text,
-  StyleSheet,
-  Alert,
-  FlatList,
-  Image,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as ImagePicker from "react-native-image-picker";
+import { launchCamera } from 'react-native-image-picker';
+import { Icon } from "react-native-paper";
 import io from "socket.io-client";
-import { colors } from "../../constants/color";
-import { Column, Row, NormalText, PrimaryButton, FlatInput } from "../../components/";
+import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components/";
+import { colors, GLOBAL_KEYS } from "../../constants";
 
-const socket = io("https://serversocket-4oew.onrender.com/"); 
-const ChatScreen = () => {
+// const socket = io("https://serversocket-4oew.onrender.com/");
+const socket = io("http://192.168.0.110:3000/");
+
+const ChatScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [typingStatus, setTypingStatus] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImagePickerVisible, setImagePickerVisible] = useState(false);
 
   useEffect(() => {
     socket.on("receive message", (data) => {
-      addMessage(data.userName, data.message);
+      addMessage(data.userName, data.message, data.image);
     });
 
     socket.on("user typing", (data) => {
@@ -29,17 +30,9 @@ const ChatScreen = () => {
       setTimeout(() => setTypingStatus(""), 3000);
     });
 
-    socket.on("error", (error) => {
-      if (error.type === "username_taken") {
-        setIsLoggedIn(false);
-        Alert.alert("Lỗi", error.message);
-      }
-    });
-
     return () => {
       socket.off("receive message");
       socket.off("user typing");
-      socket.off("error");
     };
   }, []);
 
@@ -53,101 +46,173 @@ const ChatScreen = () => {
     }
   };
 
-  const sendMessage = () => {
-    if (message.trim()) {
-      socket.emit("send message", { message });
-      addMessage("You", message, true);
+  const sendMessage = (imageUri = null) => {
+    if (message.trim() || imageUri) {
+      const msgData = { message, image: imageUri };
+      socket.emit("send message", msgData);
+      addMessage("You", message, imageUri, true);
       setMessage("");
+      setSelectedImage(null);
     }
   };
 
-  const addMessage = (userName, message, isYou = false) => {
-    const newMessage = { userName, message, isYou };
+  const addMessage = (userName, message, image = null, isYou = false) => {
+    const newMessage = { userName, message, image, isYou };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
   };
 
-  const handleTyping = (text) => {
-    setMessage(text);
-    socket.emit("typing");
+  const openCamera = () => {
+    const options = {
+      saveToPhotos: true,
+      mediaType: 'photo',
+    };
+    launchCamera(options, response => {
+      if (response.didCancel || response.errorCode) return;
+
+      setSelectedImages(prev => {
+        const newImages = response?.assets[0]?.uri;
+        if (prev.length < 3) {
+          return [...prev, newImages];
+        }
+        return prev;
+      });
+    });
+    setImagePickerVisible(false); // Hide modal
   };
 
-  const renderItem = ({ item }) => {
-    const isYou = item.isYou;
-    return (
-      <>
-        {
-          isYou ?
-            <NormalText text={item.message} style={styles.messageText} />
-            :
-            <Row
-              style={styles.messageContainer}
-            >
-              <Image
-                source={{ uri: "https://catscanman.net/wp-content/uploads/2021/09/anh-meo-cute-de-thuong-32.jpg" }}
-                style={styles.avatar}
-              />
-              <Column style={styles.messageContent}>
-                <NormalText text={item.userName} style={{ fontWeight: '500' }} />
-                <NormalText text={item.message} style={{ textAlign: 'justify', lineHeight: 20 }} />
-
-              </Column>
-            </Row >
-
-
+  const pickImage = () => {
+    ImagePicker.launchImageLibrary(
+      { mediaType: "photo", quality: 0.8 },
+      (response) => {
+        if (response.didCancel) return;
+        if (response.errorMessage) {
+          Alert.alert("Lỗi", "Không thể chọn ảnh.");
+          return;
         }
 
-      </>
+        const imageUri = response.assets?.[0]?.uri;
 
+        if (imageUri) {
+          sendMessage(imageUri); // Gửi ảnh ngay sau khi chọn
+        }
+      }
     );
+    setImagePickerVisible(false);
   };
+
+
+
+
 
   return (
     <>
       {!isLoggedIn ? (
         <Column style={{ padding: 16 }}>
           <Text style={styles.header}>Join Chat Room</Text>
-          <FlatInput
-            label="Enter your name"
-            placeholder="Nguyen Van A"
-            value={userName}
-            setValue={setUserName}
-            message={errorMessage}
-          />
-
-          <PrimaryButton title='Join' onPress={joinChat} />
+          <FlatInput label="Enter your name" placeholder="Nguyen Van A" value={userName} setValue={setUserName} message={errorMessage} />
+          <PrimaryButton title="Join" onPress={joinChat} />
         </Column>
       ) : (
         <Column style={styles.chatRoom}>
-          <Text style={styles.header}>Chat Room</Text>
-          <FlatList
-            data={messages}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={{ flexGrow: 1, gap: 12 }}
-          />
-          <NormalText style={{ fontStyle: 'italic' }} text={typingStatus} />
+          <NormalHeader style={{ backgroundColor: colors.transparent }} title="Chat room" onLeftPress={() => navigation.goBack()} />
+          <Column style={{ flex: 1, paddingHorizontal: 16 }}>
 
-          <FlatInput
-            label="Enter message"
-            placeholder=""
-            value={message}
-            setValue={handleTyping}
-          />
-          <PrimaryButton title='Send' onPress={sendMessage} />
+            <FlatList
+              data={messages}
+              keyExtractor={(_, index) => index.toString()}
+              renderItem={MessageItem}
+              contentContainerStyle={{ flexGrow: 1, gap: 12 }} />
+            <NormalText style={{ fontStyle: "italic" }} text={typingStatus} />
 
+
+            <Row>
+              <FlatInput
+                label="Enter message"
+                placeholder=""
+                value={message}
+                style={{ flex: 1 }}
+                setValue={setMessage}
+                onSubmitEditing={() => sendMessage()}
+                returnKeyType="send"
+              />
+              <TouchableOpacity onPress={() => setImagePickerVisible(true)}>
+                <Icon
+                  source="image"
+                  color={colors.gray850}
+                  size={28}
+                />
+              </TouchableOpacity>
+
+            </Row>
+
+
+
+          </Column>
+          {selectedImage && (
+            <View style={styles.previewContainer}>
+              <Text>Hình ảnh đã chọn:</Text>
+              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+            </View>
+          )}
+          <Modal
+            visible={isImagePickerVisible}
+            animationType="slide"
+            transparent={true}>
+            <Column style={styles.imagePickerOverlay}>
+              <Column style={styles.imagePickerContainer}>
+
+                <TouchableOpacity style={styles.option} onPress={openCamera}>
+                  <NormalText text="Chụp ảnh mới" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.option} onPress={pickImage}>
+                  <NormalText text="Chọn ảnh từ thư viện" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.option}
+                  onPress={() => setImagePickerVisible(false)}>
+                  <NormalText text="Hủy bỏ" />
+                </TouchableOpacity>
+
+              </Column>
+            </Column>
+          </Modal>
         </Column>
       )}
     </>
   );
 };
 
+const MessageItem = ({ item }) => {
+  const isYou = item.isYou;
+
+  return (
+    <Row style={[styles.messageContainer, isYou && styles.yourMessage]}>
+      {!isYou && (
+        <Image
+          source={{ uri: "https://catscanman.net/wp-content/uploads/2021/09/anh-meo-cute-de-thuong-32.jpg" }}
+          style={styles.avatar}
+        />
+      )}
+
+      <Column style={[styles.messageContent, isYou && { backgroundColor: colors.green100 }]}>
+        {!isYou && <NormalText text={item.userName} style={{ fontWeight: "500" }} />}
+        {item.image ? (
+          <Image source={{ uri: item.image }} style={styles.sentImage} />
+        ) : (
+          <NormalText text={item.message} />
+        )}
+      </Column>
+    </Row>
+  );
+};
+
+
 const styles = StyleSheet.create({
-  joinChat: {
-    backgroundColor: "white",
-  },
   chatRoom: {
-    backgroundColor: 'white',
-    padding: 16,
+    backgroundColor: colors.fbBg,
+    paddingVertical: 16,
     flex: 1,
   },
   header: {
@@ -155,36 +220,60 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  messageContainer: {
-    flexDirection: "row",
-    marginBottom: 10,
-    alignItems: 'flex-start',
-  
-  },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     marginRight: 6,
   },
+  imagePickerOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: colors.overlay,
+  },
+  imagePickerContainer: {
+    backgroundColor: colors.white,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  option: {
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+  },
+  messageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+    maxWidth: "80%",
+  },
+  yourMessage: {
+    alignSelf: "flex-end",
+    flexDirection: "row-reverse",
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
   messageContent: {
     maxWidth: "80%",
-    backgroundColor: 'white',
+    backgroundColor: "white",
     elevation: 2,
     padding: 10,
     borderRadius: 6,
     borderBottomColor: colors.gray300,
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
   },
-  messageText: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: colors.green500,
-    maxWidth: '80%',
-    lineHeight: 20,
-    alignSelf: 'flex-end',
-    textAlign: 'right'
+  sentImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 5,
+    alignSelf: "center",
   },
 });
 
-export default ChatScreen
+export default ChatScreen;
