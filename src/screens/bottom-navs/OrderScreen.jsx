@@ -71,6 +71,7 @@ const OrderScreen = props => {
           onFavoritePress={() =>
             navigation.navigate(ScreenEnum.MyFavoriteProducts)
           }
+          onSearchProduct={() => navigation.navigate(ScreenEnum.ProductsSearch)}
         />
         <CategoryMenu />
         <ProductsListHorizontal

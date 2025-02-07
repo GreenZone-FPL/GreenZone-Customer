@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   Image,
   View,
+  TextInput,
+  Text,
 } from 'react-native';
 
 import {
@@ -22,12 +24,15 @@ import {
   BarcodeUser,
   TitleText,
   NotificationList,
+  CategoryMenu,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { TruckFast, BagHappy, TicketDiscount, Coin1, TaskSquare, MessageFavorite, Rank, SearchNormal1, Heart } from 'iconsax-react-native';
+
+import { ShoppingGraph, UserGraph, OrderGraph, AppGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -54,7 +59,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({lat, long}) => {
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -72,7 +77,7 @@ const HomeScreen = props => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <ScrollView style={styles.containerContent}>
-        <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
+        <HeaderWithBadge title="Home" onBadgePress={() => { }} isHome={true} />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
@@ -88,9 +93,9 @@ const HomeScreen = props => {
           }
         />
         <NotificationList onSeeMorePress={() =>
-            navigation.navigate(AppGraph.AdvertisingScreen)
-          }/>
-        
+          navigation.navigate(AppGraph.AdvertisingScreen)
+        } />
+        <Searchbar />
       </ScrollView>
 
       <DeliveryButton
@@ -98,7 +103,8 @@ const HomeScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-        onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
+        // onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
+        onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}
@@ -110,9 +116,9 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({imagePath, title, onPress}) => (
+const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
-    <Image source={imagePath} style={styles.itemImage} />
+    {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
@@ -121,41 +127,88 @@ const CardCategory = () => {
   return (
     <View style={styles.card}>
       <ScrollView
-        horizontal={true} // Cuộn ngang
-        showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
-        contentContainerStyle={{gap: GLOBAL_KEYS.GAP_DEFAULT}}>
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 22 }}>
+
         <Item
-          imagePath={require('../../assets/images/image-Service/ic_delivery.png')}
+          IconComponent={() => <TruckFast size="50" color={colors.primary} variant="Bulk" />}
           title="Giao hàng"
+
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/ic_take_away.png')}
+          IconComponent={() => <BagHappy size="50" color={colors.primary} variant="Bulk" />}
           title="Mang đi"
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/voucher.png')}
+          IconComponent={() => <TicketDiscount size="50" color={colors.primary} variant="Bulk" />}
           title="Voucher"
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/coin.png')}
+          IconComponent={() => <Coin1 size="50" color={colors.primary} variant="Bulk" />}
           title="Đổi xu"
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/order.png')}
+          IconComponent={() => <TaskSquare size="50" color={colors.primary} variant="Bulk" />}
           title="Đơn Hàng"
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/feedback.png')}
+          IconComponent={() => <MessageFavorite size="50" color={colors.primary} variant="Bulk" />}
           title="Góp ý"
         />
+
         <Item
-          imagePath={require('../../assets/images/image-Service/vip.png')}
+          IconComponent={() => <Rank size="50" color={colors.primary} variant="Bulk" />}
           title="Hạng thành viên"
         />
+
       </ScrollView>
     </View>
   );
 };
+
+const Searchbar = (props) => {
+  const [query, setQuery] = useState('');
+  const { navigation } = props;
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      navigation.navigate('', { searchQuery: query });
+    } else {
+      alert('Vui lòng nhập từ khóa tìm kiếm.');
+    }
+  };
+
+  return (
+    <View style={{ marginHorizontal: 16, borderWidth: 1, borderColor: colors.gray200, padding: 4, borderRadius: 4, gap: 10 }}>
+      <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
+        <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
+          <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập từ khóa tìm kiếm..."
+            value={query}
+            onChangeText={setQuery}
+            onSubmitEditing={handleSearch} // Cho phép nhấn Enter để tìm kiếm
+            returnKeyType="search"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ borderRadius: 8, backgroundColor: colors.green200, padding: 10, height: 55 }}>
+          <Heart size="32" color={colors.primary} />
+        </TouchableOpacity>
+      </View>
+      <CategoryMenu />
+    </View>
+
+
+  );
+};
+
 
 export default HomeScreen;
 
@@ -190,6 +243,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '400',
     marginTop: 10,
+    width: 70,
+    fontSize: 12,
+    height: 37
   },
   card: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
@@ -198,6 +254,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
+  },
+  searchBar: {
+    flexDirection: 'row',           // Đặt icon và TextInput trên cùng một hàng
+    alignItems: 'center',           // Căn giữa theo chiều dọc
+    backgroundColor: colors.gray200,     // Màu nền của thanh tìm kiếm
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,               // Bo góc thanh tìm kiếm
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,          // Khoảng cách hai bên
+    paddingVertical: 8,             // Độ cao của thanh tìm kiếm  
+    width: "84%"               // Khoảng cách xung quanh thanh tìm kiếm
+  },
+  icon: {
+    marginRight: 10,                // Khoảng cách giữa icon và TextInput
+  },
+  input: {
+    flex: 1,                        // Đảm bảo TextInput chiếm hết phần còn lại
+    fontSize: 16,                   // Kích thước chữ trong TextInput
   },
 });
 

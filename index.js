@@ -1,7 +1,7 @@
-import { AppRegistry } from 'react-native';
+import {AppRegistry} from 'react-native';
 import App from './App';
-import { name as appName } from './app.json';
+import {name as appName} from './app.json';
 import ChatScreen from './src/screens/order/ChatScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
-import TestComponent from './src/screens/bottom-navs/TestComponent';
-AppRegistry.registerComponent(appName, () => TestComponent);
+
+AppRegistry.registerComponent(appName, () => App);
