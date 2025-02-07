@@ -32,5 +32,6 @@ export const colors = Object.freeze({
   white100: '#FDFCFC',
   transparent: 'transparent',
   overlay: 'rgba(0, 0, 0, 0.5)',
-  grayBg: '#F5F5F5'
+  grayBg: '#F5F5F5',
+  fbBg: '#F2F4F7'
 });

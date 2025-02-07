@@ -31,7 +31,6 @@ import {TruckFast, BagHappy, TicketDiscount, Coin1, TaskSquare, MessageFavorite,
 
 import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
 
-
 const HomeScreen = props => {
   const {navigation} = props;
   const [currentLocation, setCurrenLocation] = useState('');
@@ -104,7 +103,7 @@ const HomeScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-        onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
+        onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}

@@ -6,6 +6,8 @@ import {ProductDetailSheet} from '../../components';
 import {AuthGraph, BottomGraph, MainGraph, ShoppingGraph} from '../graphs';
 import {ScreenEnum} from '../../constants';
 import MyFavoriteProducts from '../../screens/favorite/MyFavoriteProducts';
+import ProductsSearch from '../../screens/search/ProductsSearch';
+import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
 
 const OrderStack = createNativeStackNavigator();
 const OrderStackScreen = () => {
@@ -26,6 +28,10 @@ const OrderStackScreen = () => {
       <OrderStack.Screen
         name={ScreenEnum.MyFavoriteProducts}
         component={MyFavoriteProducts}
+      />
+      <OrderStack.Screen
+        name={ScreenEnum.ProductsSearch}
+        component={ProductsSearch}
       />
     </OrderStack.Navigator>
   );
