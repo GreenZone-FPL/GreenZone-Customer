@@ -11,7 +11,7 @@ import {
   OrderGraph,
 } from '../graphs';
 import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
-import OrderCartScreen from '../../screens/order/OrderCartScreen';
+import CheckoutScreen from '../../screens/order/CheckoutScreen';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -40,8 +40,8 @@ const HomeStackScreen = () => {
         }}
       />
       <HomeStack.Screen
-        name={OrderGraph.OrderCartScreen}
-        component={OrderCartScreen}
+        name={ShoppingGraph.CheckoutScreen}
+        component={CheckoutScreen}
       />
     </HomeStack.Navigator>
   );

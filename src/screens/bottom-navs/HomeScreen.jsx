@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Image,
   View,
-  TextInput, 
+  TextInput,
   Text,
 } from 'react-native';
 
@@ -26,13 +26,13 @@ import {
   NotificationList,
   CategoryMenu,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {TruckFast, BagHappy, TicketDiscount, Coin1, TaskSquare, MessageFavorite, Rank, SearchNormal1, Heart} from 'iconsax-react-native';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { TruckFast, BagHappy, TicketDiscount, Coin1, TaskSquare, MessageFavorite, Rank, SearchNormal1, Heart } from 'iconsax-react-native';
 
-import {ShoppingGraph, UserGraph, OrderGraph, AppGraph} from '../../layouts/graphs';
+import { ShoppingGraph, UserGraph, OrderGraph, AppGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -59,7 +59,7 @@ const HomeScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({lat, long}) => {
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -77,7 +77,7 @@ const HomeScreen = props => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <ScrollView style={styles.containerContent}>
-        <HeaderWithBadge title="Home" onBadgePress={() => {}} isHome={true} />
+        <HeaderWithBadge title="Home" onBadgePress={() => { }} isHome={true} />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
@@ -93,9 +93,9 @@ const HomeScreen = props => {
           }
         />
         <NotificationList onSeeMorePress={() =>
-            navigation.navigate(AppGraph.AdvertisingScreen)
-          }/>
-        <Searchbar/>
+          navigation.navigate(AppGraph.AdvertisingScreen)
+        } />
+        <Searchbar />
       </ScrollView>
 
       <DeliveryButton
@@ -103,6 +103,7 @@ const HomeScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
+        // onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
       <DialogShippingMethod
@@ -115,9 +116,9 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({IconComponent, title, onPress}) => (
+const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
-    {IconComponent && <IconComponent />} 
+    {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
@@ -128,44 +129,44 @@ const CardCategory = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}> 
-        
+        contentContainerStyle={{ gap: 22 }}>
+
         <Item
           IconComponent={() => <TruckFast size="50" color={colors.primary} variant="Bulk" />}
           title="Giao hàng"
-          
+
         />
-        
+
         <Item
           IconComponent={() => <BagHappy size="50" color={colors.primary} variant="Bulk" />}
           title="Mang đi"
         />
-        
+
         <Item
           IconComponent={() => <TicketDiscount size="50" color={colors.primary} variant="Bulk" />}
           title="Voucher"
         />
-        
+
         <Item
-          IconComponent={() => <Coin1 size="50" color={colors.primary} variant="Bulk"/>}
+          IconComponent={() => <Coin1 size="50" color={colors.primary} variant="Bulk" />}
           title="Đổi xu"
         />
-        
+
         <Item
-          IconComponent={() => <TaskSquare size="50" color={colors.primary} variant="Bulk"/>}
+          IconComponent={() => <TaskSquare size="50" color={colors.primary} variant="Bulk" />}
           title="Đơn Hàng"
         />
-        
+
         <Item
-          IconComponent={() => <MessageFavorite size="50" color={colors.primary} variant="Bulk"/>}
+          IconComponent={() => <MessageFavorite size="50" color={colors.primary} variant="Bulk" />}
           title="Góp ý"
         />
-        
+
         <Item
-          IconComponent={() => <Rank size="50" color={colors.primary} variant="Bulk"/>}
+          IconComponent={() => <Rank size="50" color={colors.primary} variant="Bulk" />}
           title="Hạng thành viên"
         />
-        
+
       </ScrollView>
     </View>
   );
@@ -184,8 +185,8 @@ const Searchbar = (props) => {
   };
 
   return (
-    <View style={{marginHorizontal: 16, borderWidth: 1, borderColor: colors.gray200, padding: 4, borderRadius: 4, gap: 10}}>
-      <View style={{justifyContent: 'space-between', flexDirection: 'row', }}>
+    <View style={{ marginHorizontal: 16, borderWidth: 1, borderColor: colors.gray200, padding: 4, borderRadius: 4, gap: 10 }}>
+      <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput
@@ -197,14 +198,14 @@ const Searchbar = (props) => {
             returnKeyType="search"
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{borderRadius: 8, backgroundColor: colors.green200, padding: 10, height: 55 }}>
-          <Heart size="32" color={colors.primary}/>
+        <TouchableOpacity style={{ borderRadius: 8, backgroundColor: colors.green200, padding: 10, height: 55 }}>
+          <Heart size="32" color={colors.primary} />
         </TouchableOpacity>
       </View>
-      <CategoryMenu/>
+      <CategoryMenu />
     </View>
-    
-   
+
+
   );
 };
 

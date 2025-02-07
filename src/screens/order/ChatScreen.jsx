@@ -7,8 +7,8 @@ import io from "socket.io-client";
 import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components/";
 import { colors, GLOBAL_KEYS } from "../../constants";
 
-// const socket = io("https://serversocket-4oew.onrender.com/");
-const socket = io("http://192.168.0.110:3000/");
+const socket = io("https://serversocket-4oew.onrender.com/");
+// const socket = io("http://192.168.0.110:3000/");
 
 const ChatScreen = ({ navigation }) => {
   const [userName, setUserName] = useState("");
