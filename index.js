@@ -3,4 +3,4 @@ import App from './App';
 import { name as appName } from './app.json';
 import TestNotificationScreen from './src/screens/notification/TestNotificationScreen';
 
-AppRegistry.registerComponent(appName, () => TestNotificationScreen);
+AppRegistry.registerComponent(appName, () => App);

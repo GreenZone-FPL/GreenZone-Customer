@@ -7,6 +7,6 @@ export const ShoppingGraph = Object.freeze({
   CheckoutScreen: 'CheckoutScreen',
   FavoriteScreen: 'FavoriteScreen',
   SearchProductScreen: 'SearchProductScreen',
-  RecipientInfoSheet: 'RecipientInfoSheet'
-
+  RecipientInfoSheet: 'RecipientInfoSheet',
+  ChatScreen: 'ChatScreen'
 });

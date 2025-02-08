@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import AddressScreen from '../../screens/address/AddressScreen';
 import NewAddressScreen from '../../screens/address/NewAddressScreen';
 import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
@@ -18,12 +18,41 @@ import {
   BottomGraph,
   MainGraph,
   OrderGraph,
+  ShoppingGraph,
   UserGraph,
 } from '../graphs';
+import { Notifications } from 'react-native-notifications';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackScreen = () => {
+
+  const navigation = useNavigation(); 
+  useEffect(() => {
+    // Đăng ký thông báo remote (push) nếu có
+    Notifications.registerRemoteNotifications();
+
+    // Đăng ký sự kiện khi người dùng mở thông báo và ứng dụng được mở
+    Notifications.events().registerNotificationOpened(
+      (notification, completion) => {
+        console.log('Thông báo đã được mở:', notification);
+        // Điều hướng tới màn hình ChatScreen khi nhấn vào thông báo
+        navigation.navigate('ChatScreen');  // Chuyển hướng đến ChatScreen
+        completion();
+      }
+    );
+
+    // Đăng ký sự kiện khi thông báo đến khi app đang hoạt động
+    Notifications.events().registerNotificationReceivedForeground(
+      (notification, completion) => {
+        console.log('Thông báo nhận được khi app đang hoạt động:', notification);
+        completion({ alert: true, sound: true, badge: false });
+      }
+    );
+  }, [navigation]);  // Đảm bảo navigation luôn được cập nhật
+
+
   return (
     <ProfileStack.Navigator
       name={MainGraph.ProfileStackScreen}
@@ -78,15 +107,16 @@ const ProfileStackScreen = () => {
         name={OrderGraph.OrderHistoryScreen}
         component={OrderHistoryScreen}
       />
+      <ProfileStack.Screen
+        name={ShoppingGraph.ChatScreen}
+        component={ChatScreen}
+      />
 
       <ProfileStack.Screen
         name={OrderGraph.OrderDetailScreen}
         component={OrderDetailScreen}
       />
-      <ProfileStack.Screen
-        name={OrderGraph.ChatScreen}
-        component={ChatScreen}
-      />
+
     </ProfileStack.Navigator>
   );
 };
