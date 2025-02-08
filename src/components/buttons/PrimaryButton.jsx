@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
   },
 });

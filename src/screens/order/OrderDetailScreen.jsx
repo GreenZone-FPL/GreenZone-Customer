@@ -3,7 +3,7 @@ import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 
 import { Icon } from 'react-native-paper';
 import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar, Row, Column, NormalText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { OrderGraph } from '../../layouts/graphs';
+import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 
 const OrderDetailScreen = (props) => {
 
@@ -29,7 +29,7 @@ const OrderDetailScreen = (props) => {
                     title={'Đơn hàng đang trên đường giao đến bạn'}
                     titleStyle={{ fontWeight: '500', marginVertical: 8 }}
                 />
-                <ShipperInfo messageClick = {() => navigation.navigate(OrderGraph.ChatScreen)}/>
+                <ShipperInfo messageClick = {() => navigation.navigate(ShoppingGraph.ChatScreen)}/>
                 <Image style={{ width: '100%', height: 400 }} source={require('../../assets/images/map.png')} />
 
                 <MerchantInfo />
