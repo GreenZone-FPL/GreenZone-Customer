@@ -71,7 +71,9 @@ const OrderScreen = props => {
           onFavoritePress={() =>
             navigation.navigate(ScreenEnum.MyFavoriteProducts)
           }
-          onSearchProduct={() => navigation.navigate(ShoppingGraph.SearchProductScreen)}
+          onSearchProduct={() =>
+            navigation.navigate(ShoppingGraph.SearchProductScreen)
+          }
         />
         <CategoryMenu />
         <ProductsListHorizontal
@@ -91,7 +93,7 @@ const OrderScreen = props => {
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
+        onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}

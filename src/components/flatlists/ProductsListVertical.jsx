@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { Icon, Checkbox } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
+import ToppingModal from '../modal/ToppingModal';
 
 const width = Dimensions.get('window').width;
 
@@ -35,39 +35,8 @@ export const  ProductsListVertical = props => {
 };
 
 const ItemProduct = ({item, onItemClick}) => {
-   const [modalVisible, setModalVisible] = useState(false);
-    const [selectedToppings, setSelectedToppings] = useState([]);
-    const [quantity, setQuantity] = useState(1);
-  
-    const formatCurrencyVND = amount => {
-      return amount.toLocaleString('vi-VN') + 'đ';
-    };
-  
-    const toppings = [
-      {id: 1, name: 'Kem Phô Mai Macchiato', price: 12000},
-      {id: 2, name: 'Shot Espresso', price: 15000},
-      {id: 3, name: 'Trái Vải', price: 10000},
-      {id: 4, name: 'Hạt Sen', price: 10000},
-      {id: 5, name: 'Sốt Caramel', price: 12000},
-      {id: 6, name: 'Trân châu trắng', price: 8000},
-      {id: 7, name: 'Foam Phô Mai', price: 15000},
-      {id: 8, name: 'Thạch Cà Phê', price: 9000},
-      {id: 9, name: 'Đào Miếng', price: 10000},
-    ];
-  
-  toggleTopping = topping => {
-    if (selectedToppings.some(t => t.id === topping.id)) {
-      setSelectedToppings(selectedToppings.filter(t => t.id !== topping.id));
-    } else if (selectedToppings.length < 2) {
-      setSelectedToppings([...selectedToppings, topping]);
-    }
-  };
-  
-  
-    const totalPrice =
-      (item.price +
-        selectedToppings.reduce((sum, topping) => sum + topping.price, 0)) *
-      quantity;
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={() => onItemClick()}>
@@ -75,7 +44,9 @@ const ItemProduct = ({item, onItemClick}) => {
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>{formatCurrencyVND(item.price)}</Text>
+        <Text style={styles.productPrice}>
+          {item.price.toLocaleString('vi-VN')}đ
+        </Text>
       </View>
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
@@ -86,77 +57,19 @@ const ItemProduct = ({item, onItemClick}) => {
           color={colors.white}
         />
       </TouchableOpacity>
-      {/* Modal Topping */}
-      <Modal animationType="slide" transparent={true} visible={modalVisible}>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <View style={styles.toppingTitleContainer}>
-              <Text style={styles.modalTitle}>{item.name}</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <Icon source="close" size={24} color={colors.primary} />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={styles.modalSubtitle}>
-              Topping (Chọn tối đa 2 loại)
-            </Text>
-            <FlatList
-              data={toppings}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}) => (
-                <View style={styles.toppingRow}>
-                  <Checkbox
-                    status={
-                      selectedToppings.some(t => t.name === item.name)
-                        ? 'checked'
-                        : 'unchecked'
-                    }
-                    onPress={() => toggleTopping(item)}
-                    color={colors.primary}
-                  />
-                  <Text style={styles.toppingText}>{item.name}</Text>
-                  <Text style={styles.priceText}>
-                    {formatCurrencyVND(item.price)}
-                  </Text>
-                </View>
-              )}
-            />
-
-            <View style={styles.toppingRow}>
-              <View style={styles.quantityContainer}>
-                <TouchableOpacity
-                  onPress={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
-                  style={styles.quantityButton}>
-                  <Icon
-                    source={'minus'}
-                    color={colors.primary}
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.quantityText}>{quantity}</Text>
-                <TouchableOpacity
-                  onPress={() => setQuantity(quantity + 1)}
-                  style={styles.quantityButton}>
-                  <Icon
-                    source={'plus'}
-                    color={colors.primary}
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  />
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity style={styles.confirmButton}>
-                <Text style={styles.confirmText}>
-                  {formatCurrencyVND(totalPrice)}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <ToppingModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        item={item}
+        onConfirm={(selectedToppings, quantity) => {
+          console.log('Selected toppings:', selectedToppings);
+          console.log('Quantity:', quantity);
+          setModalVisible(false);
+        }}
+      />
     </View>
   );
 };
-
 const productsNewDish = [
   {
     id: '1',
