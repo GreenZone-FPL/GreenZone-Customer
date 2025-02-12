@@ -1,35 +1,62 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { useEffect } from 'react';
 import AddressScreen from '../../screens/address/AddressScreen';
 import NewAddressScreen from '../../screens/address/NewAddressScreen';
 import SearchAddressScreen from '../../screens/address/SearchAddressScreen';
 import SelectAddressScreen from '../../screens/address/SelectAddressScreen';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import ProfileScreen from '../../screens/bottom-navs/ProfileScreen';
-import ChatScreen from '../../screens/order/ChatScreen';
 import OrderDetailScreen from '../../screens/order/OrderDetailScreen';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
+import ChatScreen from '../../screens/shopping/ChatScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
+import SettingScreen from '../../screens/user-profile/SettingScreen';
 import UpdateProfileScreen from '../../screens/user-profile/UpdateProfileScreen';
 import {
   AuthGraph,
   BottomGraph,
   MainGraph,
   OrderGraph,
+  ShoppingGraph,
   UserGraph,
 } from '../graphs';
-import {ScreenEnum} from '../../constants';
-import SettingScreen from '../../screens/user-profile/SettingScreen';
-import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
+import { Notifications } from 'react-native-notifications';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackScreen = () => {
+
+  const navigation = useNavigation(); 
+  useEffect(() => {
+    // Đăng ký thông báo remote (push) nếu có
+    Notifications.registerRemoteNotifications();
+
+    // Đăng ký sự kiện khi người dùng mở thông báo và ứng dụng được mở
+    Notifications.events().registerNotificationOpened(
+      (notification, completion) => {
+        console.log('Thông báo đã được mở:', notification);
+        // Điều hướng tới màn hình ChatScreen khi nhấn vào thông báo
+        navigation.navigate('ChatScreen');  // Chuyển hướng đến ChatScreen
+        completion();
+      }
+    );
+
+    // Đăng ký sự kiện khi thông báo đến khi app đang hoạt động
+    Notifications.events().registerNotificationReceivedForeground(
+      (notification, completion) => {
+        console.log('Thông báo nhận được khi app đang hoạt động:', notification);
+        completion({ alert: true, sound: true, badge: false });
+      }
+    );
+  }, [navigation]);  // Đảm bảo navigation luôn được cập nhật
+
+
   return (
     <ProfileStack.Navigator
       name={MainGraph.ProfileStackScreen}
-      screenOptions={{headerShown: false}}>
+      screenOptions={{ headerShown: false }}>
       <ProfileStack.Screen
         name={BottomGraph.ProfileScreen}
         component={ProfileScreen}
@@ -56,7 +83,7 @@ const ProfileStackScreen = () => {
       />
 
       <ProfileStack.Screen
-        name={ScreenEnum.SettingScreen}
+        name={UserGraph.SettingScreen}
         component={SettingScreen}
       />
 
@@ -80,15 +107,16 @@ const ProfileStackScreen = () => {
         name={OrderGraph.OrderHistoryScreen}
         component={OrderHistoryScreen}
       />
+      <ProfileStack.Screen
+        name={ShoppingGraph.ChatScreen}
+        component={ChatScreen}
+      />
 
       <ProfileStack.Screen
         name={OrderGraph.OrderDetailScreen}
         component={OrderDetailScreen}
       />
-      <ProfileStack.Screen
-        name={OrderGraph.ChatScreen}
-        component={ChatScreen}
-      />
+
     </ProfileStack.Navigator>
   );
 };

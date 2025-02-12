@@ -50,7 +50,7 @@ const ProfileScreen = props => {
             icon="cog"
             title="Cài đặt"
             onPress={() => {
-              navigation.navigate(ScreenEnum.SettingScreen);
+              navigation.navigate(UserGraph.SettingScreen);
             }}
           />
           <View style={styles.separator} />

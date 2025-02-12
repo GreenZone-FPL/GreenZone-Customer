@@ -1,22 +1,20 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import {ProductDetailSheet} from '../../components';
+import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import HomeScreen from '../../screens/bottom-navs/HomeScreen';
+import CheckoutScreen from '../../screens/shopping/CheckoutScreen';
+import RecipientInfoSheet from '../../screens/shopping/RecipientInfoSheet';
 import {
   AuthGraph,
   BottomGraph,
-  ShoppingGraph,
-  UserGraph,
-  OrderGraph,
+  ShoppingGraph
 } from '../graphs';
-import ChangeRecipientInformationSheet from '../../components/bottom-sheets/ChangeRecipientInformationSheet';
-import CheckoutScreen from '../../screens/order/CheckoutScreen';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
   return (
-    <HomeStack.Navigator screenOptions={{headerShown: false}}>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name={BottomGraph.HomeScreen} component={HomeScreen} />
 
       <HomeStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
@@ -31,8 +29,8 @@ const HomeStackScreen = () => {
         }}
       />
       <HomeStack.Screen
-        name={OrderGraph.ChangeRecipientInformationSheet}
-        component={ChangeRecipientInformationSheet}
+        name={ShoppingGraph.RecipientInfoSheet}
+        component={RecipientInfoSheet}
         options={{
           animation: 'slide_from_bottom',
           presentation: 'transparentModal',

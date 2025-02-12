@@ -4,8 +4,10 @@ import * as ImagePicker from "react-native-image-picker";
 import { launchCamera } from 'react-native-image-picker';
 import { Icon } from "react-native-paper";
 import io from "socket.io-client";
-import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components/";
+import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components";
 import { colors, GLOBAL_KEYS } from "../../constants";
+import { Notifications } from 'react-native-notifications';
+
 
 const socket = io("https://serversocket-4oew.onrender.com/");
 // const socket = io("http://192.168.0.110:3000/");
@@ -20,9 +22,19 @@ const ChatScreen = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
 
+
   useEffect(() => {
     socket.on("receive message", (data) => {
       addMessage(data.userName, data.message, data.image);
+
+      // Gửi thông báo khi nhận tin nhắn
+      if (data.userName !== userName) {  // Nếu tin nhắn không phải của chính bạn
+        Notifications.postLocalNotification({
+          title: `${data.userName} gửi tin nhắn mới`,
+          body: data.message,
+          extra: 'Dữ liệu thêm',  // Bạn có thể thêm dữ liệu thêm nếu cần
+        });
+      }
     });
 
     socket.on("user typing", (data) => {
@@ -68,14 +80,6 @@ const ChatScreen = ({ navigation }) => {
     };
     launchCamera(options, response => {
       if (response.didCancel || response.errorCode) return;
-
-      setSelectedImages(prev => {
-        const newImages = response?.assets[0]?.uri;
-        if (prev.length < 3) {
-          return [...prev, newImages];
-        }
-        return prev;
-      });
     });
     setImagePickerVisible(false); // Hide modal
   };

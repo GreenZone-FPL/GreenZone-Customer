@@ -41,4 +41,4 @@ const TestNotificationScreen = () => {
   );
 };
 
-export default TestNotificationScreen
+export default TestNotificationScreen;

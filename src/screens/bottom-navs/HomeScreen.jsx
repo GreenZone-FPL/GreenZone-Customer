@@ -2,34 +2,31 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
-  Image,
-  View,
   TextInput,
-  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 
+import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
 import {
+  BarcodeUser,
+  CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
+  ImageCarousel,
   LightStatusBar,
+  NotificationList,
   ProductsListHorizontal,
   ProductsListVertical,
-  ImageCarousel,
-  BarcodeUser,
   TitleText,
-  NotificationList,
-  CategoryMenu,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { TruckFast, BagHappy, TicketDiscount, Coin1, TaskSquare, MessageFavorite, Rank, SearchNormal1, Heart } from 'iconsax-react-native';
 
-import { ShoppingGraph, UserGraph, OrderGraph, AppGraph } from '../../layouts/graphs';
+import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const { navigation } = props;
@@ -47,31 +44,31 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-  useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      console.log(position);
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   Geolocation.getCurrentPosition(position => {
+  //     console.log(position);
+  //     if (position.coords) {
+  //       reverseGeocode({
+  //         lat: position.coords.latitude,
+  //         long: position.coords.longitude,
+  //       });
+  //     }
+  //   });
+  // }, []);
 
-  const reverseGeocode = async ({ lat, long }) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+  // const reverseGeocode = async ({ lat, long }) => {
+  //   const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //   try {
+  //     const res = await axios(api);
+  //     if (res && res.status === 200 && res.data) {
+  //       const items = res.data.items;
+  //       setCurrenLocation(items[0]);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -98,14 +95,14 @@ const HomeScreen = props => {
         <Searchbar />
       </ScrollView>
 
-      <DeliveryButton
+      {/* <DeliveryButton
         title="Đi giao đến"
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         // onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-      />
+      /> */}
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
@@ -222,7 +219,7 @@ const styles = StyleSheet.create({
   containerContent: {
     flexDirection: 'column',
     flex: 1,
-    marginBottom: 90,
+    // marginBottom: 90,
   },
   deliverybutton: {
     position: 'absolute',

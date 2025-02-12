@@ -11,7 +11,7 @@ import {FlatInput, OverlayStatusBar, PrimaryButton} from '../../components';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {Icon} from 'react-native-paper';
 
-const ChangeRecipientInformationSheet = ({navigation}) => {
+const RecipientInfoSheet = ({navigation}) => {
   const [name, setName] = useState('Phong Nguyen');
   const [phone, setPhone] = useState('0936887373');
 
@@ -77,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChangeRecipientInformationSheet;
+export default RecipientInfoSheet;

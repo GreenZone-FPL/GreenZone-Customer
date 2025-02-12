@@ -41,7 +41,7 @@ const CheckoutScreen = (props) => {
         <AddressSection />
 
         <RecipientInfo
-          onChangeRecipientInfo={() => navigation.navigate(OrderGraph.ChangeRecipientInformationSheet)}
+          onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
         />
         <TimeSection />
         <ProductsInfo onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
@@ -336,17 +336,15 @@ const PaymentDetails = () => (
     ))}
 
 
-    <Row style={{ justifyContent: 'space-between' }}>
-      <Row>
-        <Text style={styles.textQuantity}>3</Text>
-        <NormalText text='Ưu đãi' style={{ color: colors.primary }} />
-        <Icon
-          source="chevron-down"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
-        />
-      </Row>
-      <NormalText text='Tiết kiệm 19.000đ' style={{ color: colors.primary }} />
+
+    <Row>
+      <Text style={styles.textQuantity}>3</Text>
+      <NormalText text='Ưu đãi' style={{ color: colors.primary }} />
+      <Icon
+        source="chevron-down"
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        color={colors.primary}
+      />
     </Row>
 
     <PaymentMethod />
@@ -399,7 +397,7 @@ const PaymentMethod = () => {
       <NormalText text='Phương thức thanh toán' />
 
       <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center' }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
         onPress={() => setIsVisible(true)}
       >
         <Image source={selectedMethod.image} style={styles.image} />
@@ -445,11 +443,17 @@ const Footer = () => {
   return (
     <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
       <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
-        <NormalText text='2 sản phẩm' />
-        <Row>
-          <TitleText text='68.000đ' style={{ color: colors.primary }} />
-          <TitleText text='69.000đ' style={styles.textDiscount} />
-        </Row>
+        <Column>
+          <TitleText text='Tổng cộng' />
+          <NormalText text='2 sản phẩm' />
+          <NormalText text='Bạn tiết kiệm 12.000đ' style={{ color: colors.green750 }} />
+
+        </Column>
+
+        <Column>
+          <TitleText text='68.000đ' style={{ color: colors.primary, textAlign: 'right' }} />
+          <NormalText text='69.000đ' style={styles.textDiscount} />
+        </Column>
       </Row>
       <PrimaryButton title='Đặt hàng' />
     </View>
@@ -471,7 +475,8 @@ const styles = StyleSheet.create({
 
   textDiscount: {
     textDecorationLine: "line-through",
-    color: colors.gray700
+    color: colors.gray700,
+    textAlign: 'right'
   },
   textQuantity: {
     borderWidth: 1,
@@ -479,7 +484,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     color: colors.white,
     paddingHorizontal: 6,
-    borderRadius: 10
+    borderRadius: 10,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   image: {
     width: 30,

@@ -5,6 +5,6 @@ export const VoucherGraph = Object.freeze({
   graphName: AppGraph.VOUCHER,
 
   MyVouchersScreen: 'MyVouchersScreen',
+  VoucherDetailSheet: 'VoucherDetailSheet',
   RankScreen: 'RankScreen',
-  AllVoucherScreen: 'AllVoucherScreen'
 });
