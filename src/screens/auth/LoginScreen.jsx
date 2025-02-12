@@ -11,6 +11,7 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { FlatInput, LightStatusBar, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { sendOTPApi } from '../../axios/modules/auth';
 
 
 const LoginScreen = props => {
