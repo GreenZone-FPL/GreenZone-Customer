@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -7,16 +7,15 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
+import {Icon, Checkbox} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import ToppingModal from '../modal/ToppingModal';
 
 const width = Dimensions.get('window').width;
 
-export const  ProductsListHorizontal = props => {
-  const {onItemClick} = props;
-
+export const ProductsListHorizontal = ({onItemClick}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -42,24 +41,41 @@ export const  ProductsListHorizontal = props => {
 };
 
 const ItemProduct = ({item, onItemClick}) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
     <View style={styles.itemProduct}>
-      <Image source={item.image} style={styles.itemImage} />
+      <TouchableOpacity onPress={onItemClick}>
+        <Image source={item.image} style={styles.itemImage} />
+      </TouchableOpacity>
       <View style={styles.priceContainer}>
-        <Text style={styles.priceText}>{TextFormatter.formatCurrency(item.price)}</Text>
+        <Text style={styles.priceText}>
+          {item.price.toLocaleString('vi-VN')}đ
+        </Text>
       </View>
       <Text numberOfLines={4} style={styles.productNameText}>
         {item.name}
       </Text>
       <TouchableOpacity
-        onPress={() => onItemClick()}
-        style={styles.addButtonContainer}>
+        style={styles.addButtonContainer}
+        onPress={() => setModalVisible(true)}>
         <Icon
           source="plus"
           color={colors.primary}
           size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         />
       </TouchableOpacity>
+
+      <ToppingModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        item={item}
+        onConfirm={(selectedToppings, quantity) => {
+          console.log('Selected toppings:', selectedToppings);
+          console.log('Quantity:', quantity);
+          setModalVisible(false);
+        }}
+      />
     </View>
   );
 };
@@ -132,11 +148,11 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     position: 'absolute',
     end: 0,
+    padding: 4,
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   priceText: {
     color: colors.primary,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
   },
@@ -157,5 +173,3 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
 });
-
-

@@ -169,7 +169,7 @@ const InfoContainer = ({messages}) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.white,
   },
   cardContainer: {
     backgroundColor: colors.primary,
