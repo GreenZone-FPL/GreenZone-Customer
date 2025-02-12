@@ -74,3 +74,6 @@ export * from './texts/DualTextRow';
 export * from './texts/PaymentMethodRow';
 export * from './texts/NormalText';
 export * from './texts/TitleText';
+
+// modals
+export * from './modal/ToppingModal';
