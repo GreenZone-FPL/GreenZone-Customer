@@ -63,11 +63,6 @@ const ProfileStackScreen = () => {
       />
 
       <ProfileStack.Screen
-        name={AuthGraph.LoginScreen}
-        component={LoginScreen}
-      />
-
-      <ProfileStack.Screen
         name={UserGraph.UpdateProfileScreen}
         component={UpdateProfileScreen}
       />

@@ -15,6 +15,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
+import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
 
 const BaseStack = createNativeStackNavigator();
 
@@ -27,6 +28,11 @@ function App() {
         {/* Truyền navigationRef vào NavigationContainer */}
         <NavigationContainer>
           <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+          
+          <BaseStack.Screen
+              name={AppGraph.AUTHENTICATION}
+              component={AuthStackScreen}
+            />
             <BaseStack.Screen
               name={MainGraph.graphName}
               component={MainNavigation}

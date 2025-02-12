@@ -92,7 +92,7 @@ const HomeScreen = props => {
         <NotificationList onSeeMorePress={() =>
           navigation.navigate(AppGraph.AdvertisingScreen)
         } />
-        <Searchbar />
+        {/* <Searchbar /> */}
       </ScrollView>
 
       {/* <DeliveryButton

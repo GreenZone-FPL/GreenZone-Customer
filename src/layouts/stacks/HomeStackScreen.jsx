@@ -17,8 +17,6 @@ const HomeStackScreen = () => {
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name={BottomGraph.HomeScreen} component={HomeScreen} />
 
-      <HomeStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
-
       <HomeStack.Screen
         name={ShoppingGraph.ProductDetailSheet}
         component={ProductDetailSheet}
