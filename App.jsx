@@ -20,23 +20,23 @@ import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
- 
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        {/* Truyền navigationRef vào NavigationContainer */}
+       
         <NavigationContainer>
           <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-          
-          <BaseStack.Screen
-              name={AppGraph.AUTHENTICATION}
-              component={AuthStackScreen}
-            />
             <BaseStack.Screen
               name={MainGraph.graphName}
               component={MainNavigation}
             />
+            <BaseStack.Screen
+              name={AppGraph.AUTHENTICATION}
+              component={AuthStackScreen}
+            />
+
             <BaseStack.Screen
               name={AuthGraph.LoginScreen}
               component={LoginScreen}
