@@ -16,20 +16,23 @@ import {
 import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 import { getAllCategoriesApi } from '../../axios/modules/category';
+import { getAllToppingsApi } from '../../axios/modules/topping';
 
 const OrderScreen = props => {
   const { navigation } = props;
   const [categories, setCategories] = useState([]);
+  const [toppings, setToppings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [isDialogVisible, setDialogVisible] = useState(false);
-
+  const [selectedProduct, setSelectedProduct] = useState(null)
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
+
 
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = option => {
@@ -38,7 +41,7 @@ const OrderScreen = props => {
   };
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
-      console.log(position);
+      // console.log(position);
       if (position.coords) {
         reverseGeocode({
           lat: position.coords.latitude,
@@ -64,6 +67,26 @@ const OrderScreen = props => {
 
     fetchCategories();
   }, []);
+  useEffect(() => {
+    const fetchToppings = async () => {
+      try {
+        const data = await getAllToppingsApi();
+        if (data) {
+          setToppings(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetching toppings:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchToppings();
+  }, []);
+  const onItemClick = (product) => {
+    console.log("Product clicked:", product);
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { myProduct: product });
+  };
 
   const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
@@ -103,9 +126,11 @@ const OrderScreen = props => {
 
 
         <ProductsListHorizontal
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
-          }
+          products={productsCombo}
+          toppings={toppings}
+          onItemClick={onItemClick} 
+
+
         />
         <ProductsListVertical
           onItemClick={() =>
@@ -136,6 +161,33 @@ const OrderScreen = props => {
     </SafeAreaView>
   );
 };
+
+const productsCombo = [
+  {
+    id: '1',
+    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/81bd11bb-c0b9-4a0d-a9ee-d8afc8ef879a.jpg',
+    price: 69000,
+  },
+  {
+    id: '2',
+    name: 'Combo 3 Olong Tea',
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/4d785911-f2e6-4dbf-a861-04c62c4cb804.jpg',
+    price: 79000,
+  },
+  {
+    id: '3',
+    name: 'Combo 3 Olong Tea',
+    image: "https://greenzone.motcaiweb.io.vn/uploads/99e39749-6bcb-4a9d-b387-7684a14cacf8.jpg",
+    price: 79000,
+  },
+  {
+    id: '4',
+    name: 'Combo 3 Olong Tea',
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/c9773a10-706e-44e5-8199-dd07a9faa94d.jpg',
+    price: 79000,
+  },
+];
 
 export default OrderScreen;
 

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Modal,
   View,
@@ -6,45 +6,36 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
+  ScrollView
 } from 'react-native';
-import {Icon, Checkbox} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
-
+import { Icon, Checkbox } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import { TextFormatter } from '../../utils';
 const formatCurrencyVND = amount => {
   return amount.toLocaleString('vi-VN') + 'đ';
 };
 
-const ToppingModal = ({visible, onClose, item, onConfirm}) => {
+const ToppingModal = ({ visible, onClose, item, onConfirm, toppings }) => {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [quantity, setQuantity] = useState(1);
 
-  const toppings = [
-    {id: 1, name: 'Kem Phô Mai Macchiato', price: 12000},
-    {id: 2, name: 'Shot Espresso', price: 15000},
-    {id: 3, name: 'Trái Vải', price: 10000},
-    {id: 4, name: 'Hạt Sen', price: 10000},
-    {id: 5, name: 'Sốt Caramel', price: 12000},
-    {id: 6, name: 'Trân châu trắng', price: 8000},
-    {id: 7, name: 'Foam Phô Mai', price: 15000},
-    {id: 8, name: 'Thạch Cà Phê', price: 9000},
-    {id: 9, name: 'Đào Miếng', price: 10000},
-  ];
-
   const toggleTopping = topping => {
-    if (selectedToppings.some(t => t.id === topping.id)) {
-      setSelectedToppings(selectedToppings.filter(t => t.id !== topping.id));
-    } else if (selectedToppings.length < 2) {
-      setSelectedToppings([...selectedToppings, topping]);
-    }
+    setSelectedToppings(prev =>
+      prev.some(t => t._id === topping._id)
+        ? prev.filter(t => t._id !== topping._id)
+        : [...prev, topping]
+    );
   };
 
   const totalPrice =
-    (item.price + selectedToppings.reduce((sum, t) => sum + t.price, 0)) *
+    (item.price + selectedToppings.reduce((sum, t) => sum + t.extraPrice, 0)) *
     quantity;
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.modalBackground}>
+        <OverlayStatusBar />
         <View style={styles.modalContainer}>
           <View style={styles.toppingTitleContainer}>
             <Text style={styles.modalTitle}>{item.name}</Text>
@@ -53,28 +44,27 @@ const ToppingModal = ({visible, onClose, item, onConfirm}) => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.modalSubtitle}>Topping (Chọn tối đa 2 loại)</Text>
-          <FlatList
-            data={toppings}
-            keyExtractor={topping => topping.id.toString()}
-            renderItem={({item}) => (
-              <View style={styles.toppingRow}>
-                <Checkbox
-                  status={
-                    selectedToppings.some(t => t.id === item.id)
-                      ? 'checked'
-                      : 'unchecked'
-                  }
-                  onPress={() => toggleTopping(item)}
-                  color={colors.primary}
-                />
-                <Text style={styles.toppingText}>{item.name}</Text>
-                <Text style={styles.priceText}>
-                  {formatCurrencyVND(item.price)}
-                </Text>
-              </View>
-            )}
-          />
+          <Text style={styles.modalSubtitle}>Topping (Chọn không giới hạn)</Text>
+          <View style={{ maxHeight: 400 }}>
+            <FlatList
+              data={toppings}
+              showsVerticalScrollIndicator={false}
+              style={{ flexGrow: 0 }} // Đảm bảo FlatList không mở rộng toàn bộ chiều cao
+              keyExtractor={topping => topping._id.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.toppingRow}>
+                  <Checkbox
+                    status={selectedToppings.some(t => t._id === item._id) ? 'checked' : 'unchecked'}
+                    onPress={() => toggleTopping(item)}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.toppingText}>{item.name}</Text>
+                  <Text style={styles.priceText}>{TextFormatter.formatCurrency(item.extraPrice)}</Text>
+                </View>
+              )}
+            />
+          </View>
+
 
           <View style={styles.toppingRow}>
             <View style={styles.quantityContainer}>
@@ -112,6 +102,7 @@ const ToppingModal = ({visible, onClose, item, onConfirm}) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
@@ -130,15 +121,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  modalSubtitle: {fontSize: 14, color: 'gray', marginBottom: 10},
+  modalSubtitle: { fontSize: 14, color: 'gray', marginBottom: 10 },
   toppingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: GLOBAL_KEYS.PADDING_SMALL,
   },
-  toppingText: {flex: 1, marginLeft: 10},
-  priceText: {color: 'gray'},
+  toppingText: { flex: 1, marginLeft: 10 },
+  priceText: { color: 'gray' },
   quantityContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -151,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  quantityText: {fontSize: 16, fontWeight: 'bold'},
+  quantityText: { fontSize: 16, fontWeight: 'bold' },
   confirmButton: {
     flex: 3,
     backgroundColor: colors.primary,
@@ -159,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-  confirmText: {fontSize: 16, fontWeight: 'bold', color: 'white'},
+  confirmText: { fontSize: 16, fontWeight: 'bold', color: 'white' },
   toppingTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -4,7 +4,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
 import { QuantitySelector } from '../buttons/QuantitySelector';
-
+import { TextFormatter } from '../../utils';
 
 const CheckoutFooterPropTypes = {
     quantity: PropTypes.number.isRequired,
@@ -49,7 +49,7 @@ export const CheckoutFooter = ({
             <View style={[styles.row, { justifyContent: 'space-between' }]}>
                 <View style={[styles.column, { paddingHorizontal: 0 }]}>
                     <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
-                    <Text style={styles.totalText}>{totalPrice}đ</Text>
+                    <Text style={styles.totalText}>{TextFormatter.formatCurrency(totalPrice)}</Text>
                 </View>
 
                 <QuantitySelector

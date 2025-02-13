@@ -6,10 +6,11 @@ import PropTypes from 'prop-types';
 
 
 
+
 const SelectableGroupPropTypes = {
     items: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.string.isRequired,
+            _id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
             price: PropTypes.number
         })
@@ -17,7 +18,7 @@ const SelectableGroupPropTypes = {
     title: PropTypes.string,
     selectedGroup: PropTypes.arrayOf(
         PropTypes.shape({
-            id: PropTypes.string.isRequired,
+            _id: PropTypes.string.isRequired,
             quantity: PropTypes.number.isRequired
         })
     ).isRequired,
@@ -50,13 +51,13 @@ export const SelectableGroup = ({
                 return (
                     <Selectable
                         item={item}
-                        quantity={selectedGroup.find(selectedItem => selectedItem.id === item.id)?.quantity || 0}
-                        selected={selectedGroup.some(selectedItem => selectedItem.id === item.id)}
+                        quantity={selectedGroup.find(selectedItem => selectedItem._id === item._id)?.quantity || 0}
+                        selected={selectedGroup.some(selectedItem => selectedItem._id === item._id)}
                         handlePlus={(item) => handlePlus(item, selectedGroup, setSelectedGroup)}
                         handleMinus={(item) => handleMinus(item, selectedGroup, setSelectedGroup)}
                         activeIconColor={activeIconColor}
                         activeTextColor={activeTextColor}
-                        key={item.id}
+                        key={item._id}
                     />
                 );
             })}
@@ -71,7 +72,7 @@ SelectableGroup.propTypes = SelectableGroupPropTypes;
 
 // Hàm xử lý tăng số lượng
 const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
-    const existingItem = selectedGroup.find(item => item.id === itemToPlus.id);
+    const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
 
     if (!existingItem) {
         // Thêm item mới với quantity là 1
@@ -81,7 +82,7 @@ const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
         if (existingItem.quantity < 3) {
             setSelectedGroup(prevGroup =>
                 prevGroup.map(item =>
-                    item.id === itemToPlus.id
+                    item._id === itemToPlus._id
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 )
@@ -103,7 +104,7 @@ const handleMinus = (itemToMinus, selectedGroup, setSelectedGroup) => {
             )
         );
     } else {
-        setSelectedGroup(prevGroup => prevGroup.filter(item => item.id !== itemToMinus.id));
+        setSelectedGroup(prevGroup => prevGroup.filter(item => item._id !== itemToMinus._id));
     }
 };
 

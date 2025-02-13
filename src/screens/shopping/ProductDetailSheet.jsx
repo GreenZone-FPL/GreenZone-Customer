@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar , Button} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar, Button } from 'react-native';
 import { IconButton, Icon } from 'react-native-paper';
 
 import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFooter } from '../../components'
@@ -7,11 +7,11 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { DialogBasic } from '../../components';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { ShoppingGraph } from '../../layouts/graphs';
+import { getAllToppingsApi } from '../../axios/modules/topping';
+
+export const ProductDetailSheet = ({ route, navigation }) => {
 
 
-export const ProductDetailSheet = (props) => {
-
-    const { navigation } = props;
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const [selectedSize, setSelectedSize] = useState('');
@@ -21,22 +21,47 @@ export const ProductDetailSheet = (props) => {
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
 
+    const [toppings, setToppings] = useState([]);
 
-
+    const { myProduct } = route.params
     const totalPrice = quantity * product.price; // Tính tổng tiền
+
+    console.log('myProduct = ', myProduct.image)
+    useEffect(() => {
+        const fetchToppings = async () => {
+            try {
+                const data = await getAllToppingsApi();
+                if (data) {
+                    setToppings(data); // Lưu danh mục vào state
+                }
+            } catch (error) {
+                console.error("Error fetching toppings:", error);
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchToppings();
+    }, []);
     return (
         <View style={styles.modalContainer}>
             <OverlayStatusBar />
             <ScrollView style={styles.modalContent}>
-                <ProductImage hideModal={() => navigation.goBack()} />
+                <ProductImage hideModal={() => navigation.goBack()} myProduct={myProduct} />
+                {/* <Image
+                    source={{ uri: myProduct.image }}
+                    style={{width: 100, height: 100}}
+                    // style={styles.productImage}
 
+                /> */}
                 <ProductInfo
+                   
                     product={product}
                     addToFavorite={() => { }}
                     showFullDescription={showFullDescription}
                     toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
                 />
-
+{/* 
                 <RadioGroup
                     items={product.sizes}
                     selectedValue={selectedSize}
@@ -44,26 +69,26 @@ export const ProductDetailSheet = (props) => {
                     title="Size"
                     required={true}
                     note="Bắt buộc"
-                />
+                /> */}
 
-                <RadioGroup
+                {/* <RadioGroup
                     items={product.sugarLevels}
                     selectedValue={selectedSugarLevel}
                     onValueChange={setSelectedSugarLevel}
                     title="Chọn mức đường"
                     required={true}
-                />
+                /> */}
 
-                <RadioGroup
+                {/* <RadioGroup
                     items={product.iceLevels}
                     selectedValue={selectedIceLevel}
                     onValueChange={setSelectedIceLevel}
                     title="Chọn mức đá"
                     required={true}
-                />
+                /> */}
 
                 <SelectableGroup
-                    items={product.toppings}
+                    items={toppings}
                     title='Chọn topping'
                     selectedGroup={selectedGroup}
                     setSelectedGroup={setSelectedGroup}
@@ -100,7 +125,7 @@ export const ProductDetailSheet = (props) => {
                         setQuantity(quantity - 1)
                     }
                 }}
-                totalPrice={68000}
+                totalPrice={myProduct.price}
                 onButtonPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
                 buttonTitle='Thêm vào giỏ hàng'
             />
@@ -112,7 +137,7 @@ const product = {
     id: '1',
     name: 'Trà Sữa Trân Châu Hoàng Kim',
     description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-    image: require('../../assets/images/product1.png'),
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/c9773a10-706e-44e5-8199-dd07a9faa94d.jpg',
     sizes: [
         { id: 'S', name: 'S', price: 10000, discount: 500, available: true },
         { id: 'M', name: 'M', price: 15000, discount: 1000, available: true },
@@ -142,33 +167,35 @@ const product = {
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 
 
-const ProductImage = ({ hideModal}) => {
-    const [isDialogVisible, setIsDialogVisible] = useState(false);
-    const images = [
-        {
-          url: '', 
-          props: {
-            source: require('../../assets/images/product1.png'),
-          },
-        },
-      ];
+const ProductImage = ({ hideModal, myProduct }) => {
+    // const [isDialogVisible, setIsDialogVisible] = useState(false);
+    // const images = [
+    //     {
+    //       url: '', 
+    //       props: {
+    //         source: require('../../assets/images/product1.png'),
+    //       },
+    //     },
+    //   ];
     return (
-      <View style={styles.imageContainer}>
-        <Pressable onPress={() => setIsDialogVisible(true)}>
-          <Image
-            source={require('../../assets/images/product1.png')}
-            style={styles.productImage}
-            onError={() => console.error('Failed to load image')}
-          />
-        </Pressable>
-        <IconButton
-          icon="close"
-          size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-          iconColor={colors.primary}
-          style={styles.closeButton}
-          onPress={hideModal}
-        />
-        <DialogBasic
+        <View style={styles.imageContainer}>
+            <Pressable
+            // onPress={() => setIsDialogVisible(true)}
+            >
+                <Image
+                    source={{ uri: myProduct.image }}
+                    style={styles.productImage}
+
+                />
+            </Pressable>
+            <IconButton
+                icon="close"
+                size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+                iconColor={colors.primary}
+                style={styles.closeButton}
+                onPress={hideModal}
+            />
+            {/* <DialogBasic
           isVisible={isDialogVisible}
           onHide={() => setIsDialogVisible(false)}
           style={styles.height}
@@ -176,10 +203,10 @@ const ProductImage = ({ hideModal}) => {
           <View style={styles.imageZoomContainer}>
             <ImageViewer imageUrls={images} renderIndicator={() => null}/>
           </View>
-        </DialogBasic>
-      </View>
+        </DialogBasic> */}
+        </View>
     );
-  };
+};
 
 const ProductInfo = ({ product, addToFavorite, showFullDescription, toggleDescription }) => (
     <View style={styles.infoContainer}>
@@ -190,7 +217,7 @@ const ProductInfo = ({ product, addToFavorite, showFullDescription, toggleDescri
                 numberOfLines={2}
                 ellipsizeMode="tail"
             >
-                Trà Sữa Trân Châu Hoàng Kim - Vị thơm ngon đặc biệt không thể bỏ lỡ!
+                {product.name}
             </Text>
             <Pressable onPress={addToFavorite}>
                 <Icon
@@ -345,11 +372,11 @@ const styles = StyleSheet.create({
         color: colors.black,
         marginHorizontal: 8,
     },
-    height:{
+    height: {
         height: '100%',
         backgroundColor: '#000'
     },
-    imageZoomContainer:{
-        height: 800, 
+    imageZoomContainer: {
+        height: 800,
     }
 });
