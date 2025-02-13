@@ -17,6 +17,7 @@ import ToppingModal from '../modal/ToppingModal';
 const width = Dimensions.get('window').width;
 
 export const ProductsListVertical = ({
+  title = "Món Mới Phải Thử",
   scrollEnabled = false,
   onItemClick,
   products
@@ -25,7 +26,7 @@ export const ProductsListVertical = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Món Mới Phải Thử</Text>
+      <Text style={styles.title}>{title}</Text>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
@@ -33,7 +34,7 @@ export const ProductsListVertical = ({
         renderItem={({ item }) => (
           <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
         )}
-        contentContainerStyle={styles.flatListContentContainer}
+        contentContainerStyle={{ gap: 16 }}
         scrollEnabled={scrollEnabled}
       />
     </View>
@@ -105,7 +106,8 @@ const ItemProduct = ({ item, onItemClick }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
@@ -121,6 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 1,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL
   },
   itemImage: {
     width: width / 4.5,

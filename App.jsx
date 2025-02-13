@@ -19,6 +19,7 @@ import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
 import { AppContextProvider } from './src/context/AppContext';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
 import { ProductDetailSheet } from './src/components';
+import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -55,6 +56,10 @@ function App() {
               <BaseStack.Screen
                 name={AppGraph.AdvertisingScreen}
                 component={AdvertisingScreen}
+              />
+              <BaseStack.Screen
+                name={ShoppingGraph.SearchProductScreen}
+                component={SearchProductScreen}
               />
 
               <BaseStack.Screen
