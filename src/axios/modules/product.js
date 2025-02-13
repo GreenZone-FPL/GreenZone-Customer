@@ -36,7 +36,7 @@ export const getProductDetailAPI = async (productId) => {
         const { statusCode, success, data } = response;
 
         if (success && statusCode === 200) {
-            console.log("getProductDetailAPI data = ", data);
+            // console.log("getProductDetailAPI data = ", data);
             return data; // Trả về dữ liệu OTP để xử lý tiếp
         } else {
             console.log("Failed to get all products, path /v1/product/${productId}");

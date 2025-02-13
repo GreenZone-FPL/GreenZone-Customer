@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, Text, ScrollView, Pressable, StatusBar, Button } from 'react-native';
-import { IconButton, Icon } from 'react-native-paper';
+import React, { useEffect, useState, useContext } from 'react';
+import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Icon, IconButton } from 'react-native-paper';
 
-import { NotesList, RadioGroup, OverlayStatusBar, SelectableGroup, CheckoutFooter } from '../../components'
+import { getProductDetailAPI } from '../../axios';
+import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { DialogBasic } from '../../components';
-import ImageViewer from 'react-native-image-zoom-viewer';
 import { ShoppingGraph } from '../../layouts/graphs';
-import { getAllToppingsApi, getProductDetailAPI } from '../../axios';
-
+import { AppContext } from '../../context/AppContext';
 export const ProductDetailSheet = ({ route, navigation }) => {
 
-
+    const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const [selectedSize, setSelectedSize] = useState('');
@@ -22,31 +20,17 @@ export const ProductDetailSheet = ({ route, navigation }) => {
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
 
-    // const [toppings, setToppings] = useState([]);
-
     const { productId } = route.params
     console.log('productId', productId)
-    // const productId = '67ad9e9b145c78765a8f89c1'
     // const totalPrice = quantity * product.price; // Tính tổng tiền
 
-
-    // useEffect(() => {
-    //     const fetchToppings = async () => {
-    //         try {
-    //             const data = await getAllToppingsApi();
-    //             if (data) {
-    //                 setToppings(data); // Lưu danh mục vào state
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching toppings:", error);
-    //         } finally {
-    //             // setLoading(false);
-    //         }
-    //     };
-
-    //     fetchToppings();
-    // }, []);
-
+    const handleAddToFavorite = () => {
+        if (favorites.some(item => item.id === product.id)) {
+            removeFromFavorites(product.id);
+        } else {
+            addToFavorites(product);
+        }
+    };
     useEffect(() => {
         const fetchProductDetail = async () => {
             try {
@@ -74,9 +58,9 @@ export const ProductDetailSheet = ({ route, navigation }) => {
                         <ProductImage hideModal={() => navigation.goBack()} product={product} />
 
                         <ProductInfo
-
+                            favorites={favorites}
                             product={product}
-                            addToFavorite={() => { }}
+                            addToFavorites={addToFavorites}
                             showFullDescription={showFullDescription}
                             toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
                         />
@@ -233,42 +217,48 @@ const ProductImage = ({ hideModal, product }) => {
     );
 };
 
-const ProductInfo = ({ product, addToFavorite, showFullDescription, toggleDescription }) => (
-    <View style={styles.infoContainer}>
-        {/* Product Name and Favorite Icon */}
-        <View style={styles.horizontalView}>
-            <Text
-                style={styles.productName}
-                numberOfLines={2}
-                ellipsizeMode="tail"
-            >
-                {product.name}
-            </Text>
-            <Pressable onPress={addToFavorite}>
-                <Icon
-                    source={product.isFavorite ? "heart" : "heart-outline"}
-                    color={product.isFavorite ? colors.primary : colors.gray700}
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                />
-            </Pressable>
-        </View>
+const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescription, favorites }) => {
+    // Kiểm tra xem sản phẩm có trong mảng favorites không
+    const isFavorite = favorites.some(fav => fav._id === product._id); // Hoặc bạn có thể so sánh dựa trên một thuộc tính khác
 
-        {/* Product Description */}
-        <View style={styles.descriptionContainer}>
-            <Text
-                style={styles.descriptionText}
-                numberOfLines={showFullDescription ? undefined : 2}
-                ellipsizeMode="tail">
-                {product.description}
-            </Text>
-            <Pressable style={styles.textButton} onPress={toggleDescription}>
-                <Text style={styles.textButtonLabel}>
-                    {showFullDescription ? 'Thu gọn' : 'Xem thêm'}
+    return (
+        <View style={styles.infoContainer}>
+            {/* Product Name and Favorite Icon */}
+            <View style={styles.horizontalView}>
+                <Text
+                    style={styles.productName}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                >
+                    {product.name}
                 </Text>
-            </Pressable>
+                <Pressable onPress={() => addToFavorites(product)}>
+                    <Icon
+                        source={isFavorite ? "heart" : "heart-outline"}  // Nếu sản phẩm trong favorites thì chọn icon "heart"
+                        color={isFavorite ? colors.pink500 : colors.gray700}  // Màu sắc tùy thuộc vào trạng thái yêu thích
+                        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                    />
+                </Pressable>
+            </View>
+
+            {/* Product Description */}
+            <View style={styles.descriptionContainer}>
+                <Text
+                    style={styles.descriptionText}
+                    numberOfLines={showFullDescription ? undefined : 2}
+                    ellipsizeMode="tail">
+                    {product.description}
+                </Text>
+                <Pressable style={styles.textButton} onPress={toggleDescription}>
+                    <Text style={styles.textButtonLabel}>
+                        {showFullDescription ? 'Thu gọn' : 'Xem thêm'}
+                    </Text>
+                </Pressable>
+            </View>
         </View>
-    </View>
-);
+    );
+};
+
 const styles = StyleSheet.create({
     modalContainer: {
         backgroundColor: colors.overlay,
