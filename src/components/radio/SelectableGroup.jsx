@@ -42,25 +42,31 @@ export const SelectableGroup = ({
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>
-                {title}
-                {required && <Text style={styles.redText}>*</Text>}
-                {note && <Text style={styles.note}> ({note})</Text>}
-            </Text>
-            {items.map(item => {
-                return (
-                    <Selectable
-                        item={item}
-                        quantity={selectedGroup.find(selectedItem => selectedItem._id === item._id)?.quantity || 0}
-                        selected={selectedGroup.some(selectedItem => selectedItem._id === item._id)}
-                        handlePlus={(item) => handlePlus(item, selectedGroup, setSelectedGroup)}
-                        handleMinus={(item) => handleMinus(item, selectedGroup, setSelectedGroup)}
-                        activeIconColor={activeIconColor}
-                        activeTextColor={activeTextColor}
-                        key={item._id}
-                    />
-                );
-            })}
+            {
+                items.length > 0 &&
+                <>
+                    <Text style={styles.title}>
+                        {title}
+                        {required && <Text style={styles.redText}>*</Text>}
+                        {note && <Text style={styles.note}> ({note})</Text>}
+                    </Text>
+                    {items.map(item => {
+                        return (
+                            <Selectable
+                                item={item}
+                                quantity={selectedGroup.find(selectedItem => selectedItem._id === item._id)?.quantity || 0}
+                                selected={selectedGroup.some(selectedItem => selectedItem._id === item._id)}
+                                handlePlus={(item) => handlePlus(item, selectedGroup, setSelectedGroup)}
+                                handleMinus={(item) => handleMinus(item, selectedGroup, setSelectedGroup)}
+                                activeIconColor={activeIconColor}
+                                activeTextColor={activeTextColor}
+                                key={item._id}
+                            />
+                        );
+                    })}
+                </>
+            }
+
         </View>
     );
 };

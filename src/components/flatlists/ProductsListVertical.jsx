@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -6,19 +6,18 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Modal,
+  View
 } from 'react-native';
-import { Icon, Checkbox } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
+import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import ToppingModal from '../modal/ToppingModal';
 import { TextFormatter } from '../../utils';
+import ToppingModal from '../modal/ToppingModal';
 
 const width = Dimensions.get('window').width;
 
 export const ProductsListVertical = ({
   onItemClick,
-  toppings,
   products
 }) => {
 
@@ -30,7 +29,7 @@ export const ProductsListVertical = ({
         data={products}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
-          <ItemProduct item={item} onItemClick={onItemClick} toppings={toppings} />
+          <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
         )}
         contentContainerStyle={styles.flatListContentContainer}
         scrollEnabled={false}
@@ -39,9 +38,27 @@ export const ProductsListVertical = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick, toppings }) => {
+const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [product, setProduct] = useState(null)
 
+  useEffect(() => {
+
+    const fetchProductDetail = async () => {
+      try {
+        const data = await getProductDetailAPI(item._id);
+        if (data) {
+          setProduct(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetchProductDetail:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchProductDetail();
+  }, []);
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
@@ -63,17 +80,23 @@ const ItemProduct = ({ item, onItemClick, toppings }) => {
           color={colors.white}
         />
       </TouchableOpacity>
-      <ToppingModal
-        toppings={toppings}
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        item={item}
-        onConfirm={(selectedToppings, quantity) => {
-          console.log('Selected toppings:', selectedToppings);
-          console.log('Quantity:', quantity);
-          setModalVisible(false);
-        }}
-      />
+      {
+        product &&
+        <ToppingModal
+          toppings={product.topping}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          item={item}
+          onConfirm={(selectedToppings, quantity) => {
+            console.log('Selected toppings:', selectedToppings);
+            console.log('Quantity:', quantity);
+            setModalVisible(false);
+          }}
+        />
+      }
+
+
+
     </View>
   );
 };

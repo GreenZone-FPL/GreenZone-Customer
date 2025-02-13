@@ -8,9 +8,9 @@ import PropTypes from 'prop-types';
 const RadioGroupPropTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      name: PropTypes.string.isRequired,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      _id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      size: PropTypes.string.isRequired,
+      sellingPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     })
   ).isRequired,
   selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -41,15 +41,15 @@ export const RadioGroup = ({
 
       {/* Danh sách Radio Buttons */}
       {items.map((item) => {
-        const { id, name, price } = item;
+        const { _id, size, sellingPrice } = item;
 
         return (
           <RadioButton
-            key={id}
-            label={name}
-            selected={selectedValue === id}
-            onPress={() => onValueChange(id)}
-            price={price}
+            key={_id}
+            label={size}
+            selected={selectedValue === _id}
+            onPress={() => onValueChange(_id)}
+            price={sellingPrice}
           />
         );
       })}
