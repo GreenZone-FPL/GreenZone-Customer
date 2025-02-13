@@ -1,33 +1,35 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 
 import {
+  CategoryMenu,
+  DeliveryButton,
+  DialogBasic,
+  DialogShippingMethod,
+  HeaderOrder,
+  LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  DeliveryButton,
-  CategoryMenu,
-  DialogShippingMethod,
-  LightStatusBar,
-  HeaderOrder,
-  DialogBasic,
 } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
-import { getAllCategoriesApi } from '../../axios/modules/category';
-import { getAllToppingsApi } from '../../axios/modules/topping';
+
+import { getAllCategoriesAPI, getAllToppingsAPI, getAllProductsAPI } from '../../axios';
+
 
 const OrderScreen = props => {
   const { navigation } = props;
   const [categories, setCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
+  const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(true);
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [isDialogVisible, setDialogVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null)
+
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -39,6 +41,9 @@ const OrderScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
+
+
+
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
       // console.log(position);
@@ -51,38 +56,38 @@ const OrderScreen = props => {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getAllCategoriesApi();
-        if (data) {
-          setCategories(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Hàm gọi API chung
+const fetchData = async (api, setter, callback) => {
+  try {
+    const data = await api();  
+    setter(data); // Cập nhật state
+    if (callback) {
+      callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
+    }
+  } catch (error) {
+    console.error(`Error fetching data from ${api.toString()}:`, error);
+  } finally {
+    setLoading(false); // Dừng loading khi lấy dữ liệu xong
+  }
+};
 
-    fetchCategories();
-  }, []);
-  useEffect(() => {
-    const fetchToppings = async () => {
-      try {
-        const data = await getAllToppingsApi();
-        if (data) {
-          setToppings(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetching toppings:", error);
-      } finally {
-        // setLoading(false);
-      }
-    };
+useEffect(() => {
+  // Fetch categories
+  fetchData(getAllCategoriesAPI, setCategories);
+  
+  // Fetch toppings
+  fetchData(getAllToppingsAPI, setToppings);
 
-    fetchToppings();
-  }, []);
+  // Fetch all products
+  fetchData(getAllProductsAPI, setAllProducts, (data) => {
+    if (data.length > 0) {
+      // Lọc sản phẩm từ tất cả các danh mục và lấy 10 sản phẩm đầu tiên
+      setAllProducts(data.flatMap(category => category.products).slice(0, 10));
+    }
+  });
+}, []); // Chỉ gọi một lần khi component mount
+
+
   const onItemClick = (product) => {
     console.log("Product clicked:", product);
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { myProduct: product });
@@ -128,14 +133,14 @@ const OrderScreen = props => {
         <ProductsListHorizontal
           products={productsCombo}
           toppings={toppings}
-          onItemClick={onItemClick} 
+          onItemClick={onItemClick}
 
 
         />
         <ProductsListVertical
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
-          }
+          products={allProducts}
+          toppings={toppings}
+          onItemClick={onItemClick}
         />
       </ScrollView>
 
