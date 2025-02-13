@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, FlatList, View } from 'react-native';
 
 import {
   CategoryMenu,
@@ -12,6 +12,7 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
+
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
@@ -29,6 +30,9 @@ const OrderScreen = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [isDialogVisible, setDialogVisible] = useState(false);
+  const scrollViewRef = useRef(null);
+  const [positions, setPositions] = useState({});
+  const [currentCategory, setCurrentCategory] = useState("Danh mục");
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -46,7 +50,6 @@ const OrderScreen = props => {
 
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
-      // console.log(position);
       if (position.coords) {
         reverseGeocode({
           lat: position.coords.latitude,
@@ -79,14 +82,44 @@ const OrderScreen = props => {
     fetchData(getAllToppingsAPI, setToppings);
 
     // Fetch all products
-    fetchData(getAllProductsAPI, setAllProducts, (data) => {
-      if (data.length > 0) {
-        // Lọc sản phẩm từ tất cả các danh mục và lấy 10 sản phẩm đầu tiên
-        setAllProducts(data.flatMap(category => category.products).slice(0, 10));
-      }
-    });
+    fetchData(getAllProductsAPI, setAllProducts);
   }, []); // Chỉ gọi một lần khi component mount
 
+  const onLayoutCategory = (event, categoryId) => {
+    const { y } = event.nativeEvent.layout;
+    setPositions(prev => ({ ...prev, [categoryId]: y }));
+  };
+
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    let closestCategory = "Danh mục";
+    let minDistance = Number.MAX_VALUE;
+
+    Object.entries(positions).forEach(([categoryId, positionY]) => {
+      const distance = Math.abs(scrollY - positionY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory = categories.find(cat => cat._id === categoryId)?.name || "Danh mục";
+      }
+    });
+
+    setCurrentCategory(closestCategory);
+  };
+
+
+  const scrollToCategory = (categoryId) => {
+    if (!scrollViewRef.current) {
+      console.log("scrollViewRef.current is null");
+      return;
+    }
+
+    if (positions[categoryId] !== undefined) {
+      console.log("Scrolling to:", positions[categoryId]);
+      scrollViewRef.current.scrollTo({ y: positions[categoryId], animated: true });
+    } else {
+      console.log("Category position not found:", categoryId);
+    }
+  };
 
   const onItemClick = (productId) => {
     console.log("Product clicked:", productId);
@@ -114,33 +147,45 @@ const OrderScreen = props => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
 
+      <HeaderOrder
+        title={currentCategory}
+        onCategoryPress={openDialogCategoryPress}
+        onFavoritePress={() =>
+          navigation.navigate(AppGraph.FavoriteScreen)
+        }
+        onSearchProduct={() =>
+          navigation.navigate(ShoppingGraph.SearchProductScreen)
+        }
+      />
+      <ScrollView
+        style={styles.containerContent}
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
 
-      <ScrollView style={styles.containerContent}>
-        <HeaderOrder
-          title="Danh mục"
-          onCategoryPress={openDialogCategoryPress}
-          onFavoritePress={() =>
-            navigation.navigate(AppGraph.FavoriteScreen)
-          }
-          onSearchProduct={() =>
-            navigation.navigate(ShoppingGraph.SearchProductScreen)
-          }
-        />
 
-        <CategoryMenu categories={categories} loading={loading} />
+        <CategoryMenu categories={categories} loading={loading} onCategorySelect={(category) => scrollToCategory(category._id)} />
 
 
         <ProductsListHorizontal
-          products={allProducts}
+          products={allProducts.flatMap(category => category.products).slice(0, 10)}
           toppings={toppings}
           onItemClick={onItemClick}
 
 
         />
-        <ProductsListVertical
-          products={allProducts}
-          onItemClick={onItemClick}
-        />
+        {
+          allProducts.length > 0 &&
+          allProducts.map((category) => (
+            <View key={category._id} onLayout={(event) => onLayoutCategory(event, category._id)}>
+              <ProductsListVertical title={category.name} products={category.products} />
+            </View>
+          ))
+
+
+        }
+
       </ScrollView>
 
       <DeliveryButton
@@ -160,38 +205,19 @@ const OrderScreen = props => {
         isVisible={isDialogVisible}
         onHide={() => setDialogVisible(false)}
         title="Danh mục">
-        <CategoryMenu />
+        <CategoryMenu
+          categories={categories}
+          loading={loading}
+          onCategorySelect={(category) => {
+            setDialogVisible(false)
+            scrollToCategory(category._id)
+          }}
+        />
       </DialogBasic>
     </SafeAreaView>
   );
 };
 
-const productsCombo = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: 'https://greenzone.motcaiweb.io.vn/uploads/81bd11bb-c0b9-4a0d-a9ee-d8afc8ef879a.jpg',
-    price: 69000,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image: 'https://greenzone.motcaiweb.io.vn/uploads/4d785911-f2e6-4dbf-a861-04c62c4cb804.jpg',
-    price: 79000,
-  },
-  {
-    id: '3',
-    name: 'Combo 3 Olong Tea',
-    image: "https://greenzone.motcaiweb.io.vn/uploads/99e39749-6bcb-4a9d-b387-7684a14cacf8.jpg",
-    price: 79000,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: 'https://greenzone.motcaiweb.io.vn/uploads/c9773a10-706e-44e5-8199-dd07a9faa94d.jpg',
-    price: 79000,
-  },
-];
 
 export default OrderScreen;
 

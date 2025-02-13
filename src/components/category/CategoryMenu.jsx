@@ -17,18 +17,8 @@ const height = Dimensions.get('window').height;
 
 export const CategoryMenu = props => {
 
-  const { categories, loading } = props
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const formatCurrencyVND = amount => {
-    return amount.toLocaleString('vi-VN') + 'đ';
-  };
-
-  const handleCategoryPress = category => {
-    setSelectedCategory(category);
-    setModalVisible(true);
-  };
-
+  const { categories, loading, onCategorySelect } = props
+ 
   return (
     <View style={styles.container}>
       {loading ? (
@@ -51,7 +41,7 @@ export const CategoryMenu = props => {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.itemContainer}
-              onPress={() => handleCategoryPress(item)}
+              onPress={() => onCategorySelect(item)}
             >
               <View style={styles.imageContainer}>
                 <Image source={{ uri: item.icon }} style={styles.image} />

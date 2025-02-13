@@ -3,11 +3,9 @@ import React from 'react';
 import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import OrderScreen from '../../screens/bottom-navs/OrderScreen';
-import FavoriteScreen from '../../screens/shopping/FavoriteScreen';
-import ProductsSearch from '../../screens/shopping/SearchProductScreen';
-import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
 import CheckoutScreen from '../../screens/shopping/CheckoutScreen';
 import RecipientInfoSheet from '../../screens/shopping/RecipientInfoSheet';
+import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
 
 const OrderStack = createNativeStackNavigator();
 const OrderStackScreen = () => {
@@ -30,10 +28,7 @@ const OrderStackScreen = () => {
         name={ShoppingGraph.CheckoutScreen}
         component={CheckoutScreen}
       />
-      <OrderStack.Screen
-        name={ShoppingGraph.SearchProductScreen}
-        component={ProductsSearch}
-      />
+
       <OrderStack.Screen
         name={ShoppingGraph.RecipientInfoSheet}
         component={RecipientInfoSheet}
