@@ -25,14 +25,10 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-       
+
         <NavigationContainer>
           <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-          
-          <BaseStack.Screen
-              name={AppGraph.AUTHENTICATION}
-              component={AuthStackScreen}
-            />
+
             <BaseStack.Screen
               name={MainGraph.graphName}
               component={MainNavigation}
@@ -41,6 +37,8 @@ function App() {
               name={AppGraph.AUTHENTICATION}
               component={AuthStackScreen}
             />
+
+
 
             <BaseStack.Screen
               name={AuthGraph.LoginScreen}
