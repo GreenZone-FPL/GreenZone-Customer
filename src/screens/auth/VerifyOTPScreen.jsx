@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { verifyOTPApi } from '../../axios/modules/auth';
-import {AppGraph} from '../../layouts/graphs/appGraph'
-
+import { AppGraph } from '../../layouts/graphs/appGraph'
+import { Toaster } from '../../utils/toaster'
 const VerifyOTPScreen = ({ route, navigation }) => {
     const { phoneNumber } = route.params; // Lấy số điện thoại từ màn hình trước
     const [code, setCode] = useState('');
 
     const handleVerifyOTP = async () => {
         if (code.length !== 6) {
-            Alert.alert("❌ Lỗi", "Vui lòng nhập mã OTP gồm 6 chữ số.");
+            Toaster.show("Vui lòng nhập mã OTP gồm 6 chữ số.")
             return;
         }
         try {
             const response = await verifyOTPApi({ phoneNumber, code });
             if (response.statusCode === 201) {
-                Alert.alert("✅ Thành công", "Đăng nhập thành công!");
+                Toaster.show("Đăng nhập thành công!")
+              
                 // console.log('otp = ', response.code)
                 // Lưu token để dùng cho các API tiếp theo (có thể dùng AsyncStorage)
                 // AsyncStorage.setItem('authToken', response.token);
 
                 navigation.navigate(AppGraph.MAIN)
             } else {
-                Alert.alert("❌ Lỗi", "Mã OTP không hợp lệ.");
+                Toaster.show("Mã OTP không hợp lệ")
             }
         } catch (error) {
-            console.error("Error verifying OTP:", error);
-            Alert.alert("❌ Lỗi", "Xác thực OTP thất bại.");
+            Toaster.show(`Error: ${error}`)
+            console.log("Error verifying OTP:", error);
         }
     };
 
@@ -61,3 +62,4 @@ const styles = StyleSheet.create({
 });
 
 export default VerifyOTPScreen;
+

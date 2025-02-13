@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 
 import {
   ProductsListHorizontal,
@@ -13,11 +13,14 @@ import {
   HeaderOrder,
   DialogBasic,
 } from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import {ShoppingGraph} from '../../layouts/graphs';
+import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
+import { getAllCategoriesApi } from '../../axios/modules/category';
 
 const OrderScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
@@ -45,7 +48,24 @@ const OrderScreen = props => {
     });
   }, []);
 
-  const reverseGeocode = async ({lat, long}) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategoriesApi();
+        if (data) {
+          setCategories(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -61,21 +81,27 @@ const OrderScreen = props => {
   const openDialogCategoryPress = () => {
     setDialogVisible(true);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+
+
       <ScrollView style={styles.containerContent}>
         <HeaderOrder
           title="Danh mục"
           onCategoryPress={openDialogCategoryPress}
           onFavoritePress={() =>
-            navigation.navigate(ScreenEnum.MyFavoriteProducts)
+            navigation.navigate(AppGraph.MyFavoriteProducts)
           }
           onSearchProduct={() =>
             navigation.navigate(ShoppingGraph.SearchProductScreen)
           }
         />
-        <CategoryMenu />
+
+        <CategoryMenu categories={categories} loading={loading} />
+
+
         <ProductsListHorizontal
           onItemClick={() =>
             navigation.navigate(ShoppingGraph.ProductDetailSheet)

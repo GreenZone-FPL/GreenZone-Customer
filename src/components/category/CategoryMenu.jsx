@@ -7,17 +7,19 @@ import {
   TouchableOpacity,
   Modal,
 } from 'react-native';
-import React, {useState} from 'react';
-import {Dimensions} from 'react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {Icon} from 'react-native-paper';
-
+import React, { useState } from 'react';
+import { Dimensions } from 'react-native';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Icon } from 'react-native-paper';
+import { Skeleton } from '@rneui/themed';
+import LinearGradient from "react-native-linear-gradient";
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export const CategoryMenu = props => {
 
+  const { categories, loading } = props
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const formatCurrencyVND = amount => {
@@ -31,29 +33,50 @@ export const CategoryMenu = props => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={categories}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            style={styles.itemContainer}
-            onPress={() => handleCategoryPress(item)}>
-            <View style={styles.imageContainer}>
-              <Image source={item.image} style={styles.image} />
-            </View>
-            <Text style={styles.itemName} numberOfLines={2}>
-              {item.name}
-            </Text>
-          </TouchableOpacity>
-        )}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={false}
-        numColumns={4}
-      />
+      {loading ? (
+        <FlatList
+          data={Array(8).fill({})} // Tạo danh sách giả có 8 phần tử để hiển thị skeleton
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={() => (
+            <Skeleton animation="wave" height={80}  style={styles.itemContainer} LinearGradientComponent={LinearGradient} />
+          )}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+          numColumns={4}
+          columnWrapperStyle={{ gap: 8 }}
+          contentContainerStyle={styles.flatlistContainer}
+        />
+      ) : (
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item._id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.itemContainer}
+              onPress={() => handleCategoryPress(item)}
+            >
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: item.icon }} style={styles.image} />
+              </View>
+              <Text style={styles.itemName} numberOfLines={2}>
+                {item.name}
+              </Text>
+            </TouchableOpacity>
+          )}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+          numColumns={4}
+          columnWrapperStyle={{ gap: 8 }}
+          contentContainerStyle={styles.flatlistContainer}
+        />
+      )}
+
+
+
 
       {/* Modal hiển thị sản phẩm */}
       <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={[styles.modalContainer, {justifyContent: 'flex-end'}]}>
+        <View style={[styles.modalContainer, { justifyContent: 'flex-end' }]}>
           <View style={styles.modalContent}>
             <View style={styles.modalTitleContainer}>
               <Text style={styles.modalTitle}>{selectedCategory?.name}</Text>
@@ -65,11 +88,11 @@ export const CategoryMenu = props => {
             </View>
 
             {selectedCategory &&
-            products.filter(p =>
-              selectedCategory.id === 1
-                ? p.tag === 'new'
-                : p.categoryId === selectedCategory.id,
-            ).length === 0 ? (
+              products.filter(p =>
+                selectedCategory.id === 1
+                  ? p.tag === 'new'
+                  : p.categoryId === selectedCategory.id,
+              ).length === 0 ? (
               <Text style={styles.emptyText}>Không có sản phẩm nào</Text>
             ) : (
               <FlatList
@@ -77,13 +100,13 @@ export const CategoryMenu = props => {
                   selectedCategory?.id === 1
                     ? products.filter(p => p.tag === 'new')
                     : products.filter(
-                        p => p.categoryId === selectedCategory?.id,
-                      )
+                      p => p.categoryId === selectedCategory?.id,
+                    )
                 }
                 keyExtractor={item => item.id.toString()}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <View style={styles.productItem}>
-                    <Image source={item.image} style={styles.productImage} />
+                    <Image source={{ uri: item.icon }} style={styles.productImage} />
                     <View style={styles.productInfo}>
                       <Text style={styles.productName}>{item.name}</Text>
                       <Text style={styles.productPrice}>
@@ -105,19 +128,26 @@ export const CategoryMenu = props => {
 };
 
 const styles = StyleSheet.create({
-  container: {backgroundColor: colors.white},
+  container: { backgroundColor: colors.white, justifyContent: 'center' },
   itemContainer: {
     alignItems: 'center',
     marginBottom: GLOBAL_KEYS.GAP_SMALL,
-    maxWidth: width / 4,
-    flex: 1,
+    // maxWidth: width / 4.5,
+    width: width / 4.7,
+    borderRadius: 6
+    // flex: 1,
+  },
+  flatlistContainer: {
+    marginHorizontal: 16,
+    justifyContent: "center",
+    backgroundColor: colors.white,
   },
   imageContainer: {
     borderRadius: 34,
     backgroundColor: colors.green100,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  image: {width: 34, height: 34, resizeMode: 'contain', borderRadius: 34},
+  image: { width: 34, height: 34, resizeMode: 'contain', borderRadius: 34 },
   itemName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
@@ -158,11 +188,11 @@ const styles = StyleSheet.create({
     height: height / 8,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
-  productInfo: {flex: 1, marginLeft: GLOBAL_KEYS.PADDING_DEFAULT},
-  productName: {fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER, fontWeight: 'bold'},
-  productPrice: {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.red900},
-  addText: {color: colors.white, fontSize: 20, fontWeight: 'bold'},
-  closeButton: {alignItems: 'center'},
+  productInfo: { flex: 1, marginLeft: GLOBAL_KEYS.PADDING_DEFAULT },
+  productName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER, fontWeight: 'bold' },
+  productPrice: { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.red900 },
+  addText: { color: colors.white, fontSize: 20, fontWeight: 'bold' },
+  closeButton: { alignItems: 'center' },
   addButton: {
     backgroundColor: colors.green200,
     padding: GLOBAL_KEYS.PADDING_SMALL,
@@ -180,43 +210,43 @@ const styles = StyleSheet.create({
 });
 
 // Danh mục
-const categories = [
-  {
-    id: 1,
-    name: 'Món Mới Phải Thử',
-    image: require('../../assets/images/image_category/image_new_dish.png'),
-  },
-  {
-    id: 2,
-    name: 'Trà trái cây',
-    image: require('../../assets/images/image_category/image_fruit_tea.png'),
-  },
-  {
-    id: 3,
-    name: 'Trà Xanh',
-    image: require('../../assets/images/image_category/image_green_tea.png'),
-  },
-  {
-    id: 4,
-    name: 'Cafe',
-    image: require('../../assets/images/image_category/image_coffee.png'),
-  },
-  {
-    id: 5,
-    name: 'Trà Sữa',
-    image: require('../../assets/images/image_category/image_milk_tea.png'),
-  },
-  {
-    id: 6,
-    name: 'Bánh Ngọt',
-    image: require('../../assets/images/image_category/image_cake.png'),
-  },
-  {
-    id: 7,
-    name: 'Món Ngon',
-    image: require('../../assets/images/image_category/image_delicious_food.png'),
-  },
-];
+// const categories = [
+//   {
+//     id: 1,
+//     name: 'Món Mới Phải Thử',
+//     image: require('../../assets/images/image_category/image_new_dish.png'),
+//   },
+//   {
+//     id: 2,
+//     name: 'Trà trái cây',
+//     image: require('../../assets/images/image_category/image_fruit_tea.png'),
+//   },
+//   {
+//     id: 3,
+//     name: 'Trà Xanh',
+//     image: require('../../assets/images/image_category/image_green_tea.png'),
+//   },
+//   {
+//     id: 4,
+//     name: 'Cafe',
+//     image: require('../../assets/images/image_category/image_coffee.png'),
+//   },
+//   {
+//     id: 5,
+//     name: 'Trà Sữa',
+//     image: require('../../assets/images/image_category/image_milk_tea.png'),
+//   },
+//   {
+//     id: 6,
+//     name: 'Bánh Ngọt',
+//     image: require('../../assets/images/image_category/image_cake.png'),
+//   },
+//   {
+//     id: 7,
+//     name: 'Món Ngon',
+//     image: require('../../assets/images/image_category/image_delicious_food.png'),
+//   },
+// ];
 
 // Sản phẩm
 const products = [
