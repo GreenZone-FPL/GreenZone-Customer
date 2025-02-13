@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import {
+  FlatList,
   Modal,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  FlatList,
-  StyleSheet,
-  ScrollView
+  View
 } from 'react-native';
-import { Icon, Checkbox } from 'react-native-paper';
+import { Checkbox, Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { TextFormatter } from '../../utils';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 const formatCurrencyVND = amount => {
   return amount.toLocaleString('vi-VN') + 'đ';
 };
@@ -29,22 +28,26 @@ const ToppingModal = ({ visible, onClose, item, onConfirm, toppings }) => {
   };
 
   const totalPrice =
-    (item.price + selectedToppings.reduce((sum, t) => sum + t.extraPrice, 0)) *
+    (item.sellingPrice + selectedToppings.reduce((sum, t) => sum + t.extraPrice, 0)) *
     quantity;
 
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
       <View style={styles.modalBackground}>
         <OverlayStatusBar />
+
         <View style={styles.modalContainer}>
           <View style={styles.toppingTitleContainer}>
+
             <Text style={styles.modalTitle}>{item.name}</Text>
             <TouchableOpacity onPress={onClose}>
               <Icon source="close" size={24} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
+
           <Text style={styles.modalSubtitle}>Topping (Chọn không giới hạn)</Text>
+
           <View style={{ maxHeight: 400 }}>
             <FlatList
               data={toppings}
@@ -96,6 +99,7 @@ const ToppingModal = ({ visible, onClose, item, onConfirm, toppings }) => {
               </Text>
             </TouchableOpacity>
           </View>
+
         </View>
       </View>
     </Modal>

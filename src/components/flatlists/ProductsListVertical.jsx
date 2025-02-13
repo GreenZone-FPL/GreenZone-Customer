@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -6,46 +6,72 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Modal,
+  View
 } from 'react-native';
-import { Icon, Checkbox } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
+import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
 
 const width = Dimensions.get('window').width;
 
-export const  ProductsListVertical = props => {
-  const {onItemClick} = props;
+export const ProductsListVertical = ({
+  title = "Món Mới Phải Thử",
+  scrollEnabled = false,
+  onItemClick,
+  products
+}) => {
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Món Mới Phải Thử</Text>
+      <Text style={styles.title}>{title}</Text>
       <FlatList
-        data={productsNewDish}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => (
-          <ItemProduct item={item} onItemClick={onItemClick} />
+        showsVerticalScrollIndicator={false}
+        data={products}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => (
+          <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
         )}
-        contentContainerStyle={styles.flatListContentContainer}
-        scrollEnabled={false}
+        contentContainerStyle={{ gap: 16 }}
+        scrollEnabled={scrollEnabled}
       />
     </View>
   );
 };
 
-const ItemProduct = ({item, onItemClick}) => {
+const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [product, setProduct] = useState(null)
 
+  useEffect(() => {
+
+    const fetchProductDetail = async () => {
+      try {
+        const data = await getProductDetailAPI(item._id);
+        if (data) {
+          setProduct(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetchProductDetail:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchProductDetail();
+  }, []);
   return (
     <View style={styles.itemProduct}>
-      <TouchableOpacity onPress={() => onItemClick()}>
-        <Image source={item.image} style={styles.itemImage} />
+      <TouchableOpacity onPress={onItemClick}>
+        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
         <Text style={styles.productPrice}>
-          {item.price.toLocaleString('vi-VN')}đ
+          {TextFormatter.formatCurrency(item.originalPrice)}
+          {/* {item.originalPrice.toLocaleString('vi-VN')}đ */}
         </Text>
       </View>
       <TouchableOpacity
@@ -57,49 +83,31 @@ const ItemProduct = ({item, onItemClick}) => {
           color={colors.white}
         />
       </TouchableOpacity>
-      <ToppingModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        item={item}
-        onConfirm={(selectedToppings, quantity) => {
-          console.log('Selected toppings:', selectedToppings);
-          console.log('Quantity:', quantity);
-          setModalVisible(false);
-        }}
-      />
+      {
+        product &&
+        <ToppingModal
+          toppings={product.topping}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          item={item}
+          onConfirm={(selectedToppings, quantity) => {
+            console.log('Selected toppings:', selectedToppings);
+            console.log('Quantity:', quantity);
+            setModalVisible(false);
+          }}
+        />
+      }
+
+
+
     </View>
   );
 };
-const productsNewDish = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '3',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
@@ -115,6 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 1,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL
   },
   itemImage: {
     width: width / 4.5,
@@ -159,15 +168,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  modalSubtitle: {fontSize: 14, color: 'gray', marginBottom: 10},
+  modalSubtitle: { fontSize: 14, color: 'gray', marginBottom: 10 },
   toppingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: GLOBAL_KEYS.PADDING_SMALL,
   },
-  toppingText: {flex: 1, marginLeft: 10},
-  priceText: {color: 'gray'},
+  toppingText: { flex: 1, marginLeft: 10 },
+  priceText: { color: 'gray' },
   quantityContainer: {
     flex: 2,
     flexDirection: 'row',
@@ -181,7 +190,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  quantityText: {fontSize: 16, fontWeight: 'bold'},
+  quantityText: { fontSize: 16, fontWeight: 'bold' },
   confirmButton: {
     flex: 3,
     backgroundColor: colors.primary,
@@ -189,7 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-  confirmText: {fontSize: 16, fontWeight: 'bold', color: 'white'},
+  confirmText: { fontSize: 16, fontWeight: 'bold', color: 'white' },
   toppingTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
