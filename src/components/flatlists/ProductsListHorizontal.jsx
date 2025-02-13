@@ -16,7 +16,11 @@ import { TextFormatter } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
-export const ProductsListHorizontal = ({ onItemClick, toppings, products }) => {
+export const ProductsListHorizontal = ({
+  onItemClick,
+  toppings,
+  products
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -28,7 +32,7 @@ export const ProductsListHorizontal = ({ onItemClick, toppings, products }) => {
           data={products}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
-            <ItemProduct item={item}  onItemClick={() => onItemClick(item)}  toppings={toppings} />
+            <ItemProduct item={item}  onItemClick={onItemClick} toppings={toppings} />
           )}
           horizontal={true}
           contentContainerStyle={{
@@ -48,9 +52,9 @@ const ItemProduct = ({ item, onItemClick, toppings }) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image 
-          source={{ uri: String(item.image) }} 
-         style={styles.itemImage} />
+        <Image
+          source={{ uri: String(item.image) }}
+          style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.priceContainer}>
         <Text style={styles.priceText}>

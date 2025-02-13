@@ -1,6 +1,6 @@
-import axiosInstance from "../index";
+import axiosInstance from "../axiosInstance";
 
-export const sendOTPApi = async (request) => {
+export const sendOTPAPI = async (request) => {
     try {
         const { phoneNumber } = request
         const body = { phoneNumber }

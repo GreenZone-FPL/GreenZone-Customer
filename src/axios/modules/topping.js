@@ -1,6 +1,6 @@
-import axiosInstance from "../index";
+import axiosInstance from "../axiosInstance";
 
-export const getAllToppingsApi = async () => {
+export const getAllToppingsAPI = async () => {
     try {
        
         const response = await axiosInstance().get("/v1/topping/all");

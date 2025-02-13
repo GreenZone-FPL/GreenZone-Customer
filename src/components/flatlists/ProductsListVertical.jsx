@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -12,20 +12,25 @@ import {
 import { Icon, Checkbox } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import ToppingModal from '../modal/ToppingModal';
+import { TextFormatter } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
-export const  ProductsListVertical = props => {
-  const {onItemClick} = props;
+export const ProductsListVertical = ({
+  onItemClick,
+  toppings,
+  products
+}) => {
+
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Món Mới Phải Thử</Text>
       <FlatList
-        data={productsNewDish}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => (
-          <ItemProduct item={item} onItemClick={onItemClick} />
+        data={products}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => (
+          <ItemProduct item={item} onItemClick={onItemClick} toppings={toppings} />
         )}
         contentContainerStyle={styles.flatListContentContainer}
         scrollEnabled={false}
@@ -34,18 +39,19 @@ export const  ProductsListVertical = props => {
   );
 };
 
-const ItemProduct = ({item, onItemClick}) => {
+const ItemProduct = ({ item, onItemClick, toppings }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <View style={styles.itemProduct}>
-      <TouchableOpacity onPress={() => onItemClick()}>
-        <Image source={item.image} style={styles.itemImage} />
+      <TouchableOpacity onPress={onItemClick}>
+        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
         <Text style={styles.productPrice}>
-          {item.price.toLocaleString('vi-VN')}đ
+          {TextFormatter.formatCurrency(item.originalPrice)}
+          {/* {item.originalPrice.toLocaleString('vi-VN')}đ */}
         </Text>
       </View>
       <TouchableOpacity
@@ -58,6 +64,7 @@ const ItemProduct = ({item, onItemClick}) => {
         />
       </TouchableOpacity>
       <ToppingModal
+        toppings={toppings}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         item={item}
@@ -70,32 +77,6 @@ const ItemProduct = ({item, onItemClick}) => {
     </View>
   );
 };
-const productsNewDish = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '3',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -159,15 +140,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 10,
   },
-  modalSubtitle: {fontSize: 14, color: 'gray', marginBottom: 10},
+  modalSubtitle: { fontSize: 14, color: 'gray', marginBottom: 10 },
   toppingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: GLOBAL_KEYS.PADDING_SMALL,
   },
-  toppingText: {flex: 1, marginLeft: 10},
-  priceText: {color: 'gray'},
+  toppingText: { flex: 1, marginLeft: 10 },
+  priceText: { color: 'gray' },
   quantityContainer: {
     flex: 2,
     flexDirection: 'row',
@@ -181,7 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  quantityText: {fontSize: 16, fontWeight: 'bold'},
+  quantityText: { fontSize: 16, fontWeight: 'bold' },
   confirmButton: {
     flex: 3,
     backgroundColor: colors.primary,
@@ -189,7 +170,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
   },
-  confirmText: {fontSize: 16, fontWeight: 'bold', color: 'white'},
+  confirmText: { fontSize: 16, fontWeight: 'bold', color: 'white' },
   toppingTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
