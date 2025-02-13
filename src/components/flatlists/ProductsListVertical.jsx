@@ -17,6 +17,7 @@ import ToppingModal from '../modal/ToppingModal';
 const width = Dimensions.get('window').width;
 
 export const ProductsListVertical = ({
+  scrollEnabled = false,
   onItemClick,
   products
 }) => {
@@ -26,13 +27,14 @@ export const ProductsListVertical = ({
     <View style={styles.container}>
       <Text style={styles.title}>Món Mới Phải Thử</Text>
       <FlatList
+        showsVerticalScrollIndicator={false}
         data={products}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
           <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
         )}
         contentContainerStyle={styles.flatListContentContainer}
-        scrollEnabled={false}
+        scrollEnabled={scrollEnabled}
       />
     </View>
   );
