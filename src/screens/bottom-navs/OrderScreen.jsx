@@ -57,40 +57,40 @@ const OrderScreen = props => {
   }, []);
 
   // Hàm gọi API chung
-const fetchData = async (api, setter, callback) => {
-  try {
-    const data = await api();  
-    setter(data); // Cập nhật state
-    if (callback) {
-      callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
+  const fetchData = async (api, setter, callback) => {
+    try {
+      const data = await api();
+      setter(data); // Cập nhật state
+      if (callback) {
+        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
+      }
+    } catch (error) {
+      console.error(`Error fetching data from ${api.toString()}:`, error);
+    } finally {
+      setLoading(false); // Dừng loading khi lấy dữ liệu xong
     }
-  } catch (error) {
-    console.error(`Error fetching data from ${api.toString()}:`, error);
-  } finally {
-    setLoading(false); // Dừng loading khi lấy dữ liệu xong
-  }
-};
+  };
 
-useEffect(() => {
-  // Fetch categories
-  fetchData(getAllCategoriesAPI, setCategories);
-  
-  // Fetch toppings
-  fetchData(getAllToppingsAPI, setToppings);
+  useEffect(() => {
+    // Fetch categories
+    fetchData(getAllCategoriesAPI, setCategories);
 
-  // Fetch all products
-  fetchData(getAllProductsAPI, setAllProducts, (data) => {
-    if (data.length > 0) {
-      // Lọc sản phẩm từ tất cả các danh mục và lấy 10 sản phẩm đầu tiên
-      setAllProducts(data.flatMap(category => category.products).slice(0, 10));
-    }
-  });
-}, []); // Chỉ gọi một lần khi component mount
+    // Fetch toppings
+    fetchData(getAllToppingsAPI, setToppings);
+
+    // Fetch all products
+    fetchData(getAllProductsAPI, setAllProducts, (data) => {
+      if (data.length > 0) {
+        // Lọc sản phẩm từ tất cả các danh mục và lấy 10 sản phẩm đầu tiên
+        setAllProducts(data.flatMap(category => category.products).slice(0, 10));
+      }
+    });
+  }, []); // Chỉ gọi một lần khi component mount
 
 
-  const onItemClick = (product) => {
-    console.log("Product clicked:", product);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { myProduct: product });
+  const onItemClick = (productId) => {
+    console.log("Product clicked:", productId);
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
   const reverseGeocode = async ({ lat, long }) => {
@@ -131,7 +131,7 @@ useEffect(() => {
 
 
         <ProductsListHorizontal
-          products={productsCombo}
+          products={allProducts}
           toppings={toppings}
           onItemClick={onItemClick}
 
@@ -139,7 +139,6 @@ useEffect(() => {
         />
         <ProductsListVertical
           products={allProducts}
-          toppings={toppings}
           onItemClick={onItemClick}
         />
       </ScrollView>
