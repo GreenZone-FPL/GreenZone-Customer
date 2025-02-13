@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
+import { getAllCategoriesAPI, getAllProductsAPI } from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -25,106 +26,146 @@ import {
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { getAllToppingsApi } from '../../axios/modules/topping';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const { navigation } = props;
+  const [categories, setCategories] = useState([])
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
-  const [toppings, setToppings] = useState([]);
+  const [allProducts, setAllProducts] = useState([])
+  const scrollViewRef = useRef(null);
+  const [positions, setPositions] = useState({});
+  const [currentCategory, setCurrentCategory] = useState("Chào bạn mới");
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
+
 
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = option => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-  // useEffect(() => {
-  //   Geolocation.getCurrentPosition(position => {
-  //     console.log(position);
-  //     if (position.coords) {
-  //       reverseGeocode({
-  //         lat: position.coords.latitude,
-  //         long: position.coords.longitude,
-  //       });
-  //     }
-  //   });
-  // }, []);
+  const reverseGeocode = async ({ lat, long }) => {
+    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
-  // const reverseGeocode = async ({ lat, long }) => {
-  //   const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
-
-  //   try {
-  //     const res = await axios(api);
-  //     if (res && res.status === 200 && res.data) {
-  //       const items = res.data.items;
-  //       setCurrenLocation(items[0]);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+    try {
+      const res = await axios(api);
+      if (res && res.status === 200 && res.data) {
+        const items = res.data.items;
+        setCurrenLocation(items[0]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    const fetchToppings = async () => {
-      try {
-        const data = await getAllToppingsApi();
-        if (data) {
-          setToppings(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetching toppings:", error);
-      } finally {
-        // setLoading(false);
+    Geolocation.getCurrentPosition(position => {
+      if (position.coords) {
+        reverseGeocode({
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        });
       }
-    };
-
-    fetchToppings();
+    });
   }, []);
+
+  // Hàm gọi API chung
+  const fetchData = async (api, setter, callback) => {
+    try {
+      const data = await api();
+      setter(data); // Cập nhật state
+      if (callback) {
+        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
+      }
+    } catch (error) {
+      console.error(`Error fetching data from ${api.toString()}:`, error);
+    } finally {
+      setLoading(false); // Dừng loading khi lấy dữ liệu xong
+    }
+  };
+
+  const onLayoutCategory = (event, categoryId) => {
+    const { y } = event.nativeEvent.layout;
+    setPositions(prev => ({ ...prev, [categoryId]: y }));
+  };
+
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    let closestCategory = "Danh mục";
+    let minDistance = Number.MAX_VALUE;
+
+    Object.entries(positions).forEach(([categoryId, positionY]) => {
+      const distance = Math.abs(scrollY - positionY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory = categories.find(cat => cat._id === categoryId)?.name || "Danh mục";
+      }
+    });
+
+    setCurrentCategory(closestCategory);
+  };
+  const onItemClick = (productId) => {
+    console.log("Product clicked:", productId);
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+  };
+
+
+  useEffect(() => {
+    fetchData(getAllCategoriesAPI, setCategories);
+    // Fetch all products
+    fetchData(getAllProductsAPI, setAllProducts);
+  }, []); // Chỉ gọi một lần khi component mount
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-      <ScrollView style={styles.containerContent}>
-        <HeaderWithBadge title="Home" onBadgePress={() => { }} isHome={true} />
+      <HeaderWithBadge title={currentCategory} onBadgePress={() => { }} isHome={false} />
+      <ScrollView
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={styles.containerContent}>
+
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
 
-        <ProductsListHorizontal
-          products={productsCombo}
-          toppings={toppings}
-          onItemClick={(product) => {
-            setSelectedProduct(product)
-            navigation.navigate(ShoppingGraph.ProductDetailSheet, { product })
-          }
-
-          }
-        />
-        <ProductsListVertical
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
-          }
-        />
         <NotificationList onSeeMorePress={() =>
           navigation.navigate(AppGraph.AdvertisingScreen)
         } />
+        <ProductsListHorizontal
+          products={allProducts.flatMap(category => category.products).slice(0, 10)}
+          onItemClick={onItemClick}
+        />
+
+
+        {
+          allProducts.length > 0 &&
+          allProducts.map((category) => (
+            <View key={category._id} onLayout={(event) => onLayoutCategory(event, category._id)}>
+              <ProductsListVertical title={category.name} products={category.products} onItemClick={onItemClick} />
+            </View>
+          ))
+
+
+        }
+
         {/* <Searchbar /> */}
       </ScrollView>
 
-      {/* <DeliveryButton
+      <DeliveryButton
         title="Đi giao đến"
         address={currentLocation && currentLocation.address.label}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-        // onPressCart={() => navigation.navigate(OrderGraph.OrderCartScreen)}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
-      /> */}
+      />
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
