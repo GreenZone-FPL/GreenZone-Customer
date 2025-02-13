@@ -27,10 +27,10 @@ const MainNavigation = () => {
         tabBarIcon: ({ focused }) => {
           let iconName;
 
-          // if (route.name === MainGraph.HomeStackScreen) {
-          //   iconName = focused ? 'home' : 'home-outline';
-          // }
-          if (route.name === MainGraph.OrderStackScreen) {
+          if (route.name === MainGraph.HomeStackScreen) {
+            iconName = focused ? 'home' : 'home-outline';
+          }
+          else if (route.name === MainGraph.OrderStackScreen) {
             iconName = focused ? 'food' : 'food-outline';
           }
           else if (route.name === MainGraph.MerchantStackScreen) {
@@ -52,10 +52,10 @@ const MainNavigation = () => {
         tabBarLabel: ({ focused }) => {
           let label;
 
-          // if (route.name === MainGraph.HomeStackScreen) {
-          //   label = 'Trang chủ';
-          // }
-          if (route.name === MainGraph.OrderStackScreen) {
+          if (route.name === MainGraph.HomeStackScreen) {
+            label = 'Trang chủ';
+          }
+          else if (route.name === MainGraph.OrderStackScreen) {
             label = 'Đặt hàng';
           }
           else if (route.name === MainGraph.MerchantStackScreen) {
@@ -75,11 +75,11 @@ const MainNavigation = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.gray700,
       })}>
-      {/* <BottomTab.Screen
+      <BottomTab.Screen
         name={MainGraph.HomeStackScreen}
         component={HomeStackScreen}
 
-      /> */}
+      />
       <BottomTab.Screen
         name={MainGraph.OrderStackScreen}
         component={OrderStackScreen}
