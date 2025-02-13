@@ -25,7 +25,7 @@ import {
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-
+import { getAllToppingsApi } from '../../axios/modules/topping';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
@@ -33,7 +33,7 @@ const HomeScreen = props => {
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
-
+  const [toppings, setToppings] = useState([]);
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -70,6 +70,23 @@ const HomeScreen = props => {
   //   }
   // };
 
+  useEffect(() => {
+    const fetchToppings = async () => {
+      try {
+        const data = await getAllToppingsApi();
+        if (data) {
+          setToppings(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetching toppings:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchToppings();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -80,8 +97,13 @@ const HomeScreen = props => {
         <ImageCarousel data={dataBanner} time={2000} />
 
         <ProductsListHorizontal
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
+          products={productsCombo}
+          toppings={toppings}
+          onItemClick={(product) => {
+            setSelectedProduct(product)
+            navigation.navigate(ShoppingGraph.ProductDetailSheet, { product })
+          }
+
           }
         />
         <ProductsListVertical
@@ -112,6 +134,33 @@ const HomeScreen = props => {
     </SafeAreaView>
   );
 };
+
+const productsCombo = [
+  {
+    id: '1',
+    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
+    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
+    price: 69000,
+  },
+  {
+    id: '2',
+    name: 'Combo 3 Olong Tea',
+    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
+    price: 79000,
+  },
+  {
+    id: '3',
+    name: 'Combo 3 Olong Tea',
+    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
+    price: 79000,
+  },
+  {
+    id: '4',
+    name: 'Combo 3 Olong Tea',
+    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
+    price: 79000,
+  },
+];
 
 const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>

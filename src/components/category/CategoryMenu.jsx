@@ -1,18 +1,16 @@
+import { Skeleton } from '@rneui/themed';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
+  Dimensions,
   FlatList,
   Image,
   StyleSheet,
+  Text,
   TouchableOpacity,
-  Modal,
+  View
 } from 'react-native';
-import React, { useState } from 'react';
-import { Dimensions } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { Icon } from 'react-native-paper';
-import { Skeleton } from '@rneui/themed';
 import LinearGradient from "react-native-linear-gradient";
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -70,59 +68,6 @@ export const CategoryMenu = props => {
           contentContainerStyle={styles.flatlistContainer}
         />
       )}
-
-
-
-
-      {/* Modal hiển thị sản phẩm */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={[styles.modalContainer, { justifyContent: 'flex-end' }]}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalTitleContainer}>
-              <Text style={styles.modalTitle}>{selectedCategory?.name}</Text>
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                style={styles.closeButton}>
-                <Icon source="close" color={colors.red900} size={20} />
-              </TouchableOpacity>
-            </View>
-
-            {selectedCategory &&
-              products.filter(p =>
-                selectedCategory.id === 1
-                  ? p.tag === 'new'
-                  : p.categoryId === selectedCategory.id,
-              ).length === 0 ? (
-              <Text style={styles.emptyText}>Không có sản phẩm nào</Text>
-            ) : (
-              <FlatList
-                data={
-                  selectedCategory?.id === 1
-                    ? products.filter(p => p.tag === 'new')
-                    : products.filter(
-                      p => p.categoryId === selectedCategory?.id,
-                    )
-                }
-                keyExtractor={item => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View style={styles.productItem}>
-                    <Image source={{ uri: item.icon }} style={styles.productImage} />
-                    <View style={styles.productInfo}>
-                      <Text style={styles.productName}>{item.name}</Text>
-                      <Text style={styles.productPrice}>
-                        {formatCurrencyVND(item.price)}
-                      </Text>
-                    </View>
-                    <TouchableOpacity style={styles.addButton}>
-                      <Icon source="plus" color={colors.primary} size={20} />
-                    </TouchableOpacity>
-                  </View>
-                )}
-              />
-            )}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -209,110 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-// Danh mục
-// const categories = [
-//   {
-//     id: 1,
-//     name: 'Món Mới Phải Thử',
-//     image: require('../../assets/images/image_category/image_new_dish.png'),
-//   },
-//   {
-//     id: 2,
-//     name: 'Trà trái cây',
-//     image: require('../../assets/images/image_category/image_fruit_tea.png'),
-//   },
-//   {
-//     id: 3,
-//     name: 'Trà Xanh',
-//     image: require('../../assets/images/image_category/image_green_tea.png'),
-//   },
-//   {
-//     id: 4,
-//     name: 'Cafe',
-//     image: require('../../assets/images/image_category/image_coffee.png'),
-//   },
-//   {
-//     id: 5,
-//     name: 'Trà Sữa',
-//     image: require('../../assets/images/image_category/image_milk_tea.png'),
-//   },
-//   {
-//     id: 6,
-//     name: 'Bánh Ngọt',
-//     image: require('../../assets/images/image_category/image_cake.png'),
-//   },
-//   {
-//     id: 7,
-//     name: 'Món Ngon',
-//     image: require('../../assets/images/image_category/image_delicious_food.png'),
-//   },
-// ];
 
-// Sản phẩm
-const products = [
-  {
-    id: 1,
-    name: 'Trà Xanh Matcha',
-    price: 45000,
-    categoryId: 3,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 2,
-    name: 'Cafe Sữa',
-    price: 35000,
-    categoryId: 4,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 3,
-    name: 'Trà Sữa Trân Châu',
-    price: 50000,
-    categoryId: 5,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 4,
-    name: 'Bánh Ngọt Tiramisu',
-    price: 55000,
-    categoryId: 6,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 5,
-    name: 'Trà Đào Cam Sả',
-    price: 48000,
-    categoryId: 2,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 6,
-    name: 'Bánh Mousse Chanh Leo',
-    price: 52000,
-    categoryId: 6,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 7,
-    name: 'Trà Lài',
-    price: 38000,
-    categoryId: 3,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-  },
-  {
-    id: 8,
-    name: 'Nước Ép Dâu Tây',
-    price: 42000,
-    categoryId: 2,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-    tag: 'new',
-  },
-  {
-    id: 9,
-    name: 'Sinh Tố Bơ',
-    price: 50000,
-    categoryId: 2,
-    image: require('../../assets/images/imgae_product_combo/product.png'),
-    tag: 'new',
-  },
-];
