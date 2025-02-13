@@ -25,10 +25,7 @@ const OrderStackScreen = () => {
         name={ShoppingGraph.ProductDetailSheet}
         component={ProductDetailSheet}
       />
-      <OrderStack.Screen
-        name={ShoppingGraph.FavoriteScreen}
-        component={FavoriteScreen}
-      />
+      
       <OrderStack.Screen
         name={ShoppingGraph.CheckoutScreen}
         component={CheckoutScreen}

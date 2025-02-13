@@ -120,7 +120,7 @@ const OrderScreen = props => {
           title="Danh mục"
           onCategoryPress={openDialogCategoryPress}
           onFavoritePress={() =>
-            navigation.navigate(AppGraph.MyFavoriteProducts)
+            navigation.navigate(AppGraph.FavoriteScreen)
           }
           onSearchProduct={() =>
             navigation.navigate(ShoppingGraph.SearchProductScreen)

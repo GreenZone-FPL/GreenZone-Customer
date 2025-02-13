@@ -16,7 +16,8 @@ import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
 import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
-
+import { AppContextProvider } from './src/context/AppContext';
+import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -25,37 +26,44 @@ function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
+        <AppContextProvider>
+          <NavigationContainer>
+            <BaseStack.Navigator screenOptions={{ headerShown: false }}>
 
-        <NavigationContainer>
-          <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+              <BaseStack.Screen
+                name={MainGraph.graphName}
+                component={MainNavigation}
+              />
+              <BaseStack.Screen
+                name={AppGraph.AUTHENTICATION}
+                component={AuthStackScreen}
+              />
 
-            <BaseStack.Screen
-              name={MainGraph.graphName}
-              component={MainNavigation}
-            />
-            <BaseStack.Screen
-              name={AppGraph.AUTHENTICATION}
-              component={AuthStackScreen}
-            />
+              <BaseStack.Screen
+                name={AuthGraph.LoginScreen}
+                component={LoginScreen}
+              />
+              <BaseStack.Screen
+                name={AppGraph.MembershipScreen}
+                component={MembershipScreen}
+              />
+              <BaseStack.Screen
+                name={ShoppingGraph.ChatScreen}
+                component={ChatScreen}
+              />
+              <BaseStack.Screen
+                name={AppGraph.AdvertisingScreen}
+                component={AdvertisingScreen}
+              />
 
-            <BaseStack.Screen
-              name={AuthGraph.LoginScreen}
-              component={LoginScreen}
-            />
-            <BaseStack.Screen
-              name={AppGraph.MembershipScreen}
-              component={MembershipScreen}
-            />
-            <BaseStack.Screen
-              name={ShoppingGraph.ChatScreen}
-              component={ChatScreen}
-            />
-            <BaseStack.Screen
-              name={AppGraph.AdvertisingScreen}
-              component={AdvertisingScreen}
-            />
-          </BaseStack.Navigator>
-        </NavigationContainer>
+              <BaseStack.Screen
+                name={AppGraph.FavoriteScreen}
+                component={FavoriteScreen}
+              />
+            </BaseStack.Navigator>
+          </NavigationContainer>
+        </AppContextProvider>
+
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
