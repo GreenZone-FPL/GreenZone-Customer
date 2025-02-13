@@ -18,6 +18,7 @@ import ChatScreen from './src/screens/shopping/ChatScreen';
 import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
 import { AppContextProvider } from './src/context/AppContext';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
+import { ProductDetailSheet } from './src/components';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -57,9 +58,20 @@ function App() {
               />
 
               <BaseStack.Screen
+                name={ShoppingGraph.ProductDetailSheet}
+                component={ProductDetailSheet}
+                options={{
+                  animation: 'slide_from_bottom',
+                  presentation: 'transparentModal',
+                  headerShown: false,
+                }}
+              />
+              <BaseStack.Screen
                 name={AppGraph.FavoriteScreen}
                 component={FavoriteScreen}
               />
+
+
             </BaseStack.Navigator>
           </NavigationContainer>
         </AppContextProvider>
