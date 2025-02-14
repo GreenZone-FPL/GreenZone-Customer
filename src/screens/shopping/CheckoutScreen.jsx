@@ -335,18 +335,6 @@ const PaymentDetails = () => (
       <DualTextRow key={index} {...item} />
     ))}
 
-
-
-    <Row>
-      <Text style={styles.textQuantity}>3</Text>
-      <NormalText text='Ưu đãi' style={{ color: colors.primary }} />
-      <Icon
-        source="chevron-down"
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.primary}
-      />
-    </Row>
-
     <PaymentMethod />
   </View>
 );

@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { verifyOTPApi } from '../../axios/modules/auth';
-import { AppGraph } from '../../layouts/graphs/appGraph'
+import { verifyOTPAPI } from '../../axios';
+import { AppGraph } from '../../layouts/graphs'
 import { Toaster } from '../../utils/toaster'
 import { OtpInput } from "react-native-otp-entry";
 import { colors } from '../../constants';
 const VerifyOTPScreen = ({ route, navigation }) => {
-    const { phoneNumber } = route.params; // Lấy số điện thoại từ màn hình trước
-    // const { phoneNumber } = '0868441273'; // Lấy số điện thoại từ màn hình trước
+    const { phoneNumber } = route.params; 
     const [code, setCode] = useState('');
 
     const handleVerifyOTP = async () => {
@@ -16,7 +15,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             return;
         }
         try {
-            const response = await verifyOTPApi({ phoneNumber, code });
+            const response = await verifyOTPAPI({ phoneNumber, code });
             if (response.statusCode === 201) {
                 Toaster.show("Đăng nhập thành công!")
 
@@ -48,6 +47,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
                 onChangeText={setCode}
             /> */}
             <OtpInput
+                focusColor={colors.primary}
                 autoFocus={true}
                 secureTextEntry={false}
                 numberOfDigits={6}

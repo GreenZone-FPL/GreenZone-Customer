@@ -183,8 +183,6 @@ const OrderScreen = props => {
         <ProductsListHorizontal
           products={allProducts.flatMap(category => category.products).slice(0, 10)}
           onItemClick={onItemClick}
-
-
         />
 
         <FlatList
