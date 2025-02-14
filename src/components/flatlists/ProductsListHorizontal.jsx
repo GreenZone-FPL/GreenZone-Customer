@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -6,19 +6,17 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Modal,
+  View
 } from 'react-native';
-import { Icon, Checkbox } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import ToppingModal from '../modal/ToppingModal';
-import { TextFormatter } from '../../utils';
+import { Icon } from 'react-native-paper';
 import { getProductDetailAPI } from '../../axios';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
+import ToppingModal from '../modal/ToppingModal';
 const width = Dimensions.get('window').width;
 //test
 export const ProductsListHorizontal = ({
   onItemClick,
-  toppings,
   products
 }) => {
   return (
@@ -32,7 +30,7 @@ export const ProductsListHorizontal = ({
           data={products}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
-            <ItemProduct item={item}  onItemClick={() => onItemClick(item._id)} toppings={toppings} />
+            <ItemProduct item={item}  onItemClick={() => onItemClick(item._id)}  />
           )}
           horizontal={true}
           contentContainerStyle={{
@@ -45,7 +43,7 @@ export const ProductsListHorizontal = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick, toppings }) => {
+const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [product, setProduct] = useState(null)
 

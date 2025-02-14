@@ -27,7 +27,7 @@ export const  HeaderWithBadge = (props) => {
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
             />
-            <Text style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>Chào bạn mới</Text>
+            <Text style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>{title}</Text>
             <Icon source='hand-wave' color={colors.yellow700} size={GLOBAL_KEYS.ICON_SIZE_SMALL} />
           </View>
 

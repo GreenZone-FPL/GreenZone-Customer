@@ -15,7 +15,7 @@ const BottomTab = createBottomTabNavigator();
 const MainNavigation = () => {
   return (
     <BottomTab.Navigator
-      initialRouteName={MainGraph.OrderStackScreen}
+      initialRouteName={MainGraph.HomeStackScreen}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarShowLabel: true,

@@ -1,7 +1,8 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -36,7 +37,6 @@ const HomeScreen = props => {
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
   const [allProducts, setAllProducts] = useState([])
-  const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState("Chào bạn mới");
   // Hàm xử lý khi đóng dialog
@@ -90,26 +90,38 @@ const HomeScreen = props => {
     }
   };
 
-  const onLayoutCategory = (event, categoryId) => {
-    const { y } = event.nativeEvent.layout;
-    setPositions(prev => ({ ...prev, [categoryId]: y }));
+  const onLayoutCategory = (categoryId, event) => {
+    event.target.measureInWindow((x, y) => {
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
+    });
   };
+
+
+  useEffect(() => {
+    console.log("Header title updated:", currentCategory);
+  }, [currentCategory]);
+
 
   const handleScroll = (event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
     let closestCategory = "Danh mục";
     let minDistance = Number.MAX_VALUE;
 
-    Object.entries(positions).forEach(([categoryId, positionY]) => {
-      const distance = Math.abs(scrollY - positionY);
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
-        closestCategory = categories.find(cat => cat._id === categoryId)?.name || "Danh mục";
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || "Danh mục";
       }
     });
 
-    setCurrentCategory(closestCategory);
+    if (closestCategory !== currentCategory) {
+      setCurrentCategory(closestCategory);
+    }
   };
+
+
+
   const onItemClick = (productId) => {
     console.log("Product clicked:", productId);
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -127,9 +139,10 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge title={currentCategory} onBadgePress={() => { }} isHome={false} />
       <ScrollView
-        ref={scrollViewRef}
         onScroll={handleScroll}
+
         scrollEventThrottle={16}
+        showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
 
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
@@ -144,18 +157,17 @@ const HomeScreen = props => {
           onItemClick={onItemClick}
         />
 
-
-        {
-          allProducts.length > 0 &&
-          allProducts.map((category) => (
-            <View key={category._id} onLayout={(event) => onLayoutCategory(event, category._id)}>
-              <ProductsListVertical title={category.name} products={category.products} onItemClick={onItemClick} />
+        <FlatList
+          data={allProducts}
+          keyExtractor={(item) => item._id}
+          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View onLayout={(event) => onLayoutCategory(item._id, event)}>
+              <ProductsListVertical title={item.name} products={item.products} onItemClick={onItemClick} />
             </View>
-          ))
-
-
-        }
-
+          )}
+        />
         {/* <Searchbar /> */}
       </ScrollView>
 
@@ -176,32 +188,7 @@ const HomeScreen = props => {
   );
 };
 
-const productsCombo = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '3',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-];
+
 
 const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
@@ -309,7 +296,7 @@ const styles = StyleSheet.create({
   containerContent: {
     flexDirection: 'column',
     flex: 1,
-    // marginBottom: 90,
+    marginBottom: 90,
   },
   deliverybutton: {
     position: 'absolute',
