@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
 import { getProductDetailAPI } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
 import { AppContext } from '../../context/AppContext';
+import { ShoppingGraph } from '../../layouts/graphs';
 export const ProductDetailSheet = ({ route, navigation }) => {
 
     const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
@@ -65,14 +65,18 @@ export const ProductDetailSheet = ({ route, navigation }) => {
                             toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
                         />
 
-                        <RadioGroup
-                            items={product.variant}
-                            selectedValue={selectedSize}
-                            onValueChange={setSelectedSize}
-                            title="Size"
-                            required={true}
-                            note="Bắt buộc"
-                        />
+                        {
+                            product.variant.length > 0 &&
+                            <RadioGroup
+                                items={product.variant}
+                                selectedValue={selectedSize}
+                                onValueChange={setSelectedSize}
+                                title="Size"
+                                required={true}
+                                note="Bắt buộc"
+                            />
+                        }
+
 
                         {/* <RadioGroup
                     items={product.sugarLevels}
@@ -131,7 +135,7 @@ export const ProductDetailSheet = ({ route, navigation }) => {
                                 setQuantity(quantity - 1)
                             }
                         }}
-                        totalPrice={product.sellingPrice}
+                        totalPrice={99000}
                         onButtonPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
                         buttonTitle='Thêm vào giỏ hàng'
                     />

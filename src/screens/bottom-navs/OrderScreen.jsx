@@ -1,7 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, FlatList, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 import {
   CategoryMenu,
@@ -12,12 +12,11 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 
-import { getAllCategoriesAPI, getAllToppingsAPI, getAllProductsAPI } from '../../axios';
+import { getAllCategoriesAPI, getAllProductsAPI, getAllToppingsAPI } from '../../axios';
 
 
 const OrderScreen = props => {
@@ -85,26 +84,38 @@ const OrderScreen = props => {
     fetchData(getAllProductsAPI, setAllProducts);
   }, []); // Chỉ gọi một lần khi component mount
 
-  const onLayoutCategory = (event, categoryId) => {
-    const { y } = event.nativeEvent.layout;
-    setPositions(prev => ({ ...prev, [categoryId]: y }));
+  const onLayoutCategory = (categoryId, event) => {
+    event.target.measureInWindow((x, y) => {
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
+    });
   };
+
+
+  useEffect(() => {
+    console.log("Header title updated:", currentCategory);
+  }, [currentCategory]);
+
 
   const handleScroll = (event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
     let closestCategory = "Danh mục";
     let minDistance = Number.MAX_VALUE;
 
-    Object.entries(positions).forEach(([categoryId, positionY]) => {
-      const distance = Math.abs(scrollY - positionY);
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
-        closestCategory = categories.find(cat => cat._id === categoryId)?.name || "Danh mục";
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || "Danh mục";
       }
     });
 
-    setCurrentCategory(closestCategory);
+    if (closestCategory !== currentCategory) {
+      setCurrentCategory(closestCategory);
+    }
   };
+
+
+
 
 
   const scrollToCategory = (categoryId) => {
@@ -119,6 +130,7 @@ const OrderScreen = props => {
     } else {
       console.log("Category position not found:", categoryId);
     }
+    setDialogVisible(false)
   };
 
   const onItemClick = (productId) => {
@@ -170,21 +182,22 @@ const OrderScreen = props => {
 
         <ProductsListHorizontal
           products={allProducts.flatMap(category => category.products).slice(0, 10)}
-          toppings={toppings}
           onItemClick={onItemClick}
 
 
         />
-        {
-          allProducts.length > 0 &&
-          allProducts.map((category) => (
-            <View key={category._id} onLayout={(event) => onLayoutCategory(event, category._id)}>
-              <ProductsListVertical title={category.name} products={category.products} />
+
+        <FlatList
+          data={allProducts}
+          keyExtractor={(item) => item._id}
+          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View onLayout={(event) => onLayoutCategory(item._id, event)}>
+              <ProductsListVertical title={item.name} products={item.products} onItemClick={onItemClick} />
             </View>
-          ))
-
-
-        }
+          )}
+        />
 
       </ScrollView>
 
@@ -209,7 +222,7 @@ const OrderScreen = props => {
           categories={categories}
           loading={loading}
           onCategorySelect={(category) => {
-            setDialogVisible(false)
+           
             scrollToCategory(category._id)
           }}
         />

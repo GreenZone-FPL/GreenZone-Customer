@@ -1,8 +1,8 @@
+import { ArrowDown2, Category2, Heart, SearchNormal1 } from 'iconsax-react-native';
+import PropTypes from 'prop-types';
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import PropTypes from 'prop-types'
-import { Category2, ArrowCircleDown, Heart, SearchNormal1 ,ArrowDown2} from 'iconsax-react-native';
 import { Row } from '../containers/Row';
 
 const HeaderOrderPropTypes = {
