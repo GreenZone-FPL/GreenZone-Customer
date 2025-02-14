@@ -20,6 +20,7 @@ import { AppContextProvider } from './src/context/AppContext';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
 import { ProductDetailSheet } from './src/components';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
+import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -33,12 +34,18 @@ function App() {
             <BaseStack.Navigator screenOptions={{ headerShown: false }}>
 
               <BaseStack.Screen
+                name={AppGraph.AUTHENTICATION}
+                component={AuthStackScreen}
+              />
+              <BaseStack.Screen
                 name={MainGraph.graphName}
                 component={MainNavigation}
               />
+
+
               <BaseStack.Screen
-                name={AppGraph.AUTHENTICATION}
-                component={AuthStackScreen}
+                name={ShoppingGraph.CheckoutScreen}
+                component={CheckoutScreen}
               />
 
               <BaseStack.Screen

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { sendOTPApi } from '../../axios/modules/auth';
+import { sendOTPAPI } from '../../axios/modules/auth';
 import {AuthGraph} from '../../layouts/graphs/authGraph'
+import { colors } from '../../constants';
 
 const SendOTPScreen = (props) => {
     const {navigation} = props
@@ -16,7 +17,7 @@ const SendOTPScreen = (props) => {
 
         setLoading(true);
         try {
-            const response = await sendOTPApi({ phoneNumber});
+            const response = await sendOTPAPI({ phoneNumber});
             if (response) {
                 console.log('otp = ', response.code)
                 // Alert.alert('Thành công', `Mã OTP: ${response.code}`);
@@ -61,55 +62,28 @@ const SendOTPScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f4f6f8',
-        padding: 20,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#2c3e50',
-        marginBottom: 20,
-    },
+    container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16, backgroundColor: colors.fbBg, gap: 20 },
+    title: { fontSize: 28, fontWeight: 'bold', color: colors.black },
     input: {
         width: '100%',
         height: 50,
-        borderColor: '#ccc',
+        borderColor: colors.gray200,
         borderWidth: 1,
         borderRadius: 10,
         paddingHorizontal: 15,
-        backgroundColor: '#fff',
+        backgroundColor: colors.white,
         fontSize: 16,
-        marginBottom: 20,
-        shadowColor: '#000',
+        shadowColor: colors.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
     },
-    button: {
-        backgroundColor: '#27ae60',
-        paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 10,
-        shadowColor: '#27ae60',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.5,
-        shadowRadius: 4,
-        elevation: 5,
-    },
+    button: { backgroundColor: colors.primary, padding: 16, borderRadius: 10, width: '80%' },
+    buttonText: { color: colors.white, fontSize: 16, textAlign: 'center' },
     buttonDisabled: {
         backgroundColor: '#95a5a6',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
+    }
 });
 
 export default SendOTPScreen;
