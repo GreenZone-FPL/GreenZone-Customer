@@ -24,10 +24,7 @@ const OrderStackScreen = () => {
         component={ProductDetailSheet}
       />
       
-      <OrderStack.Screen
-        name={ShoppingGraph.CheckoutScreen}
-        component={CheckoutScreen}
-      />
+    
 
       <OrderStack.Screen
         name={ShoppingGraph.RecipientInfoSheet}
