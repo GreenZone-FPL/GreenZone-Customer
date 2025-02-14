@@ -28,7 +28,7 @@ export const sendOTPAPI = async (request) => {
     }
 };
 
-export const verifyOTPApi = async (request) => {
+export const verifyOTPAPI = async (request) => {
     try {
 
         const { phoneNumber, code } = request
