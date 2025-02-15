@@ -16,13 +16,7 @@ export const getAllProductsAPI = async () => {
             return null;
         }
     } catch (error) {
-        if (error.response) {
-            console.log("Server Error:", error.response.data);
-        } else if (error.request) {
-            console.log("No response received:", error.request);
-        } else {
-            console.log("Request setup error:", error.message);
-        }
+        console.error("getAllProductsAPI Error path /v1/product/all:", error);
         throw error; // Để nơi gọi có thể xử lý lỗi tiếp
     }
 }
@@ -43,13 +37,7 @@ export const getProductDetailAPI = async (productId) => {
             return null;
         }
     } catch (error) {
-        if (error.response) {
-            console.log("Server Error:", error.response.data);
-        } else if (error.request) {
-            console.log("No response received:", error.request);
-        } else {
-            console.log("Request setup error:", error.message);
-        }
+        console.error("getProductDetailAPI Error path /v1/product/${productId}:", error);
         throw error; // Để nơi gọi có thể xử lý lỗi tiếp
     }
 }

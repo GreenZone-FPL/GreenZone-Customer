@@ -2,6 +2,7 @@ import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -289,8 +290,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.white,
+    backgroundColor: colors.primary,
     position: 'relative',
+    height: Dimensions.get('window').height
   },
   containerContent: {
     flexDirection: 'column',

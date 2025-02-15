@@ -1,28 +1,30 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  View,
   Alert,
-  Text,
   Image,
   KeyboardAvoidingView,
   Modal,
   Platform,
   ScrollView,
   StyleSheet,
-  TouchableOpacity
+  Text,
+  TouchableOpacity,
+  View
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
-import { Column, CustomFlatInput, NormalText, PrimaryButton, TitleText } from '../../components';
+import { Column, CustomFlatInput, NormalText, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { registerAPI } from '../../axios';
+import { AppAsyncStorage } from '../../utils';
 
 const RegisterScreen = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('Nam');
+  const [firstName, setFirstName] = useState('Bui');
+  const [lastName, setLastName] = useState('Ngoc Dai');
+  const [email, setEmail] = useState('dai@gmail.com');
+  const [dateOfBirth, setDateOfBirth] = useState('2025-02-15');
+  const [gender, setGender] = useState('male');
   const [avatar, setAvatar] = useState(null);
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
@@ -32,10 +34,15 @@ const RegisterScreen = () => {
   const [show, setShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const onSelectDate = (selectedDate) => {
+  const onSelectDate = (event, selectedDate) => {
+    if (event.type === 'dismissed') {
+      setShow(false); // Ẩn picker nếu người dùng hủy
+      return;
+    }
+
     const currentDate = selectedDate || new Date();
     const formattedDate = currentDate.toISOString().split('T')[0];
-    setShow(Platform.OS === 'ios' ? true : false);
+    setShow(false);
     setDateOfBirth(formattedDate);
   };
 
@@ -53,6 +60,70 @@ const RegisterScreen = () => {
       }
     );
   };
+
+  const validateForm = () => {
+    let valid = true;
+    if (!firstName) {
+      setFirstNameError('Họ không được để trống');
+      valid = false;
+    } else {
+      setFirstNameError('');
+    }
+
+    if (!lastName) {
+      setLastNameError('Tên không được để trống');
+      valid = false;
+    } else {
+      setLastNameError('');
+    }
+
+    if (!email) {
+      setEmailError('Email không được để trống');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!dateOfBirth) {
+      setDateOfBirthError('Ngày sinh không được để trống');
+      valid = false;
+    } else {
+      setDateOfBirthError('');
+    }
+
+    if (!gender) {
+      setGenderError('Giới tính không được để trống');
+      valid = false;
+    } else {
+      setGenderError('');
+    }
+
+    return valid;
+  };
+
+  const handleRegister = async () => {
+    if (validateForm()) {
+
+      const request = {
+        firstName,
+        lastName,
+        email,
+        dateOfBirth,
+        gender,
+        avatar: '', // Để avatar rỗng
+      };
+
+      try {
+        const result = await registerAPI(request);
+        // Handle kết quả trả về từ API
+        console.log("User registered:", result);
+      } catch (error) {
+        // Xử lý lỗi từ API
+        Alert.alert('Đăng ký thất bại', error.message || 'Có lỗi xảy ra, vui lòng thử lại!');
+      }
+    }
+  };
+
 
   return (
     <KeyboardAvoidingView
@@ -139,20 +210,21 @@ const RegisterScreen = () => {
 
 
           <RegisterButton
-            onPress={() => { }}
+            onPress={handleRegister}
             title='ĐĂNG KÝ' />
 
         </Column>
 
-        {show && (
+        {show ? (
           <DateTimePicker
             testID="dateTimePicker"
-            value={new Date()}
+            value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
             mode="date"
             display="default"
             onChange={onSelectDate}
           />
-        )}
+        ) : null}
+
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -194,17 +266,17 @@ const DialogGender = ({ visible, onClose, onSelect }) => {
         <Column style={styles.modalContent}>
           <TitleText text='Chọn giới tính' style={{ fontSize: 16 }} />
 
-          <TouchableOpacity style={styles.option} onPress={() => onSelect('Nam')}>
+          <TouchableOpacity style={styles.option} onPress={() => onSelect('male')}>
             <NormalText text='Nam' />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.option} onPress={() => onSelect('Nữ')}>
+          <TouchableOpacity style={styles.option} onPress={() => onSelect('female')}>
             <NormalText text='Nữ' />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.option} onPress={() => onSelect('Không xác định')}>
+          {/* <TouchableOpacity style={styles.option} onPress={() => onSelect('Không xác định')}>
             <NormalText text='Không xác định' />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
             <NormalText text='Hủy' style={{ color: colors.red800 }} />
@@ -241,6 +313,12 @@ const styles = StyleSheet.create({
   },
   avatar: {
     resizeMode: 'cover',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.overlay,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   modalContent: {
     width: 300,
