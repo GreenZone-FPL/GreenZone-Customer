@@ -33,13 +33,14 @@ function App() {
           <NavigationContainer>
             <BaseStack.Navigator screenOptions={{ headerShown: false }}>
               <BaseStack.Screen
-                name={MainGraph.graphName}
-                component={MainNavigation}
-              />
-              <BaseStack.Screen
                 name={AppGraph.AUTHENTICATION}
                 component={AuthStackScreen}
               />
+              <BaseStack.Screen
+                name={MainGraph.graphName}
+                component={MainNavigation}
+              />
+
 
 
 

@@ -124,16 +124,20 @@ FlatInput.propTypes = FlatInputPropTypes;
  */
 export const CustomFlatInput = ({
   label = 'Default label',
-  placeholder = 'Default place holder',
+  placeholder = '',
   value,
   setValue,
   message,
   rightIcon = 'calendar',
+  leftIcon = 'account',
   onRightPress,
   rightIconColor = colors.primary,
+  leftIconColor = colors.primary,
   style,
   editable = true,
   keyboardType = 'default',
+  enableLeftIcon = false,
+  enableRightIcon = false
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -150,10 +154,21 @@ export const CustomFlatInput = ({
         underlineColor={colors.primary}
         style={styles.input}
         right={
+
+          enableRightIcon &&
           <TextInput.Icon
             color={rightIconColor}
             icon={rightIcon}
             onPress={onRightPress}
+          />
+
+
+        }
+        left={
+          enableLeftIcon &&
+          <TextInput.Icon
+            color={leftIconColor}
+            icon={leftIcon}
           />
         }
         editable={editable}

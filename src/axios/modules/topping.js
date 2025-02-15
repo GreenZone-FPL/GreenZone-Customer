@@ -16,13 +16,7 @@ export const getAllToppingsAPI = async () => {
             return null;
         }
     } catch (error) {
-        if (error.response) {
-            console.log("Server Error:", error.response.data);
-        } else if (error.request) {
-            console.log("No response received:", error.request);
-        } else {
-            console.log("Request setup error:", error.message);
-        }
+        console.error("getAllToppingsAPI Error path path /v1/topping/all:", error);
         throw error; // Để nơi gọi có thể xử lý lỗi tiếp
     }
 }

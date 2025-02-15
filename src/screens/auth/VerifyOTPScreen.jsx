@@ -5,8 +5,10 @@ import { AppGraph } from '../../layouts/graphs'
 import { Toaster } from '../../utils/toaster'
 import { OtpInput } from "react-native-otp-entry";
 import { colors } from '../../constants';
+import { AppAsyncStorage } from '../../utils';
+
 const VerifyOTPScreen = ({ route, navigation }) => {
-    const { phoneNumber } = route.params; 
+    const { phoneNumber } = route.params;
     const [code, setCode] = useState('');
 
     const handleVerifyOTP = async () => {
@@ -19,9 +21,12 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             if (response.statusCode === 201) {
                 Toaster.show("Đăng nhập thành công!")
 
-                // console.log('otp = ', response.code)
-                // Lưu token để dùng cho các API tiếp theo (có thể dùng AsyncStorage)
-                // AsyncStorage.setItem('authToken', response.token);
+                const accessToken = response.data.token.accessToken.token;
+                const refreshToken = response.data.token.refreshToken.token;
+
+                // Lưu token vào AsyncStorage
+                await AppAsyncStorage.storeData('accessToken', accessToken);
+                await AppAsyncStorage.storeData('refreshToken', refreshToken);
 
                 navigation.navigate(AppGraph.MAIN)
             } else {
@@ -38,14 +43,6 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             <Text style={styles.title}>Xác thực OTP</Text>
             <Text style={styles.subtitle}>Nhập mã OTP gửi đến {phoneNumber}</Text>
 
-            {/* <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                maxLength={6}
-                placeholder="Nhập OTP"
-                value={code}
-                onChangeText={setCode}
-            /> */}
             <OtpInput
                 focusColor={colors.primary}
                 autoFocus={true}

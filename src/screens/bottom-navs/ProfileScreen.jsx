@@ -1,13 +1,20 @@
-import React from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-paper';
-import {HeaderWithBadge, LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import {AppGraph, AuthGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
-
+import React, { useEffect } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { HeaderWithBadge, LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AppAsyncStorage } from '../../utils';
 const ProfileScreen = props => {
   const navigation = props.navigation;
 
+  useEffect(() => {
+    const fetchToken = async () => {
+      const accessToken = await AppAsyncStorage.readData('accessToken');
+      console.log('accessToken', accessToken);
+    };
+    fetchToken();
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -83,14 +90,14 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

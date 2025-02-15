@@ -16,13 +16,7 @@ export const getAllCategoriesAPI = async () => {
             return null;
         }
     } catch (error) {
-        if (error.response) {
-            console.log("Server Error:", error.response.data);
-        } else if (error.request) {
-            console.log("No response received:", error.request);
-        } else {
-            console.log("Request setup error:", error.message);
-        }
+        console.error("getAllCategoriesAPI error path /v1/category/all:", error);
         throw error; // Để nơi gọi có thể xử lý lỗi tiếp
     }
 };
