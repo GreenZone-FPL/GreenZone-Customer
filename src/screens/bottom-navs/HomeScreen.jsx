@@ -140,7 +140,6 @@ const HomeScreen = props => {
       <HeaderWithBadge title={currentCategory} onBadgePress={() => { }} isHome={false} />
       <ScrollView
         onScroll={handleScroll}
-
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
