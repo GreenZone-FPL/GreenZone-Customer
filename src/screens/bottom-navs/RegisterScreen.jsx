@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   View,
   Alert,
+  Text,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -12,8 +13,9 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { Icon } from 'react-native-paper';
 import { Column, CustomFlatInput, NormalText, PrimaryButton, TitleText } from '../../components';
-import { colors } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('');
@@ -135,7 +137,11 @@ const RegisterScreen = () => {
           <NormalText text='Upload avatar (Không bắt buộc)' style={{ color: colors.primary }} />
           <Avatar uri={avatar} onPress={openImagePicker} />
 
-          <PrimaryButton title='ĐĂNG KÝ' />
+
+          <RegisterButton
+            onPress={() => { }}
+            title='ĐĂNG KÝ' />
+
         </Column>
 
         {show && (
@@ -149,6 +155,21 @@ const RegisterScreen = () => {
         )}
       </ScrollView>
     </KeyboardAvoidingView>
+  );
+};
+
+const RegisterButton = ({ title = 'Đăng ký', onPress }) => {
+
+  return (
+    <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={onPress}>
+      <View style={{ width: 35, height: 35 }}></View>
+      <Text style={styles.buttonText}>{title}</Text>
+      <Icon
+        source="arrow-right-circle"
+        color={colors.white}
+        size={35}
+      />
+    </TouchableOpacity>
   );
 };
 
@@ -240,6 +261,19 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     marginTop: 10,
+  },
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    padding: 10
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: 'bold',
+    marginRight: 8,
   },
 });
 
