@@ -80,7 +80,14 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="logout"
             title="Đăng xuất"
-            onPress={() => navigation.navigate(AuthGraph.LoginScreen)}
+            onPress={async () => {
+              // Xóa token khi người dùng logout
+              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+
+              // Điều hướng đến màn hình đăng nhập
+              navigation.navigate(AuthGraph.LoginScreen);
+            }}
           />
         </View>
       </View>

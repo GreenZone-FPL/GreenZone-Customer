@@ -1,21 +1,60 @@
-import React, { useState } from 'react';
+import LottieView from 'lottie-react-native';
+import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
+  Modal,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View
 } from 'react-native';
+import { Icon } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { FlatInput, LightStatusBar, PrimaryButton } from '../../components';
+import { sendOTPAPI } from '../../axios';
+import { FlatInput, LightStatusBar, Row } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { sendOTPApi } from '../../axios/modules/auth';
+import { AuthGraph } from '../../layouts/graphs';
+import { AppAsyncStorage } from '../../utils';
 
 
-const LoginScreen = props => {
-  const [value, setValue] = useState();
+const LoginScreen = ({ navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState('0868441273');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      const accessToken = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+      console.log('accessToken', accessToken);
+    };
+    fetchToken();
+  }, []);
+
+  const handleSendOTP = async () => {
+    if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
+      Alert.alert('Lỗi', 'Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await sendOTPAPI({ phoneNumber });
+      if (response) {
+        console.log('otp = ', response.code);
+        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
+      } else {
+        Alert.alert('Lỗi', 'Không thể gửi OTP, vui lòng thử lại sau.');
+      }
+    } catch (error) {
+      console.log('error', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <KeyboardAvoidingView>
@@ -29,16 +68,25 @@ const LoginScreen = props => {
             <Text style={styles.welcome}>Chào mừng bạn đến với</Text>
             <Text style={styles.title}>GREEN ZONE</Text>
             <FlatInput
+              value={phoneNumber}
               label="Nhập số điện thoại"
               style={{ width: '100%' }}
               placeholder="Nhập số điện thoại của bạn..."
-              setValue={setValue}
+              setValue={setPhoneNumber}
+              // autoFocus
             />
-            <PrimaryButton
-              title="Đăng nhập"
-              onPress={() => console.log('đăng nhập')}
-              style={{ width: '100%' }}
-            />
+
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: colors.primary }]}
+              onPress={handleSendOTP}
+            >
+              <Row style={{ width: '100%', justifyContent: 'space-between' }}>
+                <View style={{ width: 35, height: 35 }}></View>
+                <Text style={styles.buttonText}>Đăng nhập</Text>
+                <Icon source="arrow-right-circle" color={colors.white} size={35} />
+              </Row>
+            </TouchableOpacity>
+
             <View style={styles.row}>
               <View style={styles.separator}></View>
               <Text style={styles.other}>Hoặc</Text>
@@ -63,6 +111,21 @@ const LoginScreen = props => {
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {/* Modal hiển thị overlay khi đang loading */}
+      <Modal transparent={true} visible={loading} animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <LottieView
+              source={require('../../assets/animations/ani_loading.json')} // Đường dẫn tới file JSON của bạn
+              autoPlay
+              loop
+              style={{ width: 100, height: 100 }}
+            />
+            <Text style={styles.loadingText}>Đang xử lý...</Text>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -73,7 +136,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
   },
   imgBanner: {
     width: '100%',
@@ -156,5 +219,33 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontWeight: '500',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+  },
+
+  button: {
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    padding: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: colors.gray200,
+    padding: 40,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.black,
   },
 });

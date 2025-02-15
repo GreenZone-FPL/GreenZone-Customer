@@ -1,6 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export class AppAsyncStorage {
+   
+    static STORAGE_KEYS = {
+        accessToken: 'accessToken',
+        refreshToken: 'refreshToken',
+       
+    };
+
     static async readData(key, defaultValue = null) {
         try {
             const jsonValue = await AsyncStorage.getItem(key);
@@ -37,5 +44,3 @@ export class AppAsyncStorage {
         }
     }
 }
-
-

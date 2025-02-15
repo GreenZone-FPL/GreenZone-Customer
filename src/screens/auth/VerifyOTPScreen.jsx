@@ -21,13 +21,6 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             if (response.statusCode === 201) {
                 Toaster.show("Đăng nhập thành công!")
 
-                const accessToken = response.data.token.accessToken.token;
-                const refreshToken = response.data.token.refreshToken.token;
-
-                // Lưu token vào AsyncStorage
-                await AppAsyncStorage.storeData('accessToken', accessToken);
-                await AppAsyncStorage.storeData('refreshToken', refreshToken);
-
                 navigation.navigate(AppGraph.MAIN)
             } else {
                 Toaster.show("Mã OTP không hợp lệ")

@@ -73,7 +73,8 @@ export const FlatInput = ({
   editable = true,
   keyboardType = 'default',
   onSubmitEditing,
-  returnKeyType = "done"
+  returnKeyType = "done",
+  autoFocus = false
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -90,6 +91,7 @@ export const FlatInput = ({
         underlineColor={colors.primary}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         style={styles.input}
+        autoFocus={autoFocus}
         right={
           secureTextEntry && (
             <TextInput.Icon
