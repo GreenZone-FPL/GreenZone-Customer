@@ -5,30 +5,26 @@ export const registerAPI = async ({ firstName, lastName, email, dateOfBirth, gen
     try {
         const body = { firstName, lastName, email, dateOfBirth, gender, avatar };
 
-        // Gửi request
         const response = await axiosInstance().post("/auth/otp/register", body);
 
-        // Tách dữ liệu từ response
         const { statusCode, success, data } = response;
 
         if (success && statusCode === 201) {
             console.log("Register successfully, userId = ", data.user._id);
-
-            // Trích xuất accessToken và refreshToken từ response
+        
             const { accessToken, refreshToken } = data.token;
+           
+            await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken.token);
+            await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken.token);
 
-            // Lưu token vào AsyncStorage
-            await AppAsyncStorage.storeData('accessToken', accessToken.token);
-            await AppAsyncStorage.storeData('refreshToken', refreshToken.token);
-
-            return data; // Trả về dữ liệu OTP để xử lý tiếp
+            return data; 
         } else {
             console.log("Failed to send OTP:", response);
             return null;
         }
     } catch (error) {
         console.error("RegisterAPI Error path /auth/otp/register :", error);
-        throw error; // Để nơi gọi có thể xử lý lỗi tiếp
+        throw error; 
     }
 };
 
@@ -59,12 +55,20 @@ export const sendOTPAPI = async ({phoneNumber}) => {
 
 export const verifyOTPAPI = async ({ phoneNumber, code }) => {
     try {
-        const body = { phoneNumber, code }
+        const body = { phoneNumber, code };
         const response = await axiosInstance().post("/auth/otp/login", body);
 
         const { success, data } = response;
         if (success) {
             console.log("✅ OTP Verified, token = ", data.token);
+            
+            // Lưu token vào AsyncStorage
+            const accessToken = data.token.accessToken.token;
+            const refreshToken = data.token.refreshToken.token;
+
+            await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);
+            await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken);
+
             return response;
         } else {
             console.log("❌ OTP Verification Failed:");
@@ -75,6 +79,7 @@ export const verifyOTPAPI = async ({ phoneNumber, code }) => {
         throw error;
     }
 };
+
 
 
 

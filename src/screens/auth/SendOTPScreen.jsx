@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { sendOTPAPI } from '../../axios/modules/auth';
+import { sendOTPAPI } from '../../axios';
 import {AuthGraph} from '../../layouts/graphs/authGraph'
 import { colors } from '../../constants';
 

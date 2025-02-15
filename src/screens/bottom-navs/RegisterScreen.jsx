@@ -351,7 +351,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
-    marginRight: 8,
   },
 });
 

@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
+
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     flex: 1,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
   itemImage: {
     width: width / 4.5,

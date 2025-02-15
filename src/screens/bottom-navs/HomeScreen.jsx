@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.white,
     position: 'relative',
     height: Dimensions.get('window').height
   },
