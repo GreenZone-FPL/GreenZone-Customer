@@ -1,4 +1,6 @@
 import { AppRegistry } from 'react-native';
 import App from './App';
 import { name as appName } from './app.json';
-AppRegistry.registerComponent(appName, () => App);
+import RegisterScreen from './src/screens/auth/RegisterScreen';
+import LoginScreen from './src/screens/auth/LoginScreen';
+AppRegistry.registerComponent(appName, () => LoginScreen);

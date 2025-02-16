@@ -10,5 +10,6 @@ export const AuthGraph = Object.freeze({
     VerifyOTPScreen: 'VerifyOTPScreen',
     SplashScreen: 'SplashScreen',
     LoginScreen: 'LoginScreen',
+    RegisterScreen: 'RegisterScreen',
 
 });
