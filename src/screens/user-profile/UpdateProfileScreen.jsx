@@ -32,7 +32,7 @@ const UpdateProfileScreen = props => {
             <Image
               style={styles.avatarImage}
               source={{
-                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/User_icon-cp.png/618px-User_icon-cp.png',
+                uri: 'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
               }}
             />
             <View style={styles.cameraIconContainer}>
@@ -66,11 +66,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
+    gap: 16
   },
   avatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
   },
   avatar: {
     backgroundColor: colors.gray700,

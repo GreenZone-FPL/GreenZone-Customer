@@ -1,6 +1,7 @@
 // App's Graph
 export const AppGraph = Object.freeze({
     ROOT: 'RootGraph',
+    GUEST: 'GuestGraph',
     AUTHENTICATION: 'AuthGraph',
     MAIN: 'MainGraph',
     BOTTOM: 'BottomGraph',

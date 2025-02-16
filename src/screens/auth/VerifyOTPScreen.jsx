@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { verifyOTPAPI } from '../../axios';
-import { AppGraph } from '../../layouts/graphs'
-import { Toaster } from '../../utils/toaster'
+import React, { useState, useEffect, useContext } from 'react';
+import { AppContext } from '../../context/AppContext';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { OtpInput } from "react-native-otp-entry";
+import { verifyOTPAPI } from '../../axios';
 import { colors } from '../../constants';
-import { AppAsyncStorage } from '../../utils';
+import { AppGraph, AuthGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils/toaster';
 
 const VerifyOTPScreen = ({ route, navigation }) => {
     const { phoneNumber } = route.params;
     const [code, setCode] = useState('');
+
+    const { login } = useContext(AppContext)
 
     const handleVerifyOTP = async () => {
         if (code.length !== 6) {
@@ -20,8 +22,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             const response = await verifyOTPAPI({ phoneNumber, code });
             if (response.statusCode === 201) {
                 Toaster.show("Đăng nhập thành công!")
-
-                navigation.navigate(AppGraph.MAIN)
+                login()
             } else {
                 Toaster.show("Mã OTP không hợp lệ")
             }
