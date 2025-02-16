@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 export class AppAsyncStorage {
-   
+
     static STORAGE_KEYS = {
         accessToken: 'accessToken',
         refreshToken: 'refreshToken',
-       
+
     };
 
     static async readData(key, defaultValue = null) {
@@ -43,4 +44,37 @@ export class AppAsyncStorage {
             console.log('Error clearing all data:', error);
         }
     }
+
+    static async isTokenValid() {
+        const accessToken = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+        if (!accessToken) {
+            return false; 
+        }
+
+        try {
+            const decoded = jwtDecode(accessToken); // Sử dụng jwt_decode thay vì jwtDecode
+            console.log('decoded', decoded);
+            const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại (tính theo giây)
+
+            return decoded.exp > currentTime; // Nếu exp lớn hơn currentTime thì token còn hạn
+        } catch (error) {
+            console.log('Lỗi khi decode token:', error);
+            return false; // Token không hợp lệ
+        }
+    };
+
+    static startTokenWatcher(onTokenExpired) {
+        if (this.tokenWatcher) {
+            clearInterval(this.tokenWatcher);
+        }
+    
+        this.tokenWatcher = setInterval(async () => {
+            const isValid = await this.isTokenValid();
+            if (!isValid) {
+                clearInterval(this.tokenWatcher);
+                onTokenExpired(); // Xử lý khi token hết hạn và không refresh được
+            }
+        }, 5000); // Kiểm tra mỗi 5 giây
+    }
+
 }

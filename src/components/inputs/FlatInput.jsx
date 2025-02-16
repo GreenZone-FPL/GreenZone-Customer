@@ -61,8 +61,8 @@ const CustomFlatInputPropTypes = {
  * />
  */
 export const FlatInput = ({
-  label = 'Default label',
-  placeholder = 'Default place holder',
+  label = '',
+  placeholder = '',
   value,
   setValue,
   invalidMessage,

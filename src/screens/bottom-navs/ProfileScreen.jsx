@@ -1,35 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { HeaderWithBadge, LightStatusBar } from '../../components';
+import { Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AppGraph, AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 import { AppAsyncStorage } from '../../utils';
+import { getProfileAPI } from '../../axios';
+import { AppContext } from '../../context/AppContext';
+
 const ProfileScreen = props => {
   const navigation = props.navigation;
+  const { isLoggedIn, logout } = useContext(AppContext)
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const accessToken = await AppAsyncStorage.readData('accessToken');
-      console.log('accessToken', accessToken);
-    };
-    fetchToken();
-  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
 
-      <View style={styles.body}>
-        <Text style={styles.sectionTitle}>Tài khoản</Text>
-        <View>
-          <View style={styles.accountContainer}>
+      <Column style={styles.body}>
+        <TitleText text='Tài khoản' />
+
+        <Column >
+          <Row style={styles.accountContainer}>
             <CardAccount
               icon="account"
               color={colors.primary}
               title="Thông tin cá nhân"
               onPress={() => {
-                navigation.navigate(UserGraph.UpdateProfileScreen);
+                if (isLoggedIn) {
+                  navigation.navigate(UserGraph.UpdateProfileScreen);
+                } else {
+                  navigation.navigate(AuthGraph.LoginScreen);
+                }
               }}
             />
             <CardAccount
@@ -38,8 +40,9 @@ const ProfileScreen = props => {
               title="Địa chỉ"
               onPress={() => navigation.navigate(UserGraph.AddressScreen)}
             />
-          </View>
-          <View style={styles.accountContainer}>
+          </Row>
+
+          <Row style={styles.accountContainer}>
             <CardAccount
               icon="file-document-edit"
               color={colors.orange700}
@@ -48,10 +51,11 @@ const ProfileScreen = props => {
                 navigation.navigate(OrderGraph.OrderHistoryScreen);
               }}
             />
-          </View>
-        </View>
+          </Row>
+        </Column>
 
-        <Text style={styles.sectionTitle}>Tiện ích</Text>
+        <TitleText text='Tiện ích' />
+
         <View style={styles.utilities}>
           <CardUtiliti
             icon="cog"
@@ -81,17 +85,16 @@ const ProfileScreen = props => {
             icon="logout"
             title="Đăng xuất"
             onPress={async () => {
-              // Xóa token khi người dùng logout
+        
               await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
               await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
 
-              // Điều hướng đến màn hình đăng nhập
-              navigation.navigate(AuthGraph.LoginScreen);
+              logout()
             }}
           />
         </View>
-      </View>
-    </SafeAreaView>
+      </Column>
+    </SafeAreaView >
   );
 };
 
@@ -119,12 +122,13 @@ const CardUtiliti = ({ icon, title, onPress }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     flexDirection: 'column',
   },
   body: {
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
   },
   sectionTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
