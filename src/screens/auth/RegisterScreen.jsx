@@ -18,13 +18,13 @@ import { Column, CustomFlatInput, NormalText, TitleText } from '../../components
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { registerAPI } from '../../axios';
 import { AppAsyncStorage } from '../../utils';
-
+import { uploadFileAPI } from '../../axios';
 const RegisterScreen = () => {
   const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
   const [email, setEmail] = useState('dai@gmail.com');
   const [dateOfBirth, setDateOfBirth] = useState('2025-02-15');
-  const [gender, setGender] = useState('male');
+  const [gender, setGender] = useState('Nam');
   const [avatar, setAvatar] = useState(null);
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
@@ -102,27 +102,54 @@ const RegisterScreen = () => {
   };
 
   const handleRegister = async () => {
-    if (validateForm()) {
+    if (!validateForm()) return;
 
-      const request = {
-        firstName,
-        lastName,
-        email,
-        dateOfBirth,
-        gender,
-        avatar: '', // Để avatar rỗng
-      };
+    try {
+        let avatarUrl = "";
 
-      try {
+        // Nếu có avatar, tiến hành upload
+        if (avatar) {
+            console.log("Uploading avatar...");
+            const file = {
+                uri: avatar,
+                type: "image/jpeg", // Hoặc lấy từ response của picker
+                name: "avatar.jpg",
+            };
+            
+            // Gọi API upload file
+            const uploadResult = await uploadFileAPI(file);
+
+            // Kiểm tra nếu upload thất bại
+            if (uploadResult) {
+                avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
+            } else {
+                console.log("Upload avatar failed, proceeding without avatar.");
+            }
+        }
+
+        // Chuyển đổi giới tính
+        const genderValue = gender === "Nam" ? "male" : "female";
+
+        // Tạo request
+        const request = {
+            firstName,
+            lastName,
+            email,
+            dateOfBirth,
+            gender: genderValue,
+            avatar: avatarUrl || "", // Nếu không có avatar thì truyền giá trị rỗng
+        };
+
+        // Gọi API đăng ký
         const result = await registerAPI(request);
-        // Handle kết quả trả về từ API
         console.log("User registered:", result);
-      } catch (error) {
-        // Xử lý lỗi từ API
-        Alert.alert('Đăng ký thất bại', error.message || 'Có lỗi xảy ra, vui lòng thử lại!');
-      }
+        Alert.alert("Thành công", "Đăng ký tài khoản thành công!");
+    } catch (error) {
+        console.error("Registration failed:", error);
+        Alert.alert("Đăng ký thất bại", error.message || "Có lỗi xảy ra, vui lòng thử lại!");
     }
-  };
+};
+
 
 
   return (
@@ -266,11 +293,11 @@ const DialogGender = ({ visible, onClose, onSelect }) => {
         <Column style={styles.modalContent}>
           <TitleText text='Chọn giới tính' style={{ fontSize: 16 }} />
 
-          <TouchableOpacity style={styles.option} onPress={() => onSelect('male')}>
+          <TouchableOpacity style={styles.option} onPress={() => onSelect('Nam')}>
             <NormalText text='Nam' />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.option} onPress={() => onSelect('female')}>
+          <TouchableOpacity style={styles.option} onPress={() => onSelect('Nữ')}>
             <NormalText text='Nữ' />
           </TouchableOpacity>
 

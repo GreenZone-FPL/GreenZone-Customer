@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { Icon } from 'react-native-paper'
 import PropTypes from 'prop-types'
+import { Row } from '../containers/Row';
 
 
 const NormalHeaderPropTypes = {
@@ -29,7 +30,7 @@ export const  NormalHeader = ({
   style
 }) => {
   return (
-    <View style={[styles.header, style]}>
+    <Row style={[styles.header, style]}>
 
       <TouchableOpacity onPress={onLeftPress}>
         <Icon source={leftIcon} size={24} color={leftIconColor} />
@@ -46,7 +47,7 @@ export const  NormalHeader = ({
       ) : (
         <View style={styles.placeholderIcon} />
       )}
-    </View>
+    </Row>
   );
 };
 
@@ -56,12 +57,9 @@ NormalHeader.propTypes = NormalHeaderPropTypes;
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingTop: 24
+    paddingVertical: 24
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,

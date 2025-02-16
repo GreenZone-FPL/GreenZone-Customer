@@ -1,6 +1,58 @@
 import axiosInstance from "../axiosInstance";
 import { AppAsyncStorage } from "../../utils";
 
+
+
+export const refreshTokenAPI = async () => {
+    try {
+        const storedRefreshToken = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+        if (!storedRefreshToken) {
+            console.log("Không tìm thấy refreshToken!");
+            return null;
+        }
+
+
+        const body = { refreshToken: storedRefreshToken };
+
+        const response = await axiosInstance().post("/auth/refresh", body);
+
+        // Tách dữ liệu từ response
+        const { statusCode, success, data } = response;
+
+        if (success && statusCode === 201) {
+            console.log("Refresh Successfully new accesstoken = ", data.accessToken.token);
+            return data;
+        } else {
+            console.log("Failed to refresh token:");
+            return null;
+        }
+    } catch (error) {
+        console.error("refreshTokenAPI Error path /auth/refresh:", error);
+        throw error;
+    }
+};
+export const getProfileAPI = async () => {
+    try {
+
+        const response = await axiosInstance().get("/auth/profile");
+
+        // Tách dữ liệu từ response
+        const { statusCode, success, data } = response;
+
+        if (success && statusCode === 200) {
+            console.log("getProfileAPI data = ", data);
+            return data;
+        } else {
+            console.log("Failed to get profile, path /auth/profile");
+            return null;
+        }
+    } catch (error) {
+        console.error("getProfileAPI error path /auth/profile:", error);
+        throw error; // Để nơi gọi có thể xử lý lỗi tiếp
+    }
+};
+
+
 export const registerAPI = async ({ firstName, lastName, email, dateOfBirth, gender, avatar = null }) => {
     try {
         const body = { firstName, lastName, email, dateOfBirth, gender, avatar };
@@ -11,29 +63,29 @@ export const registerAPI = async ({ firstName, lastName, email, dateOfBirth, gen
 
         if (success && statusCode === 201) {
             console.log("Register successfully, userId = ", data.user._id);
-        
+
             const { accessToken, refreshToken } = data.token;
-           
+
             await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken.token);
             await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken.token);
 
-            return data; 
+            return data;
         } else {
-            console.log("Failed to send OTP:", response);
+            console.log("Failed to register:", response);
             return null;
         }
     } catch (error) {
         console.error("RegisterAPI Error path /auth/otp/register :", error);
-        throw error; 
+        throw error;
     }
 };
 
 
 
 
-export const sendOTPAPI = async ({phoneNumber}) => {
+export const sendOTPAPI = async ({ phoneNumber }) => {
     try {
-       
+
         const body = { phoneNumber }
         const response = await axiosInstance().post("/auth/otp/send", body);
 
@@ -61,7 +113,7 @@ export const verifyOTPAPI = async ({ phoneNumber, code }) => {
         const { success, data } = response;
         if (success) {
             console.log("✅ OTP Verified, token = ", data.token);
-            
+
             // Lưu token vào AsyncStorage
             const accessToken = data.token.accessToken.token;
             const refreshToken = data.token.refreshToken.token;
