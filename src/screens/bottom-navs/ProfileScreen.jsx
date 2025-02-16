@@ -1,13 +1,20 @@
-import React from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-paper';
-import {HeaderWithBadge, LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
-import {AppGraph, AuthGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
-
+import React, { useEffect } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { HeaderWithBadge, LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AppAsyncStorage } from '../../utils';
 const ProfileScreen = props => {
   const navigation = props.navigation;
 
+  useEffect(() => {
+    const fetchToken = async () => {
+      const accessToken = await AppAsyncStorage.readData('accessToken');
+      console.log('accessToken', accessToken);
+    };
+    fetchToken();
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -73,7 +80,14 @@ const ProfileScreen = props => {
           <CardUtiliti
             icon="logout"
             title="Đăng xuất"
-            onPress={() => navigation.navigate(AuthGraph.LoginScreen)}
+            onPress={async () => {
+              // Xóa token khi người dùng logout
+              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+
+              // Điều hướng đến màn hình đăng nhập
+              navigation.navigate(AuthGraph.LoginScreen);
+            }}
           />
         </View>
       </View>
@@ -83,14 +97,14 @@ const ProfileScreen = props => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

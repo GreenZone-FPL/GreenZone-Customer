@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -6,16 +6,19 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Modal,
+  View
 } from 'react-native';
-import {Icon, Checkbox} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
+import { Icon } from 'react-native-paper';
+import { getProductDetailAPI } from '../../axios';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
-
 const width = Dimensions.get('window').width;
-
-export const ProductsListHorizontal = ({onItemClick}) => {
+//test
+export const ProductsListHorizontal = ({
+  onItemClick,
+  products
+}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -24,10 +27,10 @@ export const ProductsListHorizontal = ({onItemClick}) => {
           <Text style={styles.timeText}>08:00:00</Text>
         </View>
         <FlatList
-          data={productsCombo}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({item}) => (
-            <ItemProduct item={item} onItemClick={() => onItemClick()} />
+          data={products}
+          keyExtractor={item => item._id.toString()}
+          renderItem={({ item }) => (
+            <ItemProduct item={item}  onItemClick={() => onItemClick(item._id)}  />
           )}
           horizontal={true}
           contentContainerStyle={{
@@ -40,17 +43,38 @@ export const ProductsListHorizontal = ({onItemClick}) => {
   );
 };
 
-const ItemProduct = ({item, onItemClick}) => {
+const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [product, setProduct] = useState(null)
+
+  useEffect(() => {
+
+    const fetchProductDetail = async () => {
+      try {
+        const data = await getProductDetailAPI(item._id);
+        if (data) {
+          setProduct(data); // Lưu danh mục vào state
+        }
+      } catch (error) {
+        console.error("Error fetchProductDetail:", error);
+      } finally {
+        // setLoading(false);
+      }
+    };
+
+    fetchProductDetail();
+  }, []);
 
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image source={item.image} style={styles.itemImage} />
+        <Image
+          source={{ uri: String(item.image) }}
+          style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.priceContainer}>
         <Text style={styles.priceText}>
-          {item.price.toLocaleString('vi-VN')}đ
+          {TextFormatter.formatCurrency(item.sellingPrice)}
         </Text>
       </View>
       <Text numberOfLines={4} style={styles.productNameText}>
@@ -66,46 +90,25 @@ const ItemProduct = ({item, onItemClick}) => {
         />
       </TouchableOpacity>
 
-      <ToppingModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        item={item}
-        onConfirm={(selectedToppings, quantity) => {
-          console.log('Selected toppings:', selectedToppings);
-          console.log('Quantity:', quantity);
-          setModalVisible(false);
-        }}
-      />
+      {
+        product &&
+        <ToppingModal
+          toppings={product.topping}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          item={item}
+          onConfirm={(selectedToppings, quantity) => {
+            console.log('Selected toppings:', selectedToppings);
+            console.log('Quantity:', quantity);
+            setModalVisible(false);
+          }}
+        />
+      }
     </View>
   );
 };
 
-const productsCombo = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 69000,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '3',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-    price: 79000,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: require('../../assets/images/imgae_product_combo/image_combo_3_milk_tea.png'),
-    price: 79000,
-  },
-];
+
 
 const styles = StyleSheet.create({
   container: {

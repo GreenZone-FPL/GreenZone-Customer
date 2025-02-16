@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Dimensions,
   Image,
@@ -8,40 +8,43 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {Column, LightStatusBar, NormalHeader, Row} from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {TextFormatter} from '../../utils';
-import {ShoppingGraph} from '../../layouts/graphs';
+import { Icon } from 'react-native-paper';
+import { Column, LightStatusBar, NormalHeader, Row } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { ShoppingGraph } from '../../layouts/graphs';
+import { AppContext } from '../../context/AppContext';
+const { width } = Dimensions.get('window');
 
-const {width} = Dimensions.get('window');
-
-const FavoriteScreen = ({navigation}) => {
+const FavoriteScreen = ({ navigation }) => {
+  const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
   const navigateProductDetail = id => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {id});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { id });
   };
 
   return (
     <Column style={styles.container}>
-      <View style={styles.headerContainer}>
+    
         <LightStatusBar />
         <NormalHeader
           title="Sản phẩm yêu thích"
           onLeftPress={() => navigation.goBack()}
         />
-      </View>
-      <Body navigateProductDetail={navigateProductDetail} />
+   
+      <Body
+        favorites={favorites}
+        navigateProductDetail={navigateProductDetail} />
     </Column>
   );
 };
 
-const Body = ({navigateProductDetail}) => {
+const Body = ({ navigateProductDetail, favorites }) => {
   return (
     <View style={styles.flatListContent}>
       <FlatList
-        data={productsFavorite}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => (
+        data={favorites}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => (
           <Item item={item} navigateProductDetail={navigateProductDetail} />
         )}
         contentContainerStyle={styles.flatListContainer}
@@ -50,11 +53,11 @@ const Body = ({navigateProductDetail}) => {
   );
 };
 
-const Item = ({item, navigateProductDetail}) => {
+const Item = ({ item, navigateProductDetail }) => {
   return (
     <Row style={styles.itemContainer}>
       <View style={styles.imageWrapper}>
-        <Image source={{uri: item.image}} style={styles.itemImage} />
+        <Image source={{ uri: item.image }} style={styles.itemImage} />
         {item.discount > 0 && (
           <Text style={styles.discountBadge}>
             {TextFormatter.formatCurrency((item.discount * item.price) / 100)}
@@ -66,13 +69,13 @@ const Item = ({item, navigateProductDetail}) => {
         <Row>
           {item.discount > 0 && (
             <Text
-              style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
+              style={[styles.itemPrice, { textDecorationLine: 'line-through' }]}>
               {TextFormatter.formatCurrency(item.price)}
             </Text>
           )}
-          <Text style={[styles.itemPrice, {fontWeight: 'bold'}]}>
+          <Text style={[styles.itemPrice]}>
             {TextFormatter.formatCurrency(
-              item.price - (item.discount * item.price) / 100,
+              item.sellingPrice
             )}
           </Text>
         </Row>
@@ -95,10 +98,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
   },
-  headerContainer: {
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
+
   flatListContainer: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },

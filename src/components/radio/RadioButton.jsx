@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
-
+import { TextFormatter } from '../../utils';
 
 const RadioButtonPropTypes = {
     label: PropTypes.string.isRequired,
@@ -15,7 +15,7 @@ const RadioButtonPropTypes = {
 };
 
 
-export const  RadioButton = ({
+export const RadioButton = ({
     label,
     selected,
     onPress,
@@ -38,7 +38,7 @@ export const  RadioButton = ({
 
             {price && (
                 <Text style={[styles.price, { color: textColor }]}>
-                    {price}
+                    {TextFormatter.formatCurrency(price)}
                 </Text>
             )}
         </Pressable>

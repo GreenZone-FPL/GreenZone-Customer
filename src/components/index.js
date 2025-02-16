@@ -71,9 +71,11 @@ export * from './tabviews/CustomTabView';
 
 // texts
 export * from './texts/DualTextRow';
+export * from './texts/NormalPrimaryText';
 export * from './texts/PaymentMethodRow';
 export * from './texts/NormalText';
 export * from './texts/TitleText';
+
 
 // modals
 export * from './modal/ToppingModal';

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import {QuantityButton} from '../buttons/QuantityButton';
 import {QuantitySelector} from '../buttons/QuantitySelector';
-
+import { TextFormatter } from '../../utils';
 
 const SelectablePropTypes = {
   item: PropTypes.shape({
@@ -55,8 +55,8 @@ export const Selectable = ({
         <Text style={[styles.label, { color: textColor }]}>{item.name}</Text>
       </View>
 
-      {item.price && (
-        <Text style={[styles.price, { color: textColor }]}>{item.price}</Text>
+      {item.extraPrice && (
+        <Text style={[styles.price, { color: textColor }]}>{TextFormatter.formatCurrency(item.extraPrice)}</Text>
       )}
     </View>
   );

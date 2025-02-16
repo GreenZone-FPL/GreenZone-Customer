@@ -1,44 +1,54 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 
 import {
+  CategoryMenu,
+  DeliveryButton,
+  DialogBasic,
+  DialogShippingMethod,
+  HeaderOrder,
+  LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  DeliveryButton,
-  CategoryMenu,
-  DialogShippingMethod,
-  LightStatusBar,
-  HeaderOrder,
-  DialogBasic,
 } from '../../components';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
-import { getAllCategoriesApi } from '../../axios/modules/category';
+
+import { getAllCategoriesAPI, getAllProductsAPI, getAllToppingsAPI } from '../../axios';
+
 
 const OrderScreen = props => {
   const { navigation } = props;
   const [categories, setCategories] = useState([]);
+  const [toppings, setToppings] = useState([]);
+  const [allProducts, setAllProducts] = useState([])
   const [loading, setLoading] = useState(true);
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [isDialogVisible, setDialogVisible] = useState(false);
+  const scrollViewRef = useRef(null);
+  const [positions, setPositions] = useState({});
+  const [currentCategory, setCurrentCategory] = useState("Danh mục");
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
 
+
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = option => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
+
+
+
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
-      console.log(position);
       if (position.coords) {
         reverseGeocode({
           lat: position.coords.latitude,
@@ -48,22 +58,85 @@ const OrderScreen = props => {
     });
   }, []);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getAllCategoriesApi();
-        if (data) {
-          setCategories(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      } finally {
-        setLoading(false);
+  // Hàm gọi API chung
+  const fetchData = async (api, setter, callback) => {
+    try {
+      const data = await api();
+      setter(data); // Cập nhật state
+      if (callback) {
+        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
       }
-    };
+    } catch (error) {
+      console.error(`Error fetching data from ${api.toString()}:`, error);
+    } finally {
+      setLoading(false); // Dừng loading khi lấy dữ liệu xong
+    }
+  };
 
-    fetchCategories();
-  }, []);
+  useEffect(() => {
+    // Fetch categories
+    fetchData(getAllCategoriesAPI, setCategories);
+
+    // Fetch toppings
+    fetchData(getAllToppingsAPI, setToppings);
+
+    // Fetch all products
+    fetchData(getAllProductsAPI, setAllProducts);
+  }, []); // Chỉ gọi một lần khi component mount
+
+  const onLayoutCategory = (categoryId, event) => {
+    event.target.measureInWindow((x, y) => {
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
+    });
+  };
+
+
+  useEffect(() => {
+    console.log("Header title updated:", currentCategory);
+  }, [currentCategory]);
+
+
+  const handleScroll = (event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    let closestCategory = "Danh mục";
+    let minDistance = Number.MAX_VALUE;
+
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || "Danh mục";
+      }
+    });
+
+    if (closestCategory !== currentCategory) {
+      setCurrentCategory(closestCategory);
+    }
+  };
+
+
+
+
+
+  const scrollToCategory = (categoryId) => {
+    if (!scrollViewRef.current) {
+      console.log("scrollViewRef.current is null");
+      return;
+    }
+
+    if (positions[categoryId] !== undefined) {
+      console.log("Scrolling to:", positions[categoryId]);
+      scrollViewRef.current.scrollTo({ y: positions[categoryId], animated: true });
+    } else {
+      console.log("Category position not found:", categoryId);
+    }
+    setDialogVisible(false)
+  };
+
+  const onItemClick = (productId) => {
+    console.log("Product clicked:", productId);
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+  };
 
   const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
@@ -86,32 +159,44 @@ const OrderScreen = props => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
 
+      <HeaderOrder
+        title={currentCategory}
+        onCategoryPress={openDialogCategoryPress}
+        onFavoritePress={() =>
+          navigation.navigate(AppGraph.FavoriteScreen)
+        }
+        onSearchProduct={() =>
+          navigation.navigate(ShoppingGraph.SearchProductScreen)
+        }
+      />
+      <ScrollView
+        style={styles.containerContent}
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
 
-      <ScrollView style={styles.containerContent}>
-        <HeaderOrder
-          title="Danh mục"
-          onCategoryPress={openDialogCategoryPress}
-          onFavoritePress={() =>
-            navigation.navigate(AppGraph.MyFavoriteProducts)
-          }
-          onSearchProduct={() =>
-            navigation.navigate(ShoppingGraph.SearchProductScreen)
-          }
-        />
 
-        <CategoryMenu categories={categories} loading={loading} />
+        <CategoryMenu categories={categories} loading={loading} onCategorySelect={(category) => scrollToCategory(category._id)} />
 
 
         <ProductsListHorizontal
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
-          }
+          products={allProducts.flatMap(category => category.products).slice(0, 10)}
+          onItemClick={onItemClick}
         />
-        <ProductsListVertical
-          onItemClick={() =>
-            navigation.navigate(ShoppingGraph.ProductDetailSheet)
-          }
+
+        <FlatList
+          data={allProducts}
+          keyExtractor={(item) => item._id}
+          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <View onLayout={(event) => onLayoutCategory(item._id, event)}>
+              <ProductsListVertical title={item.name} products={item.products} onItemClick={onItemClick} />
+            </View>
+          )}
         />
+
       </ScrollView>
 
       <DeliveryButton
@@ -131,11 +216,19 @@ const OrderScreen = props => {
         isVisible={isDialogVisible}
         onHide={() => setDialogVisible(false)}
         title="Danh mục">
-        <CategoryMenu />
+        <CategoryMenu
+          categories={categories}
+          loading={loading}
+          onCategorySelect={(category) => {
+           
+            scrollToCategory(category._id)
+          }}
+        />
       </DialogBasic>
     </SafeAreaView>
   );
 };
+
 
 export default OrderScreen;
 
