@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Image,
@@ -14,19 +14,23 @@ import {
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
-import { registerAPI } from '../../axios';
 import { Column, CustomFlatInput, NormalText, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-
+import { registerAPI } from '../../axios';
+import { AppAsyncStorage } from '../../utils';
+import { uploadFileAPI } from '../../axios';
 const RegisterScreen = () => {
-  const [firstName, setFirstName] = useState('');
+  const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
-  const [email, setEmail] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [email, setEmail] = useState('dai@gmail.com');
+  const [dateOfBirth, setDateOfBirth] = useState('2025-02-15');
   const [gender, setGender] = useState('Nam');
   const [avatar, setAvatar] = useState(null);
-  const [lastNameError, setLastNameError] = useState(false);
-  const [lastNameMessage, setLastNameMessage] = useState('');
+  const [firstNameError, setFirstNameError] = useState('');
+  const [lastNameError, setLastNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [dateOfBirthError, setDateOfBirthError] = useState('');
+  const [genderError, setGenderError] = useState('');
   const [show, setShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -58,42 +62,93 @@ const RegisterScreen = () => {
   };
 
   const validateForm = () => {
-    // API register thì chỉ có field lastname là required, còn lại thì đều là optional
     let valid = true;
-
-
-    if (!lastName) {
-      setLastNameError(true);
-      setLastNameMessage('Tên không được để trống')
+    if (!firstName) {
+      setFirstNameError('Họ không được để trống');
       valid = false;
     } else {
-      setLastNameError(false);
+      setFirstNameError('');
     }
+
+    if (!lastName) {
+      setLastNameError('Tên không được để trống');
+      valid = false;
+    } else {
+      setLastNameError('');
+    }
+
+    if (!email) {
+      setEmailError('Email không được để trống');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!dateOfBirth) {
+      setDateOfBirthError('Ngày sinh không được để trống');
+      valid = false;
+    } else {
+      setDateOfBirthError('');
+    }
+
+    if (!gender) {
+      setGenderError('Giới tính không được để trống');
+      valid = false;
+    } else {
+      setGenderError('');
+    }
+
     return valid;
   };
 
   const handleRegister = async () => {
-    if (validateForm()) {
-      // Chuyển đổi gender từ tiếng Việt sang giá trị yêu cầu của server
-      const genderValue = gender === "Nam" ? "male" : "female";
+    if (!validateForm()) return;
 
-      const request = {
-        firstName,
-        lastName,
-        email,
-        dateOfBirth,
-        gender: genderValue,
-        avatar: '',
-      };
+    try {
+        let avatarUrl = "";
 
-      try {
+        // Nếu có avatar, tiến hành upload
+        if (avatar) {
+            console.log("Uploading avatar...");
+            const file = {
+                uri: avatar,
+                type: "image/jpeg", // Hoặc lấy từ response của picker
+                name: "avatar.jpg",
+            };
+            
+            // Gọi API upload file
+            const uploadResult = await uploadFileAPI(file);
+
+            // Kiểm tra nếu upload thất bại
+            if (uploadResult) {
+                avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
+            } else {
+                console.log("Upload avatar failed, proceeding without avatar.");
+            }
+        }
+
+        // Chuyển đổi giới tính
+        const genderValue = gender === "Nam" ? "male" : "female";
+
+        // Tạo request
+        const request = {
+            firstName,
+            lastName,
+            email,
+            dateOfBirth,
+            gender: genderValue,
+            avatar: avatarUrl || "", // Nếu không có avatar thì truyền giá trị rỗng
+        };
+
+        // Gọi API đăng ký
         const result = await registerAPI(request);
         console.log("User registered:", result);
-      } catch (error) {
-        Alert.alert('Đăng ký thất bại', error.message || 'Có lỗi xảy ra, vui lòng thử lại!');
-      }
+        Alert.alert("Thành công", "Đăng ký tài khoản thành công!");
+    } catch (error) {
+        console.error("Registration failed:", error);
+        Alert.alert("Đăng ký thất bại", error.message || "Có lỗi xảy ra, vui lòng thử lại!");
     }
-  };
+};
 
 
 
@@ -120,19 +175,16 @@ const RegisterScreen = () => {
             placeholder="Ví dụ: Nguyễn"
             value={firstName}
             setValue={setFirstName}
+            message={firstNameError}
+
           />
 
           <CustomFlatInput
-            label="Tên*"
+            label="Tên"
             placeholder="Ví dụ: Văn A"
             value={lastName}
-            setValue={(text) => {
-              setLastNameError(false)
-              setLastNameMessage('')
-              setLastName(text)
-            }}
-            error={lastNameError}
-            invalidMessage={lastNameMessage}
+            setValue={setLastName}
+            message={lastNameError}
           />
 
           <CustomFlatInput
@@ -141,7 +193,7 @@ const RegisterScreen = () => {
             value={email}
             keyboardType='email-address'
             setValue={setEmail}
-        
+            message={emailError}
           />
 
           <CustomFlatInput
@@ -151,6 +203,7 @@ const RegisterScreen = () => {
             setValue={setDateOfBirth}
             onRightPress={() => setShow(true)}
             editable={false} // Không cho nhập trực tiếp
+            message={dateOfBirthError}
             rightIcon='calendar-text'
             enableRightIcon
           />
@@ -161,6 +214,7 @@ const RegisterScreen = () => {
             value={gender}
             setValue={setGender}
             editable={false} // Không cho nhập trực tiếp
+            message={genderError}
             enableRightIcon
             rightIcon='chevron-down-circle'
             onRightPress={() => setModalVisible(true)}

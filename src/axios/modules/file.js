@@ -1,28 +1,30 @@
 import axiosInstance from "../axiosInstance";
 
-export const uploadFile = async () => {
+export const uploadFileAPI = async (file) => {
     try {
-       
-        const response = await axiosInstance().post("/file/image/upload");
+        if (!file) {
+            console.error("uploadFile: No file provided");
+            return null;
+        }
 
-        // Tách dữ liệu từ response
-        const { statusCode, success, data } = response;
+        const formData = new FormData();
+        formData.append("file", file);
 
-        if (success && statusCode === 200) {
-            // console.log("getAllProducts data = ", data);
-            return data; // Trả về dữ liệu OTP để xử lý tiếp
+        // Vì axiosInstance mặc định gửi JSON, nên cần tạo instance mới cho multipart/form-data
+        const response = await axiosInstance("multipart/form-data")
+            .post("/file/image/upload", formData);
+
+        const { statusCode, success, message, data } = response;
+
+        if (success && statusCode === 201) {
+            console.log("uploadFile successfully, image url = ", data.url);
+            return data;
         } else {
-            console.log("Failed to get all products, path /v1/product/all");
+            console.log("Failed to send OTP:", response);
             return null;
         }
     } catch (error) {
-        if (error.response) {
-            console.log("Server Error:", error.response.data);
-        } else if (error.request) {
-            console.log("No response received:", error.request);
-        } else {
-            console.log("Request setup error:", error.message);
-        }
-        throw error; // Để nơi gọi có thể xử lý lỗi tiếp
+        console.error("uploadFile API Error path /file/image/upload :", error);
+        throw error;
     }
-}
+};
