@@ -19,7 +19,7 @@ export const registerAPI = async ({ firstName, lastName, email, dateOfBirth, gen
 
             return data; 
         } else {
-            console.log("Failed to send OTP:", response);
+            console.log("Failed to register:", response);
             return null;
         }
     } catch (error) {

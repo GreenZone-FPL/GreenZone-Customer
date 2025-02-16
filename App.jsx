@@ -41,11 +41,6 @@ function App() {
                 component={MainNavigation}
               />
 
-
-
-
-
-
               <BaseStack.Screen
                 name={ShoppingGraph.CheckoutScreen}
                 component={CheckoutScreen}
