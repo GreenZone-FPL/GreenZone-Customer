@@ -27,24 +27,19 @@ function App() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{flex: 1}}>
       <SafeAreaProvider>
         <AppContextProvider>
           <NavigationContainer>
-            <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-              <BaseStack.Screen
+            <BaseStack.Navigator screenOptions={{headerShown: false}}>
+              {/* <BaseStack.Screen
                 name={AppGraph.AUTHENTICATION}
                 component={AuthStackScreen}
-              />
+              /> */}
               <BaseStack.Screen
                 name={MainGraph.graphName}
                 component={MainNavigation}
               />
-
-
-
-
-
 
               <BaseStack.Screen
                 name={ShoppingGraph.CheckoutScreen}
@@ -85,12 +80,9 @@ function App() {
                 name={AppGraph.FavoriteScreen}
                 component={FavoriteScreen}
               />
-
-
             </BaseStack.Navigator>
           </NavigationContainer>
         </AppContextProvider>
-
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

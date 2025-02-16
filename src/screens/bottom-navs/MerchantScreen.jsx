@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -6,71 +6,101 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { CustomSearchBar, HeaderWithBadge } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph } from '../../layouts/graphs/appGraph';
-import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import {Icon} from 'react-native-paper';
+import {CustomSearchBar, HeaderWithBadge} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph} from '../../layouts/graphs/appGraph';
+import {ShoppingGraph} from '../../layouts/graphs';
+import Geocoder from 'react-native-geocoding';
 
-const MerchantScreen = props => {
-  const [searchQuery, setsearchQuery] = useState('');
+const MerchantScreen = ({navigation}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isMapView, setIsMapView] = useState(false); // State kiểm soát màn hình hiển thị
 
-  const { navigation } = props;
 
   const handleMerchant = item => {
-    navigation.navigate(AppGraph.MerchantDetailSheet, { item: item });
+    navigation.navigate(AppGraph.MerchantDetailSheet, {item});
   };
+
+  const toggleView = () => {
+    setIsMapView(!isMapView);
+  };
+  
+  
+  // Geocoder.init(process.env.MAP_API_KEY || ''); 
+  // useEffect(() => {
+  //   Geocoder.from('CVPM+9V Hồ Chí Minh').then(position => {
+  //     position && console.log(position.results[0].geometry.location);
+  //   });
+  // }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderWithBadge title="Cửa hàng" />
+      <HeaderWithBadge title={isMapView ? 'Bản đồ' : 'Cửa hàng'} />
 
       <View style={styles.content}>
         <View style={styles.tool}>
           <CustomSearchBar
             placeholder="Tìm kiếm..."
             searchQuery={searchQuery}
-            setSearchQuery={setsearchQuery}
-            onClearIconPress={() => setsearchQuery('')}
+            setSearchQuery={setSearchQuery}
+            onClearIconPress={() => setSearchQuery('')}
             leftIcon="magnify"
             rightIcon="close"
-            style={{ flex: 1, elevation: 3 }}
+            style={{flex: 1, elevation: 3}}
           />
-          <View style={styles.map}>
-            <Icon
-              source="google-maps"
-              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-              color={colors.primary}
-            />
-            <Text style={styles.normalText}>Bản đồ</Text>
-          </View>
+
+          <TouchableOpacity onPress={toggleView}>
+            <View style={styles.map}>
+              <Icon
+                source="google-maps"
+                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                color={colors.primary}
+              />
+              <Text style={styles.normalText}>
+                {isMapView ? 'Cửa hàng' : 'Bản đồ'}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.mechant1}>
-          <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
-          <FlatList
-            data={data.slice(0, 1)}
-            renderItem={({ item }) => renderItem({ handleMerchant, item })}
-            keyExtractor={item => item.id}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
-        <Text style={styles.tittle}>Cửa hàng Khác</Text>
-        <FlatList
-          data={data}
-          renderItem={({ item }) => renderItem({ handleMerchant, item })}
-          keyExtractor={item => item.id}
-          scrollEnabled={true}
-        />
+        {isMapView ? (
+          <View style={styles.mapView}>
+            <Text style={styles.mapText}>Bản đồ sẽ hiển thị ở đây</Text>
+            {/* AIzaSyAcW-7SoxTjYG6hfCj9JF-yMOzaWdBAYWA */}
+            {/* Thêm component bản đồ vào đây nếu có */}
+            console.log(process.env.MAP_API_KEY)
+          </View>
+        ) : (
+          <View>
+            <View style={styles.mechant1}>
+              <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
+              <FlatList
+                data={data.slice(0, 1)}
+                renderItem={({item}) => renderItem({handleMerchant, item})}
+                keyExtractor={item => item.id}
+                showsVerticalScrollIndicator={false}
+              />
+            </View>
+            <Text style={styles.tittle}>Cửa hàng Khác</Text>
+            <FlatList
+              data={data}
+              renderItem={({item}) => renderItem({handleMerchant, item})}
+              keyExtractor={item => item.id}
+              scrollEnabled={true}
+            />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
 };
 
-const renderItem = ({ item, handleMerchant }) => (
+const renderItem = ({item, handleMerchant}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{ uri: item.image }} style={styles.imageItem} />
+    <Image source={{uri: item.image}} style={styles.imageItem} />
     <View style={styles.infoItem}>
       <Text style={styles.title}>{item.name}</Text>
       <Text style={styles.location}>{item.location}</Text>
@@ -96,46 +126,6 @@ const data = [
     image:
       'https://minio.thecoffeehouse.com/image/admin/store/5bfe084efbc6865eac59c98a_to_20ngoc_20van.jpg',
   },
-  {
-    id: '3',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 3 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5d147678696fb3596835615c_new_20city_20.jpg',
-  },
-  {
-    id: '4',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 3.1 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5d147678696fb3596835615c_new_20city_20.jpg',
-  },
-  {
-    id: '5',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 3.3 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5d147678696fb3596835615c_new_20city_20.jpg',
-  },
-  {
-    id: '6',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 3.5 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5d147678696fb3596835615c_new_20city_20.jpg',
-  },
-  {
-    id: '7',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 4 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5d147678696fb3596835615c_new_20city_20.jpg',
-  },
 ];
 
 const styles = StyleSheet.create({
@@ -159,30 +149,44 @@ const styles = StyleSheet.create({
   },
   map: {
     flexDirection: 'row',
-    alignContent: 'center',
     alignItems: 'center',
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'flex-end',
   },
-
   tittle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     marginVertical: 10,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  distance: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-    color: colors.gray400,
+  mapView: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  location: {
+  mapText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray850,
-  },
-  title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: 'bold',
     color: colors.black,
+  },
+  normalText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginBottom: 8,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
   infoItem: {
     flex: 1,
@@ -194,27 +198,6 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginBottom: 8,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 4,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  normalText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.black
-  }
 });
 
 export default MerchantScreen;
