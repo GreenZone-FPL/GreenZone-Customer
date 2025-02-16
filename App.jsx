@@ -38,11 +38,6 @@ function App() {
               component={MainNavigation}
             />
             <BaseStack.Screen
-              name={AppGraph.AUTHENTICATION}
-              component={AuthStackScreen}
-            />
-
-            <BaseStack.Screen
               name={AuthGraph.LoginScreen}
               component={LoginScreen}
             />
