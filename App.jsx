@@ -17,16 +17,15 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
-import AuthStackScreen from './src/layouts/stacks/AuthStackScreen';
 import { ProductDetailSheet } from './src/components';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 import RegisterScreen from './src/screens/auth/RegisterScreen';
-import GuestStackScreen from './src/layouts/stacks/GuestStackScreen';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
 import SplashScreen from './src/screens/auth/SplashScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-
+import GuestNavigator from './src/layouts/stacks/GuestNavigator';
+import UserNavigator from './src/layouts/stacks/UserNavigator';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -50,87 +49,37 @@ function AppInner() {
   useEffect(() => {
 
     console.log('isLoggedIn đã thay đổi:', isLoggedIn);
-
-
+    
   }, [isLoggedIn]);
-  return (
-    <>
-      {isLoggedIn ?
-        <BaseStack.Navigator
-          screenOptions={{ headerShown: false }}>
+  return isLoggedIn ? <UserNavigator /> : <GuestNavigator />;
 
-          <BaseStack.Screen
-            name={AuthGraph.SplashScreen}
-            component={SplashScreen}
-          />
-          <BaseStack.Screen
-            name={MainGraph.graphName}
-            component={MainNavigation}
-          />
-          <BaseStack.Screen
-            name={ShoppingGraph.CheckoutScreen}
-            component={CheckoutScreen}
-          />
-
-          <BaseStack.Screen
-            name={UserGraph.UpdateProfileScreen}
-            component={UpdateProfileScreen}
-          />
-
-          <BaseStack.Screen
-            name={AuthGraph.RegisterScreen}
-            component={RegisterScreen}
-          />
-          <BaseStack.Screen
-            name={AuthGraph.LoginScreen}
-            component={LoginScreen}
-          />
-          <BaseStack.Screen
-            name={AppGraph.MembershipScreen}
-            component={MembershipScreen}
-          />
-          <BaseStack.Screen
-            name={ShoppingGraph.ChatScreen}
-            component={ChatScreen}
-          />
-         
-          <BaseStack.Screen
-            name={AppGraph.AdvertisingScreen}
-            component={AdvertisingScreen}
-          />
-          <BaseStack.Screen
-            name={ShoppingGraph.SearchProductScreen}
-            component={SearchProductScreen}
-          />
-          <BaseStack.Screen
-            name={ShoppingGraph.ProductDetailSheet}
-            component={ProductDetailSheet}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
-          />
-          <BaseStack.Screen
-            name={AppGraph.FavoriteScreen}
-            component={FavoriteScreen}
-          />
-
-        </BaseStack.Navigator>
-        :
-        <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-          <BaseStack.Screen
-            name={AppGraph.GUEST}
-            component={GuestStackScreen}
-          />
-        </BaseStack.Navigator>
-
-      }
-
-    </>
-
-
-  );
 }
+
+
+// return (
+
+
+//   <BaseStack.Navigator 
+//   initialRouteName={AuthGraph.SplashScreen}
+//   screenOptions={{ headerShown: false }}>
+//     <BaseStack.Screen
+//       name={AuthGraph.SplashScreen}
+//       component={SplashScreen}
+//     />
+//     {isLoggedIn ?
+
+//       <BaseStack.Screen
+//         name={AppGraph.USER}
+//         component={UserNavigator}
+//       /> :
+
+//       <BaseStack.Screen
+//         name={AppGraph.GUEST}
+//         component={GuestNavigator}
+//       />}
+
+//   </BaseStack.Navigator>
+// );
+
 
 export default App;

@@ -23,6 +23,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             if (response.statusCode === 201) {
                 Toaster.show("Đăng nhập thành công!")
                 login()
+                navigation.navigate(AppGraph.MAIN)
             } else {
                 Toaster.show("Mã OTP không hợp lệ")
             }

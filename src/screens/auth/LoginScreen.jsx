@@ -18,10 +18,11 @@ import {
 import { Icon } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { sendOTPAPI } from '../../axios';
-import { Column, FlatInput, LightStatusBar, NormalText, OverlayStatusBar, Row, TitleText } from '../../components';
+import { Column, FlatInput, LightStatusBar, NormalText, OverlayStatusBar, Row, TitleText, Ani_ModalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AuthGraph } from '../../layouts/graphs';
 import { refreshTokenAPI } from '../../axios';
+
 
 
 const LoginScreen = ({ route, navigation }) => {
@@ -32,14 +33,7 @@ const LoginScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
 
 
-  const handleRefreshToken = async () => {
-    try {
-      await refreshTokenAPI()
-      // console.log(response)
-    } catch (error) {
-      console.log('error', error);
-    }
-  }
+
   const handleSendOTP = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
       setPhoneNumberError(true);
@@ -52,7 +46,7 @@ const LoginScreen = ({ route, navigation }) => {
       const response = await sendOTPAPI({ phoneNumber });
       if (response) {
         console.log('otp = ', response.code);
-        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber});
+        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
       } else {
         Alert.alert('Lỗi', 'Không thể gửi OTP, vui lòng thử lại sau.');
       }
@@ -95,11 +89,7 @@ const LoginScreen = ({ route, navigation }) => {
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleRefreshToken}>
-        <View style={{ width: 30, height: 30 }}></View>
-        <Text style={styles.buttonText}>Refresh token</Text>
-        <Icon source="arrow-right-circle" color={colors.white} size={30} />
-      </TouchableOpacity>
+
 
       {/* <Row style={styles.separatorContainer}>
         <View style={styles.separator} />
@@ -117,28 +107,34 @@ const LoginScreen = ({ route, navigation }) => {
         <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
       </Pressable> */}
 
-      {loading && (
-        <Modal transparent={true} visible={loading} animationType="fade">
-          <OverlayStatusBar />
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <LottieView
-                source={require('../../assets/animations/ani_loading.json')}
-                autoPlay
-                loop
-                style={{ width: 100, height: 100 }}
-              />
-              <Text style={styles.loadingText}>Đang xử lý...</Text>
-            </View>
-          </View>
-        </Modal>
-      )}
+    
+        <Ani_ModalLoading loading={loading}/>
+      
     </Column>
 
 
 
   );
 };
+
+// const Ani_ModalLoading = ({loading}) => {
+//   return (
+//     <Modal transparent={true} visible={loading} animationType="fade">
+//       <OverlayStatusBar />
+//       <View style={styles.modalContainer}>
+//         <View style={styles.modalContent}>
+//           <LottieView
+//             source={require('../../assets/animations/ani_loading.json')}
+//             autoPlay
+//             loop
+//             style={{ width: 100, height: 100 }}
+//           />
+//           <Text style={styles.loadingText}>Đang xử lý...</Text>
+//         </View>
+//       </View>
+//     </Modal>
+//   )
+// }
 
 export default LoginScreen;
 

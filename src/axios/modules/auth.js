@@ -31,6 +31,8 @@ export const refreshTokenAPI = async () => {
         throw error;
     }
 };
+
+
 export const getProfileAPI = async () => {
     try {
 
@@ -40,7 +42,7 @@ export const getProfileAPI = async () => {
         const { statusCode, success, data } = response;
 
         if (success && statusCode === 200) {
-            console.log("getProfileAPI data = ", data);
+            // console.log("getProfileAPI data = ", data);
             return data;
         } else {
             console.log("Failed to get profile, path /auth/profile");
