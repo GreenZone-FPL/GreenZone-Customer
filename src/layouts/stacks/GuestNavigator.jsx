@@ -12,10 +12,15 @@ import {
 import MainNavigation from '../MainNavigation';
 
 const GuestStack = createNativeStackNavigator();
-const GuestStackScreen = () => {
+const GuestNavigator = () => {
   return (
-    <GuestStack.Navigator screenOptions={{ headerShown: false }}>
-      <GuestStack.Screen name={AuthGraph.SplashScreen} component={SplashScreen} />
+    <GuestStack.Navigator
+      initialRouteName={AuthGraph.SplashScreen}
+      screenOptions={{ headerShown: false }}>
+      <GuestStack.Screen
+        name={AuthGraph.SplashScreen}
+        component={SplashScreen}
+      />
       <GuestStack.Screen
         name={MainGraph.graphName}
         component={MainNavigation}
@@ -30,4 +35,4 @@ const GuestStackScreen = () => {
   );
 };
 
-export default GuestStackScreen
+export default GuestNavigator

@@ -2,12 +2,12 @@
 export const AppGraph = Object.freeze({
     ROOT: 'RootGraph',
     GUEST: 'GuestGraph',
+    USER: 'UserGraph',
     AUTHENTICATION: 'AuthGraph',
     MAIN: 'MainGraph',
     BOTTOM: 'BottomGraph',
     SHOPPING: 'ShoppingGraph',
     ORDER: 'OrderGraph',
-    USER: 'UserGraph',
     VOUCHER: 'VoucherGraph',
     MerchantDetailSheet: 'MerchantDetailSheet',
     MembershipScreen: 'MembershipScreen',

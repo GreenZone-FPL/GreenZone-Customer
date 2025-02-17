@@ -1,30 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
+import LottieView from 'lottie-react-native';
 import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
-  View
+  View,
+  ActivityIndicator,
+  Text
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { FlatInput, CustomFlatInput, NormalHeader, PrimaryButton } from '../../components';
+import { FlatInput, CustomFlatInput, NormalHeader, PrimaryButton, Ani_ModalLoading } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { AppContext } from '../../context/AppContext';
+import { getProfileAPI } from '../../axios';
 
 const { width } = Dimensions.get('window');
-const UpdateProfileScreen = props => {
-  const { navigation } = props;
+
+const UpdateProfileScreen = ({ navigation }) => {
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
 
+  const { isLoggedIn } = useContext(AppContext);
+  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setLoading(true);
+      getProfileAPI()
+        .then((data) => {
+          console.log('profile = ', data);
+          setProfile(data);
+          // Gán dữ liệu vào state
+          setLastName(data.lastName || '');
+          setFirstName(data.firstName || '');
+          setEmail(data.email || '');
+          setDob(data.dateOfBirth ? data.dateOfBirth.split('T')[0] : '');
+          setGender(data.gender === 'male' ? 'Nam' : data.gender === 'female' ? 'Nữ' : '');
+        })
+        .catch((err) => {
+          console.error('Lỗi khi lấy profile:', err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [isLoggedIn]);
+
+
   return (
     <KeyboardAvoidingView style={styles.container}>
+      <Ani_ModalLoading loading={loading} message='Đang tải...' />
+
       <ScrollView>
         <NormalHeader
-          title={'Cập nhập thông tin'}
+          title={'Cập nhật thông tin'}
           onLeftPress={() => navigation.goBack()}
         />
         <View style={styles.avatarContainer}>
@@ -32,7 +67,7 @@ const UpdateProfileScreen = props => {
             <Image
               style={styles.avatarImage}
               source={{
-                uri: 'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
+                uri: profile?.avatar || 'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
               }}
             />
             <View style={styles.cameraIconContainer}>
@@ -47,7 +82,7 @@ const UpdateProfileScreen = props => {
         <View style={styles.formContainer}>
           <FlatInput label={'Họ'} value={lastName} setValue={setLastName} />
           <FlatInput label={'Tên'} value={firstName} setValue={setFirstName} />
-          <FlatInput label={'Email'} value={email} setValue={setEmail} />
+          <FlatInput label={'Email'} value={email} setValue={setEmail} keyboardType='email-address'/>
           <CustomFlatInput label={'Ngày sinh'} value={dob} setValue={setDob} />
           <CustomFlatInput
             label={'Giới tính'}
@@ -58,6 +93,7 @@ const UpdateProfileScreen = props => {
           <PrimaryButton title={'Cập nhật tài khoản'} />
         </View>
       </ScrollView>
+
     </KeyboardAvoidingView>
   );
 };
@@ -65,14 +101,24 @@ const UpdateProfileScreen = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.fbBg,
-    gap: 16
+    gap: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.fbBg,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: colors.textPrimary,
   },
   avatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   avatar: {
     backgroundColor: colors.gray700,
@@ -103,6 +149,10 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
+  lottie: {
+    width: 100,
+    height: 100,
+  }
 });
 
-export default UpdateProfileScreen;
+export default UpdateProfileScreen

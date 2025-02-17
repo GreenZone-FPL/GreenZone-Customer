@@ -1,19 +1,19 @@
 import { StyleSheet, Text, View } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { AppGraph } from '../../layouts/graphs';
+import { AppContext } from '../../context/AppContext';
 
+const SplashScreen = ({ navigation }) => {
 
-const SplashScreen = ({navigation}) => {
- 
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace(AppGraph.MAIN); 
+      navigation.replace(AppGraph.MAIN);
     }, 1000);
 
-   
+
     return () => clearTimeout(timer);
-  }, [navigation]);
+  }, []);
 
   return (
     <View style={styles.container}>
