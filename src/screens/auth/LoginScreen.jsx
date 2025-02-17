@@ -1,21 +1,35 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { FlatInput, LightStatusBar, PrimaryButton } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { sendOTPApi } from '../../axios/modules/auth';
-
+import {FlatInput, LightStatusBar, PrimaryButton} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
 const LoginScreen = props => {
-  const [value, setValue] = useState();
+  const {navigation} = props;
+  const [message, setMessage] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('0936887373');
+
+  const phoneRegex = /^(0[1-9][0-9]{8})$/;
+
+  const goVerifyOTP = () => {
+    if (!phoneRegex.test(phoneNumber)) {
+      setMessage('Số điện thoại sai định dạng');
+      console.log('Số điện thoại sai định dạng');
+    } else {
+      setMessage('');
+      navigation.navigate('VerifyOTPScreen', {phoneNumber});
+      console.log('Số điện thoại đúng định dạng');
+    }
+  };
   return (
     <ScrollView style={styles.container}>
       <KeyboardAvoidingView>
@@ -30,14 +44,16 @@ const LoginScreen = props => {
             <Text style={styles.title}>GREEN ZONE</Text>
             <FlatInput
               label="Nhập số điện thoại"
-              style={{ width: '100%' }}
-              placeholder="Nhập số điện thoại của bạn..."
-              setValue={setValue}
+              style={{width: '100%'}}
+              placeholder={'Nhập số điện thoại của bạn'}
+              setValue={setPhoneNumber}
+              value={phoneNumber}
+              message={message}
             />
             <PrimaryButton
               title="Đăng nhập"
-              onPress={() => console.log('đăng nhập')}
-              style={{ width: '100%' }}
+              onPress={() => goVerifyOTP()}
+              style={{width: '100%'}}
             />
             <View style={styles.row}>
               <View style={styles.separator}></View>
