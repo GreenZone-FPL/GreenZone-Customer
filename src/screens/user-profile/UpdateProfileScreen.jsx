@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
-  View
+  View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { FlatInput, CustomFlatInput, NormalHeader, PrimaryButton } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const UpdateProfileScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -67,12 +66,12 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.fbBg,
-    gap: 16
+    gap: 16,
   },
   avatarContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   avatar: {
     backgroundColor: colors.gray700,
