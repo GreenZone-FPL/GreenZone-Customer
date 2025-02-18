@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {
   Dimensions,
@@ -8,24 +8,30 @@ import {
   StyleSheet,
   View,
   ActivityIndicator,
-  Text
+  Text,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { FlatInput, CustomFlatInput, NormalHeader, PrimaryButton, Ani_ModalLoading } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppContext } from '../../context/AppContext';
-import { getProfileAPI } from '../../axios';
+import {Icon} from 'react-native-paper';
+import {
+  FlatInput,
+  CustomFlatInput,
+  NormalHeader,
+  PrimaryButton,
+  Ani_ModalLoading,
+} from '../../components';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {AppContext} from '../../context/AppContext';
+import {getProfileAPI} from '../../axios';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const UpdateProfileScreen = ({ navigation }) => {
+const UpdateProfileScreen = ({navigation}) => {
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
 
-  const { isLoggedIn } = useContext(AppContext);
+  const {isLoggedIn} = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState(null);
 
@@ -33,7 +39,7 @@ const UpdateProfileScreen = ({ navigation }) => {
     if (isLoggedIn) {
       setLoading(true);
       getProfileAPI()
-        .then((data) => {
+        .then(data => {
           console.log('profile = ', data);
           setProfile(data);
           // Gán dữ liệu vào state
@@ -41,9 +47,15 @@ const UpdateProfileScreen = ({ navigation }) => {
           setFirstName(data.firstName || '');
           setEmail(data.email || '');
           setDob(data.dateOfBirth ? data.dateOfBirth.split('T')[0] : '');
-          setGender(data.gender === 'male' ? 'Nam' : data.gender === 'female' ? 'Nữ' : '');
+          setGender(
+            data.gender === 'male'
+              ? 'Nam'
+              : data.gender === 'female'
+              ? 'Nữ'
+              : '',
+          );
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Lỗi khi lấy profile:', err);
         })
         .finally(() => {
@@ -52,10 +64,9 @@ const UpdateProfileScreen = ({ navigation }) => {
     }
   }, [isLoggedIn]);
 
-
   return (
     <KeyboardAvoidingView style={styles.container}>
-      <Ani_ModalLoading loading={loading} message='Đang tải...' />
+      <Ani_ModalLoading loading={loading} message="Đang tải..." />
 
       <ScrollView>
         <NormalHeader
@@ -67,7 +78,9 @@ const UpdateProfileScreen = ({ navigation }) => {
             <Image
               style={styles.avatarImage}
               source={{
-                uri: profile?.avatar || 'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
+                uri:
+                  profile?.avatar ||
+                  'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
               }}
             />
             <View style={styles.cameraIconContainer}>
@@ -82,7 +95,12 @@ const UpdateProfileScreen = ({ navigation }) => {
         <View style={styles.formContainer}>
           <FlatInput label={'Họ'} value={lastName} setValue={setLastName} />
           <FlatInput label={'Tên'} value={firstName} setValue={setFirstName} />
-          <FlatInput label={'Email'} value={email} setValue={setEmail} keyboardType='email-address'/>
+          <FlatInput
+            label={'Email'}
+            value={email}
+            setValue={setEmail}
+            keyboardType="email-address"
+          />
           <CustomFlatInput label={'Ngày sinh'} value={dob} setValue={setDob} />
           <CustomFlatInput
             label={'Giới tính'}
@@ -93,7 +111,6 @@ const UpdateProfileScreen = ({ navigation }) => {
           <PrimaryButton title={'Cập nhật tài khoản'} />
         </View>
       </ScrollView>
-
     </KeyboardAvoidingView>
   );
 };
@@ -152,7 +169,7 @@ const styles = StyleSheet.create({
   lottie: {
     width: 100,
     height: 100,
-  }
+  },
 });
 
-export default UpdateProfileScreen
+export default UpdateProfileScreen;
