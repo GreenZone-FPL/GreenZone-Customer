@@ -27,7 +27,7 @@ import { refreshTokenAPI } from '../../axios';
 
 const LoginScreen = ({ route, navigation }) => {
 
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('0868441273');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);

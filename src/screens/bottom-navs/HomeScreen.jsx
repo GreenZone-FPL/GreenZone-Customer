@@ -136,11 +136,11 @@ const HomeScreen = props => {
     fetchData(getAllProductsAPI, setAllProducts);
   }, []); // Chỉ gọi một lần khi component mount
 
-  if(loading) {
-    return(
-      <Ani_ModalLoading loading={loading} message='Đang tải...' />
-    )
-  }
+  // if(loading) {
+  //   return(
+  //     <Ani_ModalLoading loading={loading} message='Đang tải...' />
+  //   )
+  // }
   return (
     <SafeAreaView style={styles.container}>
     
@@ -152,14 +152,14 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-
+{/* 
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
 
         <NotificationList onSeeMorePress={() =>
           navigation.navigate(AppGraph.AdvertisingScreen)
-        } />
+        } /> */}
         <ProductsListHorizontal
           products={allProducts.flatMap(category => category.products).slice(0, 10)}
           onItemClick={onItemClick}

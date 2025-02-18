@@ -3,7 +3,7 @@ import axiosInstance from "../axiosInstance";
 export const getAllProductsAPI = async () => {
     try {
        
-        const response = await axiosInstance().get("/v1/product/all");
+        const response = await axiosInstance.get("/v1/product/all");
 
         // Tách dữ liệu từ response
         const { statusCode, success, data } = response;
@@ -24,7 +24,7 @@ export const getAllProductsAPI = async () => {
 export const getProductDetailAPI = async (productId) => {
     try {
        
-        const response = await axiosInstance().get(`/v1/product/${productId}`);
+        const response = await axiosInstance.get(`/v1/product/${productId}`);
 
         // Tách dữ liệu từ response
         const { statusCode, success, data } = response;

@@ -6,10 +6,12 @@ import { verifyOTPAPI } from '../../axios';
 import { colors } from '../../constants';
 import { AppGraph, AuthGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils/toaster';
+import { Ani_ModalLoading } from '../../components';
 
 const VerifyOTPScreen = ({ route, navigation }) => {
     const { phoneNumber } = route.params;
     const [code, setCode] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const { login } = useContext(AppContext)
 
@@ -18,23 +20,42 @@ const VerifyOTPScreen = ({ route, navigation }) => {
             Toaster.show("Vui lòng nhập mã OTP gồm 6 chữ số.")
             return;
         }
+
+        setLoading(true)
         try {
             const response = await verifyOTPAPI({ phoneNumber, code });
             if (response.statusCode === 201) {
-                Toaster.show("Đăng nhập thành công!")
                 login()
-                navigation.navigate(AppGraph.MAIN)
+                const userLastName = response.data.user.lastName
+                console.log("✅ OTP Verified, userLastName = ", response.data.user.lastName);
+                if (userLastName) {
+                    Toaster.show("Đăng nhập thành công!")
+                    navigation.navigate(AppGraph.MAIN)
+
+                } else {
+                    navigation.navigate(AuthGraph.RegisterScreen)
+                }
+
+
+
+
+
+
+
             } else {
                 Toaster.show("Mã OTP không hợp lệ")
             }
         } catch (error) {
             Toaster.show(`Error: ${error}`)
             console.log("Error verifying OTP:", error);
+        }finally{
+            setLoading(false)
         }
     };
 
     return (
         <View style={styles.container}>
+            <Ani_ModalLoading loading={loading} message='Đang xác thực...'/>
             <Text style={styles.title}>Xác thực OTP</Text>
             <Text style={styles.subtitle}>Nhập mã OTP gửi đến {phoneNumber}</Text>
 

@@ -63,18 +63,5 @@ export class AppAsyncStorage {
         }
     };
 
-    static startTokenWatcher(onTokenExpired) {
-        if (this.tokenWatcher) {
-            clearInterval(this.tokenWatcher);
-        }
-    
-        this.tokenWatcher = setInterval(async () => {
-            const isValid = await this.isTokenValid();
-            if (!isValid) {
-                clearInterval(this.tokenWatcher);
-                onTokenExpired(); // Xử lý khi token hết hạn và không refresh được
-            }
-        }, 5000); // Kiểm tra mỗi 5 giây
-    }
 
 }

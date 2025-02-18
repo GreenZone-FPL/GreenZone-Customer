@@ -13,6 +13,7 @@ import MainNavigation from '../MainNavigation';
 
 const GuestStack = createNativeStackNavigator();
 const GuestNavigator = () => {
+  console.log('in GuestNavigator')
   return (
     <GuestStack.Navigator
       initialRouteName={AuthGraph.SplashScreen}

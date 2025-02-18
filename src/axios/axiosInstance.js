@@ -1,16 +1,19 @@
 import axios from 'axios';
 import { AppAsyncStorage } from '../utils';
 
-const axiosInstance = (contentType = 'application/json') => {
+export const baseURL = "https://greenzone.motcaiweb.io.vn/"
+
+const axiosInstance = ((contentType = 'application/json') => {
+
     const appAxios = axios.create({
-        baseURL: "https://greenzone.motcaiweb.io.vn/"
+        baseURL: baseURL
     });
 
     appAxios.interceptors.request.use(
         async (config) => {
             // Lấy token từ AsyncStorage 
             const token = await AppAsyncStorage.readData('accessToken');
-            
+
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
             }
@@ -22,10 +25,20 @@ const axiosInstance = (contentType = 'application/json') => {
         err => Promise.reject(err)
     );
 
+    // 401; token het han, xoa token, 
     appAxios.interceptors.response.use(
         res => res.data,
         err => {
-          
+            // console.log(err)
+            // if(statusCode == 401){
+            //     //clear token 
+            //     if(callback){
+            
+            //         callback()
+            //     }
+              
+            // }
+
             if (err.response) {
                 // Lỗi từ server
                 console.log("Server Error:", err.response.data);
@@ -43,6 +56,6 @@ const axiosInstance = (contentType = 'application/json') => {
     );
 
     return appAxios;
-};
+})()
 
 export default axiosInstance;

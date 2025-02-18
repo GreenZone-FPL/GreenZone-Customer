@@ -10,8 +10,8 @@ import { AppContext } from '../../context/AppContext';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
- 
-  const { isLoggedIn } = useContext(AppContext)
+
+  const { isLoggedIn, logout } = useContext(AppContext)
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -38,7 +38,7 @@ const ProfileScreen = props => {
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-            onPress={() => navigation.navigate(UserGraph.AddressScreen)}
+              onPress={() => navigation.navigate(UserGraph.AddressScreen)}
             />
           </Row>
 
@@ -82,21 +82,16 @@ const ProfileScreen = props => {
           />
           <View style={styles.separator} />
           {
-            isLoggedIn ?
+            isLoggedIn &&
               <CardUtiliti
                 icon="logout"
                 title="Đăng xuất"
                 onPress={async () => {
+                  await logout(); 
 
-                  await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-                  await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
-                  navigation.navigate(AuthGraph.LoginScreen)
-                  logout()
-                
+           
                 }}
               />
-              :
-              null
           }
 
         </View>

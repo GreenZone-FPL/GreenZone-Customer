@@ -14,12 +14,15 @@ import {
 } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
-import { Column, CustomFlatInput, NormalText, TitleText } from '../../components';
+import { Column, Row, CustomFlatInput, NormalText, TitleText, Ani_ModalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { registerAPI } from '../../axios';
-import { AppAsyncStorage } from '../../utils';
+import { AppAsyncStorage, Toaster } from '../../utils';
 import { uploadFileAPI } from '../../axios';
-const RegisterScreen = () => {
+import { AppGraph } from '../../layouts/graphs';
+import { baseURL } from '../../axios/axiosInstance';
+
+const RegisterScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
   const [email, setEmail] = useState('dai@gmail.com');
@@ -33,6 +36,7 @@ const RegisterScreen = () => {
   const [genderError, setGenderError] = useState('');
   const [show, setShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSelectDate = (event, selectedDate) => {
     if (event.type === 'dismissed') {
@@ -103,52 +107,59 @@ const RegisterScreen = () => {
 
   const handleRegister = async () => {
     if (!validateForm()) return;
-
+    setLoading(true);
     try {
-        let avatarUrl = "";
+      let avatarUrl = "";
 
-        // Nếu có avatar, tiến hành upload
-        if (avatar) {
-            console.log("Uploading avatar...");
-            const file = {
-                uri: avatar,
-                type: "image/jpeg", // Hoặc lấy từ response của picker
-                name: "avatar.jpg",
-            };
-            
-            // Gọi API upload file
-            const uploadResult = await uploadFileAPI(file);
-
-            // Kiểm tra nếu upload thất bại
-            if (uploadResult) {
-                avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
-            } else {
-                console.log("Upload avatar failed, proceeding without avatar.");
-            }
-        }
-
-        // Chuyển đổi giới tính
-        const genderValue = gender === "Nam" ? "male" : "female";
-
-        // Tạo request
-        const request = {
-            firstName,
-            lastName,
-            email,
-            dateOfBirth,
-            gender: genderValue,
-            avatar: avatarUrl || "", // Nếu không có avatar thì truyền giá trị rỗng
+      // Nếu có avatar, tiến hành upload
+      if (avatar) {
+        console.log("Uploading avatar...");
+        const file = {
+          uri: avatar,
+          type: "image/jpeg", // Hoặc lấy từ response của picker
+          name: "avatar.jpg",
         };
 
-        // Gọi API đăng ký
-        const result = await registerAPI(request);
-        console.log("User registered:", result);
-        Alert.alert("Thành công", "Đăng ký tài khoản thành công!");
+        // Gọi API upload file
+        const uploadResult = await uploadFileAPI(file);
+        console.log('uploadResult', uploadResult.url)
+
+        // Kiểm tra nếu upload thất bại
+        if (uploadResult) {
+
+          avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
+        } else {
+          console.log("Upload avatar failed, proceeding without avatar.");
+        }
+      }
+
+      // Chuyển đổi giới tính
+      const genderValue = gender === "Nam" ? "male" : "female";
+
+      // Tạo request
+      const request = {
+        firstName,
+        lastName,
+        email,
+        dateOfBirth,
+        gender: genderValue,
+        avatar: `${baseURL} + ${avatarUrl}` || "", // Nếu không có avatar thì truyền giá trị rỗng
+      };
+
+      // Gọi API đăng ký
+      const result = await registerAPI(request);
+      console.log("User registered:", result);
+
+      Toaster.show('Đăng ký tài khoản thành công')
+      navigation.navigate(AppGraph.MAIN)
     } catch (error) {
-        console.error("Registration failed:", error);
-        Alert.alert("Đăng ký thất bại", error.message || "Có lỗi xảy ra, vui lòng thử lại!");
+      console.error("Registration failed:", error);
+      Toaster.show('error.message')
+
+    } finally {
+      setLoading(false);
     }
-};
+  };
 
 
 
@@ -161,6 +172,7 @@ const RegisterScreen = () => {
         contentContainerStyle={styles.innerContainer}
         keyboardShouldPersistTaps="handled"
       >
+        <Ani_ModalLoading loading={loading} />
         <Image
           source={require('../../assets/images/register_bg.png')}
           style={{ width: '100%', height: 200 }}
@@ -168,7 +180,20 @@ const RegisterScreen = () => {
 
         <Column style={styles.formContainer}>
           <TitleText text='GREEN ZONE' style={styles.title} />
-          <TitleText text='ĐĂNG KÝ TÀI KHOẢN' />
+          <Row style={{ justifyContent: 'space-between' }}>
+            <TitleText text='ĐĂNG KÝ TÀI KHOẢN' />
+
+            {/* <TouchableOpacity
+              onPress={() => navigation.navigate(AppGraph.MAIN)}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <TitleText text='Bỏ qua' style={{ color: colors.red900, fontWeight: '400' }} />
+              <Icon
+                source="chevron-right-circle"
+                color={colors.red900}
+                size={20}
+              />
+            </TouchableOpacity> */}
+          </Row>
 
           <CustomFlatInput
             label="Họ"
