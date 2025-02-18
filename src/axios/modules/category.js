@@ -3,7 +3,7 @@ import axiosInstance from "../axiosInstance";
 export const getAllCategoriesAPI = async () => {
     try {
        
-        const response = await axiosInstance().get("/v1/category/all");
+        const response = await axiosInstance.get("/v1/category/all");
 
         // Tách dữ liệu từ response
         const { statusCode, success, data } = response;

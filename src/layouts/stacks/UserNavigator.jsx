@@ -23,16 +23,17 @@ import SplashScreen from '../../screens/auth/SplashScreen';
 
 const UserStack = createNativeStackNavigator();
 const UserNavigator = () => {
+  console.log('in UserNavigator')
   return (
     <UserStack.Navigator
-initialRouteName={AuthGraph.SplashScreen}
+      initialRouteName={AuthGraph.SplashScreen}
       screenOptions={{ headerShown: false }}>
 
       <UserStack.Screen
         name={AuthGraph.SplashScreen}
         component={SplashScreen}
       />
-      
+
       <UserStack.Screen
         name={MainGraph.graphName}
         component={MainNavigation}
@@ -51,10 +52,10 @@ initialRouteName={AuthGraph.SplashScreen}
         name={AuthGraph.RegisterScreen}
         component={RegisterScreen}
       />
-      <UserStack.Screen
+      {/* <UserStack.Screen
         name={AuthGraph.LoginScreen}
         component={LoginScreen}
-      />
+      /> */}
       <UserStack.Screen
         name={AppGraph.MembershipScreen}
         component={MembershipScreen}

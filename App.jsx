@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useContext, useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppContextProvider, AppContext } from './src/context/AppContext'; // Đảm bảo import đúng
+import { AppContextProvider, AppContext } from './src/context/AppContext'; 
 
 import {
   AppGraph,
@@ -28,32 +28,36 @@ import GuestNavigator from './src/layouts/stacks/GuestNavigator';
 import UserNavigator from './src/layouts/stacks/UserNavigator';
 const BaseStack = createNativeStackNavigator();
 
+
 function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <AppContextProvider>
+    <AppContextProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
           <NavigationContainer>
-            <AppInner />
+            <AppNavigator />
           </NavigationContainer>
-        </AppContextProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </AppContextProvider>
   );
 }
 
-function AppInner() {
+function AppNavigator() {
   const { isLoggedIn } = useContext(AppContext);
-
+ 
 
   useEffect(() => {
+    console.log('isLoggedIn = ', isLoggedIn)
+  }, [isLoggedIn ]);
 
-    console.log('isLoggedIn đã thay đổi:', isLoggedIn);
-    
-  }, [isLoggedIn]);
+  // Không cần NavigationContainer ở đây nữa, nó đã có trong App
   return isLoggedIn ? <UserNavigator /> : <GuestNavigator />;
-
 }
+
+
+
+
 
 
 // return (
