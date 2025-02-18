@@ -52,10 +52,10 @@ const UserNavigator = () => {
         name={AuthGraph.RegisterScreen}
         component={RegisterScreen}
       />
-      {/* <UserStack.Screen
+      <UserStack.Screen
         name={AuthGraph.LoginScreen}
         component={LoginScreen}
-      /> */}
+      />
       <UserStack.Screen
         name={AppGraph.MembershipScreen}
         component={MembershipScreen}

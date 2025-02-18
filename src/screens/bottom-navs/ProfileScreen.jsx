@@ -89,6 +89,7 @@ const ProfileScreen = props => {
                 onPress={async () => {
                   await logout(); 
 
+                  navigation.replace(AuthGraph.LoginScreen)
            
                 }}
               />
