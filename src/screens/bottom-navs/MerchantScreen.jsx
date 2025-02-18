@@ -17,7 +17,7 @@ import Geocoder from 'react-native-geocoding';
 
 const MerchantScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMapView, setIsMapView] = useState(false); // State kiểm soát màn hình hiển thị
+  const [isMapView, setIsMapView] = useState(false); 
 
 
   const handleMerchant = item => {
@@ -69,8 +69,6 @@ const MerchantScreen = ({navigation}) => {
         {isMapView ? (
           <View style={styles.mapView}>
             <Text style={styles.mapText}>Bản đồ sẽ hiển thị ở đây</Text>
-            {/* AIzaSyAcW-7SoxTjYG6hfCj9JF-yMOzaWdBAYWA */}
-            {/* Thêm component bản đồ vào đây nếu có */}
             console.log(process.env.MAP_API_KEY)
           </View>
         ) : (
