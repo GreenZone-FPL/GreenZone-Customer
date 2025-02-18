@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Column, DialogBasic, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { Column, DialogBasic, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, DialogNotification } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 
@@ -25,6 +25,8 @@ const CheckoutScreen = (props) => {
   const navigation = props.navigation;
   const [isDialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng');
+
+  const [address, setAddress] = useState('');
 
   return (
     <View style={styles.container}>
@@ -38,7 +40,7 @@ const CheckoutScreen = (props) => {
           rightTextStyle={{ color: colors.primary }}
           onRightPress={() => setDialogShippingMethodVisible(true)}
         />
-        <AddressSection />
+         <AddressSection setAddress={setAddress} />
 
         <RecipientInfo
           onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
@@ -50,7 +52,7 @@ const CheckoutScreen = (props) => {
 
 
       </ScrollView>
-      <Footer />
+      <Footer address={address} />
       <DialogShippingMethod
         isVisible={isDialogShippingMethodVisible}
         selectedOption={selectedOption}
@@ -141,11 +143,10 @@ const TimeSection = () => {
     </TouchableOpacity>
   );
 };
-const AddressSection = () => {
+const AddressSection = ({ setAddress }) => {
   const [currentLocation, setCurrentLocation] = useState('');
   const [locationAvailable, setLocationAvailable] = useState(false);
 
-  // Lấy vị trí người dùng
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
       if (position.coords) {
@@ -166,11 +167,13 @@ const AddressSection = () => {
         const items = res.data.items;
         setCurrentLocation(items[0]);
         setLocationAvailable(true);
+        setAddress(items[0].address.label); // Cập nhật địa chỉ vào state cha
       }
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <>
       <DualTextRow
@@ -180,12 +183,11 @@ const AddressSection = () => {
         rightTextStyle={{ color: colors.primary }}
       />
 
-      <NormalText text={locationAvailable
-        ? currentLocation.address.label
-        : 'Đang lấy vị trí...'} />
+      <NormalText text={locationAvailable ? currentLocation.address.label : 'Đang lấy vị trí...'} />
     </>
-  )
-}
+  );
+};
+
 
 const RecipientInfo = ({ onChangeRecipientInfo }) => {
   return (
@@ -427,7 +429,9 @@ const PaymentMethod = () => {
   );
 };
 
-const Footer = () => {
+const Footer = ({ address }) => {
+  const [isVisible, setIsVisible] = useState(false);
+
   return (
     <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
       <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
@@ -435,7 +439,6 @@ const Footer = () => {
           <TitleText text='Tổng cộng' />
           <NormalText text='2 sản phẩm' />
           <NormalText text='Bạn tiết kiệm 12.000đ' style={{ color: colors.green750 }} />
-
         </Column>
 
         <Column>
@@ -443,10 +446,20 @@ const Footer = () => {
           <NormalText text='69.000đ' style={styles.textDiscount} />
         </Column>
       </Row>
-      <PrimaryButton title='Đặt hàng' />
+
+      <PrimaryButton title='Đặt hàng' onPress={() => setIsVisible(true)} />
+
+      <DialogNotification 
+        isVisible={isVisible}
+        onHide={() => setIsVisible(false)}
+        title='Xác nhận thông tin đơn hàng'
+        address={address} // Truyền địa chỉ vào DialogNotification
+      />
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

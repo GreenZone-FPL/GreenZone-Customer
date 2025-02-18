@@ -14,7 +14,7 @@ const RatingOrderScreen = (props) => {
     const handleItemPress = (item) => {
         setSelectedItem(item);
         setModalVisible(true);
-    };
+    }; 
 
     const closeModal = () => {
         setModalVisible(false);
