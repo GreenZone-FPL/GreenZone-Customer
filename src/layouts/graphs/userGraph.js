@@ -9,5 +9,10 @@ export const UserGraph = Object.freeze({
   NewAddressScreen: 'NewAddressScreen',
   SearchAddressScreen: 'SearchAddressScreen',
   SelectAddressScreen: 'SelectAddressScreen',
-  SettingScreen: 'SettingScreen'
+  SettingScreen: 'SettingScreen',
+
+
+  
+  AddressMerchantScreen: 'AddressMerchantScreen',
+  MapAdressScreen: 'MapAdressScreen',
 });

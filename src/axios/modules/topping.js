@@ -3,7 +3,7 @@ import axiosInstance from "../axiosInstance";
 export const getAllToppingsAPI = async () => {
     try {
        
-        const response = await axiosInstance().get("/v1/topping/all");
+        const response = await axiosInstance.get("/v1/topping/all");
 
         // Tách dữ liệu từ response
         const { statusCode, success, data } = response;

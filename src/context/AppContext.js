@@ -9,7 +9,19 @@ export const AppContextProvider = ({ children }) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
+
+  const login = () => setIsLoggedIn(true);
+
+  const logout = async () => {
+    // Xoá accessToken và refreshToken từ storage
+    await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+    await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+
+    // Cập nhật trạng thái đăng nhập
+    setIsLoggedIn(false);
+  };
 
   const checkLoginStatus = async () => {
     const isValid = await AppAsyncStorage.isTokenValid();
@@ -26,11 +38,6 @@ export const AppContextProvider = ({ children }) => {
   }, []);
 
   // Cập nhật trạng thái đăng nhập (thủ công khi login/logout)
-  const login = () => setIsLoggedIn(true);
-  const logout = () => setIsLoggedIn(false);
-
-
-
 
   const addToFavorites = (product) => {
     setFavorites((prevFavorites) => [...prevFavorites, product]);
@@ -49,5 +56,4 @@ export const AppContextProvider = ({ children }) => {
   );
 };
 
-// Custom hook để sử dụng context
-// export const useAppContext = () => useContext(AppContext);
+

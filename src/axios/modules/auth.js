@@ -2,45 +2,16 @@ import axiosInstance from "../axiosInstance";
 import { AppAsyncStorage } from "../../utils";
 
 
-
-export const refreshTokenAPI = async () => {
-    try {
-        const storedRefreshToken = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
-        if (!storedRefreshToken) {
-            console.log("Không tìm thấy refreshToken!");
-            return null;
-        }
-
-
-        const body = { refreshToken: storedRefreshToken };
-
-        const response = await axiosInstance().post("/auth/refresh", body);
-
-        // Tách dữ liệu từ response
-        const { statusCode, success, data } = response;
-
-        if (success && statusCode === 201) {
-            console.log("Refresh Successfully new accesstoken = ", data.accessToken.token);
-            return data;
-        } else {
-            console.log("Failed to refresh token:");
-            return null;
-        }
-    } catch (error) {
-        console.error("refreshTokenAPI Error path /auth/refresh:", error);
-        throw error;
-    }
-};
 export const getProfileAPI = async () => {
     try {
 
-        const response = await axiosInstance().get("/auth/profile");
+        const response = await axiosInstance.get("/auth/profile");
 
         // Tách dữ liệu từ response
         const { statusCode, success, data } = response;
 
         if (success && statusCode === 200) {
-            console.log("getProfileAPI data = ", data);
+            // console.log("getProfileAPI data = ", data);
             return data;
         } else {
             console.log("Failed to get profile, path /auth/profile");
@@ -57,7 +28,7 @@ export const registerAPI = async ({ firstName, lastName, email, dateOfBirth, gen
     try {
         const body = { firstName, lastName, email, dateOfBirth, gender, avatar };
 
-        const response = await axiosInstance().post("/auth/otp/register", body);
+        const response = await axiosInstance.post("/auth/otp/register", body);
 
         const { statusCode, success, data } = response;
 
@@ -87,7 +58,7 @@ export const sendOTPAPI = async ({ phoneNumber }) => {
     try {
 
         const body = { phoneNumber }
-        const response = await axiosInstance().post("/auth/otp/send", body);
+        const response = await axiosInstance.post("/auth/otp/send", body);
 
         // Tách dữ liệu từ response
         const { statusCode, success, message, data } = response;
@@ -108,11 +79,11 @@ export const sendOTPAPI = async ({ phoneNumber }) => {
 export const verifyOTPAPI = async ({ phoneNumber, code }) => {
     try {
         const body = { phoneNumber, code };
-        const response = await axiosInstance().post("/auth/otp/login", body);
+        const response = await axiosInstance.post("/auth/otp/login", body);
 
         const { success, data } = response;
         if (success) {
-            console.log("✅ OTP Verified, token = ", data.token);
+           
 
             // Lưu token vào AsyncStorage
             const accessToken = data.token.accessToken.token;
