@@ -14,11 +14,11 @@ export const getProfileAPI = async () => {
             // console.log("getProfileAPI data = ", data);
             return data;
         } else {
-            console.log("Failed to get profile, path /auth/profile");
+            // console.log("Failed to get profile, path /auth/profile");
             return null;
         }
     } catch (error) {
-        console.error("getProfileAPI error path /auth/profile:", error);
+        // console.error("getProfileAPI error path /auth/profile:", error);
         throw error; // Để nơi gọi có thể xử lý lỗi tiếp
     }
 };
@@ -83,11 +83,12 @@ export const verifyOTPAPI = async ({ phoneNumber, code }) => {
 
         const { success, data } = response;
         if (success) {
-           
+
 
             // Lưu token vào AsyncStorage
             const accessToken = data.token.accessToken.token;
             const refreshToken = data.token.refreshToken.token;
+            console.log('accesstoken =', accessToken)
 
             await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);
             await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken);

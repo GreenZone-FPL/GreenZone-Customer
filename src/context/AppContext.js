@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { AppAsyncStorage } from '../utils';
-
+import eventBus from './eventBus';
 
 export const AppContext = createContext();
 
@@ -9,8 +9,6 @@ export const AppContextProvider = ({ children }) => {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [favorites, setFavorites] = useState([]);
-  const [forceUpdate, setForceUpdate] = useState(false);
-
 
   const login = () => setIsLoggedIn(true);
 
@@ -31,6 +29,12 @@ export const AppContextProvider = ({ children }) => {
       setIsLoggedIn(false); // Token không hợp lệ hoặc hết hạn
     }
   };
+
+  useEffect(() => {
+    const listener = eventBus.addListener('logout', logout);
+
+    return () => listener.remove(); // Cleanup khi component unmount
+}, []);
 
 
   useEffect(() => {

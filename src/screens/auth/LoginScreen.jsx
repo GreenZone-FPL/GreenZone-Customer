@@ -1,5 +1,5 @@
 import LottieView from 'lottie-react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Alert,
   Keyboard,
@@ -13,7 +13,9 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Platform
+  Platform,
+  Animated
+
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,6 +24,7 @@ import { Column, FlatInput, LightStatusBar, NormalText, OverlayStatusBar, Row, T
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AuthGraph } from '../../layouts/graphs';
 import { refreshTokenAPI } from '../../axios';
+import { Toaster } from '../../utils';
 
 
 
@@ -31,8 +34,22 @@ const LoginScreen = ({ route, navigation }) => {
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(route.params?.message || '');
 
 
+  const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị opacity ban đầu là 1
+
+  useEffect(() => {
+    if (message) {
+      // Sau 2 giây, làm mờ rồi ẩn message
+      Animated.timing(fadeAnim, {
+        toValue: 0, // Mờ dần về 0
+        duration: 500, // Trong 500ms
+        delay: 2000, // Chờ 2 giây trước khi bắt đầu
+        useNativeDriver: true,
+      }).start(() => setMessage('')); // Sau khi hoàn tất, xóa message
+    }
+  }, [message]);
 
   const handleSendOTP = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
@@ -61,6 +78,14 @@ const LoginScreen = ({ route, navigation }) => {
 
 
     <Column style={styles.container}>
+      {message ? (
+        <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
+          <Icon source="information" size={20} color={colors.primary} />
+          <Text style={styles.toastText}>{message}</Text>
+        </Animated.View>
+      ) : null}
+
+
       <LightStatusBar />
       <Image
         source={require('../../assets/images/register_bg.png')}
@@ -107,9 +132,9 @@ const LoginScreen = ({ route, navigation }) => {
         <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
       </Pressable> */}
 
-    
-        <Ani_ModalLoading loading={loading}/>
-      
+
+      <Ani_ModalLoading loading={loading} />
+
     </Column>
 
 
@@ -146,6 +171,31 @@ const styles = StyleSheet.create({
     gap: 24,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  toast: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    // right: 20,
+    backgroundColor: colors.black,
+    padding: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+    elevation: 4, // Đổ bóng trên Android
+    shadowColor: '#000', // Đổ bóng trên iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  toastText: {
+    color: colors.white,
+    fontSize: 14,
+    flexShrink: 1, // Giúp text không bị tràn ra ngoài
   },
 
   title: {

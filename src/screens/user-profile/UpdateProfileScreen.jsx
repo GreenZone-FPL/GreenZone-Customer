@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useState} from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import LottieView from 'lottie-react-native';
 import {
   Dimensions,
@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   FlatInput,
   CustomFlatInput,
@@ -18,50 +18,41 @@ import {
   PrimaryButton,
   Ani_ModalLoading,
 } from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {AppContext} from '../../context/AppContext';
-import {getProfileAPI} from '../../axios';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { AppContext } from '../../context/AppContext';
+import { getProfileAPI } from '../../axios';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const UpdateProfileScreen = ({navigation}) => {
+const UpdateProfileScreen = ({ navigation, route }) => {
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
 
-  const {isLoggedIn} = useContext(AppContext);
+  const { isLoggedIn } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState(null);
+
+  const { profile } = route.params
 
   useEffect(() => {
-    if (isLoggedIn) {
-      setLoading(true);
-      getProfileAPI()
-        .then(data => {
-          console.log('profile = ', data);
-          setProfile(data);
-          // Gán dữ liệu vào state
-          setLastName(data.lastName || '');
-          setFirstName(data.firstName || '');
-          setEmail(data.email || '');
-          setDob(data.dateOfBirth ? data.dateOfBirth.split('T')[0] : '');
-          setGender(
-            data.gender === 'male'
-              ? 'Nam'
-              : data.gender === 'female'
-              ? 'Nữ'
-              : '',
-          );
-        })
-        .catch(err => {
-          console.error('Lỗi khi lấy profile:', err);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+
+    console.log('profile = ', profile);
+
+    // Gán dữ liệu vào state
+    setLastName(profile.lastName || '');
+    setFirstName(profile.firstName || '');
+    setEmail(profile.email || '');
+    setDob(profile.dateOfBirth ? profile.dateOfBirth.split('T')[0] : '');
+    setGender(
+      profile.gender === 'male'
+        ? 'Nam'
+        : profile.gender === 'female'
+          ? 'Nữ'
+          : '')
+      
+    
   }, [isLoggedIn]);
 
   return (
