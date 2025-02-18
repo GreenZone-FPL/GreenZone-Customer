@@ -10,6 +10,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {Icon} from 'react-native-paper';
 import Carousel from 'react-native-reanimated-carousel';
 import {PrimaryButton, OverlayStatusBar} from '../../components';
+import {Easing} from 'react-native';
 
 import {
   configureReanimatedLogger,
@@ -192,7 +193,13 @@ const ItemCarousel = ({data, setIndexSelect, indexSelect}) => {
           vertical
           height={140}
           data={data}
-          scrollAnimationDuration={200}
+          scrollAnimationDuration={500}
+          easing={Easing.out(Easing.exp)}
+          animationOptions={{
+            friction: 4,
+            tension: 40,
+          }}
+          removeClippedSubviews={true}
           width={width / 2.5}
           pagingEnabled={false}
           snapEnabled={true}
@@ -202,6 +209,7 @@ const ItemCarousel = ({data, setIndexSelect, indexSelect}) => {
             <TouchableOpacity onPress={() => handlePress(index)}>
               <View style={styles.carouselItem}>
                 <Text
+                  numberOfLines={1}
                   style={[
                     styles.carouselText,
                     indexSelect === index && styles.carouselTextActive,
