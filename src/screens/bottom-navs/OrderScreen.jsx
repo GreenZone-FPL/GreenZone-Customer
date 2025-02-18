@@ -14,7 +14,7 @@ import {
   ProductsListVertical,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
+import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
 
 import { getAllCategoriesAPI, getAllProductsAPI, getAllToppingsAPI } from '../../axios';
 
@@ -28,6 +28,7 @@ const OrderScreen = props => {
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
+  const [editOption, setEditOption] = useState('');
   const [isDialogVisible, setDialogVisible] = useState(false);
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
@@ -44,6 +45,18 @@ const OrderScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
+
+
+  const handleEditOption = option => {
+      setEditOption(option)
+
+      if (option === 'Giao hàng') {
+        setIsModalVisible(false);
+      } else if (option === 'Mang đi') {
+        navigation.navigate(UserGraph.AddressMerchantScreen);
+      }
+
+  }
 
 
 
@@ -211,6 +224,7 @@ const OrderScreen = props => {
         selectedOption={selectedOption}
         onHide={handleCloseDialog}
         onOptionSelect={handleOptionSelect}
+        onEditOption={handleEditOption}
       />
       <DialogBasic
         isVisible={isDialogVisible}
