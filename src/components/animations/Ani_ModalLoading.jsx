@@ -14,6 +14,7 @@ export const Ani_ModalLoading = ({
             <OverlayStatusBar />
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
+                    
                     <LottieView
                         source={require('../../assets/animations/ani_loading.json')}
                         autoPlay
