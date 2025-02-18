@@ -10,7 +10,7 @@ import {
 } from '../graphs';
 
 const AuthStack = createNativeStackNavigator();
-const AuthStackScreen = () => {
+const AuthNavigator = () => {
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
@@ -21,4 +21,4 @@ const AuthStackScreen = () => {
   );
 };
 
-export default AuthStackScreen;
+export default AuthNavigator;

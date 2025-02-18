@@ -5,17 +5,25 @@ import LoginScreen from '../../screens/auth/LoginScreen';
 import RegisterScreen from '../../screens/auth/RegisterScreen';
 import SplashScreen from '../../screens/auth/SplashScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
+import AddressMerchantScreen from '../../screens/address/AddressMerchantScreen';
+import MapAdressScreen from '../../screens/address/MapAdressScreen';
 import {
   AuthGraph,
-  MainGraph
+  MainGraph,
+  UserGraph
 } from '../graphs';
 import MainNavigation from '../MainNavigation';
 
 const GuestStack = createNativeStackNavigator();
-const GuestStackScreen = () => {
+const GuestNavigator = () => {
   return (
-    <GuestStack.Navigator screenOptions={{ headerShown: false }}>
-      <GuestStack.Screen name={AuthGraph.SplashScreen} component={SplashScreen} />
+    <GuestStack.Navigator
+      initialRouteName={AuthGraph.SplashScreen}
+      screenOptions={{ headerShown: false }}>
+      <GuestStack.Screen
+        name={AuthGraph.SplashScreen}
+        component={SplashScreen}
+      />
       <GuestStack.Screen
         name={MainGraph.graphName}
         component={MainNavigation}
@@ -25,9 +33,10 @@ const GuestStackScreen = () => {
 
 
       <GuestStack.Screen name={AuthGraph.RegisterScreen} component={RegisterScreen} />
-
+      <GuestStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
+      <GuestStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
     </GuestStack.Navigator>
   );
 };
 
-export default GuestStackScreen
+export default GuestNavigator

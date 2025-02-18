@@ -26,6 +26,7 @@ import {
   ProductsListHorizontal,
   ProductsListVertical,
   TitleText,
+  Ani_ModalLoading
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
@@ -135,8 +136,15 @@ const HomeScreen = props => {
     fetchData(getAllProductsAPI, setAllProducts);
   }, []); // Chỉ gọi một lần khi component mount
 
+  if(loading) {
+    return(
+      <Ani_ModalLoading loading={loading} message='Đang tải...' />
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
+    
+    
       <LightStatusBar />
       <HeaderWithBadge title={currentCategory} onBadgePress={() => { }} isHome={false} />
       <ScrollView

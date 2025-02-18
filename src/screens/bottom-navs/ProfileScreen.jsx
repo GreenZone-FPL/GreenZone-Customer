@@ -1,5 +1,5 @@
-import React, { useEffect, useContext } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useContext, useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
@@ -10,8 +10,8 @@ import { AppContext } from '../../context/AppContext';
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
-  const { isLoggedIn, logout } = useContext(AppContext)
-
+ 
+  const { isLoggedIn } = useContext(AppContext)
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -38,7 +38,7 @@ const ProfileScreen = props => {
               icon="google-maps"
               color={colors.pink500}
               title="Địa chỉ"
-              onPress={() => navigation.navigate(UserGraph.AddressScreen)}
+            onPress={() => navigation.navigate(UserGraph.AddressScreen)}
             />
           </Row>
 
@@ -81,17 +81,24 @@ const ProfileScreen = props => {
             }}
           />
           <View style={styles.separator} />
-          <CardUtiliti
-            icon="logout"
-            title="Đăng xuất"
-            onPress={async () => {
-        
-              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-              await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+          {
+            isLoggedIn ?
+              <CardUtiliti
+                icon="logout"
+                title="Đăng xuất"
+                onPress={async () => {
 
-              logout()
-            }}
-          />
+                  await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+                  await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+                  navigation.navigate(AuthGraph.LoginScreen)
+                  logout()
+                
+                }}
+              />
+              :
+              null
+          }
+
         </View>
       </Column>
     </SafeAreaView >
