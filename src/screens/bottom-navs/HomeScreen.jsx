@@ -36,7 +36,7 @@ import {
   ProductsListHorizontal,
   ProductsListVertical,
   TitleText,
-  Ani_ModalLoading
+  Ani_ModalLoading,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph, ShoppingGraph} from '../../layouts/graphs';
@@ -148,8 +148,6 @@ const HomeScreen = props => {
   // }
   return (
     <SafeAreaView style={styles.container}>
-    
-    
       <LightStatusBar />
       <HeaderWithBadge
         title={currentCategory}
@@ -161,7 +159,7 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-{/* 
+        {/* 
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
@@ -196,11 +194,16 @@ const HomeScreen = props => {
 
       <DeliveryButton
         title="Đi giao đến"
-        address={currentLocation && currentLocation.address.label}
+        address={
+          currentLocation
+            ? currentLocation.address.label
+            : 'Đang xác định vị trí...'
+        }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
+
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
