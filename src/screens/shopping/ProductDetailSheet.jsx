@@ -7,7 +7,8 @@ import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGrou
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/AppContext';
 import { ShoppingGraph } from '../../layouts/graphs';
-export const ProductDetailSheet = ({ route, navigation }) => {
+
+const ProductDetailSheet = ({ route, navigation }) => {
 
     const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
@@ -78,23 +79,6 @@ export const ProductDetailSheet = ({ route, navigation }) => {
                         }
 
 
-                        {/* <RadioGroup
-                    items={product.sugarLevels}
-                    selectedValue={selectedSugarLevel}
-                    onValueChange={setSelectedSugarLevel}
-                    title="Chọn mức đường"
-                    required={true}
-                /> */}
-
-                        {/* <RadioGroup
-                    items={product.iceLevels}
-                    selectedValue={selectedIceLevel}
-                    onValueChange={setSelectedIceLevel}
-                    title="Chọn mức đá"
-                    required={true}
-                /> */}
-
-
                         <SelectableGroup
                             items={product.topping}
                             title='Chọn topping'
@@ -146,37 +130,6 @@ export const ProductDetailSheet = ({ route, navigation }) => {
     );
 };
 
-// const product = {
-//     id: '1',
-//     name: 'Trà Sữa Trân Châu Hoàng Kim',
-//     description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book',
-//     image: 'https://greenzone.motcaiweb.io.vn/uploads/c9773a10-706e-44e5-8199-dd07a9faa94d.jpg',
-//     sizes: [
-//         { id: 'S', name: 'S', price: 10000, discount: 500, available: true },
-//         { id: 'M', name: 'M', price: 15000, discount: 1000, available: true },
-//         { id: 'L', name: 'L', price: 20000, discount: 1500, available: false },
-//     ],
-//     toppings: [
-//         { id: '1', name: 'Trân châu đen', price: 5000 },
-//         { id: '2', name: 'Thạch dừa', price: 7000 },
-//         { id: '3', name: 'Kem cheese', price: 10000 },
-//         { id: '4', name: 'Hạt dẻ', price: 8000 },
-//         { id: '5', name: 'Sương sáo', price: 6000 },
-//         { id: '6', name: 'Trân châu trắng', price: 7000 },
-//     ],
-//     iceLevels: [
-//         { id: '1', name: '100% đá', value: '100%' },
-//         { id: '2', name: '50% đá', value: '50%' },
-//         { id: '3', name: 'Không đá', value: '0%' },
-//     ],
-//     sugarLevels: [
-//         { id: '1', name: 'Ngọt bình thường', value: '100%' },
-//         { id: '2', name: 'Ít ngọt', value: '50%' },
-//         { id: '3', name: 'Không đường', value: '0%' },
-//     ],
-//     isFavorite: true,
-// };
-
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 
 
@@ -227,7 +180,7 @@ const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescr
 
     return (
         <View style={styles.infoContainer}>
-            {/* Product Name and Favorite Icon */}
+          
             <View style={styles.horizontalView}>
                 <Text
                     style={styles.productName}
@@ -399,3 +352,5 @@ const styles = StyleSheet.create({
         height: 800,
     }
 });
+
+export default ProductDetailSheet

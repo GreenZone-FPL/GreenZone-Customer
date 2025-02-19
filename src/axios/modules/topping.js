@@ -8,5 +8,6 @@ export const getAllToppings = async () => {
         return response.data;
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 }

@@ -13,32 +13,32 @@ import { Ani_ModalLoading, Column, FlatInput, LightStatusBar, TitleText } from '
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AuthGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
-
-
-
+import { useAppContext, ActionTypes } from '../../context/AppContext';
 
 const LoginScreen = ({ route, navigation }) => {
 
-  const [phoneNumber, setPhoneNumber] = useState('0868441273');
+  const [phoneNumber, setPhoneNumber] = useState('0779188717');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(route.params?.message || '');
+  const { state, dispatch } = useAppContext();
 
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    if (message) {
+    if (state.message) {
 
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 2000,
         delay: 2000,
         useNativeDriver: true,
-      }).start(() => setMessage(''));
+      }).start(() => {
+        dispatch({ type: ActionTypes.CLEAR_MESSAGE })
+      });
     }
-  }, [message]);
+  }, [state.message]);
 
   const handleSendOTP = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
@@ -67,10 +67,10 @@ const LoginScreen = ({ route, navigation }) => {
 
 
     <Column style={styles.container}>
-      {message ? (
+      {state.message ? (
         <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
           <Icon source="information" size={20} color={colors.primary} />
-          <Text style={styles.toastText}>{message}</Text>
+          <Text style={styles.toastText}>{state.message}</Text>
         </Animated.View>
       ) : null}
 

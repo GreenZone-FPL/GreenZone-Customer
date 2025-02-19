@@ -14,5 +14,7 @@ export const AppGraph = Object.freeze({
     VoucherDetailSheet: 'VoucherDetailSheet',
     AdvertisingScreen: 'AdvertisingScreen',
     MyFavoriteProducts: 'MyFavoriteProducts',
-    FavoriteScreen: 'FavoriteScreen'
+    FavoriteScreen: 'FavoriteScreen',
+    UpdateProfileScreen: 'UpdateProfileScreen',
+
 });

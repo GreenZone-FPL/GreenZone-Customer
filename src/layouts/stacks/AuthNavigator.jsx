@@ -8,14 +8,20 @@ import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
 import {
   AuthGraph
 } from '../graphs';
+import { useAppContext } from '../../context/AppContext';
 
 const AuthStack = createNativeStackNavigator();
-const AuthNavigator = () => {
+const AuthNavigator = ({ route }) => {
+  const { state } = useAppContext()
   return (
-    <AuthStack.Navigator 
-    initialRouteName={AuthGraph.SplashScreen}
-    screenOptions={{ headerShown: false }}>
-      <AuthStack.Screen name={AuthGraph.SplashScreen} component={SplashScreen} />
+    <AuthStack.Navigator
+      screenOptions={{ headerShown: false }}
+    >
+      {
+        state.message !== 'Phiên đăng nhập hết hạn' &&
+        <AuthStack.Screen name={AuthGraph.SplashScreen} component={SplashScreen} />
+      }
+
       <AuthStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
       <AuthStack.Screen name={AuthGraph.VerifyOTPScreen} component={VerifyOTPScreen} />
       <AuthStack.Screen name={AuthGraph.RegisterScreen} component={RegisterScreen} />

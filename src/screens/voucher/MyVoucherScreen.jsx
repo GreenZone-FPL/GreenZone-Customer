@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {LightStatusBar, NormalHeader, CustomTabView} from '../../components';
-import {colors, GLOBAL_KEYS, ScreenEnum} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import { AppGraph, VoucherGraph } from '../../layouts/graphs';
 
 const {width} = Dimensions.get('window');
 
@@ -19,7 +20,7 @@ const MyVoucherScreen = props => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const navigateToVoucherDetail = item => {
-    navigation.navigate(ScreenEnum.VoucherDetailSheet, {item});
+    navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
   };
 
   return (

@@ -15,7 +15,7 @@ import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar'
 
 const width = Dimensions.get('window').width;
 
-export const MerchantDetailSheet = props => {
+const MerchantDetailSheet = props => {
   const { navigation, route } = props;
   const { item } = route.params;
 
@@ -147,3 +147,5 @@ const styles = StyleSheet.create({
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });
+
+export default MerchantDetailSheet

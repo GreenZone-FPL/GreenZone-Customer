@@ -1,9 +1,8 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { ProductDetailSheet } from '../../components';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import OrderScreen from '../../screens/bottom-navs/OrderScreen';
-import CheckoutScreen from '../../screens/shopping/CheckoutScreen';
+import ProductDetailSheet from '../../screens/shopping/ProductDetailSheet';
 import RecipientInfoSheet from '../../screens/shopping/RecipientInfoSheet';
 import { AuthGraph, BottomGraph, MainGraph, ShoppingGraph } from '../graphs';
 
@@ -22,9 +21,13 @@ const OrderStackScreen = () => {
       <OrderStack.Screen
         name={ShoppingGraph.ProductDetailSheet}
         component={ProductDetailSheet}
+        options={{
+          animation: 'slide_from_bottom',
+          presentation: 'transparentModal',
+          headerShown: false,
+        }}
       />
-      
-    
+
 
       <OrderStack.Screen
         name={ShoppingGraph.RecipientInfoSheet}

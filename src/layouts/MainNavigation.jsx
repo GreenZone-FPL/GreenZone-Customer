@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Text } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { colors, GLOBAL_KEYS } from '../constants';
@@ -9,12 +9,11 @@ import MerchantStackScreen from './stacks/MerchantStackScreen';
 import OrderStackScreen from './stacks/OrderStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
-import { AppContext } from '../context/AppContext';
 
 const BottomTab = createBottomTabNavigator();
 
 const MainNavigation = () => {
- 
+
   return (
     <BottomTab.Navigator
       initialRouteName={MainGraph.HomeStackScreen}

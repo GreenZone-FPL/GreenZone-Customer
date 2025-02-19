@@ -4,33 +4,26 @@ import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import { Ani_ModalLoading, Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/AppContext';
-import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { ActionTypes, AppContext } from '../../context/AppContext';
+import { OrderGraph, UserGraph } from '../../layouts/graphs';
 
 
-const ProfileScreen = props => {
-  const navigation = props.navigation;
-  const { isLoggedIn, logout } = useContext(AppContext)
+const ProfileScreen = ({ navigation }) => {
+
   const [loading, setLoading] = useState(false)
+  const { state, dispatch } = useContext(AppContext)
 
-  const handleProfile = () => {
-
-    getProfile()
-      .then(data => {
-        console.log('profile', data)
-        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: data })
-      })
-      .catch(err => {
-        console.log('error', err.statusCode)
-        if (err.statusCode === 401) {
-          navigation.navigate(AuthGraph.LoginScreen, { message: 'Phiên đăng nhập đã hết hạn' })
-        }
-
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
+  const handleProfile = async () => {
+    setLoading(true)
+    try {
+      const reponse = await getProfile()
+      console.log('profile', reponse)
+      navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse })
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -48,15 +41,7 @@ const ProfileScreen = props => {
               icon="account"
               color={colors.primary}
               title="Thông tin cá nhân"
-              onPress={() => {
-                // navigation.navigate(AuthGraph.LoginScreen);
-                handleProfile()
-                // if (isLoggedIn) {
-                //   navigation.navigate(UserGraph.UpdateProfileScreen);
-                // } else {
-                //   navigation.navigate(AuthGraph.LoginScreen);
-                // }
-              }}
+              onPress={handleProfile}
             />
             <CardAccount
               icon="google-maps"
@@ -106,15 +91,12 @@ const ProfileScreen = props => {
           />
           <View style={styles.separator} />
           {
-            isLoggedIn &&
+            state.isLoggedIn &&
             <CardUtiliti
               icon="logout"
               title="Đăng xuất"
-              onPress={async () => {
-                await logout();
-
-                navigation.replace(AuthGraph.LoginScreen)
-
+              onPress={() => {
+                dispatch({ type: ActionTypes.LOGOUT })
               }}
             />
           }

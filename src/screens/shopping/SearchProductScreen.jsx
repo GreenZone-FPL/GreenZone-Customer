@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
-  FlatList,
-  Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
-  ScrollView
+  View
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { Column, CustomSearchBar, LightStatusBar, NormalText, Row, ProductsListVertical } from '../../components';
+import { getAllProducts } from '../../axios';
+import { CustomSearchBar, LightStatusBar, NormalText, ProductsListVertical, Row } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { ShoppingGraph } from '../../layouts/graphs';
-import { TextFormatter } from '../../utils';
-import { getAllProductsAPI } from '../../axios';
 
 const { width } = Dimensions.get('window');
 
@@ -27,7 +21,7 @@ const SearchProductScreen = props => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getAllProductsAPI();
+        const data = await getAllProducts();
         if (data.length > 0) {
           setAllProducts(data.flatMap(category => category.products));
           setFilteredProducts(data.flatMap(category => category.products)); // Khởi tạo danh sách hiển thị

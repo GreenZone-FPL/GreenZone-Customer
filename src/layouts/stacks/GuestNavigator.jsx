@@ -35,8 +35,7 @@ const GuestNavigator = () => {
 
 
       <GuestStack.Screen name={AuthGraph.RegisterScreen} component={RegisterScreen} />
-      <GuestStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
-      <GuestStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
+     
     </GuestStack.Navigator>
   );
 };
