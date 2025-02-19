@@ -30,7 +30,7 @@ function AppNavigator() {
   const { isLoggedIn } = useContext(AppContext);
   
   
-
+// useReducer
   useEffect(() => {
     console.log('isLoggedIn = ', isLoggedIn);
   }, [isLoggedIn]);

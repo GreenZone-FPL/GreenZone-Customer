@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
         right: 4,
         backgroundColor: colors.red800,
         color: colors.white,
+        
     },
 });
 

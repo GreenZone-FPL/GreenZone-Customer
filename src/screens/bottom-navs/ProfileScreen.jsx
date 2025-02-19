@@ -1,28 +1,29 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { Column, HeaderWithBadge, LightStatusBar, Row, TitleText, Ani_ModalLoading } from '../../components';
+import { getProfile } from '../../axios';
+import { Ani_ModalLoading, Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
-import { AppAsyncStorage } from '../../utils';
-import { getProfileAPI } from '../../axios';
 import { AppContext } from '../../context/AppContext';
+import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
   const { isLoggedIn, logout } = useContext(AppContext)
+  const [loading, setLoading] = useState(false)
 
-  const getProfile = () => {
+  const handleProfile = () => {
 
-    getProfileAPI()
+    getProfile()
       .then(data => {
+        console.log('profile', data)
         navigation.navigate(UserGraph.UpdateProfileScreen, { profile: data })
       })
       .catch(err => {
         console.log('error', err.statusCode)
         if (err.statusCode === 401) {
-          navigation.navigate(AuthGraph.LoginScreen, { message: 'Bạn đã hết phiên đăng nhập' })
+          navigation.navigate(AuthGraph.LoginScreen, { message: 'Phiên đăng nhập đã hết hạn' })
         }
 
       })
@@ -30,11 +31,11 @@ const ProfileScreen = props => {
         setLoading(false);
       });
 
-
   }
 
   return (
     <SafeAreaView style={styles.container}>
+      <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
 
@@ -49,7 +50,7 @@ const ProfileScreen = props => {
               title="Thông tin cá nhân"
               onPress={() => {
                 // navigation.navigate(AuthGraph.LoginScreen);
-                getProfile()
+                handleProfile()
                 // if (isLoggedIn) {
                 //   navigation.navigate(UserGraph.UpdateProfileScreen);
                 // } else {
