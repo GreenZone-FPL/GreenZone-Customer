@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,7 +9,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
@@ -26,33 +26,32 @@ import {
   ProductsListHorizontal,
   ProductsListVertical,
   TitleText,
-  Ani_ModalLoading
+  Ani_ModalLoading,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppGraph, ShoppingGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
-  const { navigation } = props;
-  const [categories, setCategories] = useState([])
+  const {navigation} = props;
+  const [categories, setCategories] = useState([]);
   const [currentLocation, setCurrenLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
-  const [allProducts, setAllProducts] = useState([])
+  const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
-  const [currentCategory, setCurrentCategory] = useState("Chào bạn mới");
+  const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
-
 
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = option => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-  const reverseGeocode = async ({ lat, long }) => {
+  const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -94,26 +93,25 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
-
   useEffect(() => {
-    console.log("Header title updated:", currentCategory);
+    console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-
-  const handleScroll = (event) => {
+  const handleScroll = event => {
     const scrollY = event.nativeEvent.contentOffset.y;
-    let closestCategory = "Danh mục";
+    let closestCategory = 'Danh mục';
     let minDistance = Number.MAX_VALUE;
 
     Object.entries(positions).forEach(([categoryId, posY]) => {
       const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
-        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || "Danh mục";
+        closestCategory =
+          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
     });
 
@@ -122,13 +120,10 @@ const HomeScreen = props => {
     }
   };
 
-
-
-  const onItemClick = (productId) => {
-    console.log("Product clicked:", productId);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+  const onItemClick = productId => {
+    console.log('Product clicked:', productId);
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
-
 
   useEffect(() => {
     fetchData(getAllCategoriesAPI, setCategories);
@@ -139,16 +134,18 @@ const HomeScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-    
-    
       <LightStatusBar />
-      <HeaderWithBadge title={currentCategory} onBadgePress={() => { }} isHome={false} />
+      <HeaderWithBadge
+        title={currentCategory}
+        onBadgePress={() => {}}
+        isHome={false}
+      />
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-{/* 
+        {/* 
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         <ImageCarousel data={dataBanner} time={2000} />
@@ -157,18 +154,24 @@ const HomeScreen = props => {
           navigation.navigate(AppGraph.AdvertisingScreen)
         } /> */}
         <ProductsListHorizontal
-          products={allProducts.flatMap(category => category.products).slice(0, 10)}
+          products={allProducts
+            .flatMap(category => category.products)
+            .slice(0, 10)}
           onItemClick={onItemClick}
         />
 
         <FlatList
           data={allProducts}
-          keyExtractor={(item) => item._id}
+          keyExtractor={item => item._id}
           scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View onLayout={(event) => onLayoutCategory(item._id, event)}>
-              <ProductsListVertical title={item.name} products={item.products} onItemClick={onItemClick} />
+          renderItem={({item}) => (
+            <View onLayout={event => onLayoutCategory(item._id, event)}>
+              <ProductsListVertical
+                title={item.name}
+                products={item.products}
+                onItemClick={onItemClick}
+              />
             </View>
           )}
         />
@@ -177,11 +180,16 @@ const HomeScreen = props => {
 
       <DeliveryButton
         title="Đi giao đến"
-        address={currentLocation && currentLocation.address.label}
+        address={
+          currentLocation
+            ? currentLocation.address.label
+            : 'Đang xác định vị trí...'
+        }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
+
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}
@@ -192,9 +200,7 @@ const HomeScreen = props => {
   );
 };
 
-
-
-const Item = ({ IconComponent, title, onPress }) => (
+const Item = ({IconComponent, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
@@ -207,64 +213,83 @@ const CardCategory = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
-
+        contentContainerStyle={{gap: 22}}>
         <Item
-          IconComponent={() => <TruckFast size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <TruckFast size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Giao hàng"
-
         />
 
         <Item
-          IconComponent={() => <BagHappy size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <BagHappy size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Mang đi"
         />
 
         <Item
-          IconComponent={() => <TicketDiscount size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Voucher"
         />
 
         <Item
-          IconComponent={() => <Coin1 size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <Coin1 size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Đổi xu"
         />
 
         <Item
-          IconComponent={() => <TaskSquare size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <TaskSquare size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Đơn Hàng"
         />
 
         <Item
-          IconComponent={() => <MessageFavorite size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Góp ý"
         />
 
         <Item
-          IconComponent={() => <Rank size="50" color={colors.primary} variant="Bulk" />}
+          IconComponent={() => (
+            <Rank size="50" color={colors.primary} variant="Bulk" />
+          )}
           title="Hạng thành viên"
         />
-
       </ScrollView>
     </View>
   );
 };
 
-const Searchbar = (props) => {
+const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const { navigation } = props;
+  const {navigation} = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', { searchQuery: query });
+      navigation.navigate('', {searchQuery: query});
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
   };
 
   return (
-    <View style={{ marginHorizontal: 16, borderWidth: 1, borderColor: colors.gray200, padding: 4, borderRadius: 4, gap: 10 }}>
-      <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
+    <View
+      style={{
+        marginHorizontal: 16,
+        borderWidth: 1,
+        borderColor: colors.gray200,
+        padding: 4,
+        borderRadius: 4,
+        gap: 10,
+      }}>
+      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput
@@ -276,17 +301,20 @@ const Searchbar = (props) => {
             returnKeyType="search"
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ borderRadius: 8, backgroundColor: colors.green200, padding: 10, height: 55 }}>
+        <TouchableOpacity
+          style={{
+            borderRadius: 8,
+            backgroundColor: colors.green200,
+            padding: 10,
+            height: 55,
+          }}>
           <Heart size="32" color={colors.primary} />
         </TouchableOpacity>
       </View>
       <CategoryMenu />
     </View>
-
-
   );
 };
-
 
 export default HomeScreen;
 
@@ -296,7 +324,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.white,
     position: 'relative',
-    height: Dimensions.get('window').height
+    height: Dimensions.get('window').height,
   },
   containerContent: {
     flexDirection: 'column',
@@ -324,7 +352,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: 70,
     fontSize: 12,
-    height: 37
+    height: 37,
   },
   card: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
@@ -335,20 +363,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   searchBar: {
-    flexDirection: 'row',           // Đặt icon và TextInput trên cùng một hàng
-    alignItems: 'center',           // Căn giữa theo chiều dọc
-    backgroundColor: colors.gray200,     // Màu nền của thanh tìm kiếm
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,               // Bo góc thanh tìm kiếm
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,          // Khoảng cách hai bên
-    paddingVertical: 8,             // Độ cao của thanh tìm kiếm  
-    width: "84%"               // Khoảng cách xung quanh thanh tìm kiếm
+    flexDirection: 'row', // Đặt icon và TextInput trên cùng một hàng
+    alignItems: 'center', // Căn giữa theo chiều dọc
+    backgroundColor: colors.gray200, // Màu nền của thanh tìm kiếm
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, // Bo góc thanh tìm kiếm
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, // Khoảng cách hai bên
+    paddingVertical: 8, // Độ cao của thanh tìm kiếm
+    width: '84%', // Khoảng cách xung quanh thanh tìm kiếm
   },
   icon: {
-    marginRight: 10,                // Khoảng cách giữa icon và TextInput
+    marginRight: 10, // Khoảng cách giữa icon và TextInput
   },
   input: {
-    flex: 1,                        // Đảm bảo TextInput chiếm hết phần còn lại
-    fontSize: 16,                   // Kích thước chữ trong TextInput
+    flex: 1, // Đảm bảo TextInput chiếm hết phần còn lại
+    fontSize: 16, // Kích thước chữ trong TextInput
   },
 });
 
