@@ -21,6 +21,7 @@ const GuestNavigator = () => {
     <GuestStack.Navigator
       initialRouteName={AuthGraph.SplashScreen}
       screenOptions={{ headerShown: false }}>
+      <GuestStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
       <GuestStack.Screen
         name={AuthGraph.SplashScreen}
         component={SplashScreen}
@@ -29,7 +30,7 @@ const GuestNavigator = () => {
         name={MainGraph.graphName}
         component={MainNavigation}
       />
-      <GuestStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
+
       <GuestStack.Screen name={AuthGraph.VerifyOTPScreen} component={VerifyOTPScreen} />
 
 

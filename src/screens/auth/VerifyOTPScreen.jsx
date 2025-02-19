@@ -30,6 +30,7 @@ const VerifyOTPScreen = ({ route, navigation }) => {
                 console.log("✅ OTP Verified, userLastName = ", response.data.user.lastName);
                 if (userLastName) {
                     Toaster.show("Đăng nhập thành công!")
+                    
                     navigation.navigate(AppGraph.MAIN)
 
                 } else {

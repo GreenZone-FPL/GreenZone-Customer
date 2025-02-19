@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { AppAsyncStorage } from '../utils';
+import eventBus from '../context/eventBus';
 
 export const baseURL = "https://greenzone.motcaiweb.io.vn/"
+
 
 const axiosInstance = ((contentType = 'application/json') => {
 
@@ -13,6 +15,7 @@ const axiosInstance = ((contentType = 'application/json') => {
         async (config) => {
             // Lấy token từ AsyncStorage 
             const token = await AppAsyncStorage.readData('accessToken');
+            // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTg1NzM1NywiZXhwIjoxNzM5ODU3NDE3fQ.WWNFPzJRvthEHSMnx2QTnqVSxI7xYp6amHUkxWzTLV4'
 
             if (token) {
                 config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
@@ -28,30 +31,20 @@ const axiosInstance = ((contentType = 'application/json') => {
     // 401; token het han, xoa token, 
     appAxios.interceptors.response.use(
         res => res.data,
-        err => {
-            // console.log(err)
-            // if(statusCode == 401){
-            //     //clear token 
-            //     if(callback){
-            
-            //         callback()
-            //     }
+        async (err) => {
+            if (err.response.data.statusCode === 401) {
+                console.log('401 log out');
+                
+                // Xóa token khỏi AsyncStorage
+                await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+                await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+    
               
-            // }
-
-            if (err.response) {
-                // Lỗi từ server
-                console.log("Server Error:", err.response.data);
-                return Promise.reject(err.response.data);
-            } else if (err.request) {
-                // Không nhận được phản hồi từ server
-                console.log("No response received:", err.request);
-                return Promise.reject("No response received");
-            } else {
-                // Lỗi trong cấu hình request
-                console.log("Request setup error:", err.message);
-                return Promise.reject(err.message);
+                eventBus.emit('logout')
+                return Promise.reject(err.response.data); 
             }
+    
+            return Promise.reject(err); 
         }
     );
 
