@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AppContext } from '../../context/AppContext';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { OtpInput } from "react-native-otp-entry";
-import { verifyOTPAPI } from '../../axios';
+import { verifyOTP } from '../../axios';
 import { colors } from '../../constants';
 import { AppGraph, AuthGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils/toaster';
@@ -23,39 +23,31 @@ const VerifyOTPScreen = ({ route, navigation }) => {
 
         setLoading(true)
         try {
-            const response = await verifyOTPAPI({ phoneNumber, code });
-            if (response.statusCode === 201) {
-                login()
-                const userLastName = response.data.user.lastName
-                console.log("✅ OTP Verified, userLastName = ", response.data.user.lastName);
-                if (userLastName) {
-                    Toaster.show("Đăng nhập thành công!")
-                    navigation.navigate(AppGraph.MAIN)
+            const response = await verifyOTP({ phoneNumber, code });
 
-                } else {
-                    navigation.navigate(AuthGraph.RegisterScreen)
-                }
+            login()
+            const userLastName = response.user.lastName
+            console.log("✅ OTP Verified, userLastName = ", response.user.lastName);
+            if (userLastName) {
+                Toaster.show("Đăng nhập thành công!")
 
-
-
-
-
-
+                navigation.navigate(AppGraph.MAIN)
 
             } else {
-                Toaster.show("Mã OTP không hợp lệ")
+                navigation.navigate(AuthGraph.RegisterScreen)
             }
+
         } catch (error) {
             Toaster.show(`Error: ${error}`)
-            console.log("Error verifying OTP:", error);
-        }finally{
+            console.log("Error", error);
+        } finally {
             setLoading(false)
         }
     };
 
     return (
         <View style={styles.container}>
-            <Ani_ModalLoading loading={loading} message='Đang xác thực...'/>
+            <Ani_ModalLoading loading={loading} message='Đang xác thực...' />
             <Text style={styles.title}>Xác thực OTP</Text>
             <Text style={styles.subtitle}>Nhập mã OTP gửi đến {phoneNumber}</Text>
 

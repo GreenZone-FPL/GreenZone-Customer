@@ -1,61 +1,51 @@
 import axios from 'axios';
 import { AppAsyncStorage } from '../utils';
+import eventBus from '../context/eventBus';
 
 export const baseURL = "https://greenzone.motcaiweb.io.vn/"
 
-const axiosInstance = ((contentType = 'application/json') => {
+const axiosInstance = axios.create({
+    baseURL: baseURL
+});
 
-    const appAxios = axios.create({
-        baseURL: baseURL
-    });
+axiosInstance.interceptors.request.use(
+    async (config) => {
+        // Lấy token từ AsyncStorage 
+        const token = await AppAsyncStorage.readData('accessToken');
+        // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTk0NTgxMiwiZXhwIjoxNzM5OTQ1ODcyfQ.dJLwZHrHc-swD0ZwBiJWmUq0CIACK8tdLjwnbhL0j2A'
 
-    appAxios.interceptors.request.use(
-        async (config) => {
-            // Lấy token từ AsyncStorage 
-            const token = await AppAsyncStorage.readData('accessToken');
-
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
-            }
-
-            config.headers['Accept'] = 'application/json';
-            config.headers['Content-Type'] = contentType;
-            return config;
-        },
-        err => Promise.reject(err)
-    );
-
-    // 401; token het han, xoa token, 
-    appAxios.interceptors.response.use(
-        res => res.data,
-        err => {
-            // console.log(err)
-            // if(statusCode == 401){
-            //     //clear token 
-            //     if(callback){
-            
-            //         callback()
-            //     }
-              
-            // }
-
-            if (err.response) {
-                // Lỗi từ server
-                console.log("Server Error:", err.response.data);
-                return Promise.reject(err.response.data);
-            } else if (err.request) {
-                // Không nhận được phản hồi từ server
-                console.log("No response received:", err.request);
-                return Promise.reject("No response received");
-            } else {
-                // Lỗi trong cấu hình request
-                console.log("Request setup error:", err.message);
-                return Promise.reject(err.message);
-            }
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
         }
-    );
 
-    return appAxios;
-})()
+        config.headers['Accept'] = 'application/json';
+        config.headers['Content-Type'] = 'application/json';
+        return config;
+    },
+    err => Promise.reject(err)
+);
+
+// 401; token het han, xoa token, 
+axiosInstance.interceptors.response.use(
+    res => res.data,
+    async (err) => {
+        if (err.response.data.statusCode === 401) {
+            console.log('401 log out');
+
+            // Xóa token khỏi AsyncStorage
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+
+
+            eventBus.emit('logout')
+            return Promise.reject(err.response.data);
+        }
+
+        return Promise.reject(err);
+    }
+);
+
+
+
 
 export default axiosInstance;

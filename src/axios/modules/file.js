@@ -1,6 +1,6 @@
 import axiosInstance from "../axiosInstance";
 
-// export const uploadFileAPI = async (file) => {
+// export const uploadFile = async (file) => {
 //     try {
 //         if (!file) {
 //             console.error("uploadFile: No file provided");

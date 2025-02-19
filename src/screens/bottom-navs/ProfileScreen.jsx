@@ -1,19 +1,41 @@
-import React, { useEffect, useContext, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useContext, useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
+import { getProfile } from '../../axios';
+import { Ani_ModalLoading, Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
-import { AppAsyncStorage } from '../../utils';
-import { getProfileAPI } from '../../axios';
 import { AppContext } from '../../context/AppContext';
+import { AuthGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+
 
 const ProfileScreen = props => {
   const navigation = props.navigation;
-
   const { isLoggedIn, logout } = useContext(AppContext)
+  const [loading, setLoading] = useState(false)
+
+  const handleProfile = () => {
+
+    getProfile()
+      .then(data => {
+        console.log('profile', data)
+        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: data })
+      })
+      .catch(err => {
+        console.log('error', err.statusCode)
+        if (err.statusCode === 401) {
+          navigation.navigate(AuthGraph.LoginScreen, { message: 'Phiên đăng nhập đã hết hạn' })
+        }
+
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+  }
+
   return (
     <SafeAreaView style={styles.container}>
+      <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
 
@@ -27,11 +49,13 @@ const ProfileScreen = props => {
               color={colors.primary}
               title="Thông tin cá nhân"
               onPress={() => {
-                if (isLoggedIn) {
-                  navigation.navigate(UserGraph.UpdateProfileScreen);
-                } else {
-                  navigation.navigate(AuthGraph.LoginScreen);
-                }
+                // navigation.navigate(AuthGraph.LoginScreen);
+                handleProfile()
+                // if (isLoggedIn) {
+                //   navigation.navigate(UserGraph.UpdateProfileScreen);
+                // } else {
+                //   navigation.navigate(AuthGraph.LoginScreen);
+                // }
               }}
             />
             <CardAccount
@@ -83,15 +107,16 @@ const ProfileScreen = props => {
           <View style={styles.separator} />
           {
             isLoggedIn &&
-              <CardUtiliti
-                icon="logout"
-                title="Đăng xuất"
-                onPress={async () => {
-                  await logout(); 
+            <CardUtiliti
+              icon="logout"
+              title="Đăng xuất"
+              onPress={async () => {
+                await logout();
 
-           
-                }}
-              />
+                navigation.replace(AuthGraph.LoginScreen)
+
+              }}
+            />
           }
 
         </View>
