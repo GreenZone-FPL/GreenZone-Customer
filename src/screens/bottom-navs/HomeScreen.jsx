@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
-import { getAllCategoriesAPI, getAllProductsAPI } from '../../axios';
+import { getAllCategoriesAPI, getAllProducts } from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -86,7 +86,7 @@ const HomeScreen = props => {
         callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
       }
     } catch (error) {
-      console.error(`Error fetching data from ${api.toString()}:`, error);
+      console.log(`Error`, error);
     } finally {
       setLoading(false); // Dừng loading khi lấy dữ liệu xong
     }
@@ -133,14 +133,10 @@ const HomeScreen = props => {
   useEffect(() => {
     fetchData(getAllCategoriesAPI, setCategories);
     // Fetch all products
-    fetchData(getAllProductsAPI, setAllProducts);
-  }, []); // Chỉ gọi một lần khi component mount
+    fetchData(getAllProducts, setAllProducts);
+  }, []); 
 
-  // if(loading) {
-  //   return(
-  //     <Ani_ModalLoading loading={loading} message='Đang tải...' />
-  //   )
-  // }
+
   return (
     <SafeAreaView style={styles.container}>
     

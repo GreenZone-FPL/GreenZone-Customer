@@ -1,30 +1,19 @@
-import LottieView from 'lottie-react-native';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Modal,
-  Pressable,
-  ScrollView,
+  Animated,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-  Platform,
-  Animated
-
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import { sendOTPAPI } from '../../axios';
-import { Column, FlatInput, LightStatusBar, NormalText, OverlayStatusBar, Row, TitleText, Ani_ModalLoading } from '../../components';
+import { sendOTP } from '../../axios';
+import { Ani_ModalLoading, Column, FlatInput, LightStatusBar, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AuthGraph } from '../../layouts/graphs';
-import { refreshTokenAPI } from '../../axios';
 import { Toaster } from '../../utils';
+
 
 
 
@@ -37,17 +26,17 @@ const LoginScreen = ({ route, navigation }) => {
   const [message, setMessage] = useState(route.params?.message || '');
 
 
-  const fadeAnim = useRef(new Animated.Value(1)).current; // Giá trị opacity ban đầu là 1
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (message) {
-      // Sau 2 giây, làm mờ rồi ẩn message
+
       Animated.timing(fadeAnim, {
-        toValue: 0, // Mờ dần về 0
-        duration: 500, // Trong 500ms
-        delay: 2000, // Chờ 2 giây trước khi bắt đầu
+        toValue: 0,
+        duration: 2000,
+        delay: 2000,
         useNativeDriver: true,
-      }).start(() => setMessage('')); // Sau khi hoàn tất, xóa message
+      }).start(() => setMessage(''));
     }
   }, [message]);
 
@@ -60,12 +49,12 @@ const LoginScreen = ({ route, navigation }) => {
 
     setLoading(true);
     try {
-      const response = await sendOTPAPI({ phoneNumber });
+      const response = await sendOTP({ phoneNumber });
       if (response) {
         console.log('otp = ', response.code);
         navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
       } else {
-        Alert.alert('Lỗi', 'Không thể gửi OTP, vui lòng thử lại sau.');
+        Toaster.show('Không thể gửi OTP, vui lòng thử lại sau')
       }
     } catch (error) {
       console.log('error', error);
@@ -142,31 +131,14 @@ const LoginScreen = ({ route, navigation }) => {
   );
 };
 
-// const Ani_ModalLoading = ({loading}) => {
-//   return (
-//     <Modal transparent={true} visible={loading} animationType="fade">
-//       <OverlayStatusBar />
-//       <View style={styles.modalContainer}>
-//         <View style={styles.modalContent}>
-//           <LottieView
-//             source={require('../../assets/animations/ani_loading.json')}
-//             autoPlay
-//             loop
-//             style={{ width: 100, height: 100 }}
-//           />
-//           <Text style={styles.loadingText}>Đang xử lý...</Text>
-//         </View>
-//       </View>
-//     </Modal>
-//   )
-// }
+
 
 export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     padding: 16,
     gap: 24,
     alignItems: 'center',
@@ -176,15 +148,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     left: 20,
-    // right: 20,
     backgroundColor: colors.black,
     padding: 12,
     borderRadius: 8,
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
-    elevation: 4, // Đổ bóng trên Android
-    shadowColor: '#000', // Đổ bóng trên iOS
+    elevation: 4,
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -195,7 +166,7 @@ const styles = StyleSheet.create({
   toastText: {
     color: colors.white,
     fontSize: 14,
-    flexShrink: 1, // Giúp text không bị tràn ra ngoài
+    flexShrink: 1,
   },
 
   title: {

@@ -16,7 +16,7 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
 
-import { getAllCategoriesAPI, getAllProductsAPI, getAllToppingsAPI } from '../../axios';
+import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 
 
 const OrderScreen = props => {
@@ -88,13 +88,13 @@ const OrderScreen = props => {
 
   useEffect(() => {
     // Fetch categories
-    fetchData(getAllCategoriesAPI, setCategories);
+    fetchData(getAllCategories, setCategories);
 
     // Fetch toppings
-    fetchData(getAllToppingsAPI, setToppings);
+    fetchData(getAllToppings, setToppings);
 
     // Fetch all products
-    fetchData(getAllProductsAPI, setAllProducts);
+    fetchData(getAllProducts, setAllProducts);
   }, []); // Chỉ gọi một lần khi component mount
 
   const onLayoutCategory = (categoryId, event) => {

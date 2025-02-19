@@ -20,7 +20,7 @@ import {
 } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { AppContext } from '../../context/AppContext';
-import { getProfileAPI } from '../../axios';
+
 
 const { width } = Dimensions.get('window');
 
