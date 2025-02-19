@@ -1,4 +1,4 @@
-import React, {useState,useEffect,useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   FlatList,
   Image,
@@ -9,6 +9,7 @@ import {
   View,
   Animated,
   Easing,
+  TextInput,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import {CustomSearchBar, HeaderWithBadge} from '../../components';
@@ -17,7 +18,6 @@ import {AppGraph} from '../../layouts/graphs/appGraph';
 import polyline from '@mapbox/polyline';
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
-
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -35,192 +35,213 @@ const MerchantScreen = ({navigation}) => {
   const toggleView = () => {
     setIsMapView(!isMapView);
   };
- const [userLocation, setUserLocation] = useState([null, null]);
- const [lastLocation, setLastLocation] = useState([null, null]);
- const [searchText, setSearchText] = useState('');
- const [suggestions, setSuggestions] = useState([]);
- const [selectedLocation, setSelectedLocation] = useState(null);
- const cameraRef = useRef(null);
- const opacityAnim = useRef(new Animated.Value(0.3)).current;
- const watchId = useRef(null);
- const [routeCoordinates, setRouteCoordinates] = useState([]);
+  const [userLocation, setUserLocation] = useState([null, null]);
+  const [lastLocation, setLastLocation] = useState([null, null]);
+  const [searchText, setSearchText] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const cameraRef = useRef(null);
+  const opacityAnim = useRef(new Animated.Value(0.3)).current;
+  const watchId = useRef(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
 
- const [circleOpacity, setCircleOpacity] = useState(1);
+  const [circleOpacity, setCircleOpacity] = useState(1);
 
- // Tạo hiệu ứng nhấp nháy liên tục
- const pulseAnimation = useRef(new Animated.Value(1)).current;
+  // Tạo hiệu ứng nhấp nháy liên tục
+  const pulseAnimation = useRef(new Animated.Value(1)).current;
 
- useEffect(() => {
-   Animated.loop(
-     Animated.sequence([
-       Animated.timing(pulseAnimation, {
-         toValue: 0.3, // Giảm độ mờ
-         duration: 400,
-         easing: Easing.linear,
-         useNativeDriver: true,
-       }),
-       Animated.timing(pulseAnimation, {
-         toValue: 1, // Trả về trạng thái ban đầu
-         duration: 400,
-         easing: Easing.linear,
-         useNativeDriver: true,
-       }),
-     ]),
-   ).start();
- }, []);
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnimation, {
+          toValue: 0.3, // Giảm độ mờ
+          duration: 400,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnimation, {
+          toValue: 1, // Trả về trạng thái ban đầu
+          duration: 400,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, []);
 
- useEffect(() => {
-   watchId.current = Geolocation.watchPosition(
-     position => {
-       const {latitude, longitude} = position.coords;
-       const newLocation = [longitude, latitude];
+  useEffect(() => {
+    watchId.current = Geolocation.watchPosition(
+      position => {
+        const {latitude, longitude} = position.coords;
+        const newLocation = [longitude, latitude];
 
-       if (
-         !lastLocation[0] ||
-         Math.abs(newLocation[0] - lastLocation[0]) > 0.0005 ||
-         Math.abs(newLocation[1] - lastLocation[1]) > 0.0005
-       ) {
-         setUserLocation(newLocation);
-         setLastLocation(newLocation);
+        if (
+          !lastLocation[0] ||
+          Math.abs(newLocation[0] - lastLocation[0]) > 0.0005 ||
+          Math.abs(newLocation[1] - lastLocation[1]) > 0.0005
+        ) {
+          setUserLocation(newLocation);
+          setLastLocation(newLocation);
 
-         if (cameraRef.current) {
-           cameraRef.current.setCamera({
-             centerCoordinate: newLocation,
-             zoomLevel: 16,
-             animationDuration: 1000,
-           });
-         }
-       }
-     },
-     error => console.log('Lỗi lấy vị trí:', error),
-     {enableHighAccuracy: true, distanceFilter: 10},
-   );
+          if (cameraRef.current) {
+            cameraRef.current.setCamera({
+              centerCoordinate: newLocation,
+              zoomLevel: 16,
+              animationDuration: 1000,
+            });
+          }
+        }
+      },
+      error => console.log('Lỗi lấy vị trí:', error),
+      {enableHighAccuracy: true, distanceFilter: 10},
+    );
 
-   return () => {
-     if (watchId.current !== null) {
-       Geolocation.clearWatch(watchId.current);
-     }
-   };
- }, []);
+    return () => {
+      if (watchId.current !== null) {
+        Geolocation.clearWatch(watchId.current);
+      }
+    };
+  }, []);
 
- const handleSearch = async text => {
-   setSearchText(text);
-   if (text.length < 3) {
-     setSuggestions([]);
-     return;
-   }
-   try {
-     const response = await fetch(
-       `https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONG_API_KEY}&input=${text}`,
-     );
-     const data = await response.json();
-     setSuggestions(data.predictions);
-   } catch (error) {
-     console.log('Lỗi tìm kiếm:', error);
-   }
- };
+  const handleSearch = async text => {
+    setSearchQuery(text);
+    if (text.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONG_API_KEY}&input=${text}`,
+      );
+      const data = await response.json();
+      setSuggestions(data.predictions);
+    } catch (error) {
+      console.log('Lỗi tìm kiếm:', error);
+    }
+  };
 
- const handleSelectLocation = async placeId => {
-   try {
-     const response = await fetch(
-       `https://rsapi.goong.io/Place/Detail?api_key=${GOONG_API_KEY}&place_id=${placeId}`,
-     );
-     const data = await response.json();
-     const {lat, lng} = data.result.geometry.location;
+  const handleSelectLocation = async placeId => {
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/Place/Detail?api_key=${GOONG_API_KEY}&place_id=${placeId}`,
+      );
+      const data = await response.json();
+      const {lat, lng} = data.result.geometry.location;
 
-     // Xóa tuyến đường trước đó
-     setRouteCoordinates([]);
+      // Xóa tuyến đường trước đó
+      setRouteCoordinates([]);
 
-     setSelectedLocation([lng, lat]);
+      setSelectedLocation([lng, lat]);
 
-     if (cameraRef.current) {
-       cameraRef.current.setCamera({
-         centerCoordinate: [lng, lat],
-         zoomLevel: 16,
-         animationDuration: 1000,
-       });
-     }
-     setSuggestions([]);
-     setSearchText('');
-   } catch (error) {
-     console.log('Lỗi lấy chi tiết địa điểm:', error);
-   }
- };
+      if (cameraRef.current) {
+        cameraRef.current.setCamera({
+          centerCoordinate: [lng, lat],
+          zoomLevel: 16,
+          animationDuration: 1000,
+        });
+      }
+      setSuggestions([]);
+      setSearchText('');
+    } catch (error) {
+      console.log('Lỗi lấy chi tiết địa điểm:', error);
+    }
+  };
 
- const moveToCurrentLocation = () => {
-   if (userLocation[0] !== null && cameraRef.current) {
-     cameraRef.current.setCamera({
-       centerCoordinate: userLocation,
-       zoomLevel: 16,
-       animationDuration: 1000,
-     });
-   }
- };
+  const moveToCurrentLocation = () => {
+    if (userLocation[0] !== null && cameraRef.current) {
+      cameraRef.current.setCamera({
+        centerCoordinate: userLocation,
+        zoomLevel: 16,
+        animationDuration: 1000,
+      });
+    }
+  };
 
- // Lấy tuyến đường từ vị trí hiện tại đến vị trí đã chọn
- const fetchRoute = async () => {
-   if (!userLocation[0] || !selectedLocation) {
-     console.log('Vị trí không hợp lệ');
-     return;
-   }
+  // Lấy tuyến đường từ vị trí hiện tại đến vị trí đã chọn
+  const fetchRoute = async () => {
+    if (!userLocation[0] || !selectedLocation) {
+      console.log('Vị trí không hợp lệ');
+      return;
+    }
 
-   try {
-     const response = await fetch(
-       `https://rsapi.goong.io/Direction?origin=${userLocation[1]},${userLocation[0]}&destination=${selectedLocation[1]},${selectedLocation[0]}&vehicle=car&api_key=${GOONG_API_KEY}`,
-     );
-     const data = await response.json();
+    try {
+      const response = await fetch(
+        `https://rsapi.goong.io/Direction?origin=${userLocation[1]},${userLocation[0]}&destination=${selectedLocation[1]},${selectedLocation[0]}&vehicle=car&api_key=${GOONG_API_KEY}`,
+      );
+      const data = await response.json();
 
-     if (data.routes && data.routes.length > 0) {
-       const route = data.routes[0];
-       if (route.legs && route.legs.length > 0) {
-         const steps = route.legs[0].steps;
-         const coordinates = steps
-           .flatMap(step => polyline.decode(step.polyline.points))
-           .map(coord => [coord[1], coord[0]]); // Chuyển về [lng, lat]
+      if (data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        if (route.legs && route.legs.length > 0) {
+          const steps = route.legs[0].steps;
+          const coordinates = steps
+            .flatMap(step => polyline.decode(step.polyline.points))
+            .map(coord => [coord[1], coord[0]]); // Chuyển về [lng, lat]
 
-         setRouteCoordinates(coordinates);
+          setRouteCoordinates(coordinates);
 
-         // 📌 Tính toán vùng hiển thị toàn bộ tuyến đường
-         const lats = coordinates.map(c => c[1]);
-         const lngs = coordinates.map(c => c[0]);
-         const minLat = Math.min(...lats);
-         const maxLat = Math.max(...lats);
-         const minLng = Math.min(...lngs);
-         const maxLng = Math.max(...lngs);
+          //  Tính toán vùng hiển thị toàn bộ tuyến đường
+          const lats = coordinates.map(c => c[1]);
+          const lngs = coordinates.map(c => c[0]);
+          const minLat = Math.min(...lats);
+          const maxLat = Math.max(...lats);
+          const minLng = Math.min(...lngs);
+          const maxLng = Math.max(...lngs);
 
-         // 📍 Điều chỉnh bản đồ để hiển thị toàn bộ tuyến đường
-         if (cameraRef.current) {
-           cameraRef.current.fitBounds(
-             [minLng, minLat], // Góc trái dưới
-             [maxLng, maxLat], // Góc phải trên
-             100, // Padding để không bị sát mép
-           );
-         }
-       } else {
-         console.error('Không tìm thấy dữ liệu tuyến đường');
-       }
-     } else {
-       console.error('Không có tuyến đường hợp lệ');
-     }
-   } catch (error) {
-     console.log('Lỗi lấy tuyến đường:', error);
-   }
- };
+          //  Điều chỉnh bản đồ để hiển thị toàn bộ tuyến đường
+          if (cameraRef.current) {
+            cameraRef.current.fitBounds(
+              [minLng, minLat], // Góc trái dưới
+              [maxLng, maxLat], // Góc phải trên
+              100, // Padding để không bị sát mép
+            );
+          }
+        } else {
+          console.error('Không tìm thấy dữ liệu tuyến đường');
+        }
+      } else {
+        console.error('Không có tuyến đường hợp lệ');
+      }
+    } catch (error) {
+      console.log('Lỗi lấy tuyến đường:', error);
+    }
+  };
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBadge title={isMapView ? 'Bản đồ' : 'Cửa hàng'} />
 
       <View style={styles.content}>
         <View style={styles.tool}>
-          <CustomSearchBar
-            placeholder="Tìm kiếm..."
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            onClearIconPress={() => setSearchQuery('')}
-            leftIcon="magnify"
-            rightIcon="close"
-            style={{flex: 1, elevation: 3}}
-          />
+          <View style={{position: 'relative', flex: 1}}>
+            <CustomSearchBar
+              placeholder="Tìm kiếm cửa hàng hoặc địa điểm..."
+              searchQuery={searchQuery}
+              setSearchQuery={handleSearch} // Gọi trực tiếp hàm tìm kiếm khi nhập
+              onClearIconPress={() => {
+                setSearchQuery('');
+                setSuggestions([]);
+              }}
+              leftIcon="magnify"
+              rightIcon="close"
+              style={{elevation: 3}}
+            />
+
+            {suggestions.length > 0 && (
+              <View style={styles.suggestionContainer}>
+                <FlatList
+                  data={suggestions}
+                  keyExtractor={item => item.place_id}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => handleSelectLocation(item.place_id)}
+                      style={styles.suggestionItem}>
+                      <Text>{item.description}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            )}
+          </View>
 
           <TouchableOpacity onPress={toggleView}>
             <View style={styles.map}>
@@ -298,34 +319,23 @@ const MerchantScreen = ({navigation}) => {
               )}
             </MapboxGL.MapView>
 
-            <View style={styles.searchBox}>
-              <TextInput
-                placeholder="Nhập địa điểm cần tìm..."
-                value={searchText}
-                onChangeText={handleSearch}
-                style={styles.input}
-              />
-              <FlatList
-                data={suggestions}
-                keyExtractor={item => item.place_id}
-                renderItem={({item}) => (
-                  <TouchableOpacity
-                    onPress={() => handleSelectLocation(item.place_id)}
-                    style={styles.suggestionItem}>
-                    <Text>{item.description}</Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
                 onPress={moveToCurrentLocation}>
-                <Text style={styles.buttonText}>📍 Vị trí của tôi</Text>
+                <Icon
+                  source="crosshairs-gps"
+                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                  color={colors.primary}
+                />
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.button} onPress={fetchRoute}>
-                <Text style={styles.buttonText}>🚗 Chỉ đường</Text>
+                <Icon
+                  source="directions"
+                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                  color={colors.primary}
+                />
               </TouchableOpacity>
             </View>
           </View>
@@ -393,6 +403,23 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  suggestionContainer: {
+    position: 'absolute',
+    top: 60, // Điều chỉnh tùy thuộc vào vị trí của CustomSearchBar
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    elevation: 5,
+    zIndex: 10, // Giúp danh sách hiển thị phía trên các thành phần khác
+    maxHeight: 200, // Giới hạn chiều cao, tránh che hết màn hình
+  },
+  suggestionItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+
   tool: {
     flexDirection: 'row',
     alignContent: 'center',
@@ -417,8 +444,6 @@ const styles = StyleSheet.create({
   },
   mapView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   mapText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -474,17 +499,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     position: 'absolute',
-    bottom: 20,
+    bottom: 100,
     left: 10,
     right: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   button: {
-    backgroundColor: '#299345',
     padding: 10,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
   buttonText: {
     color: 'white',
