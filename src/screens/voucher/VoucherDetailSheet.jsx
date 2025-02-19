@@ -10,15 +10,16 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import { colors, GLOBAL_KEYS, ScreenEnum } from '../../constants';
-import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { OverlayStatusBar } from '../../components';
 import { Icon } from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { BottomGraph } from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
 
-export const VoucherDetailSheet = ({ navigation, route }) => {
-  const { item } = route.params;
+const VoucherDetailSheet = ({ navigation, route }) => {
+  const { item } = route.params || null
   const [showAlert, setShowAlert] = useState(false);
 
   const copyToClipboard = () => {
@@ -76,7 +77,7 @@ export const VoucherDetailSheet = ({ navigation, route }) => {
 
               <TouchableOpacity
                 style={styles.orderButton}
-                onPress={() => navigation.navigate(ScreenEnum.OrderScreen)}>
+                onPress={() => navigation.navigate(BottomGraph.OrderScreen)}>
                 <Text style={styles.orderButtonText}>Bắt đầu đặt hàng</Text>
               </TouchableOpacity>
 
@@ -250,4 +251,6 @@ const styles = StyleSheet.create({
     color: colors.blue600,
   },
 });
+
+export default VoucherDetailSheet
 

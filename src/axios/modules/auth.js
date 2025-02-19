@@ -9,7 +9,7 @@ export const getProfile = async () => {
         return response.data
     } catch (error) {
         console.log("error:", error);
-        throw error; 
+        throw error;
     }
 };
 
@@ -31,6 +31,7 @@ export const register = async ({ firstName, lastName, email, dateOfBirth, gender
 
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 };
 
@@ -46,6 +47,7 @@ export const sendOTP = async ({ phoneNumber }) => {
         return response.data;
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 };
 
@@ -68,6 +70,7 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
 
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 };
 

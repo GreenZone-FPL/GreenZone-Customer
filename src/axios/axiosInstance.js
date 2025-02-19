@@ -1,7 +1,6 @@
 import axios from 'axios';
+import { ActionTypes, appDispatch } from '../context/AppContext';
 import { AppAsyncStorage } from '../utils';
-import eventBus from '../context/eventBus';
-
 export const baseURL = "https://greenzone.motcaiweb.io.vn/"
 
 const axiosInstance = axios.create({
@@ -25,7 +24,7 @@ axiosInstance.interceptors.request.use(
     err => Promise.reject(err)
 );
 
-// 401; token het han, xoa token, 
+
 axiosInstance.interceptors.response.use(
     res => res.data,
     async (err) => {
@@ -36,8 +35,9 @@ axiosInstance.interceptors.response.use(
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
 
-
-            eventBus.emit('logout')
+            if (appDispatch) {
+                appDispatch({ type: ActionTypes.LOGIN_SESSION_EXPIRED });
+            }
             return Promise.reject(err.response.data);
         }
 

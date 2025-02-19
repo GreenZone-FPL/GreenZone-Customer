@@ -18,9 +18,10 @@ import { Column, Row, CustomFlatInput, NormalText, TitleText, Ani_ModalLoading }
 import { colors, GLOBAL_KEYS } from '../../constants';
 
 import { AppAsyncStorage, Toaster } from '../../utils';
-import { uploadFile, register } from '../../axios';
+import { register } from '../../axios';
 import { AppGraph } from '../../layouts/graphs';
 import { baseURL } from '../../axios/axiosInstance';
+import { useAppContext, ActionTypes } from '../../context/AppContext';
 
 const RegisterScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('Bui');
@@ -37,6 +38,8 @@ const RegisterScreen = ({ navigation }) => {
   const [show, setShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { dispatch } = useAppContext()
 
   const onSelectDate = (event, selectedDate) => {
     if (event.type === 'dismissed') {
@@ -112,26 +115,25 @@ const RegisterScreen = ({ navigation }) => {
       let avatarUrl = "";
 
       // Nếu có avatar, tiến hành upload
-      if (avatar) {
-        console.log("Uploading avatar...");
-        const file = {
-          uri: avatar,
-          type: "image/jpeg", // Hoặc lấy từ response của picker
-          name: "avatar.jpg",
-        };
+      // if (avatar) {
+      //   console.log("Uploading avatar...");
+      //   const file = {
+      //     uri: avatar,
+      //     type: "image/jpeg",
+      //     name: "avatar.jpg",
+      //   };
 
-        // Gọi API upload file
-        const uploadResult = await uploadFileAPI(file);
-        console.log('uploadResult', uploadResult.url)
+      //   // Gọi API upload file
+      //   const uploadResult = await uploadFileAPI(file);
+      //   console.log('uploadResult', uploadResult.url)
 
-        // Kiểm tra nếu upload thất bại
-        if (uploadResult) {
-
-          avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
-        } else {
-          console.log("Upload avatar failed, proceeding without avatar.");
-        }
-      }
+      //   // Kiểm tra nếu upload thất bại
+      //   if (uploadResult) {
+      //     avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
+      //   } else {
+      //     console.log("Upload avatar failed, proceeding without avatar.");
+      //   }
+      // }
 
       // Chuyển đổi giới tính
       const genderValue = gender === "Nam" ? "male" : "female";
@@ -143,7 +145,7 @@ const RegisterScreen = ({ navigation }) => {
         email,
         dateOfBirth,
         gender: genderValue,
-        avatar: `${baseURL} + ${avatarUrl}` || "", // Nếu không có avatar thì truyền giá trị rỗng
+        avatar: '' // Nếu không có avatar thì truyền giá trị rỗng
       };
 
       // Gọi API đăng ký
@@ -151,11 +153,12 @@ const RegisterScreen = ({ navigation }) => {
       console.log("User registered:", result);
 
       Toaster.show('Đăng ký tài khoản thành công')
-      navigation.navigate(AppGraph.MAIN)
+      // navigation.navigate(AppGraph.MAIN)
+      dispatch({ type: ActionTypes.LOGIN })
     } catch (error) {
-      console.error("Registration failed:", error);
-      Toaster.show('error.message')
-
+      console.log("Registration failed:", error);
+      Toaster.show(error.message)
+      dispatch({ type: ActionTypes.LOGIN })
     } finally {
       setLoading(false);
     }

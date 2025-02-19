@@ -20,6 +20,8 @@ import SearchProductScreen from '../../screens/shopping/SearchProductScreen';
 import { ProductDetailSheet } from '../../components';
 import FavoriteScreen from '../../screens/shopping/FavoriteScreen';
 import SplashScreen from '../../screens/auth/SplashScreen';
+import AddressMerchantScreen from '../../screens/address/AddressMerchantScreen';
+import MapAdressScreen from '../../screens/address/MapAdressScreen';
 
 const UserStack = createNativeStackNavigator();
 const UserNavigator = () => {
@@ -86,6 +88,9 @@ const UserNavigator = () => {
         name={AppGraph.FavoriteScreen}
         component={FavoriteScreen}
       />
+
+      <UserStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
+      <UserStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
 
     </UserStack.Navigator>
   );

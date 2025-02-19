@@ -7,13 +7,15 @@ import { colors } from '../../constants';
 import { AppGraph, AuthGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils/toaster';
 import { Ani_ModalLoading } from '../../components';
+import { useAppContext, ActionTypes } from '../../context/AppContext';
 
 const VerifyOTPScreen = ({ route, navigation }) => {
+    const {dispatch} = useAppContext()
     const { phoneNumber } = route.params;
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { login } = useContext(AppContext)
+
 
     const handleVerifyOTP = async () => {
         if (code.length !== 6) {
@@ -25,15 +27,15 @@ const VerifyOTPScreen = ({ route, navigation }) => {
         try {
             const response = await verifyOTP({ phoneNumber, code });
 
-            login()
+         
             const userLastName = response.user.lastName
             console.log("✅ OTP Verified, userLastName = ", response.user.lastName);
             if (userLastName) {
                 Toaster.show("Đăng nhập thành công!")
-
-                navigation.navigate(AppGraph.MAIN)
+                dispatch({type: ActionTypes.LOGIN})
 
             } else {
+                dispatch({type: ActionTypes.REGISTER})
                 navigation.navigate(AuthGraph.RegisterScreen)
             }
 

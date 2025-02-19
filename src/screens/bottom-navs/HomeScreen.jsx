@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
-import { getAllCategoriesAPI, getAllProducts } from '../../axios';
+import { getAllCategories, getAllProducts } from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -126,7 +126,7 @@ const HomeScreen = props => {
   };
 
   useEffect(() => {
-    fetchData(getAllCategoriesAPI, setCategories);
+    fetchData(getAllCategories, setCategories);
     // Fetch all products
     fetchData(getAllProducts, setAllProducts);
   }, []); 

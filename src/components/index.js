@@ -6,9 +6,8 @@ export * from './indicators/Indicator';
 export * from './barcode/barcodeUser';
 
 // bottom-sheets
-export * from '../screens/shopping/MerchantDetailSheet';
-export * from '../screens/shopping/ProductDetailSheet';
-export * from '../screens/voucher/VoucherDetailSheet';
+
+
 
 // buttons
 export * from './buttons/DeliveryButton';

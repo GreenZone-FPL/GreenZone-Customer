@@ -8,6 +8,7 @@ export const getAllProducts = async () => {
         return response.data;
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 }
 
@@ -19,5 +20,6 @@ export const getProductDetailAPI = async (productId) => {
         return response.data;
     } catch (error) {
         console.log("error:", error);
+        throw error
     }
 }
