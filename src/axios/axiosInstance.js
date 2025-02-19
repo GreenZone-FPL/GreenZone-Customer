@@ -4,51 +4,48 @@ import eventBus from '../context/eventBus';
 
 export const baseURL = "https://greenzone.motcaiweb.io.vn/"
 
+const axiosInstance = axios.create({
+    baseURL: baseURL
+});
 
-const axiosInstance = ((contentType = 'application/json') => {
+axiosInstance.interceptors.request.use(
+    async (config) => {
+        // Lấy token từ AsyncStorage 
+        const token = await AppAsyncStorage.readData('accessToken');
+        // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTk0NTgxMiwiZXhwIjoxNzM5OTQ1ODcyfQ.dJLwZHrHc-swD0ZwBiJWmUq0CIACK8tdLjwnbhL0j2A'
 
-    const appAxios = axios.create({
-        baseURL: baseURL
-    });
-
-    appAxios.interceptors.request.use(
-        async (config) => {
-            // Lấy token từ AsyncStorage 
-            const token = await AppAsyncStorage.readData('accessToken');
-            // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTg1NzM1NywiZXhwIjoxNzM5ODU3NDE3fQ.WWNFPzJRvthEHSMnx2QTnqVSxI7xYp6amHUkxWzTLV4'
-
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
-            }
-
-            config.headers['Accept'] = 'application/json';
-            config.headers['Content-Type'] = contentType;
-            return config;
-        },
-        err => Promise.reject(err)
-    );
-
-    // 401; token het han, xoa token, 
-    appAxios.interceptors.response.use(
-        res => res.data,
-        async (err) => {
-            if (err.response.data.statusCode === 401) {
-                console.log('401 log out');
-                
-                // Xóa token khỏi AsyncStorage
-                await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
-                await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
-    
-              
-                eventBus.emit('logout')
-                return Promise.reject(err.response.data); 
-            }
-    
-            return Promise.reject(err); 
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
         }
-    );
 
-    return appAxios;
-})()
+        config.headers['Accept'] = 'application/json';
+        config.headers['Content-Type'] = 'application/json';
+        return config;
+    },
+    err => Promise.reject(err)
+);
+
+// 401; token het han, xoa token, 
+axiosInstance.interceptors.response.use(
+    res => res.data,
+    async (err) => {
+        if (err.response.data.statusCode === 401) {
+            console.log('401 log out');
+
+            // Xóa token khỏi AsyncStorage
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+            await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
+
+
+            eventBus.emit('logout')
+            return Promise.reject(err.response.data);
+        }
+
+        return Promise.reject(err);
+    }
+);
+
+
+
 
 export default axiosInstance;

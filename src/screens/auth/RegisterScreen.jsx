@@ -16,9 +16,9 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
 import { Column, Row, CustomFlatInput, NormalText, TitleText, Ani_ModalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { registerAPI } from '../../axios';
+
 import { AppAsyncStorage, Toaster } from '../../utils';
-import { uploadFileAPI } from '../../axios';
+import { uploadFile, register } from '../../axios';
 import { AppGraph } from '../../layouts/graphs';
 import { baseURL } from '../../axios/axiosInstance';
 
@@ -147,7 +147,7 @@ const RegisterScreen = ({ navigation }) => {
       };
 
       // Gọi API đăng ký
-      const result = await registerAPI(request);
+      const result = await register(request);
       console.log("User registered:", result);
 
       Toaster.show('Đăng ký tài khoản thành công')

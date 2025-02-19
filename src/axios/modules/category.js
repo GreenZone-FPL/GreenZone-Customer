@@ -1,6 +1,6 @@
 import axiosInstance from "../axiosInstance";
 
-export const getAllCategoriesAPI = async () => {
+export const getAllCategories = async () => {
     try {
        
         const response = await axiosInstance.get("/v1/category/all");
