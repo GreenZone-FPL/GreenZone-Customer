@@ -25,6 +25,7 @@ import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
+import ProductDetailSheet from './src/screens/shopping/ProductDetailSheet';
 
 const BaseStack = createNativeStackNavigator();
 
@@ -41,6 +42,14 @@ function App() {
                 <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 
                 <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
+                <BaseStack.Screen
+                  name={ShoppingGraph.ProductDetailSheet}
+                  component={ProductDetailSheet}
+                  options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                  }} />
                 <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
                 <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />
                 <BaseStack.Screen name={AppGraph.AdvertisingScreen} component={AdvertisingScreen} />
