@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -31,7 +31,7 @@ import {
 } from '../../axios';
 
 const OrderScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -44,7 +44,7 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-
+  const lastCategoryRef = useRef(currentCategory);
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -92,20 +92,17 @@ const OrderScreen = props => {
     }
   };
 
+
   useEffect(() => {
-    // Fetch categories
-    fetchData(getAllCategories, setCategories);
+    if (categories.length === 0) fetchData(getAllCategories, setCategories);
+    if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
+    if (toppings.length === 0) fetchData(getAllToppings, setToppings);
+  }, []);
 
-    // Fetch toppings
-    fetchData(getAllToppings, setToppings);
-
-    // Fetch all products
-    fetchData(getAllProducts, setAllProducts);
-  }, []); // Chỉ gọi một lần khi component mount
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -113,7 +110,8 @@ const OrderScreen = props => {
     console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-  const handleScroll = event => {
+
+  const handleScroll = useCallback(event => {
     const scrollY = event.nativeEvent.contentOffset.y;
     let closestCategory = 'Danh mục';
     let minDistance = Number.MAX_VALUE;
@@ -122,15 +120,33 @@ const OrderScreen = props => {
       const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
-        closestCategory =
-          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
     });
 
-    if (closestCategory !== currentCategory) {
+    if (closestCategory !== lastCategoryRef.current) {
+      lastCategoryRef.current = closestCategory;
       setCurrentCategory(closestCategory);
     }
-  };
+  }, [positions, allProducts]);
+  // const handleScroll = event => {
+  //   const scrollY = event.nativeEvent.contentOffset.y;
+  //   let closestCategory = 'Danh mục';
+  //   let minDistance = Number.MAX_VALUE;
+
+  //   Object.entries(positions).forEach(([categoryId, posY]) => {
+  //     const distance = Math.abs(scrollY - posY);
+  //     if (distance < minDistance) {
+  //       minDistance = distance;
+  //       closestCategory =
+  //         allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+  //     }
+  //   });
+
+  //   if (closestCategory !== currentCategory) {
+  //     setCurrentCategory(closestCategory);
+  //   }
+  // };
 
   const scrollToCategory = categoryId => {
     if (!scrollViewRef.current) {
@@ -152,10 +168,10 @@ const OrderScreen = props => {
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
-  const reverseGeocode = async ({lat, long}) => {
+  const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -205,9 +221,13 @@ const OrderScreen = props => {
         <FlatList
           data={allProducts}
           keyExtractor={item => item._id}
-          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
-          showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
+          scrollEnabled={false}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          nestedScrollEnabled
+          initialNumToRender={10} // Chỉ render 10 item đầu tiên
+          removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
