@@ -18,6 +18,7 @@ import {AppGraph} from '../../layouts/graphs/appGraph';
 import polyline from '@mapbox/polyline';
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
+import {getAllMerchants} from '../../axios/modules/merchant';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -27,6 +28,34 @@ MapboxGL.setAccessToken(GOONG_API_KEY);
 const MerchantScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMapView, setIsMapView] = useState(false);
+  const [merchants, setMerchants] = useState([]);
+  const [sortedMerchants, setSortedMerchants] = useState([]);
+
+  const fetchMerchants = async () => {
+    try {
+      const data = await getAllMerchants();
+      setMerchants(data);
+    } catch (error) {
+      console.error('Lỗi khi lấy merchants:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMerchants();
+  }, []);
+
+  useEffect(() => {
+    if (!merchants || merchants.length === 0) return;
+
+    const sortedList = merchants
+      .map(item => ({
+        ...item,
+        distance: haversineDistance(item.latitude, item.longitude),
+      }))
+      .sort((a, b) => a.distance - b.distance);
+
+    setSortedMerchants(sortedList);
+  }, [merchants]);
 
   const handleMerchant = item => {
     navigation.navigate(AppGraph.MerchantDetailSheet, {item});
@@ -206,6 +235,35 @@ const MerchantScreen = ({navigation}) => {
       console.log('Lỗi lấy tuyến đường:', error);
     }
   };
+
+  // Hàm tính khoảng cách Haversine
+  const haversineDistance = (lat, lon) => {
+    if (userLocation && userLocation.length === 2) {
+      const R = 6371;
+      const toRad = angle => (angle * Math.PI) / 180;
+
+      // Lấy tọa độ của người dùng từ mảng [longitude, latitude]
+      const lat1 = userLocation[1];
+      const lon1 = userLocation[0];
+
+      // Chuyển đổi tọa độ từ độ sang radian
+      const dLat = toRad(lat - lat1);
+      const dLon = toRad(lon - lon1);
+
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) *
+          Math.cos(toRad(lat)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    }
+    return null;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBadge title={isMapView ? 'Bản đồ' : 'Cửa hàng'} />
@@ -344,17 +402,21 @@ const MerchantScreen = ({navigation}) => {
             <View style={styles.mechant1}>
               <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
               <FlatList
-                data={data.slice(0, 1)}
-                renderItem={({item}) => renderItem({handleMerchant, item})}
-                keyExtractor={item => item.id}
+                data={sortedMerchants.slice(0, 1)}
+                renderItem={({item}) =>
+                  renderItem({handleMerchant, item, haversineDistance})
+                }
+                keyExtractor={item => item._id.toString()}
                 showsVerticalScrollIndicator={false}
               />
             </View>
             <Text style={styles.tittle}>Cửa hàng Khác</Text>
             <FlatList
-              data={data}
-              renderItem={({item}) => renderItem({handleMerchant, item})}
-              keyExtractor={item => item.id}
+              data={sortedMerchants.slice(1)}
+              renderItem={({item}) =>
+                renderItem({handleMerchant, item, haversineDistance})
+              }
+              keyExtractor={item => item._id}
               scrollEnabled={true}
             />
           </View>
@@ -364,35 +426,20 @@ const MerchantScreen = ({navigation}) => {
   );
 };
 
-const renderItem = ({item, handleMerchant}) => (
+const renderItem = ({item, handleMerchant, haversineDistance}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{uri: item.image}} style={styles.imageItem} />
+    <Image source={{uri: item.images[0]}} style={styles.imageItem} />
     <View style={styles.infoItem}>
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.location}>{item.location}</Text>
-      <Text style={styles.distance}>{item.distance}</Text>
+      <Text style={styles.textNamelocation}>{item.name}</Text>
+      <Text style={styles.location}>
+        {item.specificAddress}, {item.ward}, {item.district}, {item.province}
+      </Text>
+      <Text style={styles.distance}>
+        {haversineDistance(item.latitude, item.longitude).toFixed(2)} km{' '}
+      </Text>
     </View>
   </TouchableOpacity>
 );
-
-const data = [
-  {
-    id: '1',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 0,7 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5b3b04d5fbc68621f3385253_5b3b04d5fbc68621f3385253_nguyen_20duy_20trinh.jpg',
-  },
-  {
-    id: '2',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 1 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5bfe084efbc6865eac59c98a_to_20ngoc_20van.jpg',
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -405,7 +452,7 @@ const styles = StyleSheet.create({
   },
   suggestionContainer: {
     position: 'absolute',
-    top: 60, // Điều chỉnh tùy thuộc vào vị trí của CustomSearchBar
+    top: 60,
     left: 0,
     right: 0,
     backgroundColor: 'white',
@@ -453,6 +500,10 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
   },
+  textName: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+  },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -469,15 +520,19 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
-  infoItem: {
-    flex: 1,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
+  infoItem: {flex: 1, gap: 4},
   imageItem: {
     width: 80,
     height: 80,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  location: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '500',
+  },
+  distance: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
   },
   userMarker: {
     width: 15,
