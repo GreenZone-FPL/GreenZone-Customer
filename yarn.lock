@@ -2449,6 +2449,11 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-21.10.0.tgz"
   integrity sha512-vx3Ebk1zMOvo678vkyOY9Qf6GtiaWpQcbzW6bTw+RMODllFwHt0kj5SsDt4aeVSNlA6YC+zXURCzoqUxNEbE3Q==
 
+"@react-native-picker/picker@^2.11.0":
+  version "2.11.0"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.11.0.tgz"
+  integrity sha512-QuZU6gbxmOID5zZgd/H90NgBnbJ3VV6qVzp6c7/dDrmWdX8S0X5YFYgDcQFjE3dRen9wB9FWnj2VVdPU64adSg==
+
 "@react-native-windows/cli@0.75.8":
   version "0.75.8"
   resolved "https://registry.npmjs.org/@react-native-windows/cli/-/cli-0.75.8.tgz"

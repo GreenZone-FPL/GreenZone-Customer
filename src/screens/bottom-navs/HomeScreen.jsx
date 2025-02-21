@@ -29,7 +29,7 @@ import {
   Ani_ModalLoading,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph, ShoppingGraph} from '../../layouts/graphs';
+import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -38,6 +38,7 @@ const HomeScreen = props => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
+  const [editOption, setEditOption] = useState('');
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
@@ -51,6 +52,17 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
+
+    const handleEditOption = option => {
+      setEditOption(option);
+  
+      if (option === 'Giao hàng') {
+        setIsModalVisible(false);
+      } else if (option === 'Mang đi') {
+        navigation.navigate(UserGraph.AddressMerchantScreen);
+      }
+    };
+  
   const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
@@ -195,6 +207,7 @@ const HomeScreen = props => {
         selectedOption={selectedOption}
         onHide={handleCloseDialog}
         onOptionSelect={handleOptionSelect}
+        onEditOption={handleEditOption}
       />
     </SafeAreaView>
   );
