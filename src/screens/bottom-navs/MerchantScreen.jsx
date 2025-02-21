@@ -7,15 +7,13 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Animated,
-  Easing,
-  TextInput,
+  Modal,
+  Linking
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import {CustomSearchBar, HeaderWithBadge} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph} from '../../layouts/graphs/appGraph';
-import polyline from '@mapbox/polyline';
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
 
@@ -27,7 +25,6 @@ MapboxGL.setAccessToken(GOONG_API_KEY);
 const MerchantScreen = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMapView, setIsMapView] = useState(false);
-
   const handleMerchant = item => {
     navigation.navigate(AppGraph.MerchantDetailSheet, {item});
   };
@@ -36,176 +33,43 @@ const MerchantScreen = ({navigation}) => {
     setIsMapView(!isMapView);
   };
   const [userLocation, setUserLocation] = useState([null, null]);
-  const [lastLocation, setLastLocation] = useState([null, null]);
-  const [searchText, setSearchText] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const cameraRef = useRef(null);
-  const opacityAnim = useRef(new Animated.Value(0.3)).current;
-  const watchId = useRef(null);
-  const [routeCoordinates, setRouteCoordinates] = useState([]);
-
-  const [circleOpacity, setCircleOpacity] = useState(1);
-
-  // Tạo hiệu ứng nhấp nháy liên tục
-  const pulseAnimation = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnimation, {
-          toValue: 0.3, // Giảm độ mờ
-          duration: 400,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnimation, {
-          toValue: 1, // Trả về trạng thái ban đầu
-          duration: 400,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-  }, []);
-
-  useEffect(() => {
-    watchId.current = Geolocation.watchPosition(
+    Geolocation.getCurrentPosition(
       position => {
         const {latitude, longitude} = position.coords;
-        const newLocation = [longitude, latitude];
-
-        if (
-          !lastLocation[0] ||
-          Math.abs(newLocation[0] - lastLocation[0]) > 0.0005 ||
-          Math.abs(newLocation[1] - lastLocation[1]) > 0.0005
-        ) {
-          setUserLocation(newLocation);
-          setLastLocation(newLocation);
-
-          if (cameraRef.current) {
-            cameraRef.current.setCamera({
-              centerCoordinate: newLocation,
-              zoomLevel: 16,
-              animationDuration: 1000,
-            });
-          }
+        setUserLocation([longitude, latitude]);
+        if (cameraRef.current) {
+          cameraRef.current.setCamera({
+            centerCoordinate: [longitude, latitude],
+            zoomLevel: 14,
+            animationDuration: 1000,
+          });
         }
       },
       error => console.log('Lỗi lấy vị trí:', error),
-      {enableHighAccuracy: true, distanceFilter: 10},
+      {enableHighAccuracy: true, timeout: 5000},
     );
-
-    return () => {
-      if (watchId.current !== null) {
-        Geolocation.clearWatch(watchId.current);
-      }
-    };
   }, []);
 
-  const handleSearch = async text => {
-    setSearchQuery(text);
-    if (text.length < 3) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const response = await fetch(
-        `https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONG_API_KEY}&input=${text}`,
-      );
-      const data = await response.json();
-      setSuggestions(data.predictions);
-    } catch (error) {
-      console.log('Lỗi tìm kiếm:', error);
-    }
+  // hàm tính khoảng cách giữa 2 điểm trên bản đồ
+  const haversineDistance = ([lat1, lon1], [lat2, lon2]) => {
+    const R = 6371; // Bán kính Trái Đất (km)
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2); // Khoảng cách tính theo km
   };
 
-  const handleSelectLocation = async placeId => {
-    try {
-      const response = await fetch(
-        `https://rsapi.goong.io/Place/Detail?api_key=${GOONG_API_KEY}&place_id=${placeId}`,
-      );
-      const data = await response.json();
-      const {lat, lng} = data.result.geometry.location;
-
-      // Xóa tuyến đường trước đó
-      setRouteCoordinates([]);
-
-      setSelectedLocation([lng, lat]);
-
-      if (cameraRef.current) {
-        cameraRef.current.setCamera({
-          centerCoordinate: [lng, lat],
-          zoomLevel: 16,
-          animationDuration: 1000,
-        });
-      }
-      setSuggestions([]);
-      setSearchText('');
-    } catch (error) {
-      console.log('Lỗi lấy chi tiết địa điểm:', error);
-    }
-  };
-
-  const moveToCurrentLocation = () => {
-    if (userLocation[0] !== null && cameraRef.current) {
-      cameraRef.current.setCamera({
-        centerCoordinate: userLocation,
-        zoomLevel: 16,
-        animationDuration: 1000,
-      });
-    }
-  };
-
-  // Lấy tuyến đường từ vị trí hiện tại đến vị trí đã chọn
-  const fetchRoute = async () => {
-    if (!userLocation[0] || !selectedLocation) {
-      console.log('Vị trí không hợp lệ');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://rsapi.goong.io/Direction?origin=${userLocation[1]},${userLocation[0]}&destination=${selectedLocation[1]},${selectedLocation[0]}&vehicle=car&api_key=${GOONG_API_KEY}`,
-      );
-      const data = await response.json();
-
-      if (data.routes && data.routes.length > 0) {
-        const route = data.routes[0];
-        if (route.legs && route.legs.length > 0) {
-          const steps = route.legs[0].steps;
-          const coordinates = steps
-            .flatMap(step => polyline.decode(step.polyline.points))
-            .map(coord => [coord[1], coord[0]]); // Chuyển về [lng, lat]
-
-          setRouteCoordinates(coordinates);
-
-          //  Tính toán vùng hiển thị toàn bộ tuyến đường
-          const lats = coordinates.map(c => c[1]);
-          const lngs = coordinates.map(c => c[0]);
-          const minLat = Math.min(...lats);
-          const maxLat = Math.max(...lats);
-          const minLng = Math.min(...lngs);
-          const maxLng = Math.max(...lngs);
-
-          //  Điều chỉnh bản đồ để hiển thị toàn bộ tuyến đường
-          if (cameraRef.current) {
-            cameraRef.current.fitBounds(
-              [minLng, minLat], // Góc trái dưới
-              [maxLng, maxLat], // Góc phải trên
-              100, // Padding để không bị sát mép
-            );
-          }
-        } else {
-          console.error('Không tìm thấy dữ liệu tuyến đường');
-        }
-      } else {
-        console.error('Không có tuyến đường hợp lệ');
-      }
-    } catch (error) {
-      console.log('Lỗi lấy tuyến đường:', error);
-    }
-  };
   return (
     <SafeAreaView style={styles.container}>
       <HeaderWithBadge title={isMapView ? 'Bản đồ' : 'Cửa hàng'} />
@@ -214,33 +78,12 @@ const MerchantScreen = ({navigation}) => {
         <View style={styles.tool}>
           <View style={{position: 'relative', flex: 1}}>
             <CustomSearchBar
-              placeholder="Tìm kiếm cửa hàng hoặc địa điểm..."
+              placeholder="Tìm kiếm cửa hàng...."
               searchQuery={searchQuery}
-              setSearchQuery={handleSearch} // Gọi trực tiếp hàm tìm kiếm khi nhập
-              onClearIconPress={() => {
-                setSearchQuery('');
-                setSuggestions([]);
-              }}
               leftIcon="magnify"
               rightIcon="close"
               style={{elevation: 3}}
             />
-
-            {suggestions.length > 0 && (
-              <View style={styles.suggestionContainer}>
-                <FlatList
-                  data={suggestions}
-                  keyExtractor={item => item.place_id}
-                  renderItem={({item}) => (
-                    <TouchableOpacity
-                      onPress={() => handleSelectLocation(item.place_id)}
-                      style={styles.suggestionItem}>
-                      <Text>{item.description}</Text>
-                    </TouchableOpacity>
-                  )}
-                />
-              </View>
-            )}
           </View>
 
           <TouchableOpacity onPress={toggleView}>
@@ -258,86 +101,156 @@ const MerchantScreen = ({navigation}) => {
         </View>
 
         {isMapView ? (
-          <View style={styles.mapView}>
+          <View style={{flex: 1}}>
             <MapboxGL.MapView
               style={{flex: 1}}
-              styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}
-              onPress={event => {
-                const {geometry} = event;
-                if (geometry && geometry.coordinates) {
-                  setSelectedLocation(geometry.coordinates);
-                }
-              }}>
+              styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}>
               <MapboxGL.Camera
                 ref={cameraRef}
                 animationMode="flyTo"
-                zoomLevel={16}
+                zoomLevel={14}
                 centerCoordinate={
-                  selectedLocation ||
-                  (userLocation[0] !== null
+                  userLocation[0] !== null
                     ? userLocation
-                    : [106.660172, 10.762622])
+                    : [106.700987, 10.776889]
                 }
               />
 
-              {/* userMarker*/}
+              <MapboxGL.Images
+                images={{
+                  store: require('../../assets/images/image-Service/icon_location.png'),
+                }}
+              />
+
               {userLocation[0] !== null && (
                 <MapboxGL.PointAnnotation
                   coordinate={userLocation}
                   id="userLocation">
-                  <Animated.View
-                    style={[styles.userMarker, {opacity: pulseAnimation}]}
-                  />
+                  <View style={styles.userMarker} />
                 </MapboxGL.PointAnnotation>
               )}
 
-              {selectedLocation && (
-                <MapboxGL.PointAnnotation
-                  coordinate={selectedLocation}
-                  id="selectedLocation">
-                  <MapboxGL.Callout title="Vị trí đã chọn" />
-                </MapboxGL.PointAnnotation>
-              )}
-              {routeCoordinates.length > 0 && (
-                <MapboxGL.ShapeSource
-                  id="routeSource"
-                  shape={{
+              <MapboxGL.ShapeSource
+                id="storeLocations"
+                shape={{
+                  type: 'FeatureCollection',
+                  features: storeLocations.map(store => ({
                     type: 'Feature',
-                    geometry: {
-                      type: 'LineString',
-                      coordinates: routeCoordinates,
+                    properties: {
+                      id: store.id,
+                      name: store.name,
+                      specificAddress: store.specificAddress,
                     },
-                  }}>
-                  <MapboxGL.LineLayer
-                    id="routeLayer"
-                    style={{
-                      lineColor: 'blue',
-                      lineWidth: 5,
-                    }}
-                  />
-                </MapboxGL.ShapeSource>
-              )}
+                    geometry: {
+                      type: 'Point',
+                      coordinates: [store.longitude, store.latitude],
+                    },
+                  })),
+                }}
+                onPress={e => {
+                  if (e.features.length > 0) {
+                    const {properties, geometry} = e.features[0];
+                    const store = storeLocations.find(
+                      s => s.id === properties.id,
+                    );
+
+                    if (store) {
+                      const distance =
+                        userLocation[0] !== null
+                          ? haversineDistance(
+                              [userLocation[1], userLocation[0]],
+                              [store.latitude, store.longitude],
+                            )
+                          : null;
+
+                      setSelectedStore({
+                        id: store.id,
+                        name: store.name,
+                        specificAddress: store.specificAddress,
+                        phoneNumber: store.phoneNumber,
+                        openTime: store.openTime,
+                        closeTime: store.closeTime,
+                        images: store.images,
+                        distance,
+                        coordinate: geometry.coordinates,
+                      });
+
+                      setModalVisible(true);
+                    }
+                  }
+                }}>
+                <MapboxGL.SymbolLayer
+                  id="storeIcons"
+                  style={{
+                    iconImage: 'store',
+                    iconSize: 0.1,
+                    iconAllowOverlap: true,
+                  }}
+                />
+              </MapboxGL.ShapeSource>
             </MapboxGL.MapView>
 
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={moveToCurrentLocation}>
-                <Icon
-                  source="crosshairs-gps"
-                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                  color={colors.primary}
-                />
-              </TouchableOpacity>
+            {modalVisible && selectedStore && (
+              <Modal visible={modalVisible} transparent animationType="slide">
+                <TouchableOpacity
+                  style={styles.modalOverlay}
+                  activeOpacity={1}
+                  onPress={() => setModalVisible(false)}>
+                  <View style={styles.bottomSheetContainer}>
+                    <View style={styles.modalContent}>
+                      {/* Tên cửa hàng */}
+                      <Text style={styles.modalTitle}>
+                        {selectedStore.name}
+                      </Text>
 
-              <TouchableOpacity style={styles.button} onPress={fetchRoute}>
-                <Icon
-                  source="directions"
-                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                  color={colors.primary}
-                />
-              </TouchableOpacity>
-            </View>
+                      {/* Ảnh cửa hàng */}
+                      {selectedStore.images.length > 0 && (
+                        <Image
+                          source={{uri: selectedStore.images[0]}}
+                          style={styles.image}
+                        />
+                      )}
+
+                      {/* Địa chỉ */}
+                      <TouchableOpacity
+                        onPress={() => {
+                          const [lng, lat] = selectedStore.coordinate;
+                          const destination = `${lat},${lng}`;
+                          const source =
+                            userLocation[0] !== null
+                              ? `${userLocation[1]},${userLocation[0]}`
+                              : '';
+                          const url = `https://www.google.com/maps/dir/?api=1&origin=${source}&destination=${destination}&travelmode=driving`;
+                          Linking.openURL(url);
+                        }}>
+                        <Text style={[styles.modalText, styles.greenText]}>
+                          📍 {selectedStore.specificAddress}
+                        </Text>
+                      </TouchableOpacity>
+
+                      {/* Giờ mở cửa */}
+                      <View style={styles.modalTime}>
+                        <Icon
+                          source="clock-outline"
+                          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                          color={colors.primary}
+                        />
+                        <Text style={styles.modalText}>
+                          {selectedStore.openTime} - {selectedStore.closeTime}
+                        </Text>
+                      </View>
+
+                      {/* Khoảng cách */}
+                      {selectedStore.distance && (
+                        <Text style={styles.modalText}>
+                          Khoảng cách: {selectedStore.distance} km
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+            )}
           </View>
         ) : (
           <View>
@@ -391,6 +304,41 @@ const data = [
     distance: 'Cách đây 1 km',
     image:
       'https://minio.thecoffeehouse.com/image/admin/store/5bfe084efbc6865eac59c98a_to_20ngoc_20van.jpg',
+  },
+];
+
+const storeLocations = [
+  {
+    id: '1',
+    name: 'GreenZone Coffee',
+    phoneNumber: '0987654321',
+    images: [
+      'https://i.pinimg.com/originals/3d/8b/e8/3d8be817b8a1b70452890e02c8279d1f.jpg',
+      'https://www.doanhchu.com/wp-content/uploads/2015/01/coffee-shop-1.jpg',
+    ],
+    openTime: '08:00',
+    closeTime: '22:00',
+    specificAddress: 'GreenZone Coffee, CVPM Quang Trung',
+    province: 'Hồ Chí Minh',
+    district: 'Quận 12',
+    ward: 'Phường Bến Nghé',
+    latitude: 10.85461098999802,
+    longitude: 106.62733749568963,
+  },
+
+  {
+    id: '2',
+    name: 'GreenZone Coffee',
+    phoneNumber: '0977223344',
+    images: ['https://hoason.vn/wp-content/uploads/2020/05/Quan-Cafe-1-1.jpg'],
+    openTime: '07:00',
+    closeTime: '23:00',
+    specificAddress: '456 Đường Nguyễn Huệ',
+    province: 'Hồ Chí Minh',
+    district: 'Quận 1',
+    ward: 'Phường Bến Thành',
+    latitude: 10.7756,
+    longitude: 106.7035,
   },
 ];
 
@@ -479,6 +427,12 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+
   userMarker: {
     width: 15,
     height: 15,
@@ -487,30 +441,59 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
   },
-  searchBox: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    right: 10,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 5,
-  },
   buttonContainer: {
     position: 'absolute',
-    bottom: 100,
+    bottom: 20,
     left: 10,
     right: 10,
+    alignItems: 'center',
   },
   button: {
-    padding: 10,
+    backgroundColor: '#299345',
+    padding: 12,
     borderRadius: 10,
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  bottomSheetContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: colors.gray700
+  },
+  greenText: {
+    color: '#299345',
+  },
+  modalTime: {
+    flexDirection: 'row',
+    gap: GLOBAL_KEYS.GAP_SMALL,
   },
 });
 
