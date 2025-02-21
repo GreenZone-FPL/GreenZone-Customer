@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Column, DialogBasic, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, DialogNotification } from '../../components';
+import { Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
-
+import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { AppAsyncStorage } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -40,7 +40,9 @@ const CheckoutScreen = (props) => {
           rightTextStyle={{ color: colors.primary }}
           onRightPress={() => setDialogShippingMethodVisible(true)}
         />
-         <AddressSection setAddress={setAddress} />
+        <AddressSection
+          changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
+          setAddress={setAddress} />
 
         <RecipientInfo
           onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
@@ -143,7 +145,7 @@ const TimeSection = () => {
     </TouchableOpacity>
   );
 };
-const AddressSection = ({ setAddress }) => {
+const AddressSection = ({ setAddress, changeAddress }) => {
   const [currentLocation, setCurrentLocation] = useState('');
   const [locationAvailable, setLocationAvailable] = useState(false);
 
@@ -179,8 +181,9 @@ const AddressSection = ({ setAddress }) => {
       <DualTextRow
         leftText="Địa chỉ nhận hàng"
         leftTextStyle={{ fontWeight: '600' }}
-        rightText=""
+        rightText="Thay đổi"
         rightTextStyle={{ color: colors.primary }}
+        onRightPress={changeAddress}
       />
 
       <NormalText text={locationAvailable ? currentLocation.address.label : 'Đang lấy vị trí...'} />
@@ -449,7 +452,7 @@ const Footer = ({ address }) => {
 
       <PrimaryButton title='Đặt hàng' onPress={() => setIsVisible(true)} />
 
-      <DialogNotification 
+      <DialogNotification
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'

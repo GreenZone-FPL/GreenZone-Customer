@@ -21,11 +21,12 @@ import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import RatingOrderScreen from './src/screens/order/RatingOrderScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
+import ProductDetailSheet from './src/screens/shopping/ProductDetailSheet';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-import ProductDetailSheet from './src/screens/shopping/ProductDetailSheet';
+import CheckoutScreen from './src/screens/shopping/CheckoutScreen'
 
 const BaseStack = createNativeStackNavigator();
 
@@ -51,6 +52,7 @@ function App() {
                     headerShown: false,
                   }} />
                 <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
+                <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
                 <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />
                 <BaseStack.Screen name={AppGraph.AdvertisingScreen} component={AdvertisingScreen} />
                 <BaseStack.Screen name={ShoppingGraph.SearchProductScreen} component={SearchProductScreen} />
@@ -69,7 +71,9 @@ function App() {
               </>
             ) : (
               <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />
+
             )}
+
           </BaseStack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

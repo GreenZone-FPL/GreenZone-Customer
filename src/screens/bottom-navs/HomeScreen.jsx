@@ -81,7 +81,7 @@ const HomeScreen = props => {
         error => console.log(error),
         { timeout: 5000 } // Giới hạn 5 giây
       );
-    }, 1000); // Trì hoãn để tránh giật lag khi mở app
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, []);
@@ -116,7 +116,7 @@ const HomeScreen = props => {
     const scrollY = event.nativeEvent.contentOffset.y;
     let closestCategory = 'Danh mục';
     let minDistance = Number.MAX_VALUE;
-  
+
     Object.entries(positions).forEach(([categoryId, posY]) => {
       const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
@@ -124,7 +124,7 @@ const HomeScreen = props => {
         closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
     });
-  
+
     if (closestCategory !== lastCategoryRef.current) {
       lastCategoryRef.current = closestCategory;
       setCurrentCategory(closestCategory);
@@ -178,7 +178,7 @@ const HomeScreen = props => {
           keyExtractor={item => item._id}
           scrollEnabled={false}
           maxToRenderPerBatch={10}
-          windowSize={5} 
+          windowSize={5}
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình

@@ -1,48 +1,79 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
-import { getProductDetail} from '../../axios';
-import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { getProductDetail } from '../../axios';
+import { CheckoutFooter, NotesList, OverlayStatusBar, PrimaryButton, RadioGroup, SelectableGroup } from '../../components';
+import { colors, DeliveryMethod, GLOBAL_KEYS, PaymentMethod } from '../../constants';
 import { AppContext } from '../../context/AppContext';
 import { ShoppingGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../utils';
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
     const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
-    const [selectedSize, setSelectedSize] = useState('');
-    const [selectedSugarLevel, setSelectedSugarLevel] = useState('');
-    const [selectedIceLevel, setSelectedIceLevel] = useState('');
+
+    const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState(null)
-    const [selectedGroup, setSelectedGroup] = useState([]);
+
+    const [selectedVariant, setSelectedVariant] = useState(null);
+    const [selectedToppings, setSelectedToppings] = useState([]);
     const [selectedNotes, setSelectedNotes] = useState([]);
-    const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
+    const [quantity, setQuantity] = useState(1);
+
+    const [totalAmount, setTotalAmount] = useState(0)
+
 
     const { productId } = route.params
-    console.log('productId', productId)
-    // const totalPrice = quantity * product.price; // Tính tổng tiền
 
-    const handleAddToFavorite = () => {
-        if (favorites.some(item => item.id === product.id)) {
-            removeFromFavorites(product.id);
-        } else {
-            addToFavorites(product);
-        }
-    };
+
+
+
+
     useEffect(() => {
+        if (selectedVariant) {
+
+            console.log("Số lượng hiện tại:", quantity);
+
+            const newTotalAmount = calculateTotal(selectedVariant, selectedToppings, quantity);
+            console.log("Giá tổng mới:", newTotalAmount);
+
+            setTotalAmount(newTotalAmount);
+        }
+    }, [selectedVariant, selectedToppings, quantity]);
+
+
+
+
+
+
+    const calculateTotal = (variant, toppings, quantity) => {
+        const toppingsAmount = toppings.reduce((acc, item) => acc + item.extraPrice, 0)
+        return quantity * (variant.sellingPrice + toppingsAmount)
+    }
+
+
+    useEffect(() => {
+
         const fetchProductDetail = async () => {
+            setLoading(true)
             try {
-                const data = await getProductDetail(productId);
-                if (data) {
-                    setProduct(data); // Lưu danh mục vào state
+                const detail = await getProductDetail(productId);
+
+                if (detail) {
+                    setProduct(detail); // Lưu danh mục vào state
+                    if (detail.variant.length > 0) {
+                        const firstVariant = detail.variant[0]
+                        setSelectedVariant(firstVariant)
+                        setTotalAmount(calculateTotal(firstVariant, selectedToppings));
+                    }
                 }
             } catch (error) {
                 console.error("Error fetchProductDetail:", error);
             } finally {
-                // setLoading(false);
+                setLoading(false);
             }
         };
 
@@ -67,11 +98,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         />
 
                         {
-                            product.variant.length > 0 &&
+                            product.variant.length > 0 && selectedVariant &&
                             <RadioGroup
                                 items={product.variant}
-                                selectedValue={selectedSize}
-                                onValueChange={setSelectedSize}
+                                selectedValue={selectedVariant}
+                                onValueChange={(item) => {
+                                    setSelectedVariant(item)
+                                }}
                                 title="Size"
                                 required={true}
                                 note="Bắt buộc"
@@ -79,32 +112,23 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         }
 
 
-                        <SelectableGroup
-                            items={product.topping}
-                            title='Chọn topping'
-                            selectedGroup={selectedGroup}
-                            setSelectedGroup={setSelectedGroup}
-                            note="Tối đa 3 toppings"
-                            activeIconColor={colors.primary}
-                            activeTextColor={colors.primary}
-                        />
+                        {
+                            product.topping.length > 0 &&
 
+                            <SelectableGroup
+                                items={product.topping}
+                                title='Chọn topping'
+                                selectedGroup={selectedToppings}
+                                setSelectedGroup={setSelectedToppings}
+                                note="Tối đa 3 toppings"
+                                activeIconColor={colors.primary}
+                                activeTextColor={colors.primary}
+                            />
 
+                          
+                        }
+                          <PrimaryButton title='Log cart' onPress={readCart}/>
 
-                        <NotesList
-                            title='Lưu ý cho quán'
-                            items={notes}
-                            selectedNotes={selectedNotes}
-                            onToggleNote={(note) => {
-                                if (selectedNotes.includes(note)) {
-                                    setSelectedNotes(selectedNotes.filter((item) => item !== note));
-                                } else {
-                                    setSelectedNotes([...selectedNotes, note]);
-                                }
-                            }}
-
-                            style={{ paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}
-                        />
                     </ScrollView>
 
                     <CheckoutFooter
@@ -119,16 +143,81 @@ const ProductDetailSheet = ({ route, navigation }) => {
                                 setQuantity(quantity - 1)
                             }
                         }}
-                        totalPrice={99000}
-                        onButtonPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
+                        totalPrice={totalAmount}
+                        onButtonPress={() => {
+                            if (product.variant.length > 0) {
+                                return selectedVariant
+                                    ? addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
+                                    : Toaster.show("Vui lòng chọn Size");
+                            }
+                            return addToCart(product, null, selectedToppings, totalAmount, quantity);
+                        }}
                         buttonTitle='Thêm vào giỏ hàng'
                     />
+
+
                 </>
             }
 
         </View>
     );
 };
+
+
+const addToCart = async (product, variant, selectedToppings, amount, quantity) => {
+    try {
+        const cart = await AppAsyncStorage.readData('CART', []);
+
+        // Sắp xếp toppings theo ID nếu có toppings, còn không thì giữ nguyên
+        const sortedToppings = selectedToppings?.length 
+            ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
+            : [];
+
+        // Tìm sản phẩm có cùng productId
+        const existingIndex = cart.findIndex(item => 
+            item.productId === product._id &&
+            (item.variant === (variant?._id || null)) && // Nếu variant là null, so sánh null
+            (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings)) // Nếu toppings là null, so sánh []
+        );
+
+        if (existingIndex !== -1) {
+            // Nếu đã tồn tại, tăng số lượng
+            cart[existingIndex].quantity += quantity;
+        } else {
+            // Nếu chưa có, thêm mới vào giỏ hàng
+            cart.push({
+                productId: product._id,
+                productName: product.name,
+                variant: variant?._id || null, // Nếu không có variant, lưu null
+                variantName: variant?.name || '', // Nếu không có variant, lưu chuỗi rỗng
+                quantity: quantity,
+                price: amount,
+                toppings: sortedToppings
+            });
+        }
+
+        await AppAsyncStorage.storeData('CART', cart);
+        Toaster.show('Thêm vào giỏ hàng thành công');
+    } catch (error) {
+        console.log('Error addToCart', error);
+    }
+};
+
+
+
+
+
+const readCart = async () => {
+    try {
+        const CART = await AppAsyncStorage.readData('CART', null)
+        console.log('read CART', CART);
+        console.log('read cart length', CART.length);
+    } catch (error) {
+        console.log('error read CART', error);
+    }
+};
+
+
 
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 
@@ -153,6 +242,10 @@ const ProductImage = ({ hideModal, product }) => {
                     style={styles.productImage}
 
                 />
+
+
+
+
             </Pressable>
             <IconButton
                 icon="close"
@@ -180,7 +273,7 @@ const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescr
 
     return (
         <View style={styles.infoContainer}>
-          
+
             <View style={styles.horizontalView}>
                 <Text
                     style={styles.productName}

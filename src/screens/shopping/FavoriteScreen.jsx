@@ -24,13 +24,13 @@ const FavoriteScreen = ({ navigation }) => {
 
   return (
     <Column style={styles.container}>
-    
-        <LightStatusBar />
-        <NormalHeader
-          title="Sản phẩm yêu thích"
-          onLeftPress={() => navigation.goBack()}
-        />
-   
+
+      <LightStatusBar />
+      <NormalHeader
+        title="Sản phẩm yêu thích"
+        onLeftPress={() => navigation.goBack()}
+      />
+
       <Body
         favorites={favorites}
         navigateProductDetail={navigateProductDetail} />
