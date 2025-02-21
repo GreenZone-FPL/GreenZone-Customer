@@ -12,7 +12,7 @@ import {
   TextInput,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import {CustomSearchBar, HeaderWithBadge} from '../../components';
+import {CustomSearchBar, HeaderWithBadge, Indicator} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph} from '../../layouts/graphs/appGraph';
 import polyline from '@mapbox/polyline';
@@ -36,7 +36,7 @@ const MerchantScreen = ({navigation}) => {
       const data = await getAllMerchants();
       setMerchants(data);
     } catch (error) {
-      console.error('Lỗi khi lấy merchants:', error);
+      console.log('Lỗi khi lấy merchants:', error);
     }
   };
 
@@ -401,24 +401,39 @@ const MerchantScreen = ({navigation}) => {
           <View>
             <View style={styles.mechant1}>
               <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
+
+              {sortedMerchants.length == 0 ? (
+                <Indicator
+                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                  color={colors.primary}
+                />
+              ) : (
+                <FlatList
+                  data={sortedMerchants.slice(0, 1)}
+                  renderItem={({item}) =>
+                    renderItem({handleMerchant, item, haversineDistance})
+                  }
+                  keyExtractor={item => item._id.toString()}
+                  showsVerticalScrollIndicator={false}
+                />
+              )}
+            </View>
+            <Text style={styles.tittle}>Cửa hàng Khác</Text>
+            {sortedMerchants.length == 0 ? (
+              <Indicator
+                size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                color={colors.primary}
+              />
+            ) : (
               <FlatList
-                data={sortedMerchants.slice(0, 1)}
+                data={sortedMerchants.slice(1)}
                 renderItem={({item}) =>
                   renderItem({handleMerchant, item, haversineDistance})
                 }
-                keyExtractor={item => item._id.toString()}
-                showsVerticalScrollIndicator={false}
+                keyExtractor={item => item._id}
+                scrollEnabled={true}
               />
-            </View>
-            <Text style={styles.tittle}>Cửa hàng Khác</Text>
-            <FlatList
-              data={sortedMerchants.slice(1)}
-              renderItem={({item}) =>
-                renderItem({handleMerchant, item, haversineDistance})
-              }
-              keyExtractor={item => item._id}
-              scrollEnabled={true}
-            />
+            )}
           </View>
         )}
       </View>
