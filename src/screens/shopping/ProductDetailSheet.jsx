@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
-import { getProductDetail} from '../../axios';
+import { getProductDetailAPI } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/AppContext';
@@ -35,7 +35,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
     useEffect(() => {
         const fetchProductDetail = async () => {
             try {
-                const data = await getProductDetail(productId);
+                const data = await getProductDetailAPI(productId);
                 if (data) {
                     setProduct(data); // Lưu danh mục vào state
                 }

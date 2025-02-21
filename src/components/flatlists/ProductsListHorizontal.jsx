@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { Icon } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
+import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
 const width = Dimensions.get('window').width;
-
+//test
 export const ProductsListHorizontal = ({
   onItemClick,
   products
@@ -26,17 +26,11 @@ export const ProductsListHorizontal = ({
           <Text style={styles.headerText}>Combo 69K + Freeship</Text>
           <Text style={styles.timeText}>08:00:00</Text>
         </View>
-
-
         <FlatList
           data={products}
-          maxToRenderPerBatch={10}
-          windowSize={5} 
-          nestedScrollEnabled
-          initialNumToRender={10}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
-            <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
+            <ItemProduct item={item}  onItemClick={() => onItemClick(item._id)}  />
           )}
           horizontal={true}
           contentContainerStyle={{
@@ -44,7 +38,6 @@ export const ProductsListHorizontal = ({
           }}
           scrollEnabled={true}
         />
-
       </View>
     </View>
   );
@@ -53,19 +46,19 @@ export const ProductsListHorizontal = ({
 const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setLoading(true)
+
     const fetchProductDetail = async () => {
       try {
-        const data = await getProductDetail(item._id);
+        const data = await getProductDetailAPI(item._id);
         if (data) {
           setProduct(data); // Lưu danh mục vào state
         }
       } catch (error) {
         console.error("Error fetchProductDetail:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -74,12 +67,10 @@ const ItemProduct = ({ item, onItemClick }) => {
 
   return (
     <View style={styles.itemProduct}>
-      <TouchableOpacity onPress={onItemClick}>    
-        <FastImage
-          source={{ uri: item.image, priority: FastImage.priority.high }}
-          style={styles.itemImage}
-          resizeMode={FastImage.resizeMode.cover}
-        />
+      <TouchableOpacity onPress={onItemClick}>
+        <Image
+          source={{ uri: String(item.image) }}
+          style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.priceContainer}>
         <Text style={styles.priceText}>
@@ -102,7 +93,6 @@ const ItemProduct = ({ item, onItemClick }) => {
       {
         product &&
         <ToppingModal
-          loading={loading}
           toppings={product.topping}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

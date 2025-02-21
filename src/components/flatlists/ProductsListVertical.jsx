@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { Icon } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
+import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
@@ -30,10 +30,6 @@ export const ProductsListVertical = ({
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        nestedScrollEnabled
-        initialNumToRender={10}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
           <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
@@ -48,19 +44,19 @@ export const ProductsListVertical = ({
 const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setLoading(true)
+
     const fetchProductDetail = async () => {
       try {
-        const data = await getProductDetail(item._id);
+        const data = await getProductDetailAPI(item._id);
         if (data) {
           setProduct(data); // Lưu danh mục vào state
         }
       } catch (error) {
         console.error("Error fetchProductDetail:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -69,12 +65,7 @@ const ItemProduct = ({ item, onItemClick }) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-
-        <FastImage
-          source={{ uri: item.image, priority: FastImage.priority.high }}
-          style={styles.itemImage}
-          resizeMode={FastImage.resizeMode.cover}
-        />
+        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -95,7 +86,6 @@ const ItemProduct = ({ item, onItemClick }) => {
       {
         product &&
         <ToppingModal
-
           toppings={product.topping}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
