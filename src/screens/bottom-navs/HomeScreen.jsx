@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,11 +9,22 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
   View,
 } from 'react-native';
 
-import { BagHappy, Coin1, Heart, MessageFavorite, Rank, SearchNormal1, TaskSquare, TicketDiscount, TruckFast } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {
+  BagHappy,
+  Coin1,
+  Heart,
+  MessageFavorite,
+  Rank,
+  SearchNormal1,
+  TaskSquare,
+  TicketDiscount,
+  TruckFast,
+} from 'iconsax-react-native';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -41,6 +52,7 @@ const HomeScreen = props => {
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
+  const lastCategoryRef = useRef(currentCategory);
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -66,14 +78,22 @@ const HomeScreen = props => {
   };
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
-      }
-    });
+    const timeoutId = setTimeout(() => {
+      Geolocation.getCurrentPosition(
+        position => {
+          if (position.coords) {
+            reverseGeocode({
+              lat: position.coords.latitude,
+              long: position.coords.longitude,
+            });
+          }
+        },
+        error => console.log(error),
+        {timeout: 5000}, // Giới hạn 5 giây
+      );
+    }, 1000); // Trì hoãn để tránh giật lag khi mở app
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Hàm gọi API chung
@@ -101,24 +121,28 @@ const HomeScreen = props => {
     console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-  const handleScroll = event => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-    let closestCategory = 'Danh mục';
-    let minDistance = Number.MAX_VALUE;
+  const handleScroll = useCallback(
+    event => {
+      const scrollY = event.nativeEvent.contentOffset.y;
+      let closestCategory = 'Danh mục';
+      let minDistance = Number.MAX_VALUE;
 
-    Object.entries(positions).forEach(([categoryId, posY]) => {
-      const distance = Math.abs(scrollY - posY);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestCategory =
-          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+      Object.entries(positions).forEach(([categoryId, posY]) => {
+        const distance = Math.abs(scrollY - posY);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCategory =
+            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        }
+      });
+
+      if (closestCategory !== lastCategoryRef.current) {
+        lastCategoryRef.current = closestCategory;
+        setCurrentCategory(closestCategory);
       }
-    });
-
-    if (closestCategory !== currentCategory) {
-      setCurrentCategory(closestCategory);
-    }
-  };
+    },
+    [positions, allProducts],
+  );
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
@@ -126,11 +150,9 @@ const HomeScreen = props => {
   };
 
   useEffect(() => {
-    fetchData(getAllCategories, setCategories);
-    // Fetch all products
-    fetchData(getAllProducts, setAllProducts);
-  }, []); 
-
+    if (categories.length === 0) fetchData(getAllCategories, setCategories);
+    if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -163,8 +185,12 @@ const HomeScreen = props => {
         <FlatList
           data={allProducts}
           keyExtractor={item => item._id}
-          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
-          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          nestedScrollEnabled
+          initialNumToRender={10} // Chỉ render 10 item đầu tiên
+          removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
           renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
@@ -175,6 +201,7 @@ const HomeScreen = props => {
             </View>
           )}
         />
+
         {/* <Searchbar /> */}
       </ScrollView>
 
