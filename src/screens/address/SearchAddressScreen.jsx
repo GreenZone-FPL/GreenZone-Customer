@@ -4,9 +4,7 @@ import { Icon } from 'react-native-paper';
 import { CustomSearchBar, LightStatusBar, DialogBasic, FlatInput, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
-
-
-import axios from 'axios';
+import { getProvinces, getDistricts, getWards } from '../../axios/modules/adress';
 
 const SearchAddressScreen = (props) => {
     const navigation = props.navigation;
@@ -70,7 +68,6 @@ const SearchAddressScreen = (props) => {
                     size={GLOBAL_KEYS.ICON_SIZE_LARGE}
                 />
             </Pressable>
-
             {addressList.length > 0 && (
                 <View style={{ gap: GLOBAL_KEYS.GAP_DEFAULT, margin: 16, borderWidth: 1, borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, borderColor: colors.gray200, padding: 16 }}>
                     {addressList.map((address, index) => (
@@ -96,8 +93,6 @@ const Card = ({ address, onPress }) => (
     </Pressable>
 );
 
-
-
 const SelectAddressDialog = ({ isVisible, setIsVisible, onSelectAddress }) => {
     const [tinhThanh, setTinhThanh] = useState([]);
     const [quanHuyen, setQuanHuyen] = useState([]);
@@ -108,10 +103,8 @@ const SelectAddressDialog = ({ isVisible, setIsVisible, onSelectAddress }) => {
     const [selectedPhuong, setSelectedPhuong] = useState('');
     const [note, setNote] = useState('');
 
-
     const [loading, setLoading] = useState(true);
-    const [modalType, setModalType] = useState(null); // Loại modal đang mở ('tinh', 'quan', 'phuong')
-
+    const [modalType, setModalType] = useState(null);
 
     const isConfirmDisabled = !selectedTinh || !selectedQuan || !selectedPhuong;
 
@@ -121,10 +114,8 @@ const SelectAddressDialog = ({ isVisible, setIsVisible, onSelectAddress }) => {
 
     const fetchTinhThanh = async () => {
         try {
-            const response = await axios.get('https://esgoo.net/api-tinhthanh/1/0.htm');
-            if (response.data.error === 0) {
-                setTinhThanh(response.data.data);
-            }
+            const data = await getProvinces();
+            setTinhThanh(data);
         } catch (error) {
             console.error('Lỗi tải tỉnh thành:', error);
         } finally {
@@ -132,106 +123,81 @@ const SelectAddressDialog = ({ isVisible, setIsVisible, onSelectAddress }) => {
         }
     };
 
-    const fetchQuanHuyen = async (idTinh) => {
-        setSelectedTinh(idTinh);
+    const fetchQuanHuyen = async (provinceCode) => {
+        setSelectedTinh(provinceCode);
         setQuanHuyen([]);
         setPhuongXa([]);
         setSelectedQuan('');
         setSelectedPhuong('');
 
-        if (!idTinh) return;
+        if (!provinceCode) return;
 
         try {
-            const response = await axios.get(`https://esgoo.net/api-tinhthanh/2/${idTinh}.htm`);
-            if (response.data.error === 0) {
-                setQuanHuyen(response.data.data);
-            }
+            const data = await getDistricts(provinceCode);
+            setQuanHuyen(data);
         } catch (error) {
             console.error('Lỗi tải quận huyện:', error);
         }
     };
 
-    const fetchPhuongXa = async (idQuan) => {
-        setSelectedQuan(idQuan);
+    const fetchPhuongXa = async (districtCode) => {
+        setSelectedQuan(districtCode);
         setPhuongXa([]);
         setSelectedPhuong('');
 
-        if (!idQuan) return;
+        if (!districtCode) return;
 
         try {
-            const response = await axios.get(`https://esgoo.net/api-tinhthanh/3/${idQuan}.htm`);
-            if (response.data.error === 0) {
-                setPhuongXa(response.data.data);
-            }
+            const data = await getWards(districtCode);
+            setPhuongXa(data);
         } catch (error) {
             console.error('Lỗi tải phường xã:', error);
         }
     };
-    // Hàm xử lý khi nhấn "Xác nhận"
+
     const handleConfirm = () => {
         const selectedAddress = {
-            tinh: tinhThanh.find(item => item.id === selectedTinh)?.full_name || '',
-            quan: quanHuyen.find(item => item.id === selectedQuan)?.full_name || '',
-            phuong: phuongXa.find(item => item.id === selectedPhuong)?.full_name || '',
+            tinh: tinhThanh.find(item => item.code === selectedTinh)?.name || '',
+            quan: quanHuyen.find(item => item.code === selectedQuan)?.name || '',
+            phuong: phuongXa.find(item => item.code === selectedPhuong)?.name || '',
             note: note
         };
 
-        onSelectAddress(selectedAddress); // Gửi dữ liệu ra ngoài
+        onSelectAddress(selectedAddress);
         setIsVisible(false);
     };
-
-
 
     return (
         <DialogBasic isVisible={isVisible} onHide={() => setIsVisible(false)} title="Chọn địa chỉ">
             {loading ? <ActivityIndicator size="large" color="blue" /> : (
                 <View style={{ gap: GLOBAL_KEYS.GAP_DEFAULT }}>
-                    {/* Tỉnh/Thành phố */}
                     <TouchableOpacity
                         style={styles.selectionBox}
                         onPress={() => setModalType('tinh')}
                     >
-                        <Text style={styles.textLocal}>{selectedTinh ? tinhThanh.find(item => item.id === selectedTinh)?.full_name : "Chọn Tỉnh Thành"}</Text>
-                        <Icon
-                            source="chevron-down"
-                            color={colors.primary}
-                            size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                        />
+                        <Text style={styles.textLocal}>{selectedTinh ? tinhThanh.find(item => item.code === selectedTinh)?.name : "Chọn Tỉnh Thành"}</Text>
+                        <Icon source="chevron-down" color={colors.primary} size={GLOBAL_KEYS.ICON_SIZE_LARGE} />
                     </TouchableOpacity>
 
-                    {/* Quận/Huyện */}
                     <TouchableOpacity
                         style={styles.selectionBox}
                         onPress={() => quanHuyen.length > 0 && setModalType('quan')}
                         disabled={quanHuyen.length === 0}
                     >
-                        <Text style={styles.textLocal}>{selectedQuan ? quanHuyen.find(item => item.id === selectedQuan)?.full_name : "Chọn Quận Huyện"}</Text>
-                        <Icon
-                            source="chevron-down"
-                            color={colors.primary}
-                            size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                        />
+                        <Text style={styles.textLocal}>{selectedQuan ? quanHuyen.find(item => item.code === selectedQuan)?.name : "Chọn Quận Huyện"}</Text>
+                        <Icon source="chevron-down" color={colors.primary} size={GLOBAL_KEYS.ICON_SIZE_LARGE} />
                     </TouchableOpacity>
 
-                    {/* Phường/Xã */}
                     <TouchableOpacity
                         style={styles.selectionBox}
                         onPress={() => phuongXa.length > 0 && setModalType('phuong')}
                         disabled={phuongXa.length === 0}
                     >
-                        <Text style={styles.textLocal}>{selectedPhuong ? phuongXa.find(item => item.id === selectedPhuong)?.full_name : "Chọn Phường Xã"}</Text>
-                        <Icon
-                            source="chevron-down"
-                            color={colors.primary}
-                            size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                        />
+                        <Text style={styles.textLocal}>{selectedPhuong ? phuongXa.find(item => item.code === selectedPhuong)?.name : "Chọn Phường Xã"}</Text>
+                        <Icon source="chevron-down" color={colors.primary} size={GLOBAL_KEYS.ICON_SIZE_LARGE} />
                     </TouchableOpacity>
 
-                    <FlatInput
-                        label={'Nhập chi tiết '}
-                        setValue={setNote}
-                        value={note}
-                        placeholder='Số nhà/ngách/hẻm/...' />
+                    <FlatInput label={'Nhập chi tiết '} setValue={setNote} value={note} placeholder='Số nhà/ngách/hẻm/...' />
 
                     <PrimaryButton
                         title={'Xác nhận'}
@@ -242,31 +208,29 @@ const SelectAddressDialog = ({ isVisible, setIsVisible, onSelectAddress }) => {
                 </View>
             )}
 
-            {/* Modal danh sách */}
             <Modal visible={modalType !== null} animationType="slide">
                 <View style={{ flex: 1, padding: 20 }}>
                     <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER, fontWeight: 'bold', marginBottom: 10 }}>Chọn {modalType === 'tinh' ? "Tỉnh Thành" : modalType === 'quan' ? "Quận Huyện" : "Phường Xã"}</Text>
-
                     <FlatList
                         data={modalType === 'tinh' ? tinhThanh : modalType === 'quan' ? quanHuyen : phuongXa}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item.code}
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 style={styles.listItem}
                                 onPress={() => {
                                     if (modalType === 'tinh') {
-                                        fetchQuanHuyen(item.id);
-                                        setSelectedTinh(item.id);
+                                        fetchQuanHuyen(item.code);
+                                        setSelectedTinh(item.code);
                                     } else if (modalType === 'quan') {
-                                        fetchPhuongXa(item.id);
-                                        setSelectedQuan(item.id);
+                                        fetchPhuongXa(item.code);
+                                        setSelectedQuan(item.code);
                                     } else {
-                                        setSelectedPhuong(item.id);
+                                        setSelectedPhuong(item.code);
                                     }
                                     setModalType(null);
                                 }}
                             >
-                                <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>{item.full_name}</Text>
+                                <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>{item.name}</Text>
                             </TouchableOpacity>
                         )}
                     />
@@ -365,4 +329,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default SearchAddressScreen
+export default SearchAddressScreen;
