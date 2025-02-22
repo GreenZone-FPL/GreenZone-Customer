@@ -39,9 +39,9 @@ import {
   TitleText,
   Ani_ModalLoading,
 } from '../../components';
-
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, CartManager, EventBus, EVENT } from '../../utils';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -55,6 +55,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
+
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -103,7 +104,7 @@ const HomeScreen = props => {
         error => console.log(error),
         {timeout: 5000}, // Giới hạn 5 giây
       );
-    }, 1000); // Trì hoãn để tránh giật lag khi mở app
+    }, 1000);
 
     return () => clearTimeout(timeoutId);
   }, []);
@@ -133,28 +134,24 @@ const HomeScreen = props => {
     console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-  const handleScroll = useCallback(
-    event => {
-      const scrollY = event.nativeEvent.contentOffset.y;
-      let closestCategory = 'Danh mục';
-      let minDistance = Number.MAX_VALUE;
+  const handleScroll = useCallback(event => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    let closestCategory = 'Danh mục';
+    let minDistance = Number.MAX_VALUE;
 
-      Object.entries(positions).forEach(([categoryId, posY]) => {
-        const distance = Math.abs(scrollY - posY);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCategory =
-            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
-        }
-      });
-
-      if (closestCategory !== lastCategoryRef.current) {
-        lastCategoryRef.current = closestCategory;
-        setCurrentCategory(closestCategory);
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
-    },
-    [positions, allProducts],
-  );
+    });
+
+    if (closestCategory !== lastCategoryRef.current) {
+      lastCategoryRef.current = closestCategory;
+      setCurrentCategory(closestCategory);
+    }
+  }, [positions, allProducts]);
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
@@ -164,7 +161,12 @@ const HomeScreen = props => {
   useEffect(() => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
+
+
   }, []);
+
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -226,6 +228,7 @@ const HomeScreen = props => {
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
+       
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 

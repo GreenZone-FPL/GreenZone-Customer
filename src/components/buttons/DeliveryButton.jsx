@@ -1,19 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
   Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  TouchableOpacity
 } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { AppAsyncStorage, EventBus, EVENT, CartManager } from '../../utils';
+import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
-import { Column } from '../containers/Column';
 
-const { width } = Dimensions.get('window');
+
 export const DeliveryButton = ({ title, address, onPress, style, onPressCart }) => {
+  const [cartLength, setCartLength] = useState(0);
+
+  useEffect(() => {
+    const loadCart = async () => {
+      const cart = await CartManager.readCart();
+      setCartLength(cart.length);
+    };
+
+    loadCart();
+
+    const onCartUpdated = (count) => {
+      setCartLength(count);
+    };
+    EventBus.addListener(EVENT.UPDATE_CART, onCartUpdated)
+
+    return () => {
+      EventBus.removeAllListeners(EVENT.UPDATE_CART, onCartUpdated)
+    }
+  }, [])
+
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
 
@@ -30,7 +49,8 @@ export const DeliveryButton = ({ title, address, onPress, style, onPressCart }) 
       </Column>
 
       <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
-        <Text style={styles.quantity}>1</Text>
+        
+        <Text style={styles.quantity}>{cartLength}</Text>
         <NormalText text='Giỏ hàng' style={{ color: colors.white }} />
       </TouchableOpacity>
     </TouchableOpacity>

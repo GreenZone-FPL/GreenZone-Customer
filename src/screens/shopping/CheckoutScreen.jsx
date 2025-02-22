@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Column, DialogBasic, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, DialogNotification } from '../../components';
+import { Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
+import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, CartManager } from '../../utils';
 
 
 const width = Dimensions.get('window').width;
@@ -25,9 +26,21 @@ const CheckoutScreen = (props) => {
   const navigation = props.navigation;
   const [isDialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng');
+  const [cart, setCart] = useState([]);
 
   const [address, setAddress] = useState('');
 
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        const appCart = await AppAsyncStorage.readData('CART', []);
+        setCart(appCart)
+      } catch (error) {
+        console.log('Read cart error', error);
+      }
+    }
+    loadCart()
+  }, [])
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -40,17 +53,27 @@ const CheckoutScreen = (props) => {
           rightTextStyle={{ color: colors.primary }}
           onRightPress={() => setDialogShippingMethodVisible(true)}
         />
-         <AddressSection setAddress={setAddress} />
+        <AddressSection
+          changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
+          setAddress={setAddress} />
 
         <RecipientInfo
           onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
         />
         <TimeSection />
-        <ProductsInfo onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+
+
+        {
+          cart.length > 0 &&
+          <ProductsInfo
+            cart={cart}
+            onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+        }
+
 
         <PaymentDetails />
 
-
+        <PrimaryButton title='Log cart' onPress={CartManager.readCart}/>
       </ScrollView>
       <Footer address={address} />
       <DialogShippingMethod
@@ -143,7 +166,7 @@ const TimeSection = () => {
     </TouchableOpacity>
   );
 };
-const AddressSection = ({ setAddress }) => {
+const AddressSection = ({ setAddress, changeAddress }) => {
   const [currentLocation, setCurrentLocation] = useState('');
   const [locationAvailable, setLocationAvailable] = useState(false);
 
@@ -179,8 +202,9 @@ const AddressSection = ({ setAddress }) => {
       <DualTextRow
         leftText="Địa chỉ nhận hàng"
         leftTextStyle={{ fontWeight: '600' }}
-        rightText=""
+        rightText="Thay đổi"
         rightTextStyle={{ color: colors.primary }}
+        onRightPress={changeAddress}
       />
 
       <NormalText text={locationAvailable ? currentLocation.address.label : 'Đang lấy vị trí...'} />
@@ -205,24 +229,22 @@ const RecipientInfo = ({ onChangeRecipientInfo }) => {
   );
 };
 
-const ProductsInfo = ({ onEditItem }) => {
-  const [productList, setProductList] = useState(products);
+const ProductsInfo = ({ onEditItem, cart }) => {
+  const [productList, setProductList] = useState(cart);
 
-  const handleDelete = id => {
-    setProductList(prevList => prevList.filter(item => item.id !== id));
-  };
+
 
   return (
     <View style={{ marginVertical: 8 }}>
       <FlatList
-        data={productList}
-        keyExtractor={item => item.id.toString()}
+        data={cart}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          // <SwipeableProduct item={item} onDelete={handleDelete} />
+
           <SwipeableItem
             onEdit={onEditItem}
             item={item}
-            onDelete={handleDelete} />
+            onDelete={() => console.log('Delete')} />
         )}
         contentContainerStyle={{ gap: 8 }}
         scrollEnabled={false}
@@ -449,7 +471,7 @@ const Footer = ({ address }) => {
 
       <PrimaryButton title='Đặt hàng' onPress={() => setIsVisible(true)} />
 
-      <DialogNotification 
+      <DialogNotification
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'

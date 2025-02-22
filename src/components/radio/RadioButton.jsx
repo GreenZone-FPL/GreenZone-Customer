@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { TextFormatter } from '../../utils';
 
 const RadioButtonPropTypes = {
+    item: PropTypes.object,
     label: PropTypes.string.isRequired,
     selected: PropTypes.bool,
     onPress: PropTypes.func.isRequired,
@@ -16,6 +17,7 @@ const RadioButtonPropTypes = {
 
 
 export const RadioButton = ({
+    item,
     label,
     selected,
     onPress,

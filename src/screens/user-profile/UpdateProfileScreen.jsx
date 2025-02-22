@@ -51,8 +51,8 @@ const UpdateProfileScreen = ({ navigation, route }) => {
         : profile.gender === 'female'
           ? 'Nữ'
           : '')
-      
-    
+
+
   }, [isLoggedIn]);
 
   return (

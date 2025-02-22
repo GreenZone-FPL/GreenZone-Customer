@@ -1,157 +1,127 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
 import { getProductDetail } from '../../axios';
-import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
+import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/AppContext';
-import { CartManager, Toaster } from '../../utils';
+import { ShoppingGraph } from '../../layouts/graphs';
 
-const ProductDetailSheet = ({ route, navigation }) => {
+const ProductDetailContent = ({ productId, closeSheet }) => {
 
-    const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
+    // const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
-    const [loading, setLoading] = useState(false);
+
+    const favorites = []
+    const addToFavorites = () => {
+        return 0
+    }
+    const [selectedSize, setSelectedSize] = useState('');
+    const [selectedSugarLevel, setSelectedSugarLevel] = useState('');
+    const [selectedIceLevel, setSelectedIceLevel] = useState('');
     const [product, setProduct] = useState(null)
-    const [selectedVariant, setSelectedVariant] = useState(null);
-    const [selectedToppings, setSelectedToppings] = useState([]);
+    const [selectedGroup, setSelectedGroup] = useState([]);
     const [selectedNotes, setSelectedNotes] = useState([]);
-    const [quantity, setQuantity] = useState(1);
-    const [totalAmount, setTotalAmount] = useState(0)
-    const { productId } = route.params
+    const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
 
 
+    console.log('productId', productId)
+    // const totalPrice = quantity * product.price; // Tính tổng tiền
 
 
-
-    useEffect(() => {
-        if (product) {
-            console.log("Số lượng hiện tại:", quantity);
-    
-            const newTotalAmount = calculateTotal(product, selectedVariant, selectedToppings, quantity);
-            console.log("Giá tổng mới:", newTotalAmount);
-    
-            setTotalAmount(newTotalAmount);
-        }
-    }, [product, selectedVariant, selectedToppings, quantity]);
-    
-    const calculateTotal = (product, variant, toppings, quantity) => {
-        if (!product) return 0; // Nếu không có sản phẩm, trả về 0
-    
-        const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
-        const toppingsAmount = toppings?.reduce((acc, item) => acc + item.extraPrice, 0) || 0; // Nếu không có toppings, giá là 0
-    
-        return quantity * (basePrice + toppingsAmount);
-    };
-    
-
-
-    useEffect(() => {
-
-        const fetchProductDetail = async () => {
-            setLoading(true)
-            try {
-                const detail = await getProductDetail(productId);
-
-                if (detail) {
-                    setProduct(detail); // Lưu danh mục vào state
-                    if (detail.variant.length > 0) {
-                        const firstVariant = detail.variant[0]
-                        setSelectedVariant(firstVariant)
-                        setTotalAmount(calculateTotal(firstVariant, selectedToppings));
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetchProductDetail:", error);
-            } finally {
-                setLoading(false);
+    const fetchProductDetail = useCallback(async () => {
+        try {
+            const data = await getProductDetail(productId);
+            if (data) {
+                setProduct(data); // Lưu danh mục vào state
             }
-        };
+        } catch (error) {
+            console.error("Error fetchProductDetail:", error);
+        }
+    }, [productId]);
+
+    useEffect(() => {
 
         fetchProductDetail();
-    }, []);
+
+    }, [fetchProductDetail]);
     return (
-        <View style={styles.modalContainer}>
-            <OverlayStatusBar />
+
+
+        product &&
+
+        <>
+            {/* <ScrollView style={styles.modalContent}> */}
+            <ProductImage hideModal={closeSheet} product={product} />
+
+            <ProductInfo
+                favorites={favorites}
+                product={product}
+                addToFavorites={addToFavorites}
+                showFullDescription={showFullDescription}
+                toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
+            />
+
             {
-                product &&
-
-                <>
-                    <ScrollView style={styles.modalContent}>
-                        <ProductImage hideModal={() => navigation.goBack()} product={product} />
-
-                        <ProductInfo
-                            favorites={favorites}
-                            product={product}
-                            addToFavorites={addToFavorites}
-                            showFullDescription={showFullDescription}
-                            toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
-                        />
-
-                        {
-                            product.variant.length > 0 && selectedVariant &&
-                            <RadioGroup
-                                items={product.variant}
-                                selectedValue={selectedVariant}
-                                onValueChange={(item) => {
-                                    setSelectedVariant(item)
-                                }}
-                                title="Size"
-                                required={true}
-                                note="Bắt buộc"
-                            />
-                        }
-
-
-                        {
-                            product.topping.length > 0 &&
-
-                            <SelectableGroup
-                                items={product.topping}
-                                title='Chọn topping'
-                                selectedGroup={selectedToppings}
-                                setSelectedGroup={setSelectedToppings}
-                                note="Tối đa 3 toppings"
-                                activeIconColor={colors.primary}
-                                activeTextColor={colors.primary}
-                            />
-
-                          
-                        }
-                        
-
-                    </ScrollView>
-
-                    <CheckoutFooter
-                        quantity={quantity}
-                        handlePlus={() => {
-                            if (quantity < 10) {
-                                setQuantity(quantity + 1)
-                            }
-                        }}
-                        handleMinus={() => {
-                            if (quantity > 1) {
-                                setQuantity(quantity - 1)
-                            }
-                        }}
-                        totalPrice={totalAmount}
-                        onButtonPress={() => {
-                            if (product.variant.length > 0) {
-                                return selectedVariant
-                                    ? CartManager.addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
-                                    : Toaster.show("Vui lòng chọn Size");
-                            }
-                            return CartManager.addToCart(product, null, selectedToppings, totalAmount, quantity);
-                        }}
-                        buttonTitle='Thêm vào giỏ hàng'
-                    />
-
-
-                </>
+                product.variant.length > 0 &&
+                <RadioGroup
+                    items={product.variant}
+                    selectedValue={selectedSize}
+                    onValueChange={setSelectedSize}
+                    title="Size"
+                    required={true}
+                    note="Bắt buộc"
+                />
             }
 
-        </View>
+
+            <SelectableGroup
+                items={product.topping}
+                title='Chọn topping'
+                selectedGroup={selectedGroup}
+                setSelectedGroup={setSelectedGroup}
+                note="Tối đa 3 toppings"
+                activeIconColor={colors.primary}
+                activeTextColor={colors.primary}
+            />
+
+
+
+            <NotesList
+                title='Lưu ý cho quán'
+                items={notes}
+                selectedNotes={selectedNotes}
+                onToggleNote={(note) => {
+                    if (selectedNotes.includes(note)) {
+                        setSelectedNotes(selectedNotes.filter((item) => item !== note));
+                    } else {
+                        setSelectedNotes([...selectedNotes, note]);
+                    }
+                }}
+
+                style={{ paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}
+            />
+            {/* </ScrollView> */}
+
+            <CheckoutFooter
+                quantity={quantity}
+                handlePlus={() => {
+                    if (quantity < 10) {
+                        setQuantity(quantity + 1)
+                    }
+                }}
+                handleMinus={() => {
+                    if (quantity > 1) {
+                        setQuantity(quantity - 1)
+                    }
+                }}
+                totalPrice={99000}
+                onButtonPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
+                buttonTitle='Thêm vào giỏ hàng'
+            />
+        </>
+
     );
 };
 
@@ -252,16 +222,16 @@ const styles = StyleSheet.create({
         width: '100%',
 
     },
-    modalContent: {
-        width: '100%',
-        backgroundColor: colors.white,
-        flexDirection: 'column',
-        gap: GLOBAL_KEYS.GAP_SMALL,
-        marginTop: StatusBar.currentHeight + 40,
-        flexDirection: 'column',
-        flex: 1,
+    // modalContent: {
+    //     width: '100%',
+    //     backgroundColor: colors.white,
+    //     flexDirection: 'column',
+    //     gap: GLOBAL_KEYS.GAP_SMALL,
+    //     // marginTop: StatusBar.currentHeight + 40,
+    //     flexDirection: 'column',
+    //     flex: 1,
 
-    },
+    // },
     imageContainer: {
         position: 'relative',
         width: '100%',
@@ -382,4 +352,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ProductDetailSheet
+export default ProductDetailContent

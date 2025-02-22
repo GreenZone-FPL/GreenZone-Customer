@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import {RadioButton} from './RadioButton';
+import { RadioButton } from './RadioButton';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
 
@@ -13,7 +13,7 @@ const RadioGroupPropTypes = {
       sellingPrice: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     })
   ).isRequired,
-  selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  selectedValue: PropTypes.object,
   onValueChange: PropTypes.func.isRequired,
   title: PropTypes.string,
   required: PropTypes.bool,
@@ -45,10 +45,11 @@ export const RadioGroup = ({
 
         return (
           <RadioButton
+            item={item}
             key={_id}
             label={size}
-            selected={selectedValue === _id}
-            onPress={() => onValueChange(_id)}
+            selected={selectedValue._id === _id}
+            onPress={() => onValueChange(item)}
             price={sellingPrice}
           />
         );

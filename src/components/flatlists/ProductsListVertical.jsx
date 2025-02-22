@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
+
 import { Icon } from 'react-native-paper';
 import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
@@ -24,12 +26,19 @@ export const ProductsListVertical = ({
 }) => {
 
 
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
+
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        nestedScrollEnabled
+        initialNumToRender={10}
+
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
           <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
@@ -44,6 +53,7 @@ export const ProductsListVertical = ({
 const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [product, setProduct] = useState(null)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
@@ -65,7 +75,14 @@ const ItemProduct = ({ item, onItemClick }) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
+
+        <FastImage
+          source={{ uri: item.image, priority: FastImage.priority.high }}
+          style={styles.itemImage}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+
+
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>

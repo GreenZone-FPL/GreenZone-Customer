@@ -78,23 +78,15 @@ SelectableGroup.propTypes = SelectableGroupPropTypes;
 
 // Hàm xử lý tăng số lượng
 const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
-    const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
+    if (selectedGroup.length < 3) {
+        const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
 
-    if (!existingItem) {
-        // Thêm item mới với quantity là 1
-        setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
-    } else {
-        // Nếu item đã tồn tại và quantity nhỏ hơn 3, tăng quantity
-        if (existingItem.quantity < 3) {
-            setSelectedGroup(prevGroup =>
-                prevGroup.map(item =>
-                    item._id === itemToPlus._id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                )
-            );
+        if (!existingItem) {
+            // Thêm item mới với quantity là 1
+            setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
         }
     }
+
 };
 
 // Hàm xử lý giảm số lượng

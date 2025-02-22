@@ -10,7 +10,7 @@ import { Ani_ModalLoading } from '../../components';
 import { useAppContext, ActionTypes } from '../../context/AppContext';
 
 const VerifyOTPScreen = ({ route, navigation }) => {
-    const {dispatch} = useAppContext()
+    const { dispatch } = useAppContext()
     const { phoneNumber } = route.params;
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
@@ -27,15 +27,15 @@ const VerifyOTPScreen = ({ route, navigation }) => {
         try {
             const response = await verifyOTP({ phoneNumber, code });
 
-         
+
             const userLastName = response.user.lastName
             console.log("✅ OTP Verified, userLastName = ", response.user.lastName);
             if (userLastName) {
                 Toaster.show("Đăng nhập thành công!")
-                dispatch({type: ActionTypes.LOGIN})
+                dispatch({ type: ActionTypes.LOGIN })
 
             } else {
-                dispatch({type: ActionTypes.REGISTER})
+                dispatch({ type: ActionTypes.REGISTER })
                 navigation.navigate(AuthGraph.RegisterScreen)
             }
 
