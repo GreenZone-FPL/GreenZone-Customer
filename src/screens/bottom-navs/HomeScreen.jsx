@@ -31,6 +31,7 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, CartManager, EventBus, EVENT } from '../../utils';
 
 const HomeScreen = props => {
   const { navigation } = props;
@@ -43,6 +44,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
+
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -139,8 +141,11 @@ const HomeScreen = props => {
   useEffect(() => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
+
+
   }, []);
 
+  
 
 
   return (
@@ -208,6 +213,7 @@ const HomeScreen = props => {
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
+       
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 

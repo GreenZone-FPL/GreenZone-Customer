@@ -1,31 +1,24 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
 import { getProductDetail } from '../../axios';
-import { CheckoutFooter, NotesList, OverlayStatusBar, PrimaryButton, RadioGroup, SelectableGroup } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS, PaymentMethod } from '../../constants';
+import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/AppContext';
-import { ShoppingGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, Toaster } from '../../utils';
+import { CartManager, Toaster } from '../../utils';
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
     const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
-
-
     const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState(null)
-
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedToppings, setSelectedToppings] = useState([]);
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1);
-
     const [totalAmount, setTotalAmount] = useState(0)
-
-
     const { productId } = route.params
 
 
@@ -33,26 +26,25 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
 
     useEffect(() => {
-        if (selectedVariant) {
-
+        if (product) {
             console.log("Số lượng hiện tại:", quantity);
-
-            const newTotalAmount = calculateTotal(selectedVariant, selectedToppings, quantity);
+    
+            const newTotalAmount = calculateTotal(product, selectedVariant, selectedToppings, quantity);
             console.log("Giá tổng mới:", newTotalAmount);
-
+    
             setTotalAmount(newTotalAmount);
         }
-    }, [selectedVariant, selectedToppings, quantity]);
-
-
-
-
-
-
-    const calculateTotal = (variant, toppings, quantity) => {
-        const toppingsAmount = toppings.reduce((acc, item) => acc + item.extraPrice, 0)
-        return quantity * (variant.sellingPrice + toppingsAmount)
-    }
+    }, [product, selectedVariant, selectedToppings, quantity]);
+    
+    const calculateTotal = (product, variant, toppings, quantity) => {
+        if (!product) return 0; // Nếu không có sản phẩm, trả về 0
+    
+        const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
+        const toppingsAmount = toppings?.reduce((acc, item) => acc + item.extraPrice, 0) || 0; // Nếu không có toppings, giá là 0
+    
+        return quantity * (basePrice + toppingsAmount);
+    };
+    
 
 
     useEffect(() => {
@@ -127,7 +119,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
                           
                         }
-                          <PrimaryButton title='Log cart' onPress={readCart}/>
+                        
 
                     </ScrollView>
 
@@ -147,10 +139,10 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         onButtonPress={() => {
                             if (product.variant.length > 0) {
                                 return selectedVariant
-                                    ? addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
+                                    ? CartManager.addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
                                     : Toaster.show("Vui lòng chọn Size");
                             }
-                            return addToCart(product, null, selectedToppings, totalAmount, quantity);
+                            return CartManager.addToCart(product, null, selectedToppings, totalAmount, quantity);
                         }}
                         buttonTitle='Thêm vào giỏ hàng'
                     />
@@ -162,62 +154,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
         </View>
     );
 };
-
-
-const addToCart = async (product, variant, selectedToppings, amount, quantity) => {
-    try {
-        const cart = await AppAsyncStorage.readData('CART', []);
-
-        // Sắp xếp toppings theo ID nếu có toppings, còn không thì giữ nguyên
-        const sortedToppings = selectedToppings?.length 
-            ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
-            : [];
-
-        // Tìm sản phẩm có cùng productId
-        const existingIndex = cart.findIndex(item => 
-            item.productId === product._id &&
-            (item.variant === (variant?._id || null)) && // Nếu variant là null, so sánh null
-            (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings)) // Nếu toppings là null, so sánh []
-        );
-
-        if (existingIndex !== -1) {
-            // Nếu đã tồn tại, tăng số lượng
-            cart[existingIndex].quantity += quantity;
-        } else {
-            // Nếu chưa có, thêm mới vào giỏ hàng
-            cart.push({
-                productId: product._id,
-                productName: product.name,
-                variant: variant?._id || null, // Nếu không có variant, lưu null
-                variantName: variant?.name || '', // Nếu không có variant, lưu chuỗi rỗng
-                quantity: quantity,
-                price: amount,
-                toppings: sortedToppings
-            });
-        }
-
-        await AppAsyncStorage.storeData('CART', cart);
-        Toaster.show('Thêm vào giỏ hàng thành công');
-    } catch (error) {
-        console.log('Error addToCart', error);
-    }
-};
-
-
-
-
-
-const readCart = async () => {
-    try {
-        const CART = await AppAsyncStorage.readData('CART', null)
-        console.log('read CART', CART);
-        console.log('read cart length', CART.length);
-    } catch (error) {
-        console.log('error read CART', error);
-    }
-};
-
-
 
 const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem']
 

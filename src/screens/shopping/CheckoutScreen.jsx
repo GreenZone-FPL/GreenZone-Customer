@@ -16,7 +16,8 @@ import { Icon, RadioButton } from 'react-native-paper';
 import { Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { AppAsyncStorage } from '../../utils';
+import { AppAsyncStorage, CartManager } from '../../utils';
+
 
 const width = Dimensions.get('window').width;
 
@@ -25,9 +26,21 @@ const CheckoutScreen = (props) => {
   const navigation = props.navigation;
   const [isDialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng');
+  const [cart, setCart] = useState([]);
 
   const [address, setAddress] = useState('');
 
+  useEffect(() => {
+    const loadCart = async () => {
+      try {
+        const appCart = await AppAsyncStorage.readData('CART', []);
+        setCart(appCart)
+      } catch (error) {
+        console.log('Read cart error', error);
+      }
+    }
+    loadCart()
+  }, [])
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -48,11 +61,19 @@ const CheckoutScreen = (props) => {
           onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
         />
         <TimeSection />
-        <ProductsInfo onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+
+
+        {
+          cart.length > 0 &&
+          <ProductsInfo
+            cart={cart}
+            onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+        }
+
 
         <PaymentDetails />
 
-
+        <PrimaryButton title='Log cart' onPress={CartManager.readCart}/>
       </ScrollView>
       <Footer address={address} />
       <DialogShippingMethod
@@ -208,24 +229,22 @@ const RecipientInfo = ({ onChangeRecipientInfo }) => {
   );
 };
 
-const ProductsInfo = ({ onEditItem }) => {
-  const [productList, setProductList] = useState(products);
+const ProductsInfo = ({ onEditItem, cart }) => {
+  const [productList, setProductList] = useState(cart);
 
-  const handleDelete = id => {
-    setProductList(prevList => prevList.filter(item => item.id !== id));
-  };
+
 
   return (
     <View style={{ marginVertical: 8 }}>
       <FlatList
-        data={productList}
-        keyExtractor={item => item.id.toString()}
+        data={cart}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          // <SwipeableProduct item={item} onDelete={handleDelete} />
+
           <SwipeableItem
             onEdit={onEditItem}
             item={item}
-            onDelete={handleDelete} />
+            onDelete={() => console.log('Delete')} />
         )}
         contentContainerStyle={{ gap: 8 }}
         scrollEnabled={false}

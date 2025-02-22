@@ -33,22 +33,37 @@ export const HorizontalProductItem = ({
     oldPriceStyle }) => (
     <View style={[styles.itemProduct, containerStyle]}>
         <View style={styles.imageWrapper}>
-            <Image style={[styles.itemImage, imageStyle]} source={item.image} />
+            <Image style={[styles.itemImage, imageStyle]} source={{ uri: item.image }} />
             <View style={styles.quantityBadge}>
-                <Text style={styles.quantityText}>x5</Text>
+                <Text style={styles.quantityText}>x{item.quantity}</Text>
             </View>
         </View>
 
         <View style={styles.productInfo}>
-            <Text style={[styles.productName, titleStyle]}>{item.name}</Text>
-            <Text style={[styles.normalText, { color: colors.gray700 }, optionStyle]}>Lớn</Text>
-            <Text style={[styles.normalText, { color: colors.gray700 }, optionStyle]}>Kem Phô Mai Macchiato</Text>
-            <Text style={[styles.normalText, { color: colors.orange700 }, noteStyle]}>Note: Ít cafe, Nhiều sữa</Text>
+            <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
+            {
+                item.variantName &&
+                <Text style={[styles.normalText, { color: colors.black }, optionStyle]}>Size: {item.variantName}</Text>
+            }
+
+            {
+                item.toppings.map((topping) => {
+                    return (
+                        <Text key={topping._id} style={[styles.normalText, { color: colors.brown700 }, optionStyle]}>{topping.name}</Text>
+                    )
+                })
+            }
+            {
+                item.note &&
+                <Text style={[styles.normalText, { color: colors.orange700 }, noteStyle]}>Note: Ít cafe, Nhiều sữa</Text>
+            }
+
+
         </View>
 
         <View style={styles.priceContainer}>
             <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
-            <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
+            {/* <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text> */}
             {
                 enableAction &&
                 <Pressable onPress={onAction}>
