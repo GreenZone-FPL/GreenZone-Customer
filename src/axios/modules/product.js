@@ -12,7 +12,7 @@ export const getAllProducts = async () => {
     }
 }
 
-export const getProductDetail = async (productId) => {
+export const getProductDetailAPI = async (productId) => {
     try {
 
         const response = await axiosInstance.get(`/v1/product/${productId}`);

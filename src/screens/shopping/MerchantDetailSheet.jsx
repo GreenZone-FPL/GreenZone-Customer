@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Dimensions,
   Image,
@@ -9,15 +9,16 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {OverlayStatusBar} from '../../components/status-bars/OverlayStatusBar';
+import {Linking} from 'react-native';
 
 const width = Dimensions.get('window').width;
 
 const MerchantDetailSheet = props => {
-  const { navigation, route } = props;
-  const { item } = route.params;
+  const {navigation, route} = props;
+  const {item} = route.params;
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -34,65 +35,96 @@ const MerchantDetailSheet = props => {
   );
 };
 
-const Slider = ({ item, handleGoBack }) => (
-  <View>
-    <Image source={{ uri: item.image }} style={styles.image} />
-    <TouchableOpacity
-      style={styles.goBackButton}
-      onPress={() => handleGoBack()}>
-      <Icon
-        source="close"
-        color={colors.gray700}
-        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-      />
-    </TouchableOpacity>
-  </View>
-);
+const Slider = ({item, handleGoBack}) => {
+  const [index, setIndex] = useState(0);
+  const handelImage = () => {
+    if (index < 1) {
+      setIndex(index + 1);
+    } else {
+      setIndex(0);
+    }
+  };
+  return (
+    <View>
+      <TouchableOpacity style={styles.buttonText} onPress={handelImage}>
+        <Text
+          style={{color: colors.white, fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}}>
+          Xem thêm
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handelImage} />
 
-const Body = ({ item }) => (
-  <ScrollView>
-    <View style={styles.body}>
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.location}>{item.location}</Text>
-      <Text style={styles.openingHours}>Giờ mở cửa: 07:00 - 22:00</Text>
-      <View style={styles.infoContainer}>
+      <Image source={{uri: item.images[index]}} style={styles.image} />
+      <TouchableOpacity
+        style={styles.goBackButton}
+        onPress={() => handleGoBack()}>
         <Icon
-          source="navigation-variant-outline"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
+          source="close"
+          color={colors.gray700}
+          size={GLOBAL_KEYS.ICON_SIZE_SMALL}
         />
-        <Text style={styles.infoText}>83 Quang Trung, P7 Gò vấp, Tp.HCM</Text>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Icon
-          source="cards-heart-outline"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
-        />
-        <Text style={styles.infoText}>Thêm vào danh sách yêu thích</Text>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Icon
-          source="phone-outline"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
-        />
-        <Text style={styles.infoText}>Liên hệ: 09812312312</Text>
-      </View>
-
-      <View style={styles.infoContainer}>
-        <Icon
-          source="share-variant-outline"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.primary}
-        />
-        <Text style={styles.infoText}>Chia sẻ với bạn bè</Text>
-      </View>
+      </TouchableOpacity>
     </View>
-  </ScrollView>
-);
+  );
+};
+
+const Body = ({item}) => {
+  const openGoogleMaps = (latitude, longitude) => {
+   const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    Linking.openURL(url).catch(err =>
+      console.error('Lỗi mở Google Maps:', err),
+    );
+  };
+  return (
+    <ScrollView>
+      <View style={styles.body}>
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.location}>{item.specificAddress}</Text>
+        <Text style={styles.openingHours}>Giờ mở cửa: {item.openTime}</Text>
+        <TouchableOpacity
+          onPress={() => openGoogleMaps(item.latitude, item.longitude)}
+          style={styles.infoContainer}>
+          <Icon
+            source="navigation-variant-outline"
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            color={colors.primary}
+          />
+          <Text style={styles.infoText}>
+            {item.specificAddress}, {item.ward}, {item.district},{' '}
+            {item.province}
+          </Text>
+        </TouchableOpacity>
+
+        <View style={styles.infoContainer}>
+          <Icon
+            source="cards-heart-outline"
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            color={colors.primary}
+          />
+          <Text style={styles.infoText}>Thêm vào danh sách yêu thích</Text>
+        </View>
+
+        <View style={styles.infoContainer}>
+          <Icon
+            source="phone-outline"
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            color={colors.primary}
+          />
+          <Text style={styles.infoText}>Liên hệ: {item.phoneNumber}</Text>
+        </View>
+
+        <View style={styles.infoContainer}>
+          <Icon
+            source="share-variant-outline"
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            color={colors.primary}
+          />
+          <Text style={styles.infoText}>Chia sẻ với bạn bè</Text>
+        </View>
+      </View>
+    </ScrollView>
+  );
+};
 
 const styles = StyleSheet.create({
   screen: {
@@ -146,6 +178,16 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
   },
+  buttonText: {
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 10,
+    width: width,
+    height: GLOBAL_KEYS.ICON_SIZE_LARGE + 10,
+    backgroundColor: colors.overlay,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
-export default MerchantDetailSheet
+export default MerchantDetailSheet;

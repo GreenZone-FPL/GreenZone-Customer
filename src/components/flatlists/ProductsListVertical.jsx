@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,7 +11,7 @@ import {
 import FastImage from 'react-native-fast-image';
 
 import { Icon } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
+import { getProductDetailAPI } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
@@ -55,17 +56,17 @@ const ItemProduct = ({ item, onItemClick }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true)
+
     const fetchProductDetail = async () => {
       try {
-        const data = await getProductDetail(item._id);
+        const data = await getProductDetailAPI(item._id);
         if (data) {
           setProduct(data); // Lưu danh mục vào state
         }
       } catch (error) {
         console.error("Error fetchProductDetail:", error);
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -102,7 +103,6 @@ const ItemProduct = ({ item, onItemClick }) => {
       {
         product &&
         <ToppingModal
-
           toppings={product.topping}
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

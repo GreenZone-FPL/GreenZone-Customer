@@ -43,14 +43,6 @@ function App() {
                 <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 
                 <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
-                <BaseStack.Screen
-                  name={ShoppingGraph.ProductDetailSheet}
-                  component={ProductDetailSheet}
-                  options={{
-                    animation: 'slide_from_bottom',
-                    presentation: 'transparentModal',
-                    headerShown: false,
-                  }} />
                 <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
                 <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
                 <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />

@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  ActivityIndicator,
   View
 } from 'react-native';
 import { Checkbox, Icon } from 'react-native-paper';
@@ -16,7 +15,7 @@ const formatCurrencyVND = amount => {
   return amount.toLocaleString('vi-VN') + 'đ';
 };
 
-const ToppingModal = ({ visible, onClose, item, onConfirm, toppings, loading }) => {
+const ToppingModal = ({ visible, onClose, item, onConfirm, toppings }) => {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [quantity, setQuantity] = useState(1);
 
@@ -32,79 +31,77 @@ const ToppingModal = ({ visible, onClose, item, onConfirm, toppings, loading }) 
     (item.sellingPrice + selectedToppings.reduce((sum, t) => sum + t.extraPrice, 0)) *
     quantity;
 
-  
   return (
     <Modal animationType="slide" transparent={true} visible={visible}>
-       <View style={styles.modalBackground}>
-            <OverlayStatusBar />
+      <View style={styles.modalBackground}>
+        <OverlayStatusBar />
 
-            <View style={styles.modalContainer}>
-              <View style={styles.toppingTitleContainer}>
+        <View style={styles.modalContainer}>
+          <View style={styles.toppingTitleContainer}>
 
-                <Text style={styles.modalTitle}>{item.name}</Text>
-                <TouchableOpacity onPress={onClose}>
-                  <Icon source="close" size={24} color={colors.primary} />
-                </TouchableOpacity>
-              </View>
-
-
-              <Text style={styles.modalSubtitle}>Topping (Chọn không giới hạn)</Text>
-
-              <View style={{ maxHeight: 400 }}>
-                <FlatList
-                  data={toppings}
-                  showsVerticalScrollIndicator={false}
-                  style={{ flexGrow: 0 }} // Đảm bảo FlatList không mở rộng toàn bộ chiều cao
-                  keyExtractor={topping => topping._id.toString()}
-                  renderItem={({ item }) => (
-                    <View style={styles.toppingRow}>
-                      <Checkbox
-                        status={selectedToppings.some(t => t._id === item._id) ? 'checked' : 'unchecked'}
-                        onPress={() => toggleTopping(item)}
-                        color={colors.primary}
-                      />
-                      <Text style={styles.toppingText}>{item.name}</Text>
-                      <Text style={styles.priceText}>{TextFormatter.formatCurrency(item.extraPrice)}</Text>
-                    </View>
-                  )}
-                />
-              </View>
-
-
-              <View style={styles.toppingRow}>
-                <View style={styles.quantityContainer}>
-                  <TouchableOpacity
-                    onPress={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
-                    style={styles.quantityButton}>
-                    <Icon
-                      source="minus"
-                      color={colors.primary}
-                      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.quantityText}>{quantity}</Text>
-                  <TouchableOpacity
-                    onPress={() => setQuantity(quantity + 1)}
-                    style={styles.quantityButton}>
-                    <Icon
-                      source="plus"
-                      color={colors.primary}
-                      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={() => onConfirm(selectedToppings, quantity)}>
-                  <Text style={styles.confirmText}>
-                    {formatCurrencyVND(totalPrice)}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-            </View>
+            <Text style={styles.modalTitle}>{item.name}</Text>
+            <TouchableOpacity onPress={onClose}>
+              <Icon source="close" size={24} color={colors.primary} />
+            </TouchableOpacity>
           </View>
 
+
+          <Text style={styles.modalSubtitle}>Topping (Chọn không giới hạn)</Text>
+
+          <View style={{ maxHeight: 400 }}>
+            <FlatList
+              data={toppings}
+              showsVerticalScrollIndicator={false}
+              style={{ flexGrow: 0 }} // Đảm bảo FlatList không mở rộng toàn bộ chiều cao
+              keyExtractor={topping => topping._id.toString()}
+              renderItem={({ item }) => (
+                <View style={styles.toppingRow}>
+                  <Checkbox
+                    status={selectedToppings.some(t => t._id === item._id) ? 'checked' : 'unchecked'}
+                    onPress={() => toggleTopping(item)}
+                    color={colors.primary}
+                  />
+                  <Text style={styles.toppingText}>{item.name}</Text>
+                  <Text style={styles.priceText}>{TextFormatter.formatCurrency(item.extraPrice)}</Text>
+                </View>
+              )}
+            />
+          </View>
+
+
+          <View style={styles.toppingRow}>
+            <View style={styles.quantityContainer}>
+              <TouchableOpacity
+                onPress={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
+                style={styles.quantityButton}>
+                <Icon
+                  source="minus"
+                  color={colors.primary}
+                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                />
+              </TouchableOpacity>
+              <Text style={styles.quantityText}>{quantity}</Text>
+              <TouchableOpacity
+                onPress={() => setQuantity(quantity + 1)}
+                style={styles.quantityButton}>
+                <Icon
+                  source="plus"
+                  color={colors.primary}
+                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={() => onConfirm(selectedToppings, quantity)}>
+              <Text style={styles.confirmText}>
+                {formatCurrencyVND(totalPrice)}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+        </View>
+      </View>
     </Modal>
   );
 };
