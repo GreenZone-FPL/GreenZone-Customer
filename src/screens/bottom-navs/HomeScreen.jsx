@@ -65,7 +65,6 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-
     const handleEditOption = option => {
       setEditOption(option);
   
