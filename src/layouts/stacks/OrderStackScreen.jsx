@@ -18,7 +18,7 @@ const OrderStackScreen = () => {
       />
 
       <OrderStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
-      {/* <OrderStack.Screen
+      <OrderStack.Screen
         name={ShoppingGraph.ProductDetailSheet}
         component={ProductDetailSheet}
         options={{
@@ -26,7 +26,7 @@ const OrderStackScreen = () => {
           presentation: 'transparentModal',
           headerShown: false,
         }}
-      /> */}
+      />
 
 
       <OrderStack.Screen

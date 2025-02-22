@@ -1,5 +1,8 @@
-import React, {useState, useEffect, useRef} from 'react';
+import Geolocation from '@react-native-community/geolocation';
+import MapboxGL from '@rnmapbox/maps';
+import React, {useEffect, useRef, useState} from 'react';
 import {
+  Animated,
   FlatList,
   Image,
   SafeAreaView,
@@ -7,15 +10,12 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Modal,
-  Linking
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import {CustomSearchBar, HeaderWithBadge} from '../../components';
+import {getAllMerchants} from '../../axios/modules/merchant';
+import {CustomSearchBar, HeaderWithBadge, Indicator} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph} from '../../layouts/graphs/appGraph';
-import Geolocation from '@react-native-community/geolocation';
-import MapboxGL from '@rnmapbox/maps';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -23,8 +23,36 @@ const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
 MapboxGL.setAccessToken(GOONG_API_KEY);
 
 const MerchantScreen = ({navigation}) => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isMapView, setIsMapView] = useState(false);
+  const [merchants, setMerchants] = useState([]);
+  const [sortedMerchants, setSortedMerchants] = useState([]);
+
+  const fetchMerchants = async () => {
+    try {
+      const data = await getAllMerchants();
+      setMerchants(data);
+    } catch (error) {
+      console.log('Lỗi khi lấy merchants:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMerchants();
+  }, []);
+
+  useEffect(() => {
+    if (!merchants || merchants.length === 0) return;
+
+    const sortedList = merchants
+      .map(item => ({
+        ...item,
+        distance: haversineDistance(item.latitude, item.longitude),
+      }))
+      .sort((a, b) => a.distance - b.distance);
+
+    setSortedMerchants(sortedList);
+  }, [merchants]);
+
   const handleMerchant = item => {
     navigation.navigate(AppGraph.MerchantDetailSheet, {item});
   };
@@ -33,9 +61,9 @@ const MerchantScreen = ({navigation}) => {
     setIsMapView(!isMapView);
   };
   const [userLocation, setUserLocation] = useState([null, null]);
-  const [selectedStore, setSelectedStore] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
   const cameraRef = useRef(null);
+  const opacityAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -55,20 +83,70 @@ const MerchantScreen = ({navigation}) => {
     );
   }, []);
 
-  // hàm tính khoảng cách giữa 2 điểm trên bản đồ
-  const haversineDistance = ([lat1, lon1], [lat2, lon2]) => {
-    const R = 6371; // Bán kính Trái Đất (km)
-    const dLat = (lat2 - lat1) * (Math.PI / 180);
-    const dLon = (lon2 - lon1) * (Math.PI / 180);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return (R * c).toFixed(2); // Khoảng cách tính theo km
+  // Hàm tính khoảng cách Haversine
+  const haversineDistance = (lat, lon) => {
+    if (userLocation && userLocation.length === 2) {
+      const R = 6371;
+      const toRad = angle => (angle * Math.PI) / 180;
+
+      // Lấy tọa độ của người dùng từ mảng [longitude, latitude]
+      const lat1 = userLocation[1];
+      const lon1 = userLocation[0];
+
+      // Chuyển đổi tọa độ từ độ sang radian
+      const dLat = toRad(lat - lat1);
+      const dLon = toRad(lon - lon1);
+
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) *
+          Math.cos(toRad(lat)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    }
+    return null;
   };
+
+  // const shapeData = {
+  //   type: 'FeatureCollection',
+  //   features: merchants
+  //     .filter(item => item.longitude && item.latitude) // Lọc ra những item có tọa độ hợp lệ
+  //     .map(item => ({
+  //       type: 'Feature',
+  //       properties: {
+  //         id: item._id,
+  //         name: item.name,
+  //       },
+  //       geometry: {
+  //         type: 'Point',
+  //         coordinates: [parseFloat(item.longitude), parseFloat(item.latitude)],
+  //       },
+  //     })),
+  // };
+
+  // console.log('Dữ liệu ShapeSource:', JSON.stringify(shapeData, null, 2));
+
+  const shapeData = {
+    type: 'FeatureCollection',
+    features: merchants.map(store => ({
+      type: 'Feature',
+      properties: {
+        id: store._id,
+        name: store.name,
+        iconImage: 'store',
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [parseFloat(store.longitude), parseFloat(store.latitude)], 
+      },
+    })),
+  };
+
+  console.log('Dữ liệu ShapeSource:', JSON.stringify(shapeData, null, 2));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,18 +156,34 @@ const MerchantScreen = ({navigation}) => {
         <View style={styles.tool}>
           <View style={{position: 'relative', flex: 1}}>
             <CustomSearchBar
-              placeholder="Tìm kiếm cửa hàng...."
-              searchQuery={searchQuery}
+              placeholder="Tìm kiếm cửa hàng ..."
+              onClearIconPress={() => {}}
               leftIcon="magnify"
               rightIcon="close"
               style={{elevation: 3}}
             />
+
+            {suggestions.length > 0 && (
+              <View style={styles.suggestionContainer}>
+                <FlatList
+                  data={suggestions}
+                  keyExtractor={item => item.place_id}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => handleSelectLocation(item.place_id)}
+                      style={styles.suggestionItem}>
+                      <Text>{item.description}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
+            )}
           </View>
 
           <TouchableOpacity onPress={toggleView}>
             <View style={styles.map}>
               <Icon
-                source="google-maps"
+                source={isMapView ? 'store' : 'google-maps'}
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                 color={colors.primary}
               />
@@ -101,7 +195,7 @@ const MerchantScreen = ({navigation}) => {
         </View>
 
         {isMapView ? (
-          <View style={{flex: 1}}>
+          <View style={styles.mapView}>
             <MapboxGL.MapView
               style={{flex: 1}}
               styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}>
@@ -115,13 +209,14 @@ const MerchantScreen = ({navigation}) => {
                     : [106.700987, 10.776889]
                 }
               />
-
+              {/* Đăng ký hình ảnh cho các cửa hàng */}
               <MapboxGL.Images
                 images={{
                   store: require('../../assets/images/image-Service/icon_location.png'),
                 }}
               />
 
+              {/* Vị trí người dùng */}
               {userLocation[0] !== null && (
                 <MapboxGL.PointAnnotation
                   coordinate={userLocation}
@@ -129,147 +224,56 @@ const MerchantScreen = ({navigation}) => {
                   <View style={styles.userMarker} />
                 </MapboxGL.PointAnnotation>
               )}
-
-              <MapboxGL.ShapeSource
-                id="storeLocations"
-                shape={{
-                  type: 'FeatureCollection',
-                  features: storeLocations.map(store => ({
-                    type: 'Feature',
-                    properties: {
-                      id: store.id,
-                      name: store.name,
-                      specificAddress: store.specificAddress,
-                    },
-                    geometry: {
-                      type: 'Point',
-                      coordinates: [store.longitude, store.latitude],
-                    },
-                  })),
-                }}
-                onPress={e => {
-                  if (e.features.length > 0) {
-                    const {properties, geometry} = e.features[0];
-                    const store = storeLocations.find(
-                      s => s.id === properties.id,
-                    );
-
-                    if (store) {
-                      const distance =
-                        userLocation[0] !== null
-                          ? haversineDistance(
-                              [userLocation[1], userLocation[0]],
-                              [store.latitude, store.longitude],
-                            )
-                          : null;
-
-                      setSelectedStore({
-                        id: store.id,
-                        name: store.name,
-                        specificAddress: store.specificAddress,
-                        phoneNumber: store.phoneNumber,
-                        openTime: store.openTime,
-                        closeTime: store.closeTime,
-                        images: store.images,
-                        distance,
-                        coordinate: geometry.coordinates,
-                      });
-
-                      setModalVisible(true);
-                    }
-                  }
-                }}>
+              {/* Hiển thị các cửa hàng trên bản đồ */}
+              <MapboxGL.ShapeSource id="storeLocations" shape={shapeData}>
                 <MapboxGL.SymbolLayer
                   id="storeIcons"
                   style={{
+                    iconAllowOverlap: true,
                     iconImage: 'store',
                     iconSize: 0.1,
-                    iconAllowOverlap: true,
                   }}
                 />
               </MapboxGL.ShapeSource>
             </MapboxGL.MapView>
-
-            {modalVisible && selectedStore && (
-              <Modal visible={modalVisible} transparent animationType="slide">
-                <TouchableOpacity
-                  style={styles.modalOverlay}
-                  activeOpacity={1}
-                  onPress={() => setModalVisible(false)}>
-                  <View style={styles.bottomSheetContainer}>
-                    <View style={styles.modalContent}>
-                      {/* Tên cửa hàng */}
-                      <Text style={styles.modalTitle}>
-                        {selectedStore.name}
-                      </Text>
-
-                      {/* Ảnh cửa hàng */}
-                      {selectedStore.images.length > 0 && (
-                        <Image
-                          source={{uri: selectedStore.images[0]}}
-                          style={styles.image}
-                        />
-                      )}
-
-                      {/* Địa chỉ */}
-                      <TouchableOpacity
-                        onPress={() => {
-                          const [lng, lat] = selectedStore.coordinate;
-                          const destination = `${lat},${lng}`;
-                          const source =
-                            userLocation[0] !== null
-                              ? `${userLocation[1]},${userLocation[0]}`
-                              : '';
-                          const url = `https://www.google.com/maps/dir/?api=1&origin=${source}&destination=${destination}&travelmode=driving`;
-                          Linking.openURL(url);
-                        }}>
-                        <Text style={[styles.modalText, styles.greenText]}>
-                          📍 {selectedStore.specificAddress}
-                        </Text>
-                      </TouchableOpacity>
-
-                      {/* Giờ mở cửa */}
-                      <View style={styles.modalTime}>
-                        <Icon
-                          source="clock-outline"
-                          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                          color={colors.primary}
-                        />
-                        <Text style={styles.modalText}>
-                          {selectedStore.openTime} - {selectedStore.closeTime}
-                        </Text>
-                      </View>
-
-                      {/* Khoảng cách */}
-                      {selectedStore.distance && (
-                        <Text style={styles.modalText}>
-                          Khoảng cách: {selectedStore.distance} km
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </Modal>
-            )}
           </View>
         ) : (
           <View>
             <View style={styles.mechant1}>
               <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
-              <FlatList
-                data={data.slice(0, 1)}
-                renderItem={({item}) => renderItem({handleMerchant, item})}
-                keyExtractor={item => item.id}
-                showsVerticalScrollIndicator={false}
-              />
+
+              {sortedMerchants.length == 0 ? (
+                <Indicator
+                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                  color={colors.primary}
+                />
+              ) : (
+                <FlatList
+                  data={sortedMerchants.slice(0, 1)}
+                  renderItem={({item}) =>
+                    renderItem({handleMerchant, item, haversineDistance})
+                  }
+                  keyExtractor={item => item._id.toString()}
+                  showsVerticalScrollIndicator={false}
+                />
+              )}
             </View>
             <Text style={styles.tittle}>Cửa hàng Khác</Text>
-            <FlatList
-              data={data}
-              renderItem={({item}) => renderItem({handleMerchant, item})}
-              keyExtractor={item => item.id}
-              scrollEnabled={true}
-            />
+            {sortedMerchants.length == 0 ? (
+              <Indicator
+                size={GLOBAL_KEYS.ICON_SIZE_LARGE}
+                color={colors.primary}
+              />
+            ) : (
+              <FlatList
+                data={sortedMerchants.slice(1)}
+                renderItem={({item}) =>
+                  renderItem({handleMerchant, item, haversineDistance})
+                }
+                keyExtractor={item => item._id}
+                scrollEnabled={true}
+              />
+            )}
           </View>
         )}
       </View>
@@ -277,70 +281,20 @@ const MerchantScreen = ({navigation}) => {
   );
 };
 
-const renderItem = ({item, handleMerchant}) => (
+const renderItem = ({item, handleMerchant, haversineDistance}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{uri: item.image}} style={styles.imageItem} />
+    <Image source={{uri: item.images[0]}} style={styles.imageItem} />
     <View style={styles.infoItem}>
-      <Text style={styles.title}>{item.name}</Text>
-      <Text style={styles.location}>{item.location}</Text>
-      <Text style={styles.distance}>{item.distance}</Text>
+      <Text style={styles.textNamelocation}>{item.name}</Text>
+      <Text style={styles.location}>
+        {item.specificAddress}, {item.ward}, {item.district}, {item.province}
+      </Text>
+      <Text style={styles.distance}>
+        {haversineDistance(item.latitude, item.longitude).toFixed(2)} km{' '}
+      </Text>
     </View>
   </TouchableOpacity>
 );
-
-const data = [
-  {
-    id: '1',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 0,7 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5b3b04d5fbc68621f3385253_5b3b04d5fbc68621f3385253_nguyen_20duy_20trinh.jpg',
-  },
-  {
-    id: '2',
-    name: 'GREEN ZONE',
-    location: 'HCM Cao Thang',
-    distance: 'Cách đây 1 km',
-    image:
-      'https://minio.thecoffeehouse.com/image/admin/store/5bfe084efbc6865eac59c98a_to_20ngoc_20van.jpg',
-  },
-];
-
-const storeLocations = [
-  {
-    id: '1',
-    name: 'GreenZone Coffee',
-    phoneNumber: '0987654321',
-    images: [
-      'https://i.pinimg.com/originals/3d/8b/e8/3d8be817b8a1b70452890e02c8279d1f.jpg',
-      'https://www.doanhchu.com/wp-content/uploads/2015/01/coffee-shop-1.jpg',
-    ],
-    openTime: '08:00',
-    closeTime: '22:00',
-    specificAddress: 'GreenZone Coffee, CVPM Quang Trung',
-    province: 'Hồ Chí Minh',
-    district: 'Quận 12',
-    ward: 'Phường Bến Nghé',
-    latitude: 10.85461098999802,
-    longitude: 106.62733749568963,
-  },
-
-  {
-    id: '2',
-    name: 'GreenZone Coffee',
-    phoneNumber: '0977223344',
-    images: ['https://hoason.vn/wp-content/uploads/2020/05/Quan-Cafe-1-1.jpg'],
-    openTime: '07:00',
-    closeTime: '23:00',
-    specificAddress: '456 Đường Nguyễn Huệ',
-    province: 'Hồ Chí Minh',
-    district: 'Quận 1',
-    ward: 'Phường Bến Thành',
-    latitude: 10.7756,
-    longitude: 106.7035,
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -353,7 +307,7 @@ const styles = StyleSheet.create({
   },
   suggestionContainer: {
     position: 'absolute',
-    top: 60, // Điều chỉnh tùy thuộc vào vị trí của CustomSearchBar
+    top: 60,
     left: 0,
     right: 0,
     backgroundColor: 'white',
@@ -401,6 +355,10 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
   },
+  textName: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+  },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -417,15 +375,19 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
-  infoItem: {
-    flex: 1,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
+  infoItem: {flex: 1, gap: 4},
   imageItem: {
     width: 80,
     height: 80,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  location: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '500',
+  },
+  distance: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
   },
   modalOverlay: {
     flex: 1,
@@ -458,43 +420,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  bottomSheetContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 10,
-    color: colors.gray700
-  },
-  greenText: {
-    color: '#299345',
-  },
-  modalTime: {
-    flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_SMALL,
-  },
+
 });
 
 export default MerchantScreen;
