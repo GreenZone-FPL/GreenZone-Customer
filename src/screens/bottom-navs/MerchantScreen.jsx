@@ -65,23 +65,29 @@ const MerchantScreen = ({navigation}) => {
   const cameraRef = useRef(null);
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
 
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        setUserLocation([longitude, latitude]);
-        if (cameraRef.current) {
-          cameraRef.current.setCamera({
-            centerCoordinate: [longitude, latitude],
-            zoomLevel: 14,
-            animationDuration: 1000,
-          });
-        }
-      },
-      error => console.log('Lỗi lấy vị trí:', error),
-      {enableHighAccuracy: true, timeout: 5000},
-    );
-  }, []);
+ useEffect(() => {
+    const timeoutId = setTimeout(() => {
+       Geolocation.getCurrentPosition(
+     position => {
+       const {latitude, longitude} = position.coords;
+       setUserLocation([longitude, latitude]);
+       console.log('Vị trí người dùng:', longitude, latitude);
+
+       if (cameraRef.current) {
+         cameraRef.current.setCamera({
+           centerCoordinate: [longitude, latitude],
+           zoomLevel: 14,
+           animationDuration: 1000,
+         });
+       }
+     },
+     error => console.log(error),
+         {timeout: 5000}, 
+       );
+     }, 1000); 
+
+     return () => clearTimeout(timeoutId);
+   }, []);
 
   // Hàm tính khoảng cách Haversine
   const haversineDistance = (lat, lon) => {
@@ -110,26 +116,6 @@ const MerchantScreen = ({navigation}) => {
     }
     return null;
   };
-
-  // const shapeData = {
-  //   type: 'FeatureCollection',
-  //   features: merchants
-  //     .filter(item => item.longitude && item.latitude) // Lọc ra những item có tọa độ hợp lệ
-  //     .map(item => ({
-  //       type: 'Feature',
-  //       properties: {
-  //         id: item._id,
-  //         name: item.name,
-  //       },
-  //       geometry: {
-  //         type: 'Point',
-  //         coordinates: [parseFloat(item.longitude), parseFloat(item.latitude)],
-  //       },
-  //     })),
-  // };
-
-  // console.log('Dữ liệu ShapeSource:', JSON.stringify(shapeData, null, 2));
-
   const shapeData = {
     type: 'FeatureCollection',
     features: merchants.map(store => ({
@@ -145,8 +131,6 @@ const MerchantScreen = ({navigation}) => {
       },
     })),
   };
-
-  console.log('Dữ liệu ShapeSource:', JSON.stringify(shapeData, null, 2));
 
   return (
     <SafeAreaView style={styles.container}>
