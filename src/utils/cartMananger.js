@@ -52,6 +52,7 @@ export const CartManager = (() => {
 
             await AppAsyncStorage.storeData('CART', cart);
 
+            EventBus.emit(EVENT.ADD_TO_CART, cart.length)
             EventBus.emit(EVENT.UPDATE_CART, cart.length)
 
             Toaster.show('Thêm vào giỏ hàng thành công');
@@ -60,10 +61,32 @@ export const CartManager = (() => {
         }
     };
 
-    clearCart: async () => {
+    const removeFromCart = async (productId, variantId, toppings) => {
+        try {
+            let cart = await AppAsyncStorage.readData('CART', []);
+
+            // Xóa sản phẩm theo productId, variantId và toppings
+            cart = cart.filter(item =>
+                item.productId !== productId ||
+                item.variant !== (variantId || null) ||
+                JSON.stringify(item.toppings || []) !== JSON.stringify(toppings)
+            );
+
+            await AppAsyncStorage.storeData('CART', cart);
+
+            // Phát sự kiện để cập nhật UI
+            EventBus.emit(EVENT.DELETE_ITEM, cart);
+            EventBus.emit(EVENT.UPDATE_CART, cart.length)
+
+        } catch (error) {
+            console.log('Error removeFromCart:', error);
+        }
+    };
+
+    const clearCart = async () => {
         try {
             await AppAsyncStorage.removeData('CART');
-            EventBus.emit(EVENT.UPDATE_CART, 0)
+            EventBus.emit(EVENT.CLEAR_CART, 0)
         } catch (error) {
             console.log('Error clearCart:', error);
         }
@@ -71,7 +94,9 @@ export const CartManager = (() => {
 
     return {
         readCart,
-        addToCart
+        addToCart,
+        removeFromCart,
+        clearCart
     };
 })();
 

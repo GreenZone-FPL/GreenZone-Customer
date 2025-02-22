@@ -13,10 +13,10 @@ import {
 } from 'react-native';
 import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { Column, Ani_ModalLoading, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager } from '../../utils';
+import { CartManager, EVENT, EventBus } from '../../utils';
 
 
 const width = Dimensions.get('window').width;
@@ -29,66 +29,128 @@ const CheckoutScreen = (props) => {
   const [cart, setCart] = useState([]);
 
   const [address, setAddress] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState('');
+
+  const reverseGeocode = async ({ lat, long }) => {
+    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+
+    try {
+      const res = await axios(api);
+      if (res && res.status === 200 && res.data) {
+        const items = res.data.items;
+        if (items.length > 0) {
+          setCurrentLocation(items[0]);
+        } else {
+          console.log('Không tìm thấy địa chỉ.');
+        }
+      }
+    } catch (error) {
+      console.log('Lỗi khi lấy địa chỉ:', error);
+    }
+  };
 
   useEffect(() => {
-    const loadCart = async () => {
+    const fetchLocation = async () => {
+      setLoading(true); // Bật loading ngay từ đầu
       try {
-        const appCart = await AppAsyncStorage.readData('CART', []);
-        setCart(appCart)
-      } catch (error) {
-        console.log('Read cart error', error);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
+        Geolocation.getCurrentPosition(
+          async position => {
+            if (position.coords) {
+              await reverseGeocode({
+                lat: position.coords.latitude,
+                long: position.coords.longitude,
+              });
+            }
+          },
+          error => console.log('Lỗi lấy vị trí:', error),
+          { timeout: 5000 }
+        );
+      } finally {
+        setLoading(false); // Chỉ tắt loading một lần duy nhất
       }
-    }
-    loadCart()
-  }, [])
+    };
+
+    fetchLocation();
+
+    return () => setLoading(false); // Cleanup nếu unmount
+  }, []);
+
+
+
+
+  useEffect(() => {
+    const fetchCart = async () => {
+      setLoading(true);
+      try {
+        const storedCart = await CartManager.readCart();
+        setCart(storedCart);
+      } catch (error) {
+        console.error('Lỗi khi đọc giỏ hàng:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCart();
+
+    const onCartUpdated = (updatedCart) => {
+      setCart(updatedCart);
+    };
+
+    EventBus.addListener(EVENT.DELETE_ITEM, onCartUpdated);
+
+    return () => EventBus.removeAllListeners(EVENT.DELETE_ITEM, onCartUpdated);
+  }, []);
+
+
   return (
     <View style={styles.container}>
-      <LightStatusBar />
-      <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
-      <ScrollView style={styles.containerContent}>
-        <DualTextRow
-          leftText={'GIAO HÀNG'}
-          rightText={'Thay đổi'}
-          leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
-          rightTextStyle={{ color: colors.primary }}
-          onRightPress={() => setDialogShippingMethodVisible(true)}
+
+      <>
+        <LightStatusBar />
+        <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+        {loading ? (
+          <Ani_ModalLoading loading={loading} />
+        ) : (
+          <>
+            <ScrollView style={styles.containerContent}>
+              <DualTextRow
+                leftText={'GIAO HÀNG'}
+                rightText={'Thay đổi'}
+                leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
+                rightTextStyle={{ color: colors.primary }}
+                onRightPress={() => setDialogShippingMethodVisible(true)}
+              />
+              <AddressSection
+                currentLocation={currentLocation}
+                changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
+                setAddress={setAddress} />
+              <RecipientInfo onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)} />
+              <TimeSection />
+              {cart.length > 0 && (
+                <ProductsInfo cart={cart} onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+              )}
+              <PaymentDetails />
+              <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
+            </ScrollView>
+            <Footer address={address} />
+          </>
+        )}
+
+        <DialogShippingMethod
+          isVisible={isDialogShippingMethodVisible}
+          selectedOption={selectedOption}
+          onHide={() => setDialogShippingMethodVisible(false)}
+          onEditOption={option => console.log(`Editing ${option}`)}
+          onOptionSelect={option => setSelectedOption(option)}
         />
-        <AddressSection
-          changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
-          setAddress={setAddress} />
-
-        <RecipientInfo
-          onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
-        />
-        <TimeSection />
-
-
-        {
-          cart.length > 0 &&
-          <ProductsInfo
-            cart={cart}
-            onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
-        }
-
-
-        <PaymentDetails />
-
-        <PrimaryButton title='Log cart' onPress={CartManager.readCart}/>
-      </ScrollView>
-      <Footer address={address} />
-      <DialogShippingMethod
-        isVisible={isDialogShippingMethodVisible}
-        selectedOption={selectedOption}
-        onHide={() => {
-          setDialogShippingMethodVisible(false);
-        }}
-        onEditOption={option => console.log(`Editing ${option}`)}
-        onOptionSelect={option => setSelectedOption(option)}
-      />
-
+      </>
 
     </View>
   );
+
 };
 export default CheckoutScreen;
 
@@ -166,36 +228,7 @@ const TimeSection = () => {
     </TouchableOpacity>
   );
 };
-const AddressSection = ({ setAddress, changeAddress }) => {
-  const [currentLocation, setCurrentLocation] = useState('');
-  const [locationAvailable, setLocationAvailable] = useState(false);
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
-      }
-    });
-  }, []);
-
-  const reverseGeocode = async ({ lat, long }) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
-
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrentLocation(items[0]);
-        setLocationAvailable(true);
-        setAddress(items[0].address.label); // Cập nhật địa chỉ vào state cha
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const AddressSection = ({ currentLocation, changeAddress }) => {
 
   return (
     <>
@@ -207,7 +240,7 @@ const AddressSection = ({ setAddress, changeAddress }) => {
         onRightPress={changeAddress}
       />
 
-      <NormalText text={locationAvailable ? currentLocation.address.label : 'Đang lấy vị trí...'} />
+      <NormalText text={currentLocation ? currentLocation.address.label : 'Đang lấy vị trí...'} />
     </>
   );
 };
@@ -230,9 +263,6 @@ const RecipientInfo = ({ onChangeRecipientInfo }) => {
 };
 
 const ProductsInfo = ({ onEditItem, cart }) => {
-  const [productList, setProductList] = useState(cart);
-
-
 
   return (
     <View style={{ marginVertical: 8 }}>
@@ -244,7 +274,10 @@ const ProductsInfo = ({ onEditItem, cart }) => {
           <SwipeableItem
             onEdit={onEditItem}
             item={item}
-            onDelete={() => console.log('Delete')} />
+            onDelete={async () => {
+              console.log(item.productId, item.variant, item.toppings)
+              await CartManager.removeFromCart(item.productId, item.variant, item.toppings)
+            }} />
         )}
         contentContainerStyle={{ gap: 8 }}
         scrollEnabled={false}
@@ -278,7 +311,7 @@ const SwipeableItem = ({ item, onDelete, onEdit }) => {
 
       </TouchableOpacity>
       <TouchableOpacity onPress={() => {
-        onDelete(item.id)
+        onDelete(item.productId)
         handleReset()
       }}>
         <Column style={[styles.actionButton, { backgroundColor: colors.gray400 }]}>
@@ -313,26 +346,7 @@ const SwipeableItem = ({ item, onDelete, onEdit }) => {
   );
 }
 
-const products = [
-  {
-    id: '1',
-    name: 'Trà Xanh Sữa Hạnh Nhân (Latte)',
-    image: require('../../assets/images/product1.png'),
-    price: 69000,
-    size: 'Lớn',
-    discount: 89000,
-    topping: 'kem phô mai machiato',
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tee',
-    image: require('../../assets/images/product1.png'),
-    price: 55000,
-    size: 'Lớn',
-    discount: 89000,
-    topping: 'chân châu trắng',
-  },
-];
+
 
 const PaymentDetails = () => (
   <View
@@ -486,8 +500,8 @@ const Footer = ({ address }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
-
+    backgroundColor: colors.fbBg,
+    flexDirection: 'column',
   },
   containerContent: {
     backgroundColor: colors.white,

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -9,12 +8,11 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getProductDetailAPI } from '../../axios';
+import { getProductDetail } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import ToppingModal from '../modal/ToppingModal';
-const width = Dimensions.get('window').width;
-//test
+
 export const ProductsListHorizontal = ({
   onItemClick,
   products
@@ -51,7 +49,7 @@ const ItemProduct = ({ item, onItemClick }) => {
 
     const fetchProductDetail = async () => {
       try {
-        const data = await getProductDetailAPI(item._id);
+        const data = await getProductDetail(item._id);
         if (data) {
           setProduct(data); // Lưu danh mục vào state
         }
