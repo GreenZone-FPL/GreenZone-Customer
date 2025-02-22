@@ -70,7 +70,7 @@ const Slider = ({item, handleGoBack}) => {
 
 const Body = ({item}) => {
   const openGoogleMaps = (latitude, longitude) => {
-    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+   const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
     Linking.openURL(url).catch(err =>
       console.error('Lỗi mở Google Maps:', err),
     );
