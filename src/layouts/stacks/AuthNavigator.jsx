@@ -8,17 +8,17 @@ import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
 import {
   AuthGraph
 } from '../graphs';
-import { useAppContext } from '../../context/AppContext';
+import { useAppContext } from '../../context/appContext';
 
 const AuthStack = createNativeStackNavigator();
 const AuthNavigator = ({ route }) => {
-  const { state } = useAppContext()
+  const { authState } = useAppContext()
   return (
     <AuthStack.Navigator
       screenOptions={{ headerShown: false }}
     >
       {
-        state.message !== 'Phiên đăng nhập hết hạn' &&
+        authState.message !== 'Phiên đăng nhập hết hạn' &&
         <AuthStack.Screen name={AuthGraph.SplashScreen} component={SplashScreen} />
       }
 

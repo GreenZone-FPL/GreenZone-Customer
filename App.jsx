@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppContextProvider, useAppContext } from './src/context/AppContext';
+import { AppContextProvider, useAppContext } from './src/context/appContext';
 
 import { AppGraph, AuthGraph, MainGraph, OrderGraph, ShoppingGraph, UserGraph } from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
@@ -33,14 +33,15 @@ import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
-  const { state } = useAppContext();
+  const { authState } = useAppContext();
 
   return (
+    
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NavigationContainer>
           <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-            {state.isLoggedIn ? (
+            {authState.isLoggedIn ? (
               <>
                 <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 

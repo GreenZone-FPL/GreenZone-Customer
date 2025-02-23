@@ -5,7 +5,7 @@ import { Icon, IconButton } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
 
 const ProductDetailSheet = ({ route, navigation }) => {

@@ -19,7 +19,7 @@ import {
   Ani_ModalLoading,
 } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../../context/appContext';
 
 
 const { width } = Dimensions.get('window');
