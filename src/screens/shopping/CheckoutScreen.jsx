@@ -127,11 +127,17 @@ const CheckoutScreen = (props) => {
                 currentLocation={currentLocation}
                 changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
                 setAddress={setAddress} />
+
               <RecipientInfo onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)} />
               <TimeSection />
+
               {cart.length > 0 && (
-                <ProductsInfo cart={cart} onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+                <ProductsInfo
+                  onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
+                  cart={cart}
+                />
               )}
+
               <PaymentDetails />
               <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
             </ScrollView>
@@ -272,8 +278,9 @@ const ProductsInfo = ({ onEditItem, cart }) => {
         renderItem={({ item }) => (
 
           <SwipeableItem
-            onEdit={onEditItem}
             item={item}
+            onEdit={onEditItem}
+
             onDelete={async () => {
               console.log(item.productId, item.variant, item.toppings)
               await CartManager.removeFromCart(item.productId, item.variant, item.toppings)
@@ -296,7 +303,7 @@ const SwipeableItem = ({ item, onDelete, onEdit }) => {
   const renderRightActions = () => (
     <Row style={{ backgroundColor: 'white' }}>
       <TouchableOpacity onPress={() => {
-        onEdit()
+        onEdit(item)
         handleReset()
       }}>
         <Column style={[styles.actionButton, { backgroundColor: colors.green700 }]}>

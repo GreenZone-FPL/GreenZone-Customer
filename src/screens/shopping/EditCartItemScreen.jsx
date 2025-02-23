@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
-
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/AppContext';
 import { CartManager, Toaster } from '../../utils';
 
-const ProductDetailSheet = ({ route, navigation }) => {
+const EditCartItemScreen = ({ route, navigation }) => {
 
     const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
@@ -19,7 +18,9 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
-    const { productId } = route.params
+    const { updateItem } = route.params
+
+
 
     useEffect(() => {
         if (product) {
@@ -31,6 +32,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
             setTotalAmount(newTotalAmount);
         }
     }, [product, selectedVariant, selectedToppings, quantity]);
+
 
     const calculateTotal = (product, variant, toppings, quantity) => {
         if (!product) return 0; // Nếu không có sản phẩm, trả về 0
@@ -48,15 +50,22 @@ const ProductDetailSheet = ({ route, navigation }) => {
         const fetchProductDetail = async () => {
             setLoading(true)
             try {
-                const detail = await getProductDetail(productId);
+                const detail = await getProductDetail(updateItem.productId);
 
-                if (detail) {
-                    setProduct(detail); // Lưu danh mục vào state
+                if (detail && updateItem) {
+                    setProduct(detail);
                     if (detail.variant.length > 0) {
                         const firstVariant = detail.variant[0]
-                        setSelectedVariant(firstVariant)
+                        setSelectedVariant(() => {
+                            return detail.variant.find((item) => item._id === updateItem.variant)
+                        })
                         setTotalAmount(calculateTotal(firstVariant, selectedToppings));
                     }
+
+                    if (detail.topping.length > 0) {
+                        setSelectedToppings(updateItem.toppings)
+                    }
+                    setQuantity(updateItem.quantity)
                 }
             } catch (error) {
                 console.error("Error fetchProductDetail:", error);
@@ -65,7 +74,8 @@ const ProductDetailSheet = ({ route, navigation }) => {
             }
         };
 
-        fetchProductDetail();
+        fetchProductDetail()
+
     }, []);
     return (
         <View style={styles.modalContainer}>
@@ -139,7 +149,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                             }
                             return CartManager.addToCart(product, null, selectedToppings, totalAmount, quantity);
                         }}
-                        buttonTitle='Thêm vào giỏ hàng'
+                        buttonTitle='Cập nhật giỏ hàng'
                     />
 
 
@@ -154,19 +164,10 @@ const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít s�
 
 
 const ProductImage = ({ hideModal, product }) => {
-    // const [isDialogVisible, setIsDialogVisible] = useState(false);
-    // const images = [
-    //     {
-    //       url: '', 
-    //       props: {
-    //         source: require('../../assets/images/product1.png'),
-    //       },
-    //     },
-    //   ];
+
     return (
         <View style={styles.imageContainer}>
             <Pressable
-            // onPress={() => setIsDialogVisible(true)}
             >
                 <Image
                     source={{ uri: product.image }}
@@ -185,15 +186,6 @@ const ProductImage = ({ hideModal, product }) => {
                 style={styles.closeButton}
                 onPress={hideModal}
             />
-            {/* <DialogBasic
-          isVisible={isDialogVisible}
-          onHide={() => setIsDialogVisible(false)}
-          style={styles.height}
-        >
-          <View style={styles.imageZoomContainer}>
-            <ImageViewer imageUrls={images} renderIndicator={() => null}/>
-          </View>
-        </DialogBasic> */}
         </View>
     );
 };
@@ -377,4 +369,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ProductDetailSheet
+export default EditCartItemScreen
