@@ -4,6 +4,7 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
+import { Row } from '../containers/Row';
 
 
 const HorizontalProductItemPropTypes = {
@@ -40,7 +41,11 @@ export const HorizontalProductItem = ({
         </View>
 
         <View style={styles.productInfo}>
+
             <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
+
+
+
             {
                 item.variantName &&
                 <Text style={[styles.normalText, { color: colors.black }, optionStyle]}>Size: {item.variantName}</Text>
@@ -62,7 +67,15 @@ export const HorizontalProductItem = ({
         </View>
 
         <View style={styles.priceContainer}>
-            <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
+            <Row>
+                <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
+                <Icon
+                    source="chevron-right"
+                    color={colors.gray700}
+                    size={18}
+                />
+            </Row>
+
             {/* <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text> */}
             {
                 enableAction &&
@@ -75,7 +88,11 @@ export const HorizontalProductItem = ({
                 </Pressable>
             }
 
+
+
         </View>
+
+
     </View>
 );
 

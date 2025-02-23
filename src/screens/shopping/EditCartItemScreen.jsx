@@ -141,13 +141,28 @@ const EditCartItemScreen = ({ route, navigation }) => {
                             }
                         }}
                         totalPrice={totalAmount}
-                        onButtonPress={() => {
-                            if (product.variant.length > 0) {
-                                return selectedVariant
-                                    ? CartManager.addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
-                                    : Toaster.show("Vui lòng chọn Size");
-                            }
-                            return CartManager.addToCart(product, null, selectedToppings, totalAmount, quantity);
+                        onButtonPress={async () => {
+                            const sortedToppings = selectedToppings?.length
+                                ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
+                                : [];
+
+
+                            await CartManager.updateCartItem(
+                                updateItem.productId,
+                                updateItem.variant,
+                                updateItem.toppings,
+                                {
+                                    productId: updateItem.productId,
+                                    // productName: updateItem.productName,
+                                    variant: selectedVariant?._id,
+                                    variantName: selectedVariant?.size,
+                                    quantity,
+                                    price: totalAmount,
+                                    toppings: sortedToppings,
+                                    // image: updateItem.image
+                                }
+                            )
+
                         }}
                         buttonTitle='Cập nhật giỏ hàng'
                     />

@@ -4,5 +4,6 @@ export const EVENT = Object.freeze({
     ADD_TO_CART: 'ADD_TO_CART',
     UPDATE_CART: 'UPDATE_CART',
     DELETE_ITEM: 'DELETE_ITEM',
-    CLEAR_CART: 'CLEAR_CART'
+    CLEAR_CART: 'CLEAR_CART',
+    EDIT_ITEM: 'EDIT_ITEM'
 })

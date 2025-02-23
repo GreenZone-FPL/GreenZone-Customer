@@ -83,9 +83,44 @@ export const CartManager = (() => {
         }
     };
 
+    const updateCartItem = async (productId, variantId, toppings, updatedProductData) => {
+        try {
+         
+            let cart = await AppAsyncStorage.readData('CART', []);
+            
+          
+            cart = cart.map(item => {
+                if (item.productId === productId && 
+                    (item.variant === variantId || !variantId) && 
+                    JSON.stringify(item.toppings || []) === JSON.stringify(toppings || [])) {
+                    
+                 
+                    return {
+                        ...item,
+                        ...updatedProductData,
+                    };
+                }
+                return item; 
+            });
+    
+         
+            EventBus.emit(EVENT.EDIT_ITEM, cart);
+    
+           
+            await AppAsyncStorage.storeData('CART', cart);
+    
+            Toaster.show('Cập nhật giỏ hàng thành công');
+            EventBus.emit(EVENT.UPDATE_CART, cart.length);
+    
+        } catch (error) {
+            console.log('Error updateProductInCart:', error);
+        }
+    };
+    
+
     const clearCart = async () => {
         try {
-            await AppAsyncStorage.removeData('CART');
+            await AppAsyncStorage.storeData('CART', []);
             EventBus.emit(EVENT.CLEAR_CART, 0)
         } catch (error) {
             console.log('Error clearCart:', error);
@@ -96,7 +131,8 @@ export const CartManager = (() => {
         readCart,
         addToCart,
         removeFromCart,
-        clearCart
+        clearCart,
+        updateCartItem
     };
 })();
 
