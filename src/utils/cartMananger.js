@@ -3,6 +3,15 @@ import { EventBus, EVENT } from "./eventBus";
 import { Toaster } from "./toaster";
 // closure
 
+export const CART_ACTIONS = {
+    LOAD_CART: 'LOAD_CART',
+    ADD_ITEM: 'ADD_ITEM',
+    UPDATE_ITEM: 'UPDATE_ITEM',
+    REMOVE_ITEM: 'REMOVE_ITEM',
+    CLEAR_CART: 'CLEAR_CART',
+};
+
+
 export const CartManager = (() => {
     const readCart = async () => {
         try {
@@ -39,6 +48,7 @@ export const CartManager = (() => {
                 cart[existingIndex].quantity += quantity;
             } else {
                 cart.push({
+                    itemId: new Date().getTime(),
                     productId: product._id,
                     productName: product.name,
                     variant: variant?._id || null,
@@ -61,31 +71,53 @@ export const CartManager = (() => {
         }
     };
 
-    const removeFromCart = async (productId, variantId, toppings) => {
+    const removeFromCart = async (itemId) => {
         try {
             let cart = await AppAsyncStorage.readData('CART', []);
-
-            // Xóa sản phẩm theo productId, variantId và toppings
-            cart = cart.filter(item =>
-                item.productId !== productId ||
-                item.variant !== (variantId || null) ||
-                JSON.stringify(item.toppings || []) !== JSON.stringify(toppings)
-            );
-
+    
+            
+            cart = cart.filter(item => item.itemId !== itemId);
+    
             await AppAsyncStorage.storeData('CART', cart);
-
-            // Phát sự kiện để cập nhật UI
+    
+           
             EventBus.emit(EVENT.DELETE_ITEM, cart);
-            EventBus.emit(EVENT.UPDATE_CART, cart.length)
-
+            EventBus.emit(EVENT.UPDATE_CART, cart.length);
+    
         } catch (error) {
             console.log('Error removeFromCart:', error);
         }
     };
+    
+
+    const updateCartItem = async (itemId, updatedProductData) => {
+        try {
+            let cart = await AppAsyncStorage.readData('CART', []);
+
+            const itemIndex = cart.findIndex(item => item.itemId === itemId);
+            if (itemIndex !== -1) {
+                cart[itemIndex] = {
+                    ...cart[itemIndex],
+                    ...updatedProductData,
+                };
+            }
+
+            await AppAsyncStorage.storeData('CART', cart);
+
+            EventBus.emit(EVENT.EDIT_ITEM, cart);
+            EventBus.emit(EVENT.UPDATE_CART, cart.length);
+
+            Toaster.show('Cập nhật giỏ hàng thành công');
+        } catch (error) {
+            console.log('Error updateCartItem:', error);
+        }
+    };
+
+
 
     const clearCart = async () => {
         try {
-            await AppAsyncStorage.removeData('CART');
+            await AppAsyncStorage.storeData('CART', []);
             EventBus.emit(EVENT.CLEAR_CART, 0)
         } catch (error) {
             console.log('Error clearCart:', error);
@@ -96,7 +128,8 @@ export const CartManager = (() => {
         readCart,
         addToCart,
         removeFromCart,
-        clearCart
+        clearCart,
+        updateCartItem
     };
 })();
 

@@ -27,6 +27,7 @@ import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 import CheckoutScreen from './src/screens/shopping/CheckoutScreen'
+import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -44,14 +45,23 @@ function App() {
                 <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 
                 <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
-                <BaseStack.Screen 
-                name={ShoppingGraph.ProductDetailSheet} 
-                 options={{
-                  animation: 'slide_from_bottom',
-                  presentation: 'transparentModal',
-                  headerShown: false,
-                }}
-                component={ProductDetailSheet} />
+                <BaseStack.Screen
+                  name={ShoppingGraph.ProductDetailSheet}
+                  options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                  }}
+                  component={ProductDetailSheet} />
+
+                <BaseStack.Screen
+                  name={ShoppingGraph.EditCartItemScreen}
+                  options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                  }}
+                  component={EditCartItemScreen} />
                 <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
                 <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
                 <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />

@@ -85,6 +85,7 @@ const CheckoutScreen = (props) => {
       setLoading(true);
       try {
         const storedCart = await CartManager.readCart();
+
         setCart(storedCart);
       } catch (error) {
         console.error('Lỗi khi đọc giỏ hàng:', error);
@@ -99,9 +100,17 @@ const CheckoutScreen = (props) => {
       setCart(updatedCart);
     };
 
-    EventBus.addListener(EVENT.DELETE_ITEM, onCartUpdated);
+    const onEditItem = (editedCart) => {
+      setCart(editedCart);
+    };
 
-    return () => EventBus.removeAllListeners(EVENT.DELETE_ITEM, onCartUpdated);
+    EventBus.addListener(EVENT.DELETE_ITEM, onCartUpdated);
+    EventBus.addListener(EVENT.EDIT_ITEM, onEditItem);
+
+    return () => {
+      EventBus.removeAllListeners(EVENT.DELETE_ITEM, onCartUpdated)
+      EventBus.removeAllListeners(EVENT.EDIT_ITEM, onEditItem)
+    };
   }, []);
 
 
@@ -127,11 +136,17 @@ const CheckoutScreen = (props) => {
                 currentLocation={currentLocation}
                 changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
                 setAddress={setAddress} />
+
               <RecipientInfo onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)} />
               <TimeSection />
+
               {cart.length > 0 && (
-                <ProductsInfo cart={cart} onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
+                <ProductsInfo
+                  onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
+                  cart={cart}
+                />
               )}
+
               <PaymentDetails />
               <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
             </ScrollView>
@@ -272,11 +287,11 @@ const ProductsInfo = ({ onEditItem, cart }) => {
         renderItem={({ item }) => (
 
           <SwipeableItem
-            onEdit={onEditItem}
             item={item}
+            onEdit={onEditItem}
+
             onDelete={async () => {
-              console.log(item.productId, item.variant, item.toppings)
-              await CartManager.removeFromCart(item.productId, item.variant, item.toppings)
+              await CartManager.removeFromCart(item.itemId)
             }} />
         )}
         contentContainerStyle={{ gap: 8 }}
@@ -294,9 +309,9 @@ const SwipeableItem = ({ item, onDelete, onEdit }) => {
 
 
   const renderRightActions = () => (
-    <Row style={{ backgroundColor: 'white' }}>
+    <Row style={{ backgroundColor: 'white', marginLeft: 8 }}>
       <TouchableOpacity onPress={() => {
-        onEdit()
+        onEdit(item)
         handleReset()
       }}>
         <Column style={[styles.actionButton, { backgroundColor: colors.green700 }]}>
