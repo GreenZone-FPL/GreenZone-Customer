@@ -62,8 +62,8 @@ export const CartManager = (() => {
 
             await AppAsyncStorage.storeData('CART', cart);
 
-            EventBus.emit(EVENT.ADD_TO_CART, cart.length)
-            EventBus.emit(EVENT.UPDATE_CART, cart.length)
+            // EventBus.emit(EVENT.ADD_TO_CART, cart.length)
+            // EventBus.emit(EVENT.UPDATE_CART, cart.length)
 
             Toaster.show('Thêm vào giỏ hàng thành công');
         } catch (error) {
@@ -81,8 +81,8 @@ export const CartManager = (() => {
             await AppAsyncStorage.storeData('CART', cart);
     
            
-            EventBus.emit(EVENT.DELETE_ITEM, cart);
-            EventBus.emit(EVENT.UPDATE_CART, cart.length);
+            // EventBus.emit(EVENT.DELETE_ITEM, cart);
+            // EventBus.emit(EVENT.UPDATE_CART, cart.length);
     
         } catch (error) {
             console.log('Error removeFromCart:', error);
@@ -104,8 +104,8 @@ export const CartManager = (() => {
 
             await AppAsyncStorage.storeData('CART', cart);
 
-            EventBus.emit(EVENT.EDIT_ITEM, cart);
-            EventBus.emit(EVENT.UPDATE_CART, cart.length);
+            // EventBus.emit(EVENT.EDIT_ITEM, cart);
+            // EventBus.emit(EVENT.UPDATE_CART, cart.length);
 
             Toaster.show('Cập nhật giỏ hàng thành công');
         } catch (error) {
@@ -118,7 +118,7 @@ export const CartManager = (() => {
     const clearCart = async () => {
         try {
             await AppAsyncStorage.storeData('CART', []);
-            EventBus.emit(EVENT.CLEAR_CART, 0)
+            // EventBus.emit(EVENT.CLEAR_CART, 0)
         } catch (error) {
             console.log('Error clearCart:', error);
         }
