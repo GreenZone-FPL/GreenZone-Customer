@@ -28,7 +28,7 @@ import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 import CheckoutScreen from './src/screens/shopping/CheckoutScreen'
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
-import { Edit } from 'iconsax-react-native';
+
 
 const BaseStack = createNativeStackNavigator();
 

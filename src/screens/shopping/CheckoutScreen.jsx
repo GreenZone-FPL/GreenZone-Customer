@@ -85,7 +85,7 @@ const CheckoutScreen = (props) => {
       setLoading(true);
       try {
         const storedCart = await CartManager.readCart();
-        
+
         setCart(storedCart);
       } catch (error) {
         console.error('Lỗi khi đọc giỏ hàng:', error);
@@ -291,8 +291,7 @@ const ProductsInfo = ({ onEditItem, cart }) => {
             onEdit={onEditItem}
 
             onDelete={async () => {
-              console.log(item.productId, item.variant, item.toppings)
-              await CartManager.removeFromCart(item.productId, item.variant, item.toppings)
+              await CartManager.removeFromCart(item.itemId)
             }} />
         )}
         contentContainerStyle={{ gap: 8 }}

@@ -148,9 +148,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
 
 
                             await CartManager.updateCartItem(
-                                updateItem.productId,
-                                updateItem.variant,
-                                updateItem.toppings,
+                                updateItem.itemId,
                                 {
                                     productId: updateItem.productId,
                                     // productName: updateItem.productName,
