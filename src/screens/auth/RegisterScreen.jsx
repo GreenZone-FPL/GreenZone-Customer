@@ -21,8 +21,8 @@ import { AppAsyncStorage, Toaster } from '../../utils';
 import { register } from '../../axios';
 import { AppGraph } from '../../layouts/graphs';
 import { baseURL } from '../../axios/axiosInstance';
-import { useAppContext, ActionTypes } from '../../context/AppContext';
-
+import { useAppContext } from '../../context/appContext';
+import { AuthActionTypes } from '../../reducers';
 const RegisterScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
@@ -39,7 +39,7 @@ const RegisterScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { dispatch } = useAppContext()
+  const { authDispatch } = useAppContext()
 
   const onSelectDate = (event, selectedDate) => {
     if (event.type === 'dismissed') {
@@ -154,11 +154,11 @@ const RegisterScreen = ({ navigation }) => {
 
       Toaster.show('Đăng ký tài khoản thành công')
       // navigation.navigate(AppGraph.MAIN)
-      dispatch({ type: ActionTypes.LOGIN })
+      authDispatch({ type: AuthActionTypes.LOGIN })
     } catch (error) {
       console.log("Registration failed:", error);
       Toaster.show(error.message)
-      dispatch({ type: ActionTypes.LOGIN })
+      authDispatch({ type: AuthActionTypes.LOGIN })
     } finally {
       setLoading(false);
     }

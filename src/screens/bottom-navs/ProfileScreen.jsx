@@ -4,14 +4,14 @@ import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import { Ani_ModalLoading, Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { ActionTypes, AppContext } from '../../context/AppContext';
+import { AppContext } from '../../context/appContext';
 import { OrderGraph, UserGraph } from '../../layouts/graphs';
-
+import { AuthActionTypes } from '../../reducers';
 
 const ProfileScreen = ({ navigation }) => {
 
   const [loading, setLoading] = useState(false)
-  const { state, dispatch } = useContext(AppContext)
+  const { authState, authDispatch } = useContext(AppContext)
 
   const handleProfile = async () => {
     setLoading(true)
@@ -91,12 +91,12 @@ const ProfileScreen = ({ navigation }) => {
           />
           <View style={styles.separator} />
           {
-            state.isLoggedIn &&
+            authState.isLoggedIn &&
             <CardUtiliti
               icon="logout"
               title="Đăng xuất"
               onPress={() => {
-                dispatch({ type: ActionTypes.LOGOUT })
+                authDispatch({ type: AuthActionTypes.LOGOUT })
               }}
             />
           }

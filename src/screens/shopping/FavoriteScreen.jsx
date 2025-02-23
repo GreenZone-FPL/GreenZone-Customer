@@ -13,7 +13,7 @@ import { Column, LightStatusBar, NormalHeader, Row } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import { ShoppingGraph } from '../../layouts/graphs';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../../context/appContext';
 const { width } = Dimensions.get('window');
 
 const FavoriteScreen = ({ navigation }) => {

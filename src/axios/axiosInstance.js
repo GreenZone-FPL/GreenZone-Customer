@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ActionTypes, appDispatch } from '../context/AppContext';
+import { globalAuthDispatch } from '../context/appContext';
+import { AuthActionTypes } from '../reducers';
 import { AppAsyncStorage } from '../utils';
 export const baseURL = "https://greenzone.motcaiweb.io.vn/"
 
@@ -35,8 +36,8 @@ axiosInstance.interceptors.response.use(
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.accessToken);
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
 
-            if (appDispatch) {
-                appDispatch({ type: ActionTypes.LOGIN_SESSION_EXPIRED });
+            if (globalAuthDispatch) {
+                globalAuthDispatch({ type: AuthActionTypes.LOGIN_SESSION_EXPIRED });
             }
             return Promise.reject(err.response.data);
         }
