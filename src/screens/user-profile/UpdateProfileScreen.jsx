@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, {useEffect, useContext, useState} from 'react';
 import LottieView from 'lottie-react-native';
 import {
   Dimensions,
@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
   Text,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import {Icon} from 'react-native-paper';
 import {
   FlatInput,
   CustomFlatInput,
@@ -18,26 +18,24 @@ import {
   PrimaryButton,
   Ani_ModalLoading,
 } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppContext } from '../../context/appContext';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {AppContext} from '../../context/AppContext';
 
+const {width} = Dimensions.get('window');
 
-const { width } = Dimensions.get('window');
-
-const UpdateProfileScreen = ({ navigation, route }) => {
+const UpdateProfileScreen = ({navigation, route}) => {
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [dob, setDob] = useState('');
   const [gender, setGender] = useState('');
 
-  const { isLoggedIn } = useContext(AppContext);
+  const {isLoggedIn} = useContext(AppContext);
   const [loading, setLoading] = useState(false);
 
-  const { profile } = route.params
+  const {profile} = route.params;
 
   useEffect(() => {
-
     console.log('profile = ', profile);
 
     // Gán dữ liệu vào state
@@ -49,10 +47,9 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       profile.gender === 'male'
         ? 'Nam'
         : profile.gender === 'female'
-          ? 'Nữ'
-          : '')
-
-
+        ? 'Nữ'
+        : '',
+    );
   }, [isLoggedIn]);
 
   return (

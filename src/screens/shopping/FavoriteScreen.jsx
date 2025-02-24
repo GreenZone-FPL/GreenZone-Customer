@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 import {
   Dimensions,
   Image,
@@ -8,23 +8,23 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { Column, LightStatusBar, NormalHeader, Row } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
-import { ShoppingGraph } from '../../layouts/graphs';
-import { AppContext } from '../../context/appContext';
-const { width } = Dimensions.get('window');
+import {Icon} from 'react-native-paper';
+import {Column, LightStatusBar, NormalHeader, Row} from '../../components';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {TextFormatter} from '../../utils';
+import {ShoppingGraph} from '../../layouts/graphs';
+import {AppContext} from '../../context/AppContext';
+const {width} = Dimensions.get('window');
 
-const FavoriteScreen = ({ navigation }) => {
-  const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
+const FavoriteScreen = ({navigation}) => {
+  const {favorites, addToFavorites, removeFromFavorites} =
+    useContext(AppContext);
   const navigateProductDetail = id => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { id });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {id});
   };
 
   return (
     <Column style={styles.container}>
-
       <LightStatusBar />
       <NormalHeader
         title="Sản phẩm yêu thích"
@@ -33,18 +33,19 @@ const FavoriteScreen = ({ navigation }) => {
 
       <Body
         favorites={favorites}
-        navigateProductDetail={navigateProductDetail} />
+        navigateProductDetail={navigateProductDetail}
+      />
     </Column>
   );
 };
 
-const Body = ({ navigateProductDetail, favorites }) => {
+const Body = ({navigateProductDetail, favorites}) => {
   return (
     <View style={styles.flatListContent}>
       <FlatList
         data={favorites}
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <Item item={item} navigateProductDetail={navigateProductDetail} />
         )}
         contentContainerStyle={styles.flatListContainer}
@@ -53,11 +54,11 @@ const Body = ({ navigateProductDetail, favorites }) => {
   );
 };
 
-const Item = ({ item, navigateProductDetail }) => {
+const Item = ({item, navigateProductDetail}) => {
   return (
     <Row style={styles.itemContainer}>
       <View style={styles.imageWrapper}>
-        <Image source={{ uri: item.image }} style={styles.itemImage} />
+        <Image source={{uri: item.image}} style={styles.itemImage} />
         {item.discount > 0 && (
           <Text style={styles.discountBadge}>
             {TextFormatter.formatCurrency((item.discount * item.price) / 100)}
@@ -69,14 +70,12 @@ const Item = ({ item, navigateProductDetail }) => {
         <Row>
           {item.discount > 0 && (
             <Text
-              style={[styles.itemPrice, { textDecorationLine: 'line-through' }]}>
+              style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
               {TextFormatter.formatCurrency(item.price)}
             </Text>
           )}
           <Text style={[styles.itemPrice]}>
-            {TextFormatter.formatCurrency(
-              item.sellingPrice
-            )}
+            {TextFormatter.formatCurrency(item.sellingPrice)}
           </Text>
         </Row>
       </Column>

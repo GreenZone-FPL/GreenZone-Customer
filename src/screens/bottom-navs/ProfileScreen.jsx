@@ -1,30 +1,36 @@
-import React, { useContext, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { getProfile } from '../../axios';
-import { Ani_ModalLoading, Column, HeaderWithBadge, LightStatusBar, Row, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/appContext';
-import { OrderGraph, UserGraph } from '../../layouts/graphs';
-import { AuthActionTypes } from '../../reducers';
+import React, {useContext, useState} from 'react';
+import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {getProfile} from '../../axios';
+import {
+  Ani_ModalLoading,
+  Column,
+  HeaderWithBadge,
+  LightStatusBar,
+  Row,
+  TitleText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AppContext} from '../../context/AppContext';
+import {OrderGraph, UserGraph} from '../../layouts/graphs';
+import {AuthActionTypes} from '../../reducers';
 
-const ProfileScreen = ({ navigation }) => {
-
-  const [loading, setLoading] = useState(false)
-  const { authState, authDispatch } = useContext(AppContext)
+const ProfileScreen = ({navigation}) => {
+  const [loading, setLoading] = useState(false);
+  const {authState, authDispatch} = useContext(AppContext);
 
   const handleProfile = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const reponse = await getProfile()
-      console.log('profile', reponse)
-      navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse })
+      const reponse = await getProfile();
+      console.log('profile', reponse);
+      navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
     } catch (error) {
-      console.log('error', error)
+      console.log('error', error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,9 +39,9 @@ const ProfileScreen = ({ navigation }) => {
       <HeaderWithBadge title="Cá nhân" />
 
       <Column style={styles.body}>
-        <TitleText text='Tài khoản' />
+        <TitleText text="Tài khoản" />
 
-        <Column >
+        <Column>
           <Row style={styles.accountContainer}>
             <CardAccount
               icon="account"
@@ -63,7 +69,7 @@ const ProfileScreen = ({ navigation }) => {
           </Row>
         </Column>
 
-        <TitleText text='Tiện ích' />
+        <TitleText text="Tiện ích" />
 
         <View style={styles.utilities}>
           <CardUtiliti
@@ -90,33 +96,31 @@ const ProfileScreen = ({ navigation }) => {
             }}
           />
           <View style={styles.separator} />
-          {
-            authState.isLoggedIn &&
+          {authState.isLoggedIn && (
             <CardUtiliti
               icon="logout"
               title="Đăng xuất"
               onPress={() => {
-                authDispatch({ type: AuthActionTypes.LOGOUT })
+                authDispatch({type: AuthActionTypes.LOGOUT});
               }}
             />
-          }
-
+          )}
         </View>
       </Column>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 
 export default ProfileScreen;
 
-const CardAccount = ({ icon, color, title, onPress }) => (
+const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({ icon, title, onPress }) => (
+const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
   body: {
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   sectionTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
