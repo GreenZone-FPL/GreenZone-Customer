@@ -26,6 +26,15 @@ const MerchantScreen = ({navigation}) => {
   const [isMapView, setIsMapView] = useState(false);
   const [merchants, setMerchants] = useState([]);
   const [sortedMerchants, setSortedMerchants] = useState([]);
+  const [selectedMerchant, setSelectedMerchant] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+
+
+  const handleSearchPress = () => {
+    setIsMapView(false); 
+  };
+
 
   const fetchMerchants = async () => {
     try {
@@ -46,12 +55,13 @@ const MerchantScreen = ({navigation}) => {
     const sortedList = merchants
       .map(item => ({
         ...item,
-        distance: haversineDistance(item.latitude, item.longitude),
+        distance: haversineDistance(item.lat, item.lon),
       }))
       .sort((a, b) => a.distance - b.distance);
 
     setSortedMerchants(sortedList);
   }, [merchants]);
+console.log('sortedMerchants:', sortedMerchants);
 
   const handleMerchant = item => {
     navigation.navigate(AppGraph.MerchantDetailSheet, {item});
@@ -64,6 +74,11 @@ const MerchantScreen = ({navigation}) => {
   const [suggestions, setSuggestions] = useState([]);
   const cameraRef = useRef(null);
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
+
+  const filteredMerchants = sortedMerchants.filter(merchant =>
+    merchant.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
 
  useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -141,10 +156,12 @@ const MerchantScreen = ({navigation}) => {
           <View style={{position: 'relative', flex: 1}}>
             <CustomSearchBar
               placeholder="Tìm kiếm cửa hàng ..."
-              onClearIconPress={() => {}}
+              onChangeText={text => setSearchQuery(text)}
+              onClearIconPress={() => setSearchQuery('')}
               leftIcon="magnify"
               rightIcon="close"
               style={{elevation: 3}}
+              onFocus={handleSearchPress}
             />
 
             {suggestions.length > 0 && (
@@ -209,7 +226,19 @@ const MerchantScreen = ({navigation}) => {
                 </MapboxGL.PointAnnotation>
               )}
               {/* Hiển thị các cửa hàng trên bản đồ */}
-              <MapboxGL.ShapeSource id="storeLocations" shape={shapeData}>
+              <MapboxGL.ShapeSource
+                id="storeLocations"
+                shape={shapeData}
+                onPress={event => {
+                  const {properties} = event.features[0];
+                  const merchant = merchants.find(m => m._id === properties.id);
+                  if (merchant) {
+                    setSelectedMerchant(merchant);
+                    navigation.navigate(AppGraph.MerchantDetailSheet, {
+                      item: merchant,
+                    });
+                  }
+                }}>
                 <MapboxGL.SymbolLayer
                   id="storeIcons"
                   style={{
