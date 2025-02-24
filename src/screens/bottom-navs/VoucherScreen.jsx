@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Image,
   ImageBackground,
   Pressable,
   ScrollView,
@@ -12,7 +11,7 @@ import {Icon} from 'react-native-paper';
 import {LightStatusBar} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph, VoucherGraph} from '../../layouts/graphs';
-import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
+import BarcodeBwipjs from '../../components/barcode/Barcodebwipjs';
 
 const VoucherScreen = props => {
   const {navigation} = props;

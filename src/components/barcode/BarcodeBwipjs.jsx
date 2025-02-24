@@ -6,7 +6,7 @@ import {GLOBAL_KEYS} from '../../constants';
 
 const width = Dimensions.get('window').width;
 
-const BarcodeBwipjs = () => {
+const Barcodebwipjs = () => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
 
   const [text, setText] = useState('0912345678');
@@ -47,4 +47,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BarcodeBwipjs;
+export default Barcodebwipjs;
