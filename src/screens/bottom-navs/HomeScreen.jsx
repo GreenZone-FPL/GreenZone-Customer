@@ -1,6 +1,6 @@
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,8 +9,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
-  View,
+  View
 } from 'react-native';
 
 import {
@@ -24,24 +23,20 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import {getAllCategories, getAllProducts} from '../../axios';
+import { getAllCategories, getAllProducts } from '../../axios';
 import {
-  BarcodeUser,
   CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
-  ImageCarousel,
   LightStatusBar,
-  NotificationList,
   ProductsListHorizontal,
   ProductsListVertical,
-  TitleText,
-  Ani_ModalLoading,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, EventBus, EVENT } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { ShoppingGraph } from '../../layouts/graphs';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -55,6 +50,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
+  const {cartState, cartDispatch} = useAppContext()
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -229,6 +225,7 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
        
+        cartLength = {cartState.items.length}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 

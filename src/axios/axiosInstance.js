@@ -37,7 +37,10 @@ axiosInstance.interceptors.response.use(
             await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.refreshToken);
 
             if (globalAuthDispatch) {
-                globalAuthDispatch({ type: AuthActionTypes.LOGIN_SESSION_EXPIRED });
+                globalAuthDispatch({
+                    type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+                    payload: 'Phiên đăng nhập hết hạn'
+                });
             }
             return Promise.reject(err.response.data);
         }

@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import LoginScreen from '../../screens/auth/LoginScreen';
-
 import RegisterScreen from '../../screens/auth/RegisterScreen';
 import SplashScreen from '../../screens/auth/SplashScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
@@ -11,7 +10,7 @@ import {
 import { useAppContext } from '../../context/appContext';
 
 const AuthStack = createNativeStackNavigator();
-const AuthNavigator = ({ route }) => {
+const AuthNavigator = () => {
   const { authState } = useAppContext()
   return (
     <AuthStack.Navigator
