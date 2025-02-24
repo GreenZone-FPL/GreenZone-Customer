@@ -1,17 +1,7 @@
 import { AppAsyncStorage } from "./appAsyncStorage";
-import { EventBus, EVENT } from "./eventBus";
 import { Toaster } from "./toaster";
+
 // closure
-
-export const CART_ACTIONS = {
-    LOAD_CART: 'LOAD_CART',
-    ADD_ITEM: 'ADD_ITEM',
-    UPDATE_ITEM: 'UPDATE_ITEM',
-    REMOVE_ITEM: 'REMOVE_ITEM',
-    CLEAR_CART: 'CLEAR_CART',
-};
-
-
 export const CartManager = (() => {
     const readCart = async () => {
         try {
@@ -61,11 +51,10 @@ export const CartManager = (() => {
             }
 
             await AppAsyncStorage.storeData('CART', cart);
-
-            // EventBus.emit(EVENT.ADD_TO_CART, cart.length)
-            // EventBus.emit(EVENT.UPDATE_CART, cart.length)
-
             Toaster.show('Thêm vào giỏ hàng thành công');
+            return cart
+          
+            
         } catch (error) {
             console.log('Error addToCart', error);
         }
@@ -79,10 +68,8 @@ export const CartManager = (() => {
             cart = cart.filter(item => item.itemId !== itemId);
     
             await AppAsyncStorage.storeData('CART', cart);
+            return cart
     
-           
-            // EventBus.emit(EVENT.DELETE_ITEM, cart);
-            // EventBus.emit(EVENT.UPDATE_CART, cart.length);
     
         } catch (error) {
             console.log('Error removeFromCart:', error);
@@ -104,10 +91,8 @@ export const CartManager = (() => {
 
             await AppAsyncStorage.storeData('CART', cart);
 
-            // EventBus.emit(EVENT.EDIT_ITEM, cart);
-            // EventBus.emit(EVENT.UPDATE_CART, cart.length);
-
             Toaster.show('Cập nhật giỏ hàng thành công');
+            return cart
         } catch (error) {
             console.log('Error updateCartItem:', error);
         }
@@ -118,7 +103,6 @@ export const CartManager = (() => {
     const clearCart = async () => {
         try {
             await AppAsyncStorage.storeData('CART', []);
-            // EventBus.emit(EVENT.CLEAR_CART, 0)
         } catch (error) {
             console.log('Error clearCart:', error);
         }

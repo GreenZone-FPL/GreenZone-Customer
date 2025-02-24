@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,33 +6,11 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppAsyncStorage, EventBus, EVENT, CartManager } from '../../utils';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
 
-
-
-export const DeliveryButton = ({ title, address, onPress, style, onPressCart }) => {
-  const [cartLength, setCartLength] = useState(0);
-
-  useEffect(() => {
-    const loadCart = async () => {
-      const cart = await CartManager.readCart();
-      setCartLength(cart.length);
-    };
-
-    loadCart();
-
-    const onCartUpdated = (count) => {
-      setCartLength(count);
-    };
-    EventBus.addListener(EVENT.UPDATE_CART, onCartUpdated)
-
-    return () => {
-      EventBus.removeAllListeners(EVENT.UPDATE_CART, onCartUpdated)
-    }
-  }, [])
+export const DeliveryButton = ({ title, address, onPress, style, onPressCart, cartLength}) => {
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>

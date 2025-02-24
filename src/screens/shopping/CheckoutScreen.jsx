@@ -16,22 +16,22 @@ import { Icon, RadioButton } from 'react-native-paper';
 import { Column, Ani_ModalLoading, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { CartManager, EVENT, EventBus } from '../../utils';
+import { CartManager} from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { CartActionTypes } from '../../reducers';
 
-
-const width = Dimensions.get('window').width;
 
 
 const CheckoutScreen = (props) => {
   const navigation = props.navigation;
   const [isDialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng');
-  const [cart, setCart] = useState([]);
 
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
 
+  const { cartState, cartDispatch } = useAppContext()
   const reverseGeocode = async ({ lat, long }) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
@@ -78,42 +78,6 @@ const CheckoutScreen = (props) => {
   }, []);
 
 
-
-
-  useEffect(() => {
-    const fetchCart = async () => {
-      setLoading(true);
-      try {
-        const storedCart = await CartManager.readCart();
-
-        setCart(storedCart);
-      } catch (error) {
-        console.error('Lỗi khi đọc giỏ hàng:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCart();
-
-    const onCartUpdated = (updatedCart) => {
-      setCart(updatedCart);
-    };
-
-    const onEditItem = (editedCart) => {
-      setCart(editedCart);
-    };
-
-    EventBus.addListener(EVENT.DELETE_ITEM, onCartUpdated);
-    EventBus.addListener(EVENT.EDIT_ITEM, onEditItem);
-
-    return () => {
-      EventBus.removeAllListeners(EVENT.DELETE_ITEM, onCartUpdated)
-      EventBus.removeAllListeners(EVENT.EDIT_ITEM, onEditItem)
-    };
-  }, []);
-
-
   return (
     <View style={styles.container}>
 
@@ -140,10 +104,11 @@ const CheckoutScreen = (props) => {
               <RecipientInfo onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)} />
               <TimeSection />
 
-              {cart.length > 0 && (
+              {cartState.items.length > 0 && (
                 <ProductsInfo
+                cartDispatch={cartDispatch}
                   onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
-                  cart={cart}
+                  cart={cartState.items}
                 />
               )}
 
@@ -277,7 +242,7 @@ const RecipientInfo = ({ onChangeRecipientInfo }) => {
   );
 };
 
-const ProductsInfo = ({ onEditItem, cart }) => {
+const ProductsInfo = ({ onEditItem, cart, cartDispatch }) => {
 
   return (
     <View style={{ marginVertical: 8 }}>
@@ -291,7 +256,13 @@ const ProductsInfo = ({ onEditItem, cart }) => {
             onEdit={onEditItem}
 
             onDelete={async () => {
-              await CartManager.removeFromCart(item.itemId)
+              const newCart = await CartManager.removeFromCart(item.itemId)
+
+              cartDispatch({
+                type: CartActionTypes.UPDATE_CART,
+                payload: newCart
+              })
+
             }} />
         )}
         contentContainerStyle={{ gap: 8 }}

@@ -4,8 +4,9 @@ import { Icon, IconButton } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/appContext';
-import { CartManager, Toaster } from '../../utils';
+import { AppContext, useAppContext } from '../../context/appContext';
+import { CartActionTypes } from '../../reducers';
+import { CartManager } from '../../utils';
 
 const EditCartItemScreen = ({ route, navigation }) => {
 
@@ -19,7 +20,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
     const { updateItem } = route.params
-
+    const { cartDispatch } = useAppContext()
 
 
     useEffect(() => {
@@ -147,7 +148,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
                                 : [];
 
 
-                            await CartManager.updateCartItem(
+                            const newCart = await CartManager.updateCartItem(
                                 updateItem.itemId,
                                 {
                                     productId: updateItem.productId,
@@ -160,6 +161,11 @@ const EditCartItemScreen = ({ route, navigation }) => {
                                     // image: updateItem.image
                                 }
                             )
+
+                            cartDispatch({
+                                type: CartActionTypes.UPDATE_CART,
+                                payload: newCart
+                            })
 
                         }}
                         buttonTitle='Cập nhật giỏ hàng'

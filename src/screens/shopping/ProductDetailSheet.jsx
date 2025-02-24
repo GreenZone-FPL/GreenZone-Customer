@@ -7,6 +7,8 @@ import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '.
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { CartActionTypes } from '../../reducers';
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
@@ -21,6 +23,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const [totalAmount, setTotalAmount] = useState(0)
     const { productId } = route.params
 
+    const { cartDispatch } = useAppContext()
     useEffect(() => {
         if (product) {
             console.log("Số lượng hiện tại:", quantity);
@@ -131,13 +134,16 @@ const ProductDetailSheet = ({ route, navigation }) => {
                             }
                         }}
                         totalPrice={totalAmount}
-                        onButtonPress={() => {
-                            if (product.variant.length > 0) {
-                                return selectedVariant
-                                    ? CartManager.addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
-                                    : Toaster.show("Vui lòng chọn Size");
-                            }
-                            return CartManager.addToCart(product, null, selectedToppings, totalAmount, quantity);
+                        onButtonPress={async () => {
+
+                            const newCart = await CartManager
+                                .addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity)
+
+                            cartDispatch({
+                                type: CartActionTypes.UPDATE_CART,
+                                payload: newCart
+                            })
+
                         }}
                         buttonTitle='Thêm vào giỏ hàng'
                     />
