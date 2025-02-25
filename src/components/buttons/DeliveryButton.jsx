@@ -9,8 +9,10 @@ import { GLOBAL_KEYS, colors } from '../../constants';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
+import { Icon } from 'react-native-paper';
+import { TextFormatter } from '../../utils';
 
-export const DeliveryButton = ({ title, address, onPress, style, onPressCart, cartLength}) => {
+export const DeliveryButton = ({ title, address, onPress, style, onPressCart, cart }) => {
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
@@ -26,12 +28,30 @@ export const DeliveryButton = ({ title, address, onPress, style, onPressCart, ca
         <Text numberOfLines={1} ellipsizeMode='tail' style={styles.address}>{address}</Text>
 
       </Column>
+      {
+        cart.length > 0 &&
+        <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
 
-      <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
-        
-        <Text style={styles.quantity}>{cartLength}</Text>
-        <NormalText text='Giỏ hàng' style={{ color: colors.white }} />
-      </TouchableOpacity>
+
+          <Icon
+            source="food-outline"
+            color={colors.white}
+            size={20}
+          />
+          <NormalText text={
+            TextFormatter.formatCurrency(
+              cart.reduce((acc, item) => acc + item.price, 0)
+            )
+
+          } style={{ color: colors.white, fontWeight: '500' }} />
+
+          <Text style={styles.quantity}>{cart.length}</Text>
+        </TouchableOpacity>
+
+      }
+
+
+
     </TouchableOpacity>
   );
 };

@@ -3,10 +3,11 @@ import { Toaster } from "./toaster";
 
 // closure
 export const CartManager = (() => {
+    
     const readCart = async () => {
         try {
             const CART = await AppAsyncStorage.readData('CART', null);
-            console.log('read CART', CART);
+            console.log('read CART ', CART);
             console.log('read cart length', CART?.length || 0);
             return CART
         } catch (error) {
@@ -14,7 +15,7 @@ export const CartManager = (() => {
         }
     };
 
-    const addToCart = async (product, variant, selectedToppings, amount, quantity) => {
+    const addToCart = async (product, variant, selectedToppings, amount, quantity, note) => {
         try {
             const cart = await AppAsyncStorage.readData('CART', []);
 
@@ -38,23 +39,24 @@ export const CartManager = (() => {
                 cart[existingIndex].quantity += quantity;
             } else {
                 cart.push({
+                    variant: variant?._id || null,
+                    quantity: quantity,
+                    price: amount,
+                    toppingItems: sortedToppings,
+                    
                     itemId: new Date().getTime(),
                     productId: product._id,
                     productName: product.name,
-                    variant: variant?._id || null,
                     variantName: variant?.size || '',
-                    quantity: quantity,
-                    price: amount,
-                    toppings: sortedToppings,
                     image: product.image
                 });
             }
-
+ 
             await AppAsyncStorage.storeData('CART', cart);
             Toaster.show('Thêm vào giỏ hàng thành công');
             return cart
-          
-            
+
+
         } catch (error) {
             console.log('Error addToCart', error);
         }
@@ -63,19 +65,19 @@ export const CartManager = (() => {
     const removeFromCart = async (itemId) => {
         try {
             let cart = await AppAsyncStorage.readData('CART', []);
-    
-            
+
+
             cart = cart.filter(item => item.itemId !== itemId);
-    
+
             await AppAsyncStorage.storeData('CART', cart);
             return cart
-    
-    
+
+
         } catch (error) {
             console.log('Error removeFromCart:', error);
         }
     };
-    
+
 
     const updateCartItem = async (itemId, updatedProductData) => {
         try {
@@ -109,11 +111,13 @@ export const CartManager = (() => {
     }
 
     return {
+       
         readCart,
         addToCart,
         removeFromCart,
-        clearCart,
-        updateCartItem
+        updateCartItem,
+        clearCart
+
     };
 })();
 

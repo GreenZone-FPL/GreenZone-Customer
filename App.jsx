@@ -28,6 +28,7 @@ import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 import CheckoutScreen from './src/screens/shopping/CheckoutScreen'
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
+import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 
 
 const BaseStack = createNativeStackNavigator();
@@ -36,7 +37,7 @@ function App() {
   const { authState } = useAppContext();
 
   return (
-    
+
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <NavigationContainer>
@@ -54,6 +55,14 @@ function App() {
                     headerShown: false,
                   }}
                   component={ProductDetailSheet} />
+                <BaseStack.Screen
+                  name={ShoppingGraph.RecipientInfoSheet}
+                  options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                  }}
+                  component={RecipientInfoSheet} />
 
                 <BaseStack.Screen
                   name={ShoppingGraph.EditCartItemScreen}
