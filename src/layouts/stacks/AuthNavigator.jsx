@@ -5,7 +5,7 @@ import RegisterScreen from '../../screens/auth/RegisterScreen';
 import SplashScreen from '../../screens/auth/SplashScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
 import {AuthGraph} from '../graphs';
-import {useAppContext} from '../../context/AppContext';
+import {useAppContext} from '../../context/appContext';
 
 const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {

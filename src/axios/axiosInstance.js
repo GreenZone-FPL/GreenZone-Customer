@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {globalAuthDispatch} from '../context/AppContext';
+import {globalAuthDispatch} from '../context/appContext';
 import {AuthActionTypes} from '../reducers';
 import {AppAsyncStorage} from '../utils';
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
@@ -39,16 +39,13 @@ axiosInstance.interceptors.response.use(
         AppAsyncStorage.STORAGE_KEYS.refreshToken,
       );
 
-            if (globalAuthDispatch) {
-                globalAuthDispatch({
-                    type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
-                    payload: 'Phiên đăng nhập hết hạn'
-                });
-            }
-            return Promise.reject(err.response.data);
-        }
-
-        return Promise.reject(err);
+      if (globalAuthDispatch) {
+        globalAuthDispatch({
+          type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+          payload: 'Phiên đăng nhập hết hạn',
+        });
+      }
+      return Promise.reject(err.response.data);
     }
 
     return Promise.reject(err);

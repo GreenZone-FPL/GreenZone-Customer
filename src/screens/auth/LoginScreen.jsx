@@ -19,7 +19,7 @@ import {
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AuthGraph} from '../../layouts/graphs';
 import {Toaster} from '../../utils';
-import {useAppContext} from '../../context/AppContext';
+import {useAppContext} from '../../context/appContext';
 import {AuthActionTypes} from '../../reducers';
 const LoginScreen = ({route, navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0779188717');

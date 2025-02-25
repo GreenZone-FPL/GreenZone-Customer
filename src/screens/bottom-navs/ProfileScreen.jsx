@@ -11,7 +11,7 @@ import {
   TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppContext} from '../../context/AppContext';
+import {AppContext} from '../../context/appContext';
 import {OrderGraph, UserGraph} from '../../layouts/graphs';
 import {AuthActionTypes} from '../../reducers';
 

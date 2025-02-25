@@ -28,7 +28,7 @@ import {AppAsyncStorage, Toaster} from '../../utils';
 import {register} from '../../axios';
 import {AppGraph} from '../../layouts/graphs';
 import {baseURL} from '../../axios/axiosInstance';
-import {useAppContext} from '../../context/AppContext';
+import {useAppContext} from '../../context/appContext';
 import {AuthActionTypes} from '../../reducers';
 const RegisterScreen = ({navigation}) => {
   const [firstName, setFirstName] = useState('Bui');

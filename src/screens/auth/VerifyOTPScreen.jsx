@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {AppContext} from '../../context/AppContext';
+import {AppContext} from '../../context/appContext';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
 import {verifyOTP} from '../../axios';
@@ -7,7 +7,7 @@ import {colors} from '../../constants';
 import {AppGraph, AuthGraph} from '../../layouts/graphs';
 import {Toaster} from '../../utils/toaster';
 import {Ani_ModalLoading} from '../../components';
-import {useAppContext} from '../../context/AppContext';
+import {useAppContext} from '../../context/appContext';
 import {AuthActionTypes} from '../../reducers';
 const VerifyOTPScreen = ({route, navigation}) => {
   const {authDispatch} = useAppContext();
