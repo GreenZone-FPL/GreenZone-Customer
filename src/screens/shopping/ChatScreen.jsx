@@ -1,76 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { Alert, FlatList, Image, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import * as ImagePicker from "react-native-image-picker";
-import { launchCamera } from 'react-native-image-picker';
-import { Icon } from "react-native-paper";
-import io from "socket.io-client";
-import { Column, FlatInput, NormalHeader, NormalText, PrimaryButton, Row } from "../../components";
-import { colors, GLOBAL_KEYS } from "../../constants";
-import { Notifications } from 'react-native-notifications';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  FlatList,
+  Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
+import {launchCamera} from 'react-native-image-picker';
+import {Icon} from 'react-native-paper';
+import io from 'socket.io-client';
+import {
+  Column,
+  FlatInput,
+  NormalHeader,
+  NormalText,
+  PrimaryButton,
+  Row,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {Notifications} from 'react-native-notifications';
 
-
-const socket = io("https://serversocket-4oew.onrender.com/");
+const socket = io('https://serversocket-4oew.onrender.com/');
 // const socket = io("http://192.168.0.110:3000/");
 
-const ChatScreen = ({ navigation }) => {
-  const [userName, setUserName] = useState("");
+const ChatScreen = ({navigation}) => {
+  const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-  const [typingStatus, setTypingStatus] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [typingStatus, setTypingStatus] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
 
-
   useEffect(() => {
-    socket.on("receive message", (data) => {
+    socket.on('receive message', data => {
       addMessage(data.userName, data.message, data.image);
 
       // Gửi thông báo khi nhận tin nhắn
-      if (data.userName !== userName) {  // Nếu tin nhắn không phải của chính bạn
+      if (data.userName !== userName) {
+        // Nếu tin nhắn không phải của chính bạn
         Notifications.postLocalNotification({
           title: `${data.userName} gửi tin nhắn mới`,
           body: data.message,
-          extra: 'Dữ liệu thêm',  // Bạn có thể thêm dữ liệu thêm nếu cần
+          extra: 'Dữ liệu thêm', // Bạn có thể thêm dữ liệu thêm nếu cần
         });
       }
     });
 
-    socket.on("user typing", (data) => {
+    socket.on('user typing', data => {
       setTypingStatus(`${data.userName} đang soạn tin...`);
-      setTimeout(() => setTypingStatus(""), 3000);
+      setTimeout(() => setTypingStatus(''), 3000);
     });
 
     return () => {
-      socket.off("receive message");
-      socket.off("user typing");
+      socket.off('receive message');
+      socket.off('user typing');
     };
   }, []);
 
   const joinChat = () => {
     if (userName.trim()) {
-      socket.emit("join", userName);
+      socket.emit('join', userName);
       setIsLoggedIn(true);
-      setErrorMessage("");
+      setErrorMessage('');
     } else {
-      setErrorMessage("Username is required!");
+      setErrorMessage('Username is required!');
     }
   };
 
   const sendMessage = (imageUri = null) => {
     if (message.trim() || imageUri) {
-      const msgData = { message, image: imageUri };
-      socket.emit("send message", msgData);
-      addMessage("You", message, imageUri, true);
-      setMessage("");
+      const msgData = {message, image: imageUri};
+      socket.emit('send message', msgData);
+      addMessage('You', message, imageUri, true);
+      setMessage('');
       setSelectedImage(null);
     }
   };
 
   const addMessage = (userName, message, image = null, isYou = false) => {
-    const newMessage = { userName, message, image, isYou };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    const newMessage = {userName, message, image, isYou};
+    setMessages(prevMessages => [...prevMessages, newMessage]);
   };
 
   const openCamera = () => {
@@ -86,11 +101,11 @@ const ChatScreen = ({ navigation }) => {
 
   const pickImage = () => {
     ImagePicker.launchImageLibrary(
-      { mediaType: "photo", quality: 0.8 },
-      (response) => {
+      {mediaType: 'photo', quality: 0.8},
+      response => {
         if (response.didCancel) return;
         if (response.errorMessage) {
-          Alert.alert("Lỗi", "Không thể chọn ảnh.");
+          Alert.alert('Lỗi', 'Không thể chọn ảnh.');
           return;
         }
 
@@ -99,63 +114,63 @@ const ChatScreen = ({ navigation }) => {
         if (imageUri) {
           sendMessage(imageUri); // Gửi ảnh ngay sau khi chọn
         }
-      }
+      },
     );
     setImagePickerVisible(false);
   };
 
-
-
-
-
   return (
     <>
       {!isLoggedIn ? (
-        <Column style={{ padding: 16 }}>
+        <Column style={{padding: 16}}>
           <Text style={styles.header}>Join Chat Room</Text>
-          <FlatInput label="Enter your name" placeholder="Nguyen Van A" value={userName} setValue={setUserName} message={errorMessage} />
+          <FlatInput
+            label="Enter your name"
+            placeholder="Nguyen Van A"
+            value={userName}
+            setValue={setUserName}
+            message={errorMessage}
+          />
           <PrimaryButton title="Join" onPress={joinChat} />
         </Column>
       ) : (
         <Column style={styles.chatRoom}>
-          <NormalHeader style={{ backgroundColor: colors.transparent }} title="Chat room" onLeftPress={() => navigation.goBack()} />
-          <Column style={{ flex: 1, paddingHorizontal: 16 }}>
-
+          <NormalHeader
+            style={{backgroundColor: colors.transparent}}
+            title="Chat room"
+            onLeftPress={() => navigation.goBack()}
+          />
+          <Column style={{flex: 1, paddingHorizontal: 16}}>
             <FlatList
               data={messages}
               keyExtractor={(_, index) => index.toString()}
               renderItem={MessageItem}
-              contentContainerStyle={{ flexGrow: 1, gap: 12 }} />
-            <NormalText style={{ fontStyle: "italic" }} text={typingStatus} />
-
+              contentContainerStyle={{flexGrow: 1, gap: 12}}
+            />
+            <NormalText style={{fontStyle: 'italic'}} text={typingStatus} />
 
             <Row>
               <FlatInput
                 label="Enter message"
                 placeholder=""
                 value={message}
-                style={{ flex: 1 }}
+                style={{flex: 1}}
                 setValue={setMessage}
                 onSubmitEditing={() => sendMessage()}
                 returnKeyType="send"
               />
               <TouchableOpacity onPress={() => setImagePickerVisible(true)}>
-                <Icon
-                  source="image"
-                  color={colors.gray850}
-                  size={28}
-                />
+                <Icon source="image" color={colors.gray850} size={28} />
               </TouchableOpacity>
-
             </Row>
-
-
-
           </Column>
           {selectedImage && (
             <View style={styles.previewContainer}>
               <Text>Hình ảnh đã chọn:</Text>
-              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+              <Image
+                source={{uri: selectedImage}}
+                style={styles.previewImage}
+              />
             </View>
           )}
           <Modal
@@ -164,7 +179,6 @@ const ChatScreen = ({ navigation }) => {
             transparent={true}>
             <Column style={styles.imagePickerOverlay}>
               <Column style={styles.imagePickerContainer}>
-
                 <TouchableOpacity style={styles.option} onPress={openCamera}>
                   <NormalText text="Chụp ảnh mới" />
                 </TouchableOpacity>
@@ -178,7 +192,6 @@ const ChatScreen = ({ navigation }) => {
                   onPress={() => setImagePickerVisible(false)}>
                   <NormalText text="Hủy bỏ" />
                 </TouchableOpacity>
-
               </Column>
             </Column>
           </Modal>
@@ -188,22 +201,30 @@ const ChatScreen = ({ navigation }) => {
   );
 };
 
-const MessageItem = ({ item }) => {
+const MessageItem = ({item}) => {
   const isYou = item.isYou;
 
   return (
     <Row style={[styles.messageContainer, isYou && styles.yourMessage]}>
       {!isYou && (
         <Image
-          source={{ uri: "https://catscanman.net/wp-content/uploads/2021/09/anh-meo-cute-de-thuong-32.jpg" }}
+          source={{
+            uri: 'https://catscanman.net/wp-content/uploads/2021/09/anh-meo-cute-de-thuong-32.jpg',
+          }}
           style={styles.avatar}
         />
       )}
 
-      <Column style={[styles.messageContent, isYou && { backgroundColor: colors.green100 }]}>
-        {!isYou && <NormalText text={item.userName} style={{ fontWeight: "500" }} />}
+      <Column
+        style={[
+          styles.messageContent,
+          isYou && {backgroundColor: colors.green100},
+        ]}>
+        {!isYou && (
+          <NormalText text={item.userName} style={{fontWeight: '500'}} />
+        )}
         {item.image ? (
-          <Image source={{ uri: item.image }} style={styles.sentImage} />
+          <Image source={{uri: item.image}} style={styles.sentImage} />
         ) : (
           <NormalText text={item.message} />
         )}
@@ -211,7 +232,6 @@ const MessageItem = ({ item }) => {
     </Row>
   );
 };
-
 
 const styles = StyleSheet.create({
   chatRoom: {
@@ -221,7 +241,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 20,
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 20,
   },
   avatar: {
@@ -247,14 +267,14 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.gray200,
   },
   messageContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginVertical: 5,
-    maxWidth: "80%",
+    maxWidth: '80%',
   },
   yourMessage: {
-    alignSelf: "flex-end",
-    flexDirection: "row-reverse",
+    alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
   },
   avatar: {
     width: 40,
@@ -263,8 +283,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   messageContent: {
-    maxWidth: "80%",
-    backgroundColor: "white",
+    maxWidth: '80%',
+    backgroundColor: 'white',
     elevation: 2,
     padding: 10,
     borderRadius: 6,
@@ -276,7 +296,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginTop: 5,
-    alignSelf: "center",
+    alignSelf: 'center',
   },
 });
 

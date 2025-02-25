@@ -1,11 +1,18 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppContextProvider, useAppContext } from './src/context/appContext';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {AppContextProvider, useAppContext} from './src/context/appContext';
 
-import { AppGraph, AuthGraph, MainGraph, OrderGraph, ShoppingGraph, UserGraph } from './src/layouts/graphs';
+import {
+  AppGraph,
+  AuthGraph,
+  MainGraph,
+  OrderGraph,
+  ShoppingGraph,
+  UserGraph,
+} from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
 import AddressScreen from './src/screens/address/AddressScreen';
@@ -26,7 +33,7 @@ import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-import CheckoutScreen from './src/screens/shopping/CheckoutScreen'
+import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen'
@@ -35,7 +42,7 @@ import { PaperProvider } from 'react-native-paper';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
-  const { authState } = useAppContext();
+  const {authState} = useAppContext();
 
   return (
     <PaperProvider>
@@ -115,8 +122,3 @@ export default function AppWrapper() {
     </AppContextProvider>
   );
 }
-
-
-
-
-

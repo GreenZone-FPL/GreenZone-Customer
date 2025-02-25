@@ -1,41 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { sendOTP } from '../../axios';
-import { Ani_ModalLoading, Column, FlatInput, LightStatusBar, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AuthGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
-import { useAppContext } from '../../context/appContext';
-import { AuthActionTypes } from '../../reducers';
-const LoginScreen = ({ route, navigation }) => {
-
+import {Icon} from 'react-native-paper';
+import {sendOTP} from '../../axios';
+import {
+  Ani_ModalLoading,
+  Column,
+  FlatInput,
+  LightStatusBar,
+  TitleText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AuthGraph} from '../../layouts/graphs';
+import {Toaster} from '../../utils';
+import {useAppContext} from '../../context/appContext';
+import {AuthActionTypes} from '../../reducers';
+const LoginScreen = ({route, navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0779188717');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch } = useAppContext();
-
+  const {authState, authDispatch} = useAppContext();
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     if (authState.message) {
-
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 2000,
         delay: 2000,
         useNativeDriver: true,
       }).start(() => {
-        authDispatch({ type: AuthActionTypes.CLEAR_MESSAGE })
+        authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
       });
     }
   }, [authState.message]);
@@ -49,12 +52,12 @@ const LoginScreen = ({ route, navigation }) => {
 
     setLoading(true);
     try {
-      const response = await sendOTP({ phoneNumber });
+      const response = await sendOTP({phoneNumber});
       if (response) {
         console.log('otp = ', response.code);
-        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
+        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
       } else {
-        Toaster.show('Không thể gửi OTP, vui lòng thử lại sau')
+        Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
     } catch (error) {
       console.log('error', error);
@@ -64,23 +67,20 @@ const LoginScreen = ({ route, navigation }) => {
   };
 
   return (
-
-
     <Column style={styles.container}>
       {authState.message ? (
-        <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.toast, {opacity: fadeAnim}]}>
           <Icon source="information" size={20} color={colors.primary} />
           <Text style={styles.toastText}>{authState.message}</Text>
         </Animated.View>
       ) : null}
 
-
       <LightStatusBar />
       <Image
         source={require('../../assets/images/register_bg.png')}
-        style={{ width: '100%', height: 200 }}
+        style={{width: '100%', height: 200}}
       />
-      <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
+      <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
       <FlatInput
@@ -88,7 +88,7 @@ const LoginScreen = ({ route, navigation }) => {
         label="Số điện thoại"
         placeholder="Nhập số điện thoại của bạn..."
         style={styles.input}
-        setValue={(text) => {
+        setValue={text => {
           setPhoneNumberError(false);
           setPhoneNumberMessage('');
           setPhoneNumber(text);
@@ -98,12 +98,10 @@ const LoginScreen = ({ route, navigation }) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <View style={{ width: 30, height: 30 }}></View>
+        <View style={{width: 30, height: 30}}></View>
         <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
-
-
 
       {/* <Row style={styles.separatorContainer}>
         <View style={styles.separator} />
@@ -121,17 +119,10 @@ const LoginScreen = ({ route, navigation }) => {
         <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
       </Pressable> */}
 
-
       <Ani_ModalLoading loading={loading} />
-
     </Column>
-
-
-
   );
 };
-
-
 
 export default LoginScreen;
 
@@ -142,7 +133,7 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 24,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   toast: {
     position: 'absolute',
@@ -156,7 +147,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
@@ -175,7 +166,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     textAlign: 'center',
     marginBottom: 20,
-
   },
   input: {
     width: '100%',
@@ -208,8 +198,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%'
-
+    width: '100%',
   },
   socialText: {
     color: colors.white,

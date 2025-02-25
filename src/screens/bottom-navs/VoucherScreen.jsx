@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Image,
   ImageBackground,
   Pressable,
   ScrollView,
@@ -12,7 +11,7 @@ import {Icon} from 'react-native-paper';
 import {LightStatusBar} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph, VoucherGraph} from '../../layouts/graphs';
-
+import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 const VoucherScreen = props => {
   const {navigation} = props;
   return (
@@ -28,7 +27,9 @@ const VoucherScreen = props => {
             <Text style={styles.title}>Mới</Text>
             <Pressable
               style={styles.myTicket}
-              onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}>
+              onPress={() =>
+                navigation.navigate(VoucherGraph.MyVouchersScreen)
+              }>
               <Icon
                 source="ticket-confirmation-outline"
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
@@ -38,11 +39,12 @@ const VoucherScreen = props => {
             </Pressable>
           </View>
           <View style={styles.barCode}>
-            <Image
+            <BarcodeBwipjs />
+            {/* <Image
               source={require('../../assets/images/barcode.png')}
               style={styles.imgcode}
-            />
-            <Text style={styles.code}>M41352236</Text>
+            /> */}
+            {/* <Text style={styles.code}>M41352236</Text> */}
           </View>
         </View>
       </ImageBackground>
