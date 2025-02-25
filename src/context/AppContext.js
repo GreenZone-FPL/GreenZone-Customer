@@ -6,7 +6,7 @@ import { CartManager } from '../utils';
 
 export const AppContext = createContext();
 
-// fix file name
+
 export let globalAuthDispatch = null;
 
 export const AppContextProvider = ({ children }) => {
@@ -14,6 +14,7 @@ export const AppContextProvider = ({ children }) => {
   const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState)
 
   const [favorites, setFavorites] = useState([]);
+
 
   const addToFavorites = (product) => {
     setFavorites((prevFavorites) => [...prevFavorites, product]);

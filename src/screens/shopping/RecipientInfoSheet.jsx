@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,22 +7,26 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {FlatInput, OverlayStatusBar, PrimaryButton} from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {Icon} from 'react-native-paper';
+import { Column, FlatInput, OverlayStatusBar, PrimaryButton } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Icon } from 'react-native-paper';
 
-const RecipientInfoSheet = ({navigation}) => {
+const RecipientInfoSheet = ({ navigation }) => {
   const [name, setName] = useState('Phong Nguyen');
-  const [phone, setPhone] = useState('0936887373');
+  const [phoneNumber, setPhoneNumber] = useState('0936887373');
 
   return (
-    <View style={styles.container}>
-      <View style={styles.contentContainer}>
+    <Column style={styles.container}>
+      <Column style={styles.contentContainer}>
+
         <OverlayStatusBar />
+
         <View style={styles.goBackContainer}>
           <TouchableOpacity
             style={styles.goBackButton}
-            onPress={() => navigation.goBack()}>
+            onPress={() => {
+              navigation.goBack();
+            }}>
             <Icon
               source="close"
               color={colors.gray700}
@@ -30,15 +34,26 @@ const RecipientInfoSheet = ({navigation}) => {
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.content}>
+
+        <Column style={styles.content}>
           <Text style={styles.label}>Tên người nhận</Text>
           <FlatInput label={''} value={name} setValue={setName} />
           <Text style={styles.label}>Số điện thoại</Text>
-          <FlatInput label={''} value={phone} setValue={setPhone} />
-          <PrimaryButton title={'Cập nhật'} />
-        </View>
-      </View>
-    </View>
+          <FlatInput label={''} value={phoneNumber} setValue={setPhoneNumber} />
+          <PrimaryButton
+
+            title={'Cập nhật'}
+            onPress={() => {
+              navigation.setParams({ name, phoneNumber });
+              navigation.goBack();
+            }} />
+
+
+        </Column>
+
+
+      </Column>
+    </Column>
   );
 };
 
@@ -49,7 +64,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     marginTop: StatusBar.currentHeight,
     borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     borderTopLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
@@ -63,7 +78,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   goBackButton: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,

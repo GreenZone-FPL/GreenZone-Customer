@@ -25,6 +25,8 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const [customNote, setCustomNote] = useState("");
 
     const { cartDispatch } = useAppContext()
+
+
     useEffect(() => {
         if (product) {
             console.log("Số lượng hiện tại:", quantity);
@@ -159,8 +161,15 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         onButtonPress={async () => {
 
                             // console.log('selectedToppings', selectedToppings)
+                            const updatedToppings = selectedToppings.map(topping => ({
+                                ...topping,
+                                topping: topping._id,
+                                price: topping.extraPrice
+                            }));
+
+                            console.log('updatedToppings = ', updatedToppings);
                             const newCart = await CartManager
-                                .addToCart(product, selectedVariant, selectedToppings, totalAmount, quantity, customNote)
+                                .addToCart(product, selectedVariant, updatedToppings, totalAmount/quantity, quantity, customNote)
 
                             cartDispatch({
                                 type: CartActionTypes.UPDATE_CART,

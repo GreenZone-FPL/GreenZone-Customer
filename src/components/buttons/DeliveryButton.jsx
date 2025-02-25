@@ -10,7 +10,7 @@ import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
 import { Icon } from 'react-native-paper';
-import { TextFormatter } from '../../utils';
+import { CartManager, TextFormatter } from '../../utils';
 
 export const DeliveryButton = ({ title, address, onPress, style, onPressCart, cart }) => {
 
@@ -40,7 +40,7 @@ export const DeliveryButton = ({ title, address, onPress, style, onPressCart, ca
           />
           <NormalText text={
             TextFormatter.formatCurrency(
-              cart.reduce((acc, item) => acc + item.price, 0)
+              CartManager.getCartTotal(cart)
             )
 
           } style={{ color: colors.white, fontWeight: '500' }} />
