@@ -33,7 +33,7 @@ export const Ani_ModalLoading = ({
 const styles = StyleSheet.create({
     modalContainer: {
         flex: 1,
-        backgroundColor: colors.overlay,
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
         justifyContent: 'center',
         alignItems: 'center',
     },

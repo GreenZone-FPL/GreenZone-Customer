@@ -34,10 +34,12 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
       visible={isVisible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onHide}>
+     >
       <Column style={styles.overlay}>
         <Column style={[styles.modalContainer, style]}>
+
           <OverlayStatusBar />
+
           <ScrollView>
             <KeyboardAvoidingView>
               <Row style={styles.header}>
@@ -56,6 +58,8 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
               </Column>
             </KeyboardAvoidingView>
           </ScrollView>
+
+
         </Column>
       </Column>
     </Modal>
@@ -69,6 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     backgroundColor: colors.overlay,
+
   },
   modalContainer: {
     backgroundColor: colors.white,
