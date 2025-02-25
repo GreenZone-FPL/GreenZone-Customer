@@ -8,20 +8,9 @@ import PropTypes from 'prop-types';
 
 
 const SelectableGroupPropTypes = {
-    items: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired,
-            price: PropTypes.number
-        })
-    ).isRequired,
+    items: PropTypes.array.isRequired,
     title: PropTypes.string,
-    selectedGroup: PropTypes.arrayOf(
-        PropTypes.shape({
-            _id: PropTypes.string.isRequired,
-            quantity: PropTypes.number.isRequired
-        })
-    ).isRequired,
+    selectedGroup: PropTypes.array.isRequired,
     setSelectedGroup: PropTypes.func.isRequired,
     required: PropTypes.bool,
     note: PropTypes.string,
@@ -78,25 +67,32 @@ SelectableGroup.propTypes = SelectableGroupPropTypes;
 
 // Hàm xử lý tăng số lượng
 const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
-    if (selectedGroup.length < 3) {
-        const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
+    const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
 
-        if (!existingItem) {
-            // Thêm item mới với quantity là 1
-            setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
-        }
+    if (existingItem) {
+        // Nếu item đã tồn tại, chỉ cập nhật quantity
+        setSelectedGroup(prevGroup =>
+            prevGroup.map(item =>
+                item._id === itemToPlus._id
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item
+            )
+        );
+    } else if (selectedGroup.length < 3) {
+        // Nếu chưa đủ 3 items, có thể thêm mới
+        setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
     }
-
 };
+
 
 // Hàm xử lý giảm số lượng
 const handleMinus = (itemToMinus, selectedGroup, setSelectedGroup) => {
-    const existingItem = selectedGroup.find(item => item.id === itemToMinus.id);
+    const existingItem = selectedGroup.find(item => item._id === itemToMinus._id);
 
     if (existingItem && existingItem.quantity > 1) {
         setSelectedGroup(prevGroup =>
             prevGroup.map(item =>
-                item.id === itemToMinus.id
+                item._id === itemToMinus._id
                     ? { ...item, quantity: item.quantity - 1 }
                     : item
             )

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
-import { CheckoutFooter, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
+import { CheckoutFooter,NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext, useAppContext } from '../../context/appContext';
 import { CartActionTypes } from '../../reducers';
@@ -19,6 +19,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
     const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
+    const [customNote, setCustomNote] = useState("");
     const { updateItem } = route.params
     const { cartDispatch } = useAppContext()
 
@@ -39,7 +40,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
         if (!product) return 0; // Nếu không có sản phẩm, trả về 0
 
         const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
-        const toppingsAmount = toppings?.reduce((acc, item) => acc + item.extraPrice, 0) || 0; // Nếu không có toppings, giá là 0
+        const toppingsAmount = toppings?.reduce((acc, item) => acc + item.extraPrice*item.quantity, 0) || 0; // Nếu không có toppings, giá là 0
 
         return quantity * (basePrice + toppingsAmount);
     };
@@ -63,10 +64,11 @@ const EditCartItemScreen = ({ route, navigation }) => {
                         setTotalAmount(calculateTotal(firstVariant, selectedToppings));
                     }
 
-                    if (detail.topping.length > 0) {
-                        setSelectedToppings(updateItem.toppings)
+                    if (detail.productTopping.length > 0) {
+                        setSelectedToppings(updateItem.toppingItems)
                     }
                     setQuantity(updateItem.quantity)
+                    setCustomNote(updateItem.note)
                 }
             } catch (error) {
                 console.error("Error fetchProductDetail:", error);
@@ -111,18 +113,38 @@ const EditCartItemScreen = ({ route, navigation }) => {
                         }
 
 
-                        {
-                            product.topping.length > 0 &&
+{
+                            product.productTopping.length > 0 &&
+                            <>
+                                <SelectableGroup
+                                    items={product.productTopping.map(item => item.topping)}
+                                    title='Chọn topping'
+                                    selectedGroup={selectedToppings}
+                                    setSelectedGroup={setSelectedToppings}
+                                    note="Tối đa 3 toppings"
+                                    activeIconColor={colors.primary}
+                                    activeTextColor={colors.primary}
+                                />
 
-                            <SelectableGroup
-                                items={product.topping}
-                                title='Chọn topping'
-                                selectedGroup={selectedToppings}
-                                setSelectedGroup={setSelectedToppings}
-                                note="Tối đa 3 toppings"
-                                activeIconColor={colors.primary}
-                                activeTextColor={colors.primary}
-                            />
+                                <NotesList
+                                    onToggleNote={(item) => {
+                                        if (selectedNotes.includes(item)) {
+                                            setSelectedNotes(selectedNotes.filter(note => note !== item));
+                                        } else {
+                                            setSelectedNotes([...selectedNotes, item]);
+                                            if (!customNote.includes(item)) {
+                                                setCustomNote(prev => prev ? `${prev}, ${item}` : item);
+                                            }
+                                        }
+                                    }}
+
+                                    customNote={customNote}
+                                    setCustomNote={setCustomNote}
+                                    selectedNotes={selectedNotes}
+                                    items={notes}
+                                    style={{ margin: GLOBAL_KEYS.PADDING_DEFAULT }}
+                                />
+                            </>
 
                         }
 
@@ -147,18 +169,16 @@ const EditCartItemScreen = ({ route, navigation }) => {
                                 ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
                                 : [];
 
-
                             const newCart = await CartManager.updateCartItem(
                                 updateItem.itemId,
                                 {
-                                    productId: updateItem.productId,
-                                    // productName: updateItem.productName,
                                     variant: selectedVariant?._id,
-                                    variantName: selectedVariant?.size,
                                     quantity,
                                     price: totalAmount,
-                                    toppings: sortedToppings,
-                                    // image: updateItem.image
+                                    productId: updateItem.productId,
+                                    toppingItems: sortedToppings,
+
+                                    variantName: selectedVariant?.size,
                                 }
                             )
 
@@ -166,6 +186,8 @@ const EditCartItemScreen = ({ route, navigation }) => {
                                 type: CartActionTypes.UPDATE_CART,
                                 payload: newCart
                             })
+
+                            navigation.goBack()
 
                         }}
                         buttonTitle='Cập nhật giỏ hàng'

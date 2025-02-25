@@ -16,7 +16,7 @@ import { Icon, RadioButton } from 'react-native-paper';
 import { Column, Ani_ModalLoading, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { CartManager} from '../../utils';
+import { CartManager, TextFormatter } from '../../utils';
 import { useAppContext } from '../../context/appContext';
 import { CartActionTypes } from '../../reducers';
 
@@ -78,14 +78,30 @@ const CheckoutScreen = (props) => {
   }, []);
 
 
+  if (cartState.items.length === 0) {
+    return (
+
+      <View style={styles.container}>
+        <LightStatusBar />
+        <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+        <Image
+          resizeMode="contain"
+          source={require('../../assets/images/empty_cart.png')}
+          style={{ width: '80%', height: 300, alignSelf: 'center' }}
+        />
+      </View >
+    )
+  }
+
   return (
     <View style={styles.container}>
 
       <>
         <LightStatusBar />
         <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+
         {loading ? (
-          <Ani_ModalLoading loading={loading} />
+          <Ani_ModalLoading loading={loading} message='Đang tải Giỏ hàng...' />
         ) : (
           <>
             <ScrollView style={styles.containerContent}>
@@ -106,16 +122,21 @@ const CheckoutScreen = (props) => {
 
               {cartState.items.length > 0 && (
                 <ProductsInfo
-                cartDispatch={cartDispatch}
+                  cartDispatch={cartDispatch}
                   onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
                   cart={cartState.items}
                 />
               )}
 
-              <PaymentDetails />
-              <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
+              <PaymentDetails cart={cartState.items} />
+              <PrimaryButton title='Log cart' onPress={async () => {
+                const cart = CartManager.readCart()
+                // console.log('cart toppingItems = ', cart.toppingItems)
+              }
+
+              } />
             </ScrollView>
-            <Footer address={address} />
+            <Footer cart={cartState.items} address={address} />
           </>
         )}
 
@@ -334,34 +355,47 @@ const SwipeableItem = ({ item, onDelete, onEdit }) => {
 
 
 
-const PaymentDetails = () => (
-  <View
-    style={{ marginBottom: 8 }}>
-    <DualTextRow
-      leftText="CHI TIẾT THANH TOÁN"
-      leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
-    />
-    {[
-      { leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ' },
-      { leftText: 'Phí giao hàng', rightText: '18.000đ' },
-      {
-        leftText: 'Giảm giá',
-        rightText: '-28.000đ',
-        rightTextStyle: { color: colors.primary },
-      },
-      {
-        leftText: 'Tổng tiền',
-        rightText: '68.000đ',
-        leftTextStyle: { color: colors.black, fontWeight: '500' },
-        rightTextStyle: { fontWeight: '700', color: colors.primary },
-      },
-    ].map((item, index) => (
-      <DualTextRow key={index} {...item} />
-    ))}
 
-    <PaymentMethod />
-  </View>
-);
+const PaymentDetails = ({ cart }) => {
+  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+  return (
+    < View
+      style={{ marginBottom: 8 }}>
+      <DualTextRow
+        leftText="CHI TIẾT THANH TOÁN"
+        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
+      />
+      {
+        [
+          { leftText: `Tạm tính (${cart.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(cartTotal)}` },
+          { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(deliveryAmount)}`, },
+          {
+            leftText: 'Giảm giá',
+            rightText: `- ${TextFormatter.formatCurrency(voucherAmount)}`,
+            rightTextStyle: { color: colors.primary },
+          },
+          {
+            leftText: 'Tổng tiền',
+            rightText: `${TextFormatter.formatCurrency(paymentTotal)}`,
+            leftTextStyle: { color: colors.black, fontWeight: '500' },
+            rightTextStyle: { fontWeight: '700', color: colors.primary },
+          },
+        ].map((item, index) => (
+          <DualTextRow key={index} {...item} />
+        ))
+      }
+
+      <PaymentMethod />
+    </View >
+  )
+}
+
+
+
+
 
 const PaymentMethod = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -451,21 +485,25 @@ const PaymentMethod = () => {
   );
 };
 
-const Footer = ({ address }) => {
+const Footer = ({ cart, address }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const cartTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
 
   return (
     <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
       <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
         <Column>
           <TitleText text='Tổng cộng' />
-          <NormalText text='2 sản phẩm' />
-          <NormalText text='Bạn tiết kiệm 12.000đ' style={{ color: colors.green750 }} />
+          <NormalText text={`${cart.length} sản phẩm`} />
+          <NormalText text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(voucherAmount)}`} style={{ color: colors.green750 }} />
         </Column>
 
         <Column>
-          <TitleText text='68.000đ' style={{ color: colors.primary, textAlign: 'right' }} />
-          <NormalText text='69.000đ' style={styles.textDiscount} />
+          <TitleText text={`${TextFormatter.formatCurrency(paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
+          <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} />
         </Column>
       </Row>
 
@@ -475,6 +513,7 @@ const Footer = ({ address }) => {
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'
+        onConfirm={() => setIsVisible(false)}
         address={address} // Truyền địa chỉ vào DialogNotification
       />
     </View>
