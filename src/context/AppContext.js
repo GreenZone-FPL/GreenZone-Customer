@@ -6,7 +6,7 @@ import { CartManager } from '../utils';
 
 export const AppContext = createContext();
 
-
+// fix file name
 export let globalAuthDispatch = null;
 
 export const AppContextProvider = ({ children }) => {
