@@ -13,6 +13,7 @@ import {Icon, IconButton} from 'react-native-paper';
 import {getProductDetail} from '../../axios';
 import {
   CheckoutFooter,
+  NotesList,
   OverlayStatusBar,
   RadioGroup,
   SelectableGroup,
@@ -35,6 +36,7 @@ const ProductDetailSheet = ({route, navigation}) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const {productId} = route.params;
+  const [customNote, setCustomNote] = useState('');
 
   const {cartDispatch} = useAppContext();
   useEffect(() => {
@@ -58,7 +60,10 @@ const ProductDetailSheet = ({route, navigation}) => {
 
     const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
     const toppingsAmount =
-      toppings?.reduce((acc, item) => acc + item.extraPrice, 0) || 0; // Nếu không có toppings, giá là 0
+      toppings?.reduce(
+        (acc, item) => acc + item.extraPrice * item.quantity,
+        0,
+      ) || 0; // Nếu không có toppings, giá là 0
 
     return quantity * (basePrice + toppingsAmount);
   };
@@ -120,16 +125,40 @@ const ProductDetailSheet = ({route, navigation}) => {
               />
             )}
 
-            {product.topping.length > 0 && (
-              <SelectableGroup
-                items={product.topping}
-                title="Chọn topping"
-                selectedGroup={selectedToppings}
-                setSelectedGroup={setSelectedToppings}
-                note="Tối đa 3 toppings"
-                activeIconColor={colors.primary}
-                activeTextColor={colors.primary}
-              />
+            {product.productTopping.length > 0 && (
+              <>
+                <SelectableGroup
+                  items={product.productTopping.map(item => item.topping)}
+                  title="Chọn topping"
+                  selectedGroup={selectedToppings}
+                  setSelectedGroup={setSelectedToppings}
+                  note="Tối đa 3 toppings"
+                  activeIconColor={colors.primary}
+                  activeTextColor={colors.primary}
+                />
+
+                <NotesList
+                  onToggleNote={item => {
+                    if (selectedNotes.includes(item)) {
+                      setSelectedNotes(
+                        selectedNotes.filter(note => note !== item),
+                      );
+                    } else {
+                      setSelectedNotes([...selectedNotes, item]);
+                      if (!customNote.includes(item)) {
+                        setCustomNote(prev =>
+                          prev ? `${prev}, ${item}` : item,
+                        );
+                      }
+                    }
+                  }}
+                  customNote={customNote}
+                  setCustomNote={setCustomNote}
+                  selectedNotes={selectedNotes}
+                  items={notes}
+                  style={{margin: GLOBAL_KEYS.PADDING_DEFAULT}}
+                />
+              </>
             )}
           </ScrollView>
 
@@ -147,18 +176,22 @@ const ProductDetailSheet = ({route, navigation}) => {
             }}
             totalPrice={totalAmount}
             onButtonPress={async () => {
+              // console.log('selectedToppings', selectedToppings)
               const newCart = await CartManager.addToCart(
                 product,
                 selectedVariant,
                 selectedToppings,
                 totalAmount,
                 quantity,
+                customNote,
               );
 
               cartDispatch({
                 type: CartActionTypes.UPDATE_CART,
                 payload: newCart,
               });
+
+              navigation.goBack();
             }}
             buttonTitle="Thêm vào giỏ hàng"
           />
@@ -176,6 +209,7 @@ const notes = [
   'Ít sữa',
   'Nhiều sữa',
   'Nhiều kem',
+  'Đá để riêng',
 ];
 
 const ProductImage = ({hideModal, product}) => {

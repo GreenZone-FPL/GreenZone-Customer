@@ -21,14 +21,10 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
-
+import { useAppContext } from '../../context/appContext';
 import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 
-import {
-  getAllCategoriesAPI,
-  getAllProductsAPI,
-  getAllToppingsAPI,
-} from '../../axios';
+
 
 const OrderScreen = props => {
   const {navigation} = props;
@@ -44,7 +40,7 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-
+  const {cartState, cartDispatch} = useAppContext()
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -226,6 +222,7 @@ const OrderScreen = props => {
             ? currentLocation.address.label
             : 'Đang xác định vị trí...'
         }
+        cart = {cartState.items}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}

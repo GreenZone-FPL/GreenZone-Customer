@@ -3,7 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {AppContextProvider, useAppContext} from './src/context/AppContext';
+import {AppContextProvider, useAppContext} from './src/context/appContext';
 
 import {
   AppGraph,
@@ -35,6 +35,7 @@ import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
+import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 
 const BaseStack = createNativeStackNavigator();
 
@@ -65,6 +66,15 @@ function App() {
                     headerShown: false,
                   }}
                   component={ProductDetailSheet}
+                />
+                <BaseStack.Screen
+                  name={ShoppingGraph.RecipientInfoSheet}
+                  options={{
+                    animation: 'slide_from_bottom',
+                    presentation: 'transparentModal',
+                    headerShown: false,
+                  }}
+                  component={RecipientInfoSheet}
                 />
 
                 <BaseStack.Screen
