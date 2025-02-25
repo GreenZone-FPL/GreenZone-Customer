@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, FlatList } from 'react-native';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { Dialog, Portal, Button, Text, PaperProvider, List } from 'react-native-paper';
+import { GLOBAL_KEYS } from '../../constants';
 
 export const ActionDialog = ({
     visible,
@@ -16,7 +17,11 @@ export const ActionDialog = ({
     return (
         <Portal>
 
-            <Dialog dismissable={false} visible={visible}>
+            <Dialog
+                style={{ borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT }}
+                dismissable={false}
+                visible={visible}
+            >
                 <OverlayStatusBar />
 
                 {title && <Dialog.Title>{title}</Dialog.Title>}
@@ -95,7 +100,7 @@ const ExampleScreen = () => {
                     onApprove={deleteProduct}
                 />
 
-                
+
             </View>
         </PaperProvider>
     );
