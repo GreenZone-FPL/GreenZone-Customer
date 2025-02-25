@@ -52,7 +52,7 @@ export const HorizontalProductItem = ({
             }
 
             {
-                item.toppings.map((topping) => {
+                item.toppingItems.map((topping) => {
                     return (
                         <Text key={topping._id} style={[styles.normalText, { color: colors.brown700 }, optionStyle]}>{topping.name}</Text>
                     )
@@ -60,7 +60,7 @@ export const HorizontalProductItem = ({
             }
             {
                 item.note &&
-                <Text style={[styles.normalText, { color: colors.orange700 }, noteStyle]}>Note: Ít cafe, Nhiều sữa</Text>
+                <Text style={[styles.normalText, { color: colors.orange700 }, noteStyle]}>Note: {item.note}</Text>
             }
 
 

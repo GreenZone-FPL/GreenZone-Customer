@@ -31,9 +31,9 @@ const MainNavigation = () => {
           if (route.name === MainGraph.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
           }
-          else if (route.name === MainGraph.OrderStackScreen) {
-            iconName = focused ? 'food' : 'food-outline';
-          }
+          // else if (route.name === MainGraph.OrderStackScreen) {
+          //   iconName = focused ? 'food' : 'food-outline';
+          // }
           else if (route.name === MainGraph.MerchantStackScreen) {
             iconName = focused ? 'store' : 'store-outline';
           } else if (route.name === MainGraph.VoucherStackScreen) {
@@ -56,9 +56,9 @@ const MainNavigation = () => {
           if (route.name === MainGraph.HomeStackScreen) {
             label = 'Trang chủ';
           }
-          else if (route.name === MainGraph.OrderStackScreen) {
-            label = 'Đặt hàng';
-          }
+          // else if (route.name === MainGraph.OrderStackScreen) {
+          //   label = 'Đặt hàng';
+          // }
           else if (route.name === MainGraph.MerchantStackScreen) {
             label = 'Cửa hàng';
           } else if (route.name === MainGraph.VoucherStackScreen) {
@@ -81,10 +81,10 @@ const MainNavigation = () => {
         component={HomeStackScreen}
 
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name={MainGraph.OrderStackScreen}
         component={OrderStackScreen}
-      />
+      /> */}
       <BottomTab.Screen
         name={MainGraph.MerchantStackScreen}
         component={MerchantStackScreen}

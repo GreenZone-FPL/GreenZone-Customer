@@ -225,7 +225,8 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
        
-        cartLength = {cartState.items.length}
+        cart = {cartState.items}
+        
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 
