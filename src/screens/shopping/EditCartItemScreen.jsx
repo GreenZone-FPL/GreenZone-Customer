@@ -17,8 +17,9 @@ import {
   SelectableGroup,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppContext} from '../../context/AppContext';
-import {CartManager, Toaster} from '../../utils';
+import {AppContext, useAppContext} from '../../context/appContext';
+import {CartActionTypes} from '../../reducers';
+import {CartManager} from '../../utils';
 
 const EditCartItemScreen = ({route, navigation}) => {
   const {favorites, addToFavorites, removeFromFavorites} =
@@ -32,6 +33,7 @@ const EditCartItemScreen = ({route, navigation}) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const {updateItem} = route.params;
+  const {cartDispatch} = useAppContext();
 
   useEffect(() => {
     if (product) {
@@ -158,15 +160,23 @@ const EditCartItemScreen = ({route, navigation}) => {
                   )
                 : [];
 
-              await CartManager.updateCartItem(updateItem.itemId, {
-                productId: updateItem.productId,
-                // productName: updateItem.productName,
-                variant: selectedVariant?._id,
-                variantName: selectedVariant?.size,
-                quantity,
-                price: totalAmount,
-                toppings: sortedToppings,
-                // image: updateItem.image
+              const newCart = await CartManager.updateCartItem(
+                updateItem.itemId,
+                {
+                  productId: updateItem.productId,
+                  // productName: updateItem.productName,
+                  variant: selectedVariant?._id,
+                  variantName: selectedVariant?.size,
+                  quantity,
+                  price: totalAmount,
+                  toppings: sortedToppings,
+                  // image: updateItem.image
+                },
+              );
+
+              cartDispatch({
+                type: CartActionTypes.UPDATE_CART,
+                payload: newCart,
               });
             }}
             buttonTitle="Cập nhật giỏ hàng"

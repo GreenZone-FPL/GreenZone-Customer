@@ -39,10 +39,16 @@ axiosInstance.interceptors.response.use(
         AppAsyncStorage.STORAGE_KEYS.refreshToken,
       );
 
-      if (globalAuthDispatch) {
-        globalAuthDispatch({type: AuthActionTypes.LOGIN_SESSION_EXPIRED});
-      }
-      return Promise.reject(err.response.data);
+            if (globalAuthDispatch) {
+                globalAuthDispatch({
+                    type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+                    payload: 'Phiên đăng nhập hết hạn'
+                });
+            }
+            return Promise.reject(err.response.data);
+        }
+
+        return Promise.reject(err);
     }
 
     return Promise.reject(err);

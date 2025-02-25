@@ -5,7 +5,6 @@ import { Icon, IconButton } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/AppContext';
 import { ShoppingGraph } from '../../layouts/graphs';
 
 const ProductDetailContent = ({ productId, closeSheet }) => {
