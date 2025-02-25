@@ -34,7 +34,6 @@ export const HorizontalProductItem = ({
     optionStyle,
     noteStyle,
     priceStyle,
-    onDelete,
     confirmDelete,
     oldPriceStyle }) => (
     <View style={[styles.itemProduct, containerStyle]}>
@@ -105,16 +104,17 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes
 const styles = StyleSheet.create({
     itemProduct: {
         flexDirection: 'row',
-        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
         gap: GLOBAL_KEYS.GAP_SMALL,
         backgroundColor: colors.white,
-        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+        // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         elevation: 4,
         shadowColor: colors.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
-        // marginBottom: 8
+        marginBottom: 8,
+      
     },
     itemImage: {
         width: 50,

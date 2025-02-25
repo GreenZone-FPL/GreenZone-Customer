@@ -103,6 +103,7 @@ const CheckoutScreen = ({ navigation }) => {
 
             <ScrollView style={styles.containerContent}>
               <DualTextRow
+                style={{ marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8 }}
                 leftText={'GIAO HÀNG'}
                 rightText={'Thay đổi'}
                 leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
@@ -238,7 +239,7 @@ const TimeSection = () => {
 
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText={'Thời gian nhận'}
         rightText={'Thay đổi'}
@@ -303,7 +304,7 @@ const TimeSection = () => {
 const AddressSection = ({ currentLocation, changeAddress }) => {
 
   return (
-    <>
+    <View style={{ marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8 }}>
       <DualTextRow
         leftText="Địa chỉ nhận hàng"
         leftTextStyle={{ fontWeight: '600' }}
@@ -313,7 +314,7 @@ const AddressSection = ({ currentLocation, changeAddress }) => {
       />
 
       <NormalText text={currentLocation ? currentLocation.address.label : 'Đang lấy vị trí...'} />
-    </>
+    </View >
   );
 };
 
@@ -321,7 +322,7 @@ const AddressSection = ({ currentLocation, changeAddress }) => {
 const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
 
   return (
-    <>
+    <View style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText="Thông tin người nhận"
         rightText="Thay đổi"
@@ -330,12 +331,12 @@ const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
         onRightPress={onChangeRecipientInfo}
       />
       <NormalText text={`${userInfo?.name} | ${userInfo?.phoneNumber}`} />
-    </>
+    </View >
   );
 };
 
 const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
-  <View style={{ marginVertical: 8 }}>
+  
     <FlatList
       data={cart}
       keyExtractor={(item) => item.itemId.toString()}
@@ -347,18 +348,18 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
               const newCart = await CartManager.removeFromCart(item.itemId);
               cartDispatch({ type: CartActionTypes.UPDATE_CART, payload: newCart });
             }}
-            containerStyle={{ paddingHorizontal: 8, borderBottomWidth: 1, borderBottomColor: colors.gray300 }}
+            containerStyle={{ paddingHorizontal: 16 }}
             item={item}
             enableAction={false}
           />
         </Pressable>
       )}
-      contentContainerStyle={{ gap: 0 }}
+      contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
       nestedScrollEnabled={true}
       scrollEnabled={false}
     />
 
-  </View>
+ 
 
 );
 
@@ -373,7 +374,7 @@ const PaymentDetails = ({ cart }) => {
   const paymentTotal = cartTotal + deliveryAmount - voucherAmount
   return (
     < View
-      style={{ marginBottom: 8 }}>
+      style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText="CHI TIẾT THANH TOÁN"
         leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
@@ -538,13 +539,11 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: colors.fbBg,
     position: 'relative',
-    // height: Dimensions.get('window').height,
   },
   containerContent: {
     backgroundColor: colors.white,
     flex: 1,
     gap: 16,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   swiper: {
     height: 200,
