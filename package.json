@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@ant-design/icons-react-native": "^2.3.2",
+    "@bwip-js/react-native": "^4.5.1",
     "@expo/vector-icons": "^14.0.4",
     "@gorhom/bottom-sheet": "^5.0.6",
     "@mapbox/polyline": "^1.2.1",

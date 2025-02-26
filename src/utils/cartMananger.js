@@ -1,21 +1,28 @@
 import { AppAsyncStorage } from "./appAsyncStorage";
-import { EventBus, EVENT } from "./eventBus";
 import { Toaster } from "./toaster";
-// closure
 
+// closure
 export const CartManager = (() => {
+
+    const getCartTotal = (cart) => {
+        return cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    }
     const readCart = async () => {
         try {
-            const CART = await AppAsyncStorage.readData('CART', null);
-            console.log('read CART', CART);
-            console.log('read cart length', CART?.length || 0);
-            return CART
+            const cart = await AppAsyncStorage.readData('CART', null);
+            console.log('read cart ', cart);
+            // console.log('read cart length', cart?.length || 0);
+            // if (cart.length > 0) {
+            //     console.log('cart[1]  = ', cart[1])
+            // }
+
+            return cart
         } catch (error) {
-            console.log('error read CART', error);
+            console.log('error read cart', error);
         }
     };
 
-    const addToCart = async (product, variant, selectedToppings, amount, quantity) => {
+    const addToCart = async (product, variant, selectedToppings, price, quantity) => {
         try {
             const cart = await AppAsyncStorage.readData('CART', []);
 
@@ -39,64 +46,85 @@ export const CartManager = (() => {
                 cart[existingIndex].quantity += quantity;
             } else {
                 cart.push({
+                    variant: variant?._id || null,
+                    quantity: quantity,
+                    price: price,
+                    toppingItems: sortedToppings,
+
+                    itemId: new Date().getTime(),
                     productId: product._id,
                     productName: product.name,
-                    variant: variant?._id || null,
                     variantName: variant?.size || '',
-                    quantity: quantity,
-                    price: amount,
-                    toppings: sortedToppings,
                     image: product.image
                 });
             }
 
             await AppAsyncStorage.storeData('CART', cart);
-
-            EventBus.emit(EVENT.ADD_TO_CART, cart.length)
-            EventBus.emit(EVENT.UPDATE_CART, cart.length)
-
             Toaster.show('Thêm vào giỏ hàng thành công');
+            return cart
+
+
         } catch (error) {
             console.log('Error addToCart', error);
         }
     };
 
-    const removeFromCart = async (productId, variantId, toppings) => {
+    const removeFromCart = async (itemId) => {
         try {
             let cart = await AppAsyncStorage.readData('CART', []);
 
-            // Xóa sản phẩm theo productId, variantId và toppings
-            cart = cart.filter(item =>
-                item.productId !== productId ||
-                item.variant !== (variantId || null) ||
-                JSON.stringify(item.toppings || []) !== JSON.stringify(toppings)
-            );
+
+            cart = cart.filter(item => item.itemId !== itemId);
 
             await AppAsyncStorage.storeData('CART', cart);
+            return cart
 
-            // Phát sự kiện để cập nhật UI
-            EventBus.emit(EVENT.DELETE_ITEM, cart);
-            EventBus.emit(EVENT.UPDATE_CART, cart.length)
 
         } catch (error) {
             console.log('Error removeFromCart:', error);
         }
     };
 
+
+    const updateCartItem = async (itemId, updatedProductData) => {
+        try {
+            let cart = await AppAsyncStorage.readData('CART', []);
+
+            const itemIndex = cart.findIndex(item => item.itemId === itemId);
+            if (itemIndex !== -1) {
+                cart[itemIndex] = {
+                    ...cart[itemIndex],
+                    ...updatedProductData,
+                };
+            }
+
+            await AppAsyncStorage.storeData('CART', cart);
+
+            Toaster.show('Cập nhật giỏ hàng thành công');
+            return cart
+        } catch (error) {
+            console.log('Error updateCartItem:', error);
+        }
+    };
+
+
+
     const clearCart = async () => {
         try {
-            await AppAsyncStorage.removeData('CART');
-            EventBus.emit(EVENT.CLEAR_CART, 0)
+            await AppAsyncStorage.storeData('CART', []);
         } catch (error) {
             console.log('Error clearCart:', error);
         }
     }
 
     return {
+        getCartTotal,
         readCart,
         addToCart,
         removeFromCart,
+        updateCartItem,
         clearCart
+
     };
 })();
 

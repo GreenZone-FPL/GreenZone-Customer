@@ -26,6 +26,7 @@ export * from './containers/Column';
 export * from './containers/Row';
 
 // dialogs
+export * from './dialogs/ActionDialog';
 export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';

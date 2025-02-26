@@ -5,154 +5,227 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View
 } from 'react-native';
-import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Column, Ani_ModalLoading, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { Ani_ModalLoading, ActionDialog, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { CartManager, EVENT, EventBus } from '../../utils';
+import { CartActionTypes } from '../../reducers';
+import { CartManager, TextFormatter } from '../../utils';
+import { fetchUserLocation } from '../../utils';
 
+const { width } = Dimensions.get('window');
+const CheckoutScreen = ({ navigation }) => {
 
-const width = Dimensions.get('window').width;
-
-
-const CheckoutScreen = (props) => {
-  const navigation = props.navigation;
-  const [isDialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
+  const [dialogRecipientInforVisible, setDialogRecipientInfoVisible] = useState(false);
+  const [dialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
+  const [actionDialogVisible, setActionDialogVisible] = useState(false)
   const [selectedOption, setSelectedOption] = useState('Giao hàng');
-  const [cart, setCart] = useState([]);
-
+  const [editOption, setEditOption] = useState('');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
 
-  const reverseGeocode = async ({ lat, long }) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+  const { cartState, cartDispatch } = useAppContext()
+  const [userInfo, setUserInfo] = React.useState(null);
 
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        if (items.length > 0) {
-          setCurrentLocation(items[0]);
-        } else {
-          console.log('Không tìm thấy địa chỉ.');
-        }
-      }
-    } catch (error) {
-      console.log('Lỗi khi lấy địa chỉ:', error);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
+
+  // Mở dialog với sản phẩm cần xóa
+  const confirmDelete = (product) => {
+    setSelectedProduct(product);
+    setActionDialogVisible(true);
+  };
+
+  // Xóa sản phẩm sau khi xác nhận
+  const deleteProduct = async (id) => {
+    const newCart = await CartManager.removeFromCart(id);
+    cartDispatch({ type: CartActionTypes.UPDATE_CART, payload: newCart })
+    setActionDialogVisible(false);
+  }
+
+
+  const handleCloseDialogShippingMethod = () => {
+    setDialogShippingMethodVisible(false);
+  };
+
+  // Hàm xử lý khi chọn phương thức giao hàng
+  const handleOptionSelect = option => {
+    setSelectedOption(option);
+    setDialogShippingMethodVisible(false); // Đóng dialog
+  };
+
+  const handleEditOption = option => {
+    setEditOption(option);
+
+    if (option === 'Giao hàng') {
+      setDialogShippingMethodVisible(false);
+    } else if (option === 'Mang đi') {
+      setDialogShippingMethodVisible(false)
+      navigation.navigate(UserGraph.AddressMerchantScreen);
     }
   };
 
+
   useEffect(() => {
-    const fetchLocation = async () => {
-      setLoading(true); // Bật loading ngay từ đầu
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
-        Geolocation.getCurrentPosition(
-          async position => {
-            if (position.coords) {
-              await reverseGeocode({
-                lat: position.coords.latitude,
-                long: position.coords.longitude,
-              });
-            }
-          },
-          error => console.log('Lỗi lấy vị trí:', error),
-          { timeout: 5000 }
-        );
-      } finally {
-        setLoading(false); // Chỉ tắt loading một lần duy nhất
-      }
-    };
-
-    fetchLocation();
-
-    return () => setLoading(false); // Cleanup nếu unmount
+    fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
 
-
-
-  useEffect(() => {
-    const fetchCart = async () => {
-      setLoading(true);
-      try {
-        const storedCart = await CartManager.readCart();
-        setCart(storedCart);
-      } catch (error) {
-        console.error('Lỗi khi đọc giỏ hàng:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCart();
-
-    const onCartUpdated = (updatedCart) => {
-      setCart(updatedCart);
-    };
-
-    EventBus.addListener(EVENT.DELETE_ITEM, onCartUpdated);
-
-    return () => EventBus.removeAllListeners(EVENT.DELETE_ITEM, onCartUpdated);
-  }, []);
-
+  if (cartState.items.length === 0) {
+    return (
+      <EmptyView goBack={() => navigation.goBack()} />
+    )
+  }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+
+
+      <LightStatusBar />
+      <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
 
       <>
-        <LightStatusBar />
-        <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+
         {loading ? (
-          <Ani_ModalLoading loading={loading} />
+          <Ani_ModalLoading loading={loading} message='Đang tải Giỏ hàng...' />
         ) : (
           <>
+
             <ScrollView style={styles.containerContent}>
               <DualTextRow
+                style={{ marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8 }}
                 leftText={'GIAO HÀNG'}
                 rightText={'Thay đổi'}
                 leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
                 rightTextStyle={{ color: colors.primary }}
-                onRightPress={() => setDialogShippingMethodVisible(true)}
+                onRightPress={() => setIsModalVisible(true)}
               />
               <AddressSection
                 currentLocation={currentLocation}
                 changeAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen) }}
                 setAddress={setAddress} />
-              <RecipientInfo onChangeRecipientInfo={() => navigation.navigate(ShoppingGraph.RecipientInfoSheet)} />
+
+              <RecipientInfo
+                userInfo={userInfo || { name: 'Dai ngoc', phoneNumber: '1234567890' }}
+                onChangeRecipientInfo={() =>
+                  //  navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
+                  setDialogRecipientInfoVisible(true)}
+              />
               <TimeSection />
-              {cart.length > 0 && (
-                <ProductsInfo cart={cart} onEditItem={() => navigation.navigate(ShoppingGraph.ProductDetailSheet)} />
-              )}
-              <PaymentDetails />
+
+              {cartState.items.length > 0 ?
+                <ProductsInfo
+                  confirmDelete={confirmDelete}
+                  cartDispatch={cartDispatch}
+                  onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
+                  cart={cartState.items}
+                /> : null
+              }
+
+              <PaymentDetails cart={cartState.items} />
               <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
             </ScrollView>
-            <Footer address={address} />
+
+            <Footer cart={cartState.items} address={address} />
+
+
           </>
         )}
-
-        <DialogShippingMethod
-          isVisible={isDialogShippingMethodVisible}
-          selectedOption={selectedOption}
-          onHide={() => setDialogShippingMethodVisible(false)}
-          onEditOption={option => console.log(`Editing ${option}`)}
-          onOptionSelect={option => setSelectedOption(option)}
-        />
       </>
+      <ActionDialog
+        visible={actionDialogVisible}
+        title="Xác nhận"
+        content={`Bạn có chắc chắn muốn xóa "${selectedProduct?.productName}"?`}
+        cancelText="Hủy"
+        approveText="Xóa"
+        onCancel={() => setActionDialogVisible(false)}
+        onApprove={() => deleteProduct(selectedProduct.itemId)}
+      />
 
-    </View>
+      <DialogRecipientInfo
+        visible={dialogRecipientInforVisible}
+        onHide={() => setDialogRecipientInfoVisible(false)}
+        onConfirm={(data) => {
+          setUserInfo(data);
+          setDialogRecipientInfoVisible(false);
+        }}
+      />
+
+
+      <DialogShippingMethod
+        isVisible={dialogShippingMethodVisible}
+        selectedOption={selectedOption}
+        onHide={handleCloseDialogShippingMethod}
+        onOptionSelect={handleOptionSelect}
+        onEditOption={handleEditOption}
+      />
+
+    </SafeAreaView>
   );
 
 };
 export default CheckoutScreen;
+
+
+const EmptyView = ({ goBack }) => {
+  return (
+    <View style={[styles.container, { alignItems: 'center', gap: 50 }]}>
+      <LightStatusBar />
+      <NormalHeader title="Xác nhận đơn hàng" onLeftPress={goBack} />
+      <Image
+        resizeMode="contain"
+        source={require('../../assets/images/empty_cart.png')}
+        style={{ width: '80%', height: 300, alignSelf: 'center' }}
+      />
+
+      <NormalText text='Giỏ hàng của bạn đang trống' />
+    </View >
+  )
+}
+
+
+const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
+  const [name, setName] = React.useState('');
+  const [phoneNumber, setPhoneNumber] = React.useState('');
+
+  return (
+    <DialogBasic
+      title={'Thay đổi thông tin người nhận '}
+      isVisible={visible}
+      onHide={onHide}
+      style={{ backgroundColor: colors.fbBg }}
+    >
+      <Column style={styles.content}>
+        <Text style={styles.label}>Tên người nhận</Text>
+        <FlatInput label={''} value={name} setValue={setName} />
+        <Text style={styles.label}>Số điện thoại</Text>
+        <FlatInput label={''} value={phoneNumber} setValue={setPhoneNumber} />
+
+        <PrimaryButton
+
+          title={'Cập nhật'}
+          onPress={() => {
+            onConfirm({ name, phoneNumber })
+            setName('')
+            setPhoneNumber('')
+          }} />
+
+
+      </Column>
+
+    </DialogBasic>
+  )
+}
 
 
 const dateOptions = ["Hôm nay", "Ngày mai"];
@@ -166,7 +239,7 @@ const TimeSection = () => {
 
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText={'Thời gian nhận'}
         rightText={'Thay đổi'}
@@ -231,7 +304,7 @@ const TimeSection = () => {
 const AddressSection = ({ currentLocation, changeAddress }) => {
 
   return (
-    <>
+    <View style={{ marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8 }}>
       <DualTextRow
         leftText="Địa chỉ nhận hàng"
         leftTextStyle={{ fontWeight: '600' }}
@@ -241,14 +314,15 @@ const AddressSection = ({ currentLocation, changeAddress }) => {
       />
 
       <NormalText text={currentLocation ? currentLocation.address.label : 'Đang lấy vị trí...'} />
-    </>
+    </View >
   );
 };
 
 
-const RecipientInfo = ({ onChangeRecipientInfo }) => {
+const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
+
   return (
-    <>
+    <View style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText="Thông tin người nhận"
         rightText="Thay đổi"
@@ -256,126 +330,83 @@ const RecipientInfo = ({ onChangeRecipientInfo }) => {
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
       />
-      <NormalText text='Ngọc Đại | 012345678' />
-
-    </>
+      <NormalText text={`${userInfo?.name} | ${userInfo?.phoneNumber}`} />
+    </View >
   );
 };
 
-const ProductsInfo = ({ onEditItem, cart }) => {
-
-  return (
-    <View style={{ marginVertical: 8 }}>
-      <FlatList
-        data={cart}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-
-          <SwipeableItem
-            onEdit={onEditItem}
-            item={item}
+const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
+  
+    <FlatList
+      data={cart}
+      keyExtractor={(item) => item.itemId.toString()}
+      renderItem={({ item }) => (
+        <Pressable onPress={() => onEditItem(item)}>
+          <HorizontalProductItem
+            confirmDelete={() => confirmDelete(item)}
             onDelete={async () => {
-              console.log(item.productId, item.variant, item.toppings)
-              await CartManager.removeFromCart(item.productId, item.variant, item.toppings)
-            }} />
-        )}
-        contentContainerStyle={{ gap: 8 }}
-        scrollEnabled={false}
-      />
-    </View>
-  );
-};
-
-const SwipeableItem = ({ item, onDelete, onEdit }) => {
-  const swipeableRef = useRef(null);
-  const handleReset = () => {
-    swipeableRef.current?.reset();
-  };
-
-
-  const renderRightActions = () => (
-    <Row style={{ backgroundColor: 'white' }}>
-      <TouchableOpacity onPress={() => {
-        onEdit()
-        handleReset()
-      }}>
-        <Column style={[styles.actionButton, { backgroundColor: colors.green700 }]}>
-          <Icon
-            source={'tooltip-edit'}
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.white}
+              const newCart = await CartManager.removeFromCart(item.itemId);
+              cartDispatch({ type: CartActionTypes.UPDATE_CART, payload: newCart });
+            }}
+            containerStyle={{ paddingHorizontal: 16 }}
+            item={item}
+            enableAction={false}
           />
-          <NormalText text='Chỉnh sửa' style={{ color: colors.white }} />
+        </Pressable>
+      )}
+      contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
+      nestedScrollEnabled={true}
+      scrollEnabled={false}
+    />
 
-        </Column>
+ 
 
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => {
-        onDelete(item.productId)
-        handleReset()
-      }}>
-        <Column style={[styles.actionButton, { backgroundColor: colors.gray400 }]}>
-          <Icon
-            source={'delete-variant'}
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.white}
-          />
-          <NormalText text='Xóa' style={{ color: colors.white }} />
+);
 
-        </Column>
 
-      </TouchableOpacity>
-    </Row>
-  );
 
+
+
+const PaymentDetails = ({ cart }) => {
+  const cartTotal = CartManager.getCartTotal(cart)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
   return (
-    <View style={styles.container}>
-      <ReanimatedSwipeable
-        renderRightActions={renderRightActions}
-        rightThreshold={50}
-        friction={2}
-        ref={swipeableRef}
-        containerStyle={{}}
-      >
-        <HorizontalProductItem
-          containerStyle={{ marginBottom: 0, paddingHorizontal: 8, borderBottomColor: colors.gray300, borderBottomWidth: 1 }}
-          item={item}
-          enableAction={false} />
-      </ReanimatedSwipeable>
-    </View>
-  );
+    < View
+      style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
+      <DualTextRow
+        leftText="CHI TIẾT THANH TOÁN"
+        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
+      />
+      {
+        [
+          { leftText: `Tạm tính (${cart.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(cartTotal)}` },
+          { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(deliveryAmount)}`, },
+          {
+            leftText: 'Giảm giá',
+            rightText: `- ${TextFormatter.formatCurrency(voucherAmount)}`,
+            rightTextStyle: { color: colors.primary },
+          },
+          {
+            leftText: 'Tổng tiền',
+            rightText: `${TextFormatter.formatCurrency(paymentTotal)}`,
+            leftTextStyle: { color: colors.black, fontWeight: '500' },
+            rightTextStyle: { fontWeight: '700', color: colors.primary },
+          },
+        ].map((item, index) => (
+          <DualTextRow key={index} {...item} />
+        ))
+      }
+
+      <PaymentMethod />
+    </View >
+  )
 }
 
 
 
-const PaymentDetails = () => (
-  <View
-    style={{ marginBottom: 8 }}>
-    <DualTextRow
-      leftText="CHI TIẾT THANH TOÁN"
-      leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
-    />
-    {[
-      { leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ' },
-      { leftText: 'Phí giao hàng', rightText: '18.000đ' },
-      {
-        leftText: 'Giảm giá',
-        rightText: '-28.000đ',
-        rightTextStyle: { color: colors.primary },
-      },
-      {
-        leftText: 'Tổng tiền',
-        rightText: '68.000đ',
-        leftTextStyle: { color: colors.black, fontWeight: '500' },
-        rightTextStyle: { fontWeight: '700', color: colors.primary },
-      },
-    ].map((item, index) => (
-      <DualTextRow key={index} {...item} />
-    ))}
 
-    <PaymentMethod />
-  </View>
-);
 
 const PaymentMethod = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -465,21 +496,25 @@ const PaymentMethod = () => {
   );
 };
 
-const Footer = ({ address }) => {
+const Footer = ({ cart, address }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const cartTotal = CartManager.getCartTotal(cart)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
 
   return (
     <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
       <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
         <Column>
           <TitleText text='Tổng cộng' />
-          <NormalText text='2 sản phẩm' />
-          <NormalText text='Bạn tiết kiệm 12.000đ' style={{ color: colors.green750 }} />
+          <NormalText text={`${cart.length} sản phẩm`} />
+          <NormalText text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(voucherAmount)}`} style={{ color: colors.green750 }} />
         </Column>
 
         <Column>
-          <TitleText text='68.000đ' style={{ color: colors.primary, textAlign: 'right' }} />
-          <NormalText text='69.000đ' style={styles.textDiscount} />
+          <TitleText text={`${TextFormatter.formatCurrency(paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
+          <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} />
         </Column>
       </Row>
 
@@ -489,6 +524,7 @@ const Footer = ({ address }) => {
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'
+        onConfirm={() => setIsVisible(false)}
         address={address} // Truyền địa chỉ vào DialogNotification
       />
     </View>
@@ -500,14 +536,18 @@ const Footer = ({ address }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
     flexDirection: 'column',
+    backgroundColor: colors.fbBg,
+    position: 'relative',
   },
   containerContent: {
     backgroundColor: colors.white,
     flex: 1,
     gap: 16,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
+  swiper: {
+    height: 200,
+    width: width * 0.8,
   },
 
   textDiscount: {
@@ -544,6 +584,25 @@ const styles = StyleSheet.create({
   selectedTimeText: { color: "#333", fontWeight: "bold" },
 
   actionButton: {
-    flexDirection: 'column', alignItems: 'center', paddingHorizontal: 16, backgroundColor: colors.green700, height: '100%', justifyContent: 'center', borderRadius: 8
-  }
+    flexDirection: 'column', alignItems: 'center', paddingHorizontal: 12, backgroundColor: colors.green700, height: '100%', justifyContent: 'center', borderRadius: 8
+  },
+
+  content: {
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    backgroundColor: colors.transparent
+  },
+  label: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontWeight: '500',
+  },
+  goBackButton: {
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
+    backgroundColor: colors.green100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
+    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
+    position: 'absolute',
+    end: 0,
+  },
 })
