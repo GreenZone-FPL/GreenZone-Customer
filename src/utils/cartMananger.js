@@ -1,9 +1,49 @@
 import { AppAsyncStorage } from "./appAsyncStorage";
 import { Toaster } from "./toaster";
-
-// closure
+import { CartActionTypes } from "../reducers";
+import { PaymentMethod, DeliveryMethod } from "../constants";
 export const CartManager = (() => {
 
+
+    const updateOrderInfo = async (dispatch, orderDetails) => {
+        try {
+
+            const cart = await AppAsyncStorage.readData('CART', []);
+
+            if (cart.length === 0) {
+                Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
+                return;
+            }
+
+            const order = {
+                deliveryMethod: orderDetails.deliveryMethod || DeliveryMethod.PICK_UP,
+                fulfillmentDateTime: orderDetails.fulfillmentDateTime || new Date().toISOString(),
+                note: orderDetails.note || '',
+                totalPrice: orderDetails.totalPrice,
+                paymentMethod: orderDetails.paymentMethod || PaymentMethod.COD,
+                shippingAddress: orderDetails.shippingAddress || '',
+                store: orderDetails.store || '',
+                owner: orderDetails.owner || '',
+                voucher: orderDetails.voucher || '',
+
+            };
+
+            console.log('order = ', order)
+            dispatch({
+                type: CartActionTypes.MAKE_ORDER,
+                payload: order
+            });
+
+
+
+            Toaster.show('Đặt hàng thành công');
+
+            // await AppAsyncStorage.storeData('CART', []);
+        } catch (error) {
+            console.log('Error update Order info:', error);
+            Toaster.show('Lỗi khi tạo đơn hàng');
+        }
+    };
     const getCartTotal = (cart) => {
         return cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
     }
@@ -118,6 +158,7 @@ export const CartManager = (() => {
     }
 
     return {
+        updateOrderInfo,
         getCartTotal,
         readCart,
         addToCart,

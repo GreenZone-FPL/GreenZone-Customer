@@ -14,7 +14,7 @@ axiosInstance.interceptors.request.use(
     // Lấy token từ AsyncStorage
     const token = await AppAsyncStorage.readData('accessToken');
     // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTk0NTgxMiwiZXhwIjoxNzM5OTQ1ODcyfQ.dJLwZHrHc-swD0ZwBiJWmUq0CIACK8tdLjwnbhL0j2A'
-    console.log('Token:', token);
+    // console.log('Token:', token);
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
