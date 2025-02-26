@@ -12,18 +12,6 @@ export const getProfile = async () => {
         throw error;
     }
 };
-export const getAddresses = async () => {
-  try {
-    const response = await axiosInstance.get('v1/address/my-address');
-    console.log('API Response:', response.data); // Log phản hồi đầy đủ
-    return response.data;
-  } catch (error) {
-    console.log('error:', error);
-    throw error;
-  }
-};
-
-
 
 
 export const register = async ({ firstName, lastName, email, dateOfBirth, gender, avatar = null }) => {
@@ -46,7 +34,6 @@ export const register = async ({ firstName, lastName, email, dateOfBirth, gender
         throw error
     }
 };
-
 
 
 
