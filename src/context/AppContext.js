@@ -45,6 +45,14 @@ export const AppContextProvider = ({ children }) => {
 
   const [favorites, setFavorites] = useState([]);
 
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [recipientInfo, setRecipientInfo] = useState({
+    home: '',
+    name: '',
+    phone: ''
+  });
+
   const addToFavorites = (product) => {
     setFavorites((prevFavorites) => [...prevFavorites, product]);
   };
@@ -70,8 +78,18 @@ export const AppContextProvider = ({ children }) => {
     return () => { appDispatch = null; };
   }, [dispatch]);
 
+  
+
+  const addAddress = (address) => {
+    setSelectedAddresses((prev) => [...prev, address]);
+  };
+  
+
+
   return (
-    <AppContext.Provider value={{ state, dispatch, favorites, addToFavorites, removeFromFavorites }}>
+    <AppContext.Provider value={{ state, dispatch, favorites, addToFavorites, removeFromFavorites,  
+      selectedAddresses, addAddress, selectedAddress, setSelectedAddress, 
+      recipientInfo, setRecipientInfo }}>
       {children}
     </AppContext.Provider>
   );
