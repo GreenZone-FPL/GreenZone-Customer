@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -10,20 +10,21 @@ import {
   StyleSheet,
   Linking,
 } from 'react-native';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { OverlayStatusBar } from '../../components';
-import { Icon } from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {OverlayStatusBar} from '../../components';
+import {Icon} from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { BottomGraph } from '../../layouts/graphs';
+import {BottomGraph} from '../../layouts/graphs';
+import {TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
 
-const VoucherDetailSheet = ({ navigation, route }) => {
-  const { item } = route.params || null
+const VoucherDetailSheet = ({navigation, route}) => {
+  const {item} = route.params || null;
   const [showAlert, setShowAlert] = useState(false);
 
   const copyToClipboard = () => {
-    Clipboard.setString(item.discountCode);
+    Clipboard.setString(item.code);
     setShowAlert(true);
 
     setTimeout(() => {
@@ -32,7 +33,7 @@ const VoucherDetailSheet = ({ navigation, route }) => {
   };
 
   const handleTermsText = () => {
-    Linking.openURL(item.homepage);
+    Linking.openURL(data.homepage);
   };
 
   return (
@@ -68,8 +69,8 @@ const VoucherDetailSheet = ({ navigation, route }) => {
 
               <View style={styles.separator} />
 
-              <Image source={{ uri: item.qrCode }} style={styles.qrCodeImage} />
-              <Text style={styles.discountCode}>{item.discountCode}</Text>
+              <Image source={{uri: item.image}} style={styles.qrCodeImage} />
+              <Text style={styles.discountCode}>{item.code}</Text>
 
               <TouchableOpacity onPress={copyToClipboard}>
                 <Text style={styles.copyText}>Sao chép</Text>
@@ -85,12 +86,14 @@ const VoucherDetailSheet = ({ navigation, route }) => {
 
               <View style={styles.expiryContainer}>
                 <Text style={styles.expiryText}>Ngày hết hạn:</Text>
-                <Text style={styles.expiryDate}>{item.time}</Text>
+                <Text style={styles.expiryDate}>
+                  {TextFormatter.formatDateSimple(item.endDate)}
+                </Text>
               </View>
 
               <View style={styles.separator} />
 
-              {item.description.map((desc, index) => (
+              {data?.description.map((desc, index) => (
                 <Text style={styles.descriptionText} key={index}>
                   {index + 1}/ <Text>{desc}</Text>
                 </Text>
@@ -99,7 +102,7 @@ const VoucherDetailSheet = ({ navigation, route }) => {
               <Text style={styles.termsText}>
                 Xem thêm các điều khoản sử dụng dịch vụ tại:
                 <TouchableOpacity onPress={handleTermsText}>
-                  <Text style={styles.termsLink}>{item.homepage}</Text>
+                  <Text style={styles.termsLink}>{data.homepage}</Text>
                 </TouchableOpacity>
               </Text>
             </View>
@@ -108,6 +111,21 @@ const VoucherDetailSheet = ({ navigation, route }) => {
       </View>
     </View>
   );
+};
+
+const data = {
+  qrCode:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1024px-QR_code_for_mobile_English_Wikipedia.svg.png',
+  description: [
+    'Áp dụng cho tất cả các đơn hàng giao hàng.',
+    'Không giới hạn số lần sử dụng trong ngày.',
+    'Chỉ áp dụng với đơn hàng trên 100.000 VNĐ.',
+    'Không áp dụng cùng các chương trình khuyến mãi khác.',
+    'Chỉ áp dụng tại các cửa hàng liên kết.',
+    'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
+    'Liên hệ tổng đài để biết thêm chi tiết.',
+  ],
+  homepage: 'https://www.example.com/delivery-voucher-1',
 };
 
 const styles = StyleSheet.create({
@@ -151,7 +169,7 @@ const styles = StyleSheet.create({
   },
   borderContainer: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
@@ -169,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
@@ -252,5 +270,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VoucherDetailSheet
-
+export default VoucherDetailSheet;
