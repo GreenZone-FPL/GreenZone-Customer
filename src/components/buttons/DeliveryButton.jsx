@@ -29,7 +29,7 @@ export const DeliveryButton = ({ title, address, onPress, style, onPressCart, ca
 
       </Column>
       {
-        cart.length > 0 &&
+        cart?.length > 0 &&
         <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
 
 
