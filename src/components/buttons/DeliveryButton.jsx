@@ -29,7 +29,9 @@ export const DeliveryButton = ({
           {address}
         </Text>
       </Column>
-      {cart?.length > 0 && (
+
+      {
+        cart?.length > 0 &&
         <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
           <Icon source="food-outline" color={colors.white} size={20} />
           <NormalText
