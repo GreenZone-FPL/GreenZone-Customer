@@ -3,19 +3,26 @@ import { Toaster } from "./toaster";
 
 // closure
 export const CartManager = (() => {
-    
+
+    const getCartTotal = (cart) => {
+        return cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    }
     const readCart = async () => {
         try {
-            const CART = await AppAsyncStorage.readData('CART', null);
-            console.log('read CART ', CART);
-            console.log('read cart length', CART?.length || 0);
-            return CART
+            const cart = await AppAsyncStorage.readData('CART', null);
+            console.log('read cart ', cart);
+            // console.log('read cart length', cart?.length || 0);
+            // if (cart.length > 0) {
+            //     console.log('cart[1]  = ', cart[1])
+            // }
+
+            return cart
         } catch (error) {
-            console.log('error read CART', error);
+            console.log('error read cart', error);
         }
     };
 
-    const addToCart = async (product, variant, selectedToppings, amount, quantity, note) => {
+    const addToCart = async (product, variant, selectedToppings, price, quantity) => {
         try {
             const cart = await AppAsyncStorage.readData('CART', []);
 
@@ -41,9 +48,9 @@ export const CartManager = (() => {
                 cart.push({
                     variant: variant?._id || null,
                     quantity: quantity,
-                    price: amount,
+                    price: price,
                     toppingItems: sortedToppings,
-                    
+
                     itemId: new Date().getTime(),
                     productId: product._id,
                     productName: product.name,
@@ -51,7 +58,7 @@ export const CartManager = (() => {
                     image: product.image
                 });
             }
- 
+
             await AppAsyncStorage.storeData('CART', cart);
             Toaster.show('Thêm vào giỏ hàng thành công');
             return cart
@@ -111,7 +118,7 @@ export const CartManager = (() => {
     }
 
     return {
-       
+        getCartTotal,
         readCart,
         addToCart,
         removeFromCart,
