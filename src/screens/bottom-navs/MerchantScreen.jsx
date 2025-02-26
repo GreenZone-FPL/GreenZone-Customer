@@ -213,7 +213,7 @@ console.log('sortedMerchants:', sortedMerchants);
               {/* Đăng ký hình ảnh cho các cửa hàng */}
               <MapboxGL.Images
                 images={{
-                  store: require('../../assets/images/image-Service/icon_location.png'),
+                  store: require('../../assets/images/image-Service/ic_location.png'),
                 }}
               />
 
