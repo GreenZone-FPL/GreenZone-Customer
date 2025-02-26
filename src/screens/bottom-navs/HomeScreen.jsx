@@ -1,6 +1,4 @@
-import Geolocation from '@react-native-community/geolocation';
-import axios from 'axios';
-import React, {useEffect, useState, useRef, useCallback} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,8 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator,
-  View,
+  View
 } from 'react-native';
 
 import {
@@ -24,29 +21,27 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import {getAllCategories, getAllProducts} from '../../axios';
+import { getAllCategories, getAllProducts } from '../../axios';
 import {
-  BarcodeUser,
   CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
-  ImageCarousel,
   LightStatusBar,
-  NotificationList,
   ProductsListHorizontal,
   ProductsListVertical,
-  TitleText,
-  Ani_ModalLoading,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, EventBus, EVENT } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { ShoppingGraph } from '../../layouts/graphs';
+import { fetchData, fetchUserLocation } from '../../utils';
+
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
-  const [currentLocation, setCurrenLocation] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
@@ -55,6 +50,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
+  const { cartState, cartDispatch } = useAppContext()
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -66,67 +62,23 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-    const handleEditOption = option => {
-      setEditOption(option);
-  
-      if (option === 'Giao hàng') {
-        setIsModalVisible(false);
-      } else if (option === 'Mang đi') {
-        navigation.navigate(UserGraph.AddressMerchantScreen);
-      }
-    };
-  
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+  const handleEditOption = option => {
+    setEditOption(option);
 
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-      }
-    } catch (error) {
-      console.log(error);
+    if (option === 'Giao hàng') {
+      setIsModalVisible(false);
+    } else if (option === 'Mang đi') {
+      navigation.navigate(UserGraph.AddressMerchantScreen);
     }
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      Geolocation.getCurrentPosition(
-        position => {
-          if (position.coords) {
-            reverseGeocode({
-              lat: position.coords.latitude,
-              long: position.coords.longitude,
-            });
-          }
-        },
-        error => console.log(error),
-        {timeout: 5000}, // Giới hạn 5 giây
-      );
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
+    fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
-
-  // Hàm gọi API chung
-  const fetchData = async (api, setter, callback) => {
-    try {
-      const data = await api();
-      setter(data); // Cập nhật state
-      if (callback) {
-        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
-      }
-    } catch (error) {
-      console.log(`Error`, error);
-    } finally {
-      setLoading(false); // Dừng loading khi lấy dữ liệu xong
-    }
-  };
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -155,17 +107,15 @@ const HomeScreen = props => {
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
   useEffect(() => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
-
-
   }, []);
 
-  
+
 
 
   return (
@@ -173,7 +123,7 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge
         title={currentCategory}
-        onBadgePress={() => {}}
+        onBadgePress={() => { }}
         isHome={false}
       />
       <ScrollView
@@ -205,7 +155,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
@@ -228,7 +178,9 @@ const HomeScreen = props => {
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-       
+
+        cart={cartState.items}
+
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 
@@ -243,7 +195,7 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({IconComponent, title, onPress}) => (
+const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
@@ -256,7 +208,7 @@ const CardCategory = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}>
+        contentContainerStyle={{ gap: 22 }}>
         <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
@@ -312,11 +264,11 @@ const CardCategory = () => {
 
 const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const {navigation} = props;
+  const { navigation } = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', {searchQuery: query});
+      navigation.navigate('', { searchQuery: query });
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
@@ -332,7 +284,7 @@ const Searchbar = props => {
         borderRadius: 4,
         gap: 10,
       }}>
-      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput
@@ -365,7 +317,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     position: 'relative',
     height: Dimensions.get('window').height,
   },
@@ -406,13 +358,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   searchBar: {
-    flexDirection: 'row', // Đặt icon và TextInput trên cùng một hàng
-    alignItems: 'center', // Căn giữa theo chiều dọc
-    backgroundColor: colors.gray200, // Màu nền của thanh tìm kiếm
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, // Bo góc thanh tìm kiếm
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, // Khoảng cách hai bên
-    paddingVertical: 8, // Độ cao của thanh tìm kiếm
-    width: '84%', // Khoảng cách xung quanh thanh tìm kiếm
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.gray200,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 8,
+    width: '84%',
   },
   icon: {
     marginRight: 10, // Khoảng cách giữa icon và TextInput

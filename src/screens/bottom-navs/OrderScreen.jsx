@@ -1,6 +1,4 @@
-import Geolocation from '@react-native-community/geolocation';
-import axios from 'axios';
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -9,6 +7,7 @@ import {
   View,
 } from 'react-native';
 
+import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 import {
   CategoryMenu,
   DeliveryButton,
@@ -20,23 +19,18 @@ import {
   ProductsListVertical,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
 import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { fetchData, fetchUserLocation } from '../../utils';
 
-import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
-
-import {
-  getAllCategoriesAPI,
-  getAllProductsAPI,
-  getAllToppingsAPI,
-} from '../../axios';
 
 const OrderScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentLocation, setCurrenLocation] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('');
   const [editOption, setEditOption] = useState('');
@@ -44,7 +38,7 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-
+  const { cartState, cartDispatch } = useAppContext()
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -67,30 +61,9 @@ const OrderScreen = props => {
   };
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
-      }
-    });
+    fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
-  // Hàm gọi API chung
-  const fetchData = async (api, setter, callback) => {
-    try {
-      const data = await api();
-      setter(data); // Cập nhật state
-      if (callback) {
-        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
-      }
-    } catch (error) {
-      console.error(`Error fetching data from ${api.toString()}:`, error);
-    } finally {
-      setLoading(false); // Dừng loading khi lấy dữ liệu xong
-    }
-  };
 
   useEffect(() => {
     // Fetch categories
@@ -105,7 +78,7 @@ const OrderScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -152,22 +125,10 @@ const OrderScreen = props => {
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const openDialogCategoryPress = () => {
     setDialogVisible(true);
   };
@@ -207,7 +168,7 @@ const OrderScreen = props => {
           keyExtractor={item => item._id}
           scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
@@ -226,6 +187,7 @@ const OrderScreen = props => {
             ? currentLocation.address.label
             : 'Đang xác định vị trí...'
         }
+        cart={cartState.items}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}

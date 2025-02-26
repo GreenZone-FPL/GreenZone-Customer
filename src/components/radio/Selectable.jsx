@@ -7,10 +7,7 @@ import {QuantitySelector} from '../buttons/QuantitySelector';
 import { TextFormatter } from '../../utils';
 
 const SelectablePropTypes = {
-  item: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number
-  }).isRequired,
+  item: PropTypes.object.isRequired,
   quantity: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,
   handlePlus: PropTypes.func.isRequired,

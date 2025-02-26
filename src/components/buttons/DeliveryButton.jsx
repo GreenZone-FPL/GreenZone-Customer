@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Image,
   StyleSheet,
@@ -6,32 +6,13 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppAsyncStorage, EventBus, EVENT, CartManager } from '../../utils';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
+import { Icon } from 'react-native-paper';
+import { CartManager, TextFormatter } from '../../utils';
 
-
-export const DeliveryButton = ({ title, address, onPress, style, onPressCart }) => {
-  const [cartLength, setCartLength] = useState(0);
-
-  useEffect(() => {
-    const loadCart = async () => {
-      const cart = await CartManager.readCart();
-      setCartLength(cart.length);
-    };
-
-    loadCart();
-
-    const onCartUpdated = (count) => {
-      setCartLength(count);
-    };
-    EventBus.addListener(EVENT.UPDATE_CART, onCartUpdated)
-
-    return () => {
-      EventBus.removeAllListeners(EVENT.UPDATE_CART, onCartUpdated)
-    }
-  }, [])
+export const DeliveryButton = ({ title, address, onPress, style, onPressCart, cart }) => {
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
@@ -47,12 +28,30 @@ export const DeliveryButton = ({ title, address, onPress, style, onPressCart }) 
         <Text numberOfLines={1} ellipsizeMode='tail' style={styles.address}>{address}</Text>
 
       </Column>
+      {
+        cart.length > 0 &&
+        <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
 
-      <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
-        
-        <Text style={styles.quantity}>{cartLength}</Text>
-        <NormalText text='Giỏ hàng' style={{ color: colors.white }} />
-      </TouchableOpacity>
+
+          <Icon
+            source="food-outline"
+            color={colors.white}
+            size={20}
+          />
+          <NormalText text={
+            TextFormatter.formatCurrency(
+              CartManager.getCartTotal(cart)
+            )
+
+          } style={{ color: colors.white, fontWeight: '500' }} />
+
+          <Text style={styles.quantity}>{cart.length}</Text>
+        </TouchableOpacity>
+
+      }
+
+
+
     </TouchableOpacity>
   );
 };
