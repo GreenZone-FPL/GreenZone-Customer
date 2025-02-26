@@ -60,10 +60,12 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
         // Lưu token vào AsyncStorage
         const accessToken = data.token.accessToken.token;
         const refreshToken = data.token.refreshToken.token;
-        console.log('accesstoken =', accessToken)
+        console.log('userId =', data.user._id)
 
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken);
+        await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.userId, data.user._id);
+
 
         return response.data;
 

@@ -6,7 +6,7 @@ export const DeliveryMethod = Object.freeze({
 
 export const PaymentMethod = Object.freeze({
     ONLINE: "online",
-    CODE: "cod"
+    COD: "cod"
 })
 
 export const OrderStatus = Object.freeze({

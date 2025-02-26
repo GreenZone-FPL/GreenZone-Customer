@@ -3,14 +3,18 @@ import { Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, Style
 import { Icon, RadioButton } from 'react-native-paper';
 import { ActionDialog, Ani_ModalLoading, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
-import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
+import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
+import { createOrder } from '../../axios/'
+import { types } from 'react-native-document-picker';
+
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
+  const [dialogCreateOrderVisible, setDialogCreateOrderVisible] = useState(false);
 
   const [dialogRecipientInforVisible, setDialogRecipientInfoVisible] = useState(false);
   const [dialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
@@ -27,6 +31,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [timeInfo, setTimeInfo] = React.useState(null);
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
+
 
   // Mở dialog với sản phẩm cần xóa
   const confirmDelete = (product) => {
@@ -46,7 +51,7 @@ const CheckoutScreen = ({ navigation }) => {
   }, []);
 
 
-  if (cartState.items.length === 0) {
+  if (cartState.orderItems.length === 0) {
     return (
       <EmptyView goBack={() => navigation.goBack()} />
     )
@@ -110,20 +115,30 @@ const CheckoutScreen = ({ navigation }) => {
                 />
               </Column>
 
-              {cartState.items.length > 0 ?
+              {cartState.orderItems.length > 0 ?
                 <ProductsInfo
                   confirmDelete={confirmDelete}
                   cartDispatch={cartDispatch}
                   onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
-                  cart={cartState.items}
+                  cart={cartState.orderItems}
                 /> : null
               }
 
-              <PaymentDetails cart={cartState.items} />
-              <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
+              <PaymentDetails
+                cartState={cartState}
+                onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen,
+                  {
+                    cartTotal: CartManager.getCartTotal(cartState.orderItems),
+                    deliveryAmount: 18000
+                  }
+                )}
+                cart={cartState.orderItems}
+              />
+              <PrimaryButton title='Log cartState' onPress={() => console.log('cartState =', cartState)} />
+              <PrimaryButton title='Reset cartState' onPress={() => cartDispatch({type: CartActionTypes.RESET_STATE})} />
             </ScrollView>
 
-            <Footer deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.items} address={address} />
+            <Footer showDialog={() => setDialogCreateOrderVisible(true)} deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.orderItems} address={address} />
 
 
           </>
@@ -136,6 +151,47 @@ const CheckoutScreen = ({ navigation }) => {
         onConfirm={(data) => {
           setTimeInfo(data)
           setDialogSelectTimeVisible(false)
+        }}
+      />
+
+      <ActionDialog
+        visible={dialogCreateOrderVisible}
+        title="Xác nhận"
+        content={`Bạn xác nhận đặt đơn hàng"?`}
+        cancelText="Hủy"
+        approveText="Đồng ý"
+        onCancel={() => setDialogCreateOrderVisible(false)}
+        onApprove={async () => {
+
+          try {
+            const cartTotal = CartManager.getCartTotal(cartState.orderItems)
+            const deliveryAmount = 18000
+            const voucherAmount = 28000
+            const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+            const orderInfo = {
+              deliveryMethod: deliveryMethod === 'Mang đi' ? DeliveryMethod.PICK_UP : DeliveryMethod.DELIVERY,
+              fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+              totalPrice: paymentTotal,
+              note,
+              paymentMethod: PaymentMethod.COD
+            }
+      
+            // Cập nhật state
+            CartManager.updateOrderInfo(cartDispatch, orderInfo)
+      
+            // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
+            const response = await createOrder({
+              ...cartState,  // Giữ nguyên dữ liệu hiện tại
+              ...orderInfo   // Ghi đè các thông tin cập nhật
+            });
+            console.log('order data', response)
+
+          } catch (error) {
+            console.log('error', error)
+          } finally {
+            setDialogCreateOrderVisible(false)
+          }
+
         }}
       />
       <ActionDialog
@@ -172,7 +228,7 @@ const CheckoutScreen = ({ navigation }) => {
             setDialogShippingMethodVisible(false);
           } else if (option === 'Mang đi') {
             setDialogShippingMethodVisible(false)
-            navigation.navigate(UserGraph.AddressMerchantScreen);
+            navigation.navigate(BottomGraph.MerchantScreen, { updateOrderInfo: true });
           }
         }}
       />
@@ -318,11 +374,11 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 );
 
 
-const PaymentDetails = ({ cart }) => {
+const PaymentDetails = ({ onSelectVoucher, cart, cartState }) => {
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
-  const voucherAmount = 28000
-  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+  const voucherAmount = 1
+  const paymentTotal = cartTotal + deliveryAmount
   return (
     < View
       style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
@@ -335,9 +391,10 @@ const PaymentDetails = ({ cart }) => {
           { leftText: `Tạm tính (${cart.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(cartTotal)}` },
           { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(deliveryAmount)}`, },
           {
-            leftText: 'Giảm giá',
+            leftText: 'Giảm giá >>>',
             rightText: `- ${TextFormatter.formatCurrency(voucherAmount)}`,
             rightTextStyle: { color: colors.primary },
+            onLeftPress: () => onSelectVoucher()
           },
           {
             leftText: 'Tổng tiền',
@@ -359,36 +416,41 @@ const PaymentDetails = ({ cart }) => {
 const PaymentMethodView = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState({
-    name: 'Tiền mặt',
+    name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
   });
 
-  // Danh sách phương thức thanh toán
+
   const paymentMethods = [
     {
-      name: 'Tiền mặt',
+      name: 'Thanh toán khi nhận hàng',
       image: require('../../assets/images/logo_vnd.png'),
       value: 'cash',
+      paymentMethod: PaymentMethod.COD
     },
     {
       name: 'Momo',
       image: require('../../assets/images/logo_momo.png'),
       value: 'momo',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'ZaloPay',
       image: require('../../assets/images/logo_zalopay.png'),
       value: 'zalopay',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'PayOs',
       image: require('../../assets/images/logo_payos.png'),
       value: 'PayOs',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'Thanh toán bằng thẻ',
       image: require('../../assets/images/logo_card.png'),
       value: 'Card',
+      paymentMethod: PaymentMethod.ONLINE
     },
   ];
 
@@ -444,8 +506,15 @@ const PaymentMethodView = () => {
   );
 };
 
-const Footer = ({ note, deliveryMethod, cartDispatch, cart, address }) => {
-  const [isVisible, setIsVisible] = useState(false);
+const getPaymentTotal = () => {
+  const cartTotal = CartManager.getCartTotal(cart)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+
+}
+const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart, address }) => {
+
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
   const voucherAmount = 28000
@@ -466,25 +535,16 @@ const Footer = ({ note, deliveryMethod, cartDispatch, cart, address }) => {
         </Column>
       </Row>
 
-      <PrimaryButton title='Đặt hàng' onPress={() => {
-        CartManager.updateOrderInfo(
-          cartDispatch,
-          {
-            deliveryMethod: deliveryMethod === 'Mang đi' ? DeliveryMethod.PICK_UP : DeliveryMethod.DELIVERY,
-            totalPrice: paymentTotal,
-            note
-          }
-        )
-      }}
+      <PrimaryButton title='Đặt hàng' onPress={showDialog}
       />
 
-      <DialogNotification
+      {/* <DialogNotification
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'
         onConfirm={() => setIsVisible(false)}
         address={address} // Truyền địa chỉ vào DialogNotification
-      />
+      /> */}
     </View>
   );
 };

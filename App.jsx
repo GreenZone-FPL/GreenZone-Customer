@@ -8,10 +8,12 @@ import {AppContextProvider, useAppContext} from './src/context/appContext';
 import {
   AppGraph,
   AuthGraph,
+  BottomGraph,
   MainGraph,
   OrderGraph,
   ShoppingGraph,
   UserGraph,
+  VoucherGraph,
 } from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
@@ -37,6 +39,8 @@ import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen'
+import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
+import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import { PaperProvider } from 'react-native-paper';
 
 const BaseStack = createNativeStackNavigator();
@@ -83,6 +87,8 @@ function App() {
                     }}
                     component={EditCartItemScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
+                  <BaseStack.Screen name={BottomGraph.MerchantScreen} component={MerchantScreen} />
+                  <BaseStack.Screen name={VoucherGraph.MyVouchersScreen} component={MyVoucherScreen} />
                   <BaseStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
                   <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
                   <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />

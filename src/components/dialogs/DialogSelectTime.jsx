@@ -66,7 +66,13 @@ const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
                             />
                         </Row>
 
-                        <PrimaryButton title='Xác nhận' onPress={() => onConfirm({ selectedDay, selectedTime })} />
+                        <PrimaryButton
+                            title='Xác nhận'
+                            onPress={() => {
+                                const fulfillmentDateTime = calculateFulfillmentDateTime(selectedDay, selectedTime);
+                                onConfirm({ selectedDay, selectedTime, fulfillmentDateTime });
+                            }}
+                        />
                     </Column>
                 </Column>
             </Column>
@@ -111,6 +117,24 @@ const generateTimeSlots = (selectedDay) => {
     }
     return timeList;
 };
+
+const calculateFulfillmentDateTime = (selectedDay, selectedTime) => {
+    const now = new Date();
+    let fulfillmentDate = new Date(now);
+
+    if (selectedDay === "Ngày mai") {
+        fulfillmentDate.setDate(now.getDate() + 1);
+        fulfillmentDate.setHours(8, 0, 0, 0); // Mặc định bắt đầu từ 08:00
+    }
+
+    if (selectedTime !== "Sớm nhất có thể") {
+        const [hour, minute] = selectedTime.split(":").map(Number);
+        fulfillmentDate.setHours(hour, minute, 0, 0);
+    }
+
+    return fulfillmentDate.toISOString();
+};
+
 
 const styles = StyleSheet.create({
     overlay: {
