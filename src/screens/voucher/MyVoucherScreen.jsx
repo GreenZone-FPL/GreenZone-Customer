@@ -98,7 +98,6 @@ const Body = ({data, handleGoVoucherDetail}) => (
 );
 
 const ItemVoucher = ({item, handleGoVoucherDetail}) => {
-  console.log(item);
   return (
     <TouchableOpacity
       onPress={() => handleGoVoucherDetail(item)}
