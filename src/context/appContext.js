@@ -30,8 +30,6 @@ export const AppContextProvider = ({ children }) => {
       const isValid = await AppAsyncStorage.isTokenValid();
       if (isValid) {
         authDispatch({ type: AuthActionTypes.LOGIN })
-      } else {
-        authDispatch({ type: AuthActionTypes.LOGIN_SESSION_EXPIRED, payload: 'Phiên đăng nhập hết hạn' })
       }
     };
     checkLoginStatus();

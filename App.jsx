@@ -1,9 +1,9 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {AppContextProvider, useAppContext} from './src/context/appContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppContextProvider, useAppContext } from './src/context/appContext';
 
 import {
   AppGraph,
@@ -42,11 +42,13 @@ import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen'
 import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import { PaperProvider } from 'react-native-paper';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
 
 const BaseStack = createNativeStackNavigator();
 
 function App() {
-  const {authState} = useAppContext();
+  const { authState } = useAppContext();
+  console.log('needAuthen', authState.needAuthen)
 
   return (
     <PaperProvider>
@@ -56,10 +58,19 @@ function App() {
         <SafeAreaProvider>
           <NavigationContainer>
             <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-              {authState.isLoggedIn ? (
-                <>
-                  <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
 
+
+              {authState.needAuthen === false ? (
+                <>
+
+                  {authState.needFlash && (
+                    <BaseStack.Screen
+                      name={AuthGraph.SplashScreen2}
+                      component={SplashScreen2}
+                    />
+                  )}
+                  {/* <BaseStack.Screen name={AuthGraph.SplashScreen2} component={SplashScreen2} /> */}
+                  <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
                   <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
                   <BaseStack.Screen
                     name={ShoppingGraph.ProductDetailSheet}

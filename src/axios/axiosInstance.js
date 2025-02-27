@@ -33,20 +33,31 @@ axiosInstance.interceptors.response.use(
     if (err.response.data.statusCode === 401) {
       console.log('401 log out');
 
-      // Xóa token khỏi AsyncStorage
-      await AppAsyncStorage.removeData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-      await AppAsyncStorage.removeData(
-        AppAsyncStorage.STORAGE_KEYS.refreshToken,
-      );
+      const token = await AppAsyncStorage.readData('accessToken');
+      console.log('token', token)
+      if (token) { // chưa logout nhưng hết hạn token
+        // Xóa token khỏi AsyncStorage
+        await AppAsyncStorage.removeData(
+          AppAsyncStorage.STORAGE_KEYS.accessToken,
+        );
+        await AppAsyncStorage.removeData(
+          AppAsyncStorage.STORAGE_KEYS.refreshToken,
+        );
 
-      if (globalAuthDispatch) {
-        globalAuthDispatch({
-          type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
-          payload: 'Phiên đăng nhập hết hạn',
-        });
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+            payload: 'Phiên đăng nhập hết hạn',
+          });
+        }
+      }else{ // đã logout và hết hạn token
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED
+          });
+        }
       }
+
       return Promise.reject(err.response.data);
     }
 

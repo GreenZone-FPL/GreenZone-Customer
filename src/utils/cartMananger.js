@@ -28,7 +28,7 @@ export const CartManager = (() => {
         }
     };
     const getCartTotal = (cart) => {
-        return cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
+        return cart.reduce((acc, item) => acc + item.price, 0)
     }
     const readCart = async () => {
         try {
