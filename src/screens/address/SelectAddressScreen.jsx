@@ -50,7 +50,7 @@ const SelectAddressScreen = props => {
               key={address._id}
               name={address.consigneeName}
               phone={address.consigneePhone}
-              location={`${address.specificAddress}, ${address.ward}, Quận ${address.district}, ${address.province}`}
+              location={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
               isSelected={selectedAddress === address._id}
               onPress={() => setSelectedAddress(address._id)}
             />
@@ -89,7 +89,7 @@ const Card = ({name, phone, location, isSelected, onPress}) => (
       color={colors.primary}
     />
     <View style={styles.textContainer}>
-      <Text style={styles.location}>Tên: {name}</Text>
+      <Text style={styles.location}>Người nhận: {name}</Text>
       <Text style={styles.location}>SĐT: {phone}</Text>
       <Text style={styles.location}>Địa chỉ: {location}</Text>
     </View>
@@ -116,11 +116,12 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 2,
-    marginBottom: 8,
+    elevation: 4,
+    marginBottom: 16,
+    gap: 12
   },
   selectedCard: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: colors.primary,
   },
   location: {

@@ -179,7 +179,7 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
 
-        cart={cartState.items}
+        cart={cartState.orderItems}
 
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />

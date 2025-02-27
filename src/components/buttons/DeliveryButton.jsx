@@ -1,11 +1,11 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {Column} from '../containers/Column';
-import {Row} from '../containers/Row';
-import {NormalText} from '../texts/NormalText';
-import {Icon} from 'react-native-paper';
-import {CartManager, TextFormatter} from '../../utils';
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
+import { NormalText } from '../texts/NormalText';
+import { Icon } from 'react-native-paper';
+import { CartManager, TextFormatter } from '../../utils';
 
 export const DeliveryButton = ({
   title,
@@ -17,7 +17,7 @@ export const DeliveryButton = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
-      <Column style={{flex: 1}}>
+      <Column style={{ flex: 1 }}>
         <Row>
           <Image
             source={require('../../assets/images/ic_delivery.png')}
@@ -36,12 +36,12 @@ export const DeliveryButton = ({
           <Icon source="food-outline" color={colors.white} size={20} />
           <NormalText
             text={TextFormatter.formatCurrency(CartManager.getCartTotal(cart))}
-            style={{color: colors.white, fontWeight: '500'}}
+            style={{ color: colors.white, fontWeight: '500' }}
           />
 
           <Text style={styles.quantity}>{cart.length}</Text>
         </TouchableOpacity>
-      )}
+      }
     </TouchableOpacity>
   );
 };
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green100,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,

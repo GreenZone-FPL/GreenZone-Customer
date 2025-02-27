@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -8,21 +8,23 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
-import {LightStatusBar, NormalHeader, CustomTabView} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph, VoucherGraph} from '../../layouts/graphs';
-import {getAllVoucher} from '../../axios/index';
-import {TextFormatter} from '../../utils';
+import { LightStatusBar, NormalHeader, CustomTabView } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph, VoucherGraph } from '../../layouts/graphs';
+import { getAllVoucher } from '../../axios/index';
+import { CartManager, TextFormatter } from '../../utils';
+import { useAppContext } from '../../context/appContext';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const MyVoucherScreen = props => {
-  const {navigation} = props;
+  const { navigation, route } = props;
   const [tabIndex, setTabIndex] = useState(0);
-
+ 
   const [vouchers, setVouchers] = useState([]);
-
+  const { cartState, cartDispatch } = useAppContext()
   const fetchVouchers = async () => {
     try {
       const response = await getAllVoucher();
@@ -37,7 +39,7 @@ const MyVoucherScreen = props => {
   }, []);
 
   const navigateToVoucherDetail = item => {
-    navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
+    navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
   };
 
   return (
@@ -56,26 +58,32 @@ const MyVoucherScreen = props => {
           titleInActiveColor: colors.gray700,
         }}>
         <Body
+          goBack={() => navigation.goBack()}
           key="delivery"
+          cartDispatch={cartDispatch}
           data={vouchers}
-          handleGoVoucherDetail={navigateToVoucherDetail}
+        // handleGoVoucherDetail={navigateToVoucherDetail}
         />
         <Body
+          goBack={() => navigation.goBack()}
+          cartDispatch={cartDispatch}
           key="merchant"
           data={vouchers}
-          handleGoVoucherDetail={navigateToVoucherDetail}
+        // handleGoVoucherDetail={navigateToVoucherDetail}
         />
         <Body
+          goBack={() => navigation.goBack()}
           key="takeAway"
+          cartDispatch={cartDispatch}
           data={vouchers}
-          handleGoVoucherDetail={navigateToVoucherDetail}
+        // handleGoVoucherDetail={navigateToVoucherDetail}
         />
       </CustomTabView>
     </View>
   );
 };
 
-const Body = ({data, handleGoVoucherDetail}) => (
+const Body = ({ cartDispatch, goBack, data, handleGoVoucherDetail }) => (
   <ScrollView showsVerticalScrollIndicator={false}>
     <View style={styles.bodyContainer}>
       {data.length > 0 && (
@@ -84,12 +92,12 @@ const Body = ({data, handleGoVoucherDetail}) => (
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
-          <ItemVoucher
-            item={item}
-            handleGoVoucherDetail={handleGoVoucherDetail}
-          />
-        )}
+        renderItem={({ item }) => {
+          // console.log('Render item:', item);
+          return (
+            <ItemVoucher goBack={goBack} cartDispatch={cartDispatch} item={item} />
+          );
+        }}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
       />
@@ -97,19 +105,33 @@ const Body = ({data, handleGoVoucherDetail}) => (
   </ScrollView>
 );
 
-const ItemVoucher = ({item, handleGoVoucherDetail}) => {
+
+const ItemVoucher = ({ item, cartDispatch, goBack, handleGoVoucherDetail }) => {
   return (
-    <TouchableOpacity
-      onPress={() => handleGoVoucherDetail(item)}
-      style={styles.itemVoucher}>
-      <Image source={{uri: item.image}} style={styles.itemImage} />
+    <Pressable
+      style={styles.itemVoucher}
+      onPress={() => {
+        console.log('item Vouher = ', item)
+        if (cartDispatch) {
+          CartManager.updateOrderInfo(
+            cartDispatch,
+            {
+              voucher: item._id
+            }
+          )
+        }
+
+        goBack()
+      }}
+    >
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>Voucher {item.name}</Text>
         <Text style={styles.itemTime}>
           Hết hạn {TextFormatter.formatDateSimple(item.endDate)}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -158,7 +180,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,

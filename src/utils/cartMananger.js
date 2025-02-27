@@ -1,9 +1,32 @@
+import { CartActionTypes } from "../reducers";
 import { AppAsyncStorage } from "./appAsyncStorage";
 import { Toaster } from "./toaster";
-
-// closure
 export const CartManager = (() => {
 
+
+    const updateOrderInfo = async (dispatch, orderDetails) => {
+        try {
+
+            const cart = await AppAsyncStorage.readData('CART', []);
+            const userId = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.userId, null)
+            if (cart.length === 0) {
+                Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
+                return;
+            }
+
+            dispatch({
+                type: CartActionTypes.UPDATE_ORDER_INFO,
+                payload: { ...orderDetails, owner: userId }
+            });
+
+            Toaster.show('Đặt hàng thành công');
+
+            // await AppAsyncStorage.storeData('CART', []);
+        } catch (error) {
+            console.log('Error update Order info:', error);
+            Toaster.show('Lỗi khi tạo đơn hàng');
+        }
+    };
     const getCartTotal = (cart) => {
         return cart.reduce((acc, item) => acc + item.price * item.quantity, 0)
     }
@@ -118,6 +141,7 @@ export const CartManager = (() => {
     }
 
     return {
+        updateOrderInfo,
         getCartTotal,
         readCart,
         addToCart,

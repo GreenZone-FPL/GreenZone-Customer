@@ -187,7 +187,7 @@ const OrderScreen = props => {
             ? currentLocation.address.label
             : 'Đang xác định vị trí...'
         }
-        cart={cartState.items}
+        cart={cartState.orderItems}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}

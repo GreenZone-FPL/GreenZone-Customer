@@ -1,44 +1,37 @@
-import Geolocation from '@react-native-community/geolocation';
-import axios from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  Pressable,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
-import { Ani_ModalLoading, ActionDialog, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import { ActionDialog, Ani_ModalLoading, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
+import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
-import { CartManager, TextFormatter } from '../../utils';
-import { fetchUserLocation } from '../../utils';
+import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
+import { createOrder } from '../../axios/'
+import { types } from 'react-native-document-picker';
+
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
+  const [dialogCreateOrderVisible, setDialogCreateOrderVisible] = useState(false);
 
   const [dialogRecipientInforVisible, setDialogRecipientInfoVisible] = useState(false);
   const [dialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
+  const [dialogSelecTimeVisible, setDialogSelectTimeVisible] = useState(false);
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
-  const [selectedOption, setSelectedOption] = useState('Giao hàng');
-  const [editOption, setEditOption] = useState('');
   const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
+  const [deliveryMethod, setDeliveryMethod] = useState('Mang đi');
+  const [note, setNote] = useState('');
 
   const { cartState, cartDispatch } = useAppContext()
   const [userInfo, setUserInfo] = React.useState(null);
-
+  const [timeInfo, setTimeInfo] = React.useState(null);
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
+
 
   // Mở dialog với sản phẩm cần xóa
   const confirmDelete = (product) => {
@@ -53,35 +46,12 @@ const CheckoutScreen = ({ navigation }) => {
     setActionDialogVisible(false);
   }
 
-
-  const handleCloseDialogShippingMethod = () => {
-    setDialogShippingMethodVisible(false);
-  };
-
-  // Hàm xử lý khi chọn phương thức giao hàng
-  const handleOptionSelect = option => {
-    setSelectedOption(option);
-    setDialogShippingMethodVisible(false); // Đóng dialog
-  };
-
-  const handleEditOption = option => {
-    setEditOption(option);
-
-    if (option === 'Giao hàng') {
-      setDialogShippingMethodVisible(false);
-    } else if (option === 'Mang đi') {
-      setDialogShippingMethodVisible(false)
-      navigation.navigate(UserGraph.AddressMerchantScreen);
-    }
-  };
-
-
   useEffect(() => {
     fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
 
-  if (cartState.items.length === 0) {
+  if (cartState.orderItems.length === 0) {
     return (
       <EmptyView goBack={() => navigation.goBack()} />
     )
@@ -89,7 +59,6 @@ const CheckoutScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-
 
       <LightStatusBar />
       <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
@@ -104,11 +73,11 @@ const CheckoutScreen = ({ navigation }) => {
             <ScrollView style={styles.containerContent}>
               <DualTextRow
                 style={{ marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginBottom: 8 }}
-                leftText={'GIAO HÀNG'}
+                leftText={deliveryMethod.toLocaleUpperCase()}
                 rightText={'Thay đổi'}
                 leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
                 rightTextStyle={{ color: colors.primary }}
-                onRightPress={() => setIsModalVisible(true)}
+                onRightPress={() => setDialogShippingMethodVisible(true)}
               />
               <AddressSection
                 currentLocation={currentLocation}
@@ -121,27 +90,110 @@ const CheckoutScreen = ({ navigation }) => {
                   //  navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
                   setDialogRecipientInfoVisible(true)}
               />
-              <TimeSection />
+              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} />
 
-              {cartState.items.length > 0 ?
+
+              <Column style={{ marginVertical: 8, marginHorizontal: 16 }}>
+                <Row>
+                  <NormalText
+                    text='Thêm ghi chú cho cửa hàng bạn nhé'
+                    style={{ color: colors.primary, fontStyle: "italic" }}
+                  />
+                  <Icon source="pencil" size={20} color={colors.primary} />
+                </Row>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nhập ghi chú khác..."
+                  placeholderTextColor={colors.gray500}
+                  value={note}
+                  onChangeText={setNote}
+                  multiline={true}
+                  textAlignVertical="top"
+                  returnKeyType="done"
+
+                />
+              </Column>
+
+              {cartState.orderItems.length > 0 ?
                 <ProductsInfo
                   confirmDelete={confirmDelete}
                   cartDispatch={cartDispatch}
                   onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
-                  cart={cartState.items}
+                  cart={cartState.orderItems}
                 /> : null
               }
 
-              <PaymentDetails cart={cartState.items} />
-              <PrimaryButton title='Log cart' onPress={CartManager.readCart} />
+              <PaymentDetails
+                cartState={cartState}
+                onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen,
+                  {
+                    cartTotal: CartManager.getCartTotal(cartState.orderItems),
+                    deliveryAmount: 18000
+                  }
+                )}
+                cart={cartState.orderItems}
+              />
+              <PrimaryButton title='Log cartState' onPress={() => console.log('cartState =', cartState)} />
+              <PrimaryButton title='Reset cartState' onPress={() => cartDispatch({type: CartActionTypes.RESET_STATE})} />
             </ScrollView>
 
-            <Footer cart={cartState.items} address={address} />
+            <Footer showDialog={() => setDialogCreateOrderVisible(true)} deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.orderItems} address={address} />
 
 
           </>
         )}
       </>
+
+      <DialogSelectTime
+        visible={dialogSelecTimeVisible}
+        onClose={() => setDialogSelectTimeVisible(false)}
+        onConfirm={(data) => {
+          setTimeInfo(data)
+          setDialogSelectTimeVisible(false)
+        }}
+      />
+
+      <ActionDialog
+        visible={dialogCreateOrderVisible}
+        title="Xác nhận"
+        content={`Bạn xác nhận đặt đơn hàng"?`}
+        cancelText="Hủy"
+        approveText="Đồng ý"
+        onCancel={() => setDialogCreateOrderVisible(false)}
+        onApprove={async () => {
+
+          try {
+            const cartTotal = CartManager.getCartTotal(cartState.orderItems)
+            const deliveryAmount = 18000
+            const voucherAmount = 28000
+            const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+            const orderInfo = {
+              deliveryMethod: deliveryMethod === 'Mang đi' ? DeliveryMethod.PICK_UP : DeliveryMethod.DELIVERY,
+              fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+              totalPrice: paymentTotal,
+              note,
+              paymentMethod: PaymentMethod.COD
+            }
+      
+            // Cập nhật state
+            CartManager.updateOrderInfo(cartDispatch, orderInfo)
+      
+            // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
+            const response = await createOrder({
+              ...cartState,  // Giữ nguyên dữ liệu hiện tại
+              ...orderInfo   // Ghi đè các thông tin cập nhật
+            });
+            console.log('order data', response)
+
+          } catch (error) {
+            console.log('error', error)
+          } finally {
+            setDialogCreateOrderVisible(false)
+          }
+
+        }}
+      />
       <ActionDialog
         visible={actionDialogVisible}
         title="Xác nhận"
@@ -161,13 +213,24 @@ const CheckoutScreen = ({ navigation }) => {
         }}
       />
 
-
       <DialogShippingMethod
         isVisible={dialogShippingMethodVisible}
-        selectedOption={selectedOption}
-        onHide={handleCloseDialogShippingMethod}
-        onOptionSelect={handleOptionSelect}
-        onEditOption={handleEditOption}
+        selectedOption={deliveryMethod}
+        onHide={() => setDialogShippingMethodVisible(false)}
+        onOptionSelect={option => {
+          setDeliveryMethod(option);
+          setDialogShippingMethodVisible(false);
+        }}
+        onEditOption={option => {
+          setDeliveryMethod(option);
+
+          if (option === 'Giao hàng') {
+            setDialogShippingMethodVisible(false);
+          } else if (option === 'Mang đi') {
+            setDialogShippingMethodVisible(false)
+            navigation.navigate(BottomGraph.MerchantScreen, { updateOrderInfo: true });
+          }
+        }}
       />
 
     </SafeAreaView>
@@ -206,10 +269,10 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
       style={{ backgroundColor: colors.fbBg }}
     >
       <Column style={styles.content}>
-        <Text style={styles.label}>Tên người nhận</Text>
-        <FlatInput label={''} value={name} setValue={setName} />
-        <Text style={styles.label}>Số điện thoại</Text>
-        <FlatInput label={''} value={phoneNumber} setValue={setPhoneNumber} />
+
+        <FlatInput label={'Tên người nhận'} value={name} setValue={setName} />
+
+        <FlatInput label={'Số điện thoại'} value={phoneNumber} setValue={setPhoneNumber} />
 
         <PrimaryButton
 
@@ -228,77 +291,24 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
 }
 
 
-const dateOptions = ["Hôm nay", "Ngày mai"];
-const timeSlots = Array.from({ length: 24 }, (_, i) => `${8 + Math.floor(i / 2)}:${i % 2 === 0 ? "00" : "30"}`);
-
-const TimeSection = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedDay, setSelectedDay] = useState(dateOptions[0]); // Mặc định là "Hôm nay"
-  const [selectedTime, setSelectedTime] = useState(timeSlots[0]);
-  const timeListRef = useRef(null);
-
-
+const TimeSection = ({ timeInfo, showDialog }) => {
   return (
-    <TouchableOpacity style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
+    <Column style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
       <DualTextRow
         leftText={'Thời gian nhận'}
         rightText={'Thay đổi'}
         leftTextStyle={{ fontWeight: '600' }}
         rightTextStyle={{ color: colors.primary }}
-        onRightPress={() => setIsVisible(true)}
+        onRightPress={showDialog}
       />
-      <NormalText text={`${selectedDay} - ${selectedTime}`} />
 
-      <DialogBasic isVisible={isVisible} onHide={() => setIsVisible(false)} title="Thời gian nhận">
-        <Row>
-          {/* Danh sách ngày */}
-          <FlatList
-            data={dateOptions}
-            keyExtractor={(item) => item}
-            scrollEnabled={false}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[styles.dayItem, selectedDay === item && styles.selectedDay]}
-                onPress={() => {
-                  setSelectedDay(item);
-                  setSelectedTime(timeSlots[0]); // Reset về 8:00 khi đổi ngày
-                }}
-              >
-                <TitleText text={item} style={{ color: selectedDay === item ? colors.black : colors.gray400 }} />
+      {
+        timeInfo ?
+          <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`} /> :
+          <NormalText text='Chọn thời gian nhận' />
+      }
 
-              </TouchableOpacity>
-            )}
-          />
-
-          {/* Danh sách giờ */}
-          <FlatList
-            ref={timeListRef}
-            data={timeSlots}
-            keyExtractor={(item) => item}
-            showsVerticalScrollIndicator={false}
-            snapToAlignment="center"
-            nestedScrollEnabled={true}
-            snapToInterval={50} // Điều chỉnh để căn giữa
-            decelerationRate="fast"
-            initialNumToRender={3} // Chỉ render trước 3 item
-            maxToRenderPerBatch={3} // Render tối đa 3 item cùng lúc
-            windowSize={3} // Giữ 3 item trong bộ nhớ để tối ưu hiệu suất
-            style={{ maxHeight: 150 }} // Giới hạn chiều cao để chỉ hiển thị 3 item (50px mỗi item)
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[styles.timeItem, selectedTime === item && styles.selectedTimeItem]}
-                onPress={() => setSelectedTime(item)}
-              >
-                <TitleText text={item} style={{ color: selectedTime === item ? colors.black : colors.gray400 }} />
-              </TouchableOpacity>
-            )}
-          />
-        </Row>
-
-        {/* Nút Xác nhận */}
-        <PrimaryButton title='Xác nhận' onPress={() => setIsVisible(false)} />
-      </DialogBasic>
-    </TouchableOpacity>
+    </Column>
   );
 };
 const AddressSection = ({ currentLocation, changeAddress }) => {
@@ -336,42 +346,39 @@ const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
 };
 
 const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
-  
-    <FlatList
-      data={cart}
-      keyExtractor={(item) => item.itemId.toString()}
-      renderItem={({ item }) => (
-        <Pressable onPress={() => onEditItem(item)}>
-          <HorizontalProductItem
-            confirmDelete={() => confirmDelete(item)}
-            onDelete={async () => {
-              const newCart = await CartManager.removeFromCart(item.itemId);
-              cartDispatch({ type: CartActionTypes.UPDATE_CART, payload: newCart });
-            }}
-            containerStyle={{ paddingHorizontal: 16 }}
-            item={item}
-            enableAction={false}
-          />
-        </Pressable>
-      )}
-      contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
-      nestedScrollEnabled={true}
-      scrollEnabled={false}
-    />
 
- 
+  <FlatList
+    data={cart}
+    keyExtractor={(item) => item.itemId.toString()}
+    renderItem={({ item }) => (
+      <Pressable onPress={() => onEditItem(item)}>
+        <HorizontalProductItem
+          confirmDelete={() => confirmDelete(item)}
+          onDelete={async () => {
+            const newCart = await CartManager.removeFromCart(item.itemId);
+            cartDispatch({ type: CartActionTypes.UPDATE_CART, payload: newCart });
+          }}
+          containerStyle={{ paddingHorizontal: 16 }}
+          item={item}
+          enableAction={false}
+        />
+      </Pressable>
+    )}
+    contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
+    nestedScrollEnabled={true}
+    scrollEnabled={false}
+  />
+
+
 
 );
 
 
-
-
-
-const PaymentDetails = ({ cart }) => {
+const PaymentDetails = ({ onSelectVoucher, cart, cartState }) => {
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
-  const voucherAmount = 28000
-  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+  const voucherAmount = 1
+  const paymentTotal = cartTotal + deliveryAmount
   return (
     < View
       style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
@@ -384,9 +391,10 @@ const PaymentDetails = ({ cart }) => {
           { leftText: `Tạm tính (${cart.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(cartTotal)}` },
           { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(deliveryAmount)}`, },
           {
-            leftText: 'Giảm giá',
+            leftText: 'Giảm giá >>>',
             rightText: `- ${TextFormatter.formatCurrency(voucherAmount)}`,
             rightTextStyle: { color: colors.primary },
+            onLeftPress: () => onSelectVoucher()
           },
           {
             leftText: 'Tổng tiền',
@@ -399,48 +407,50 @@ const PaymentDetails = ({ cart }) => {
         ))
       }
 
-      <PaymentMethod />
+      <PaymentMethodView />
     </View >
   )
 }
 
 
-
-
-
-const PaymentMethod = () => {
+const PaymentMethodView = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState({
-    name: 'Tiền mặt',
+    name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
   });
 
-  // Danh sách phương thức thanh toán
+
   const paymentMethods = [
     {
-      name: 'Tiền mặt',
+      name: 'Thanh toán khi nhận hàng',
       image: require('../../assets/images/logo_vnd.png'),
       value: 'cash',
+      paymentMethod: PaymentMethod.COD
     },
     {
       name: 'Momo',
       image: require('../../assets/images/logo_momo.png'),
       value: 'momo',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'ZaloPay',
       image: require('../../assets/images/logo_zalopay.png'),
       value: 'zalopay',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'PayOs',
       image: require('../../assets/images/logo_payos.png'),
       value: 'PayOs',
+      paymentMethod: PaymentMethod.ONLINE
     },
     {
       name: 'Thanh toán bằng thẻ',
       image: require('../../assets/images/logo_card.png'),
       value: 'Card',
+      paymentMethod: PaymentMethod.ONLINE
     },
   ];
 
@@ -496,8 +506,15 @@ const PaymentMethod = () => {
   );
 };
 
-const Footer = ({ cart, address }) => {
-  const [isVisible, setIsVisible] = useState(false);
+const getPaymentTotal = () => {
+  const cartTotal = CartManager.getCartTotal(cart)
+  const deliveryAmount = 18000
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+
+}
+const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart, address }) => {
+
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
   const voucherAmount = 28000
@@ -518,20 +535,19 @@ const Footer = ({ cart, address }) => {
         </Column>
       </Row>
 
-      <PrimaryButton title='Đặt hàng' onPress={() => setIsVisible(true)} />
+      <PrimaryButton title='Đặt hàng' onPress={showDialog}
+      />
 
-      <DialogNotification
+      {/* <DialogNotification
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title='Xác nhận thông tin đơn hàng'
         onConfirm={() => setIsVisible(false)}
         address={address} // Truyền địa chỉ vào DialogNotification
-      />
+      /> */}
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -545,64 +561,25 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 16,
   },
-  swiper: {
-    height: 200,
-    width: width * 0.8,
-  },
-
-  textDiscount: {
-    textDecorationLine: "line-through",
-    color: colors.gray700,
-    textAlign: 'right'
-  },
-  textQuantity: {
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    backgroundColor: colors.primary,
-    color: colors.white,
-    paddingHorizontal: 6,
-    borderRadius: 10,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
-  },
   image: {
     width: 30,
     height: 30,
     resizeMode: 'contain',
   },
-  selectedTime: { fontSize: 14, color: colors.gray700, marginTop: 4 },
-
-  containerTime: { flexDirection: "row", justifyContent: "space-between", padding: 10 },
-
-  dayItem: { padding: 12, alignItems: "center" },
-  selectedDay: { borderRadius: 5 },
-  dayText: { fontSize: 14, color: colors.gray700 },
-  selectedDayText: { color: colors.black, fontWeight: "bold" },
-
-  timeItem: { height: 50, justifyContent: "center", alignItems: "center" },
-  selectedTimeItem: { borderRadius: 5 },
-  timeText: { fontSize: 16, color: colors.gray700 },
-  selectedTimeText: { color: "#333", fontWeight: "bold" },
-
-  actionButton: {
-    flexDirection: 'column', alignItems: 'center', paddingHorizontal: 12, backgroundColor: colors.green700, height: '100%', justifyContent: 'center', borderRadius: 8
-  },
-
   content: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.transparent
   },
-  label: {
+
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.gray300,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
-  },
-  goBackButton: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    backgroundColor: colors.green100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    position: 'absolute',
-    end: 0,
+    color: colors.black,
+    minHeight: 80,
   },
 })

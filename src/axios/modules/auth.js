@@ -12,18 +12,6 @@ export const getProfile = async () => {
         throw error;
     }
 };
-export const getAddresses = async () => {
-  try {
-    const response = await axiosInstance.get('v1/address/my-address');
-    console.log('API Response:', response.data); // Log phản hồi đầy đủ
-    return response.data;
-  } catch (error) {
-    console.log('error:', error);
-    throw error;
-  }
-};
-
-
 
 
 export const register = async ({ firstName, lastName, email, dateOfBirth, gender, avatar = null }) => {
@@ -46,7 +34,6 @@ export const register = async ({ firstName, lastName, email, dateOfBirth, gender
         throw error
     }
 };
-
 
 
 
@@ -73,10 +60,12 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
         // Lưu token vào AsyncStorage
         const accessToken = data.token.accessToken.token;
         const refreshToken = data.token.refreshToken.token;
-        console.log('accesstoken =', accessToken)
+        console.log('userId =', data.user._id)
 
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.accessToken, accessToken);
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.refreshToken, refreshToken);
+        await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.userId, data.user._id);
+
 
         return response.data;
 
