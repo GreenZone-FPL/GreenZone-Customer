@@ -377,8 +377,8 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 const PaymentDetails = ({ onSelectVoucher, cart, cartState }) => {
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
-  const voucherAmount = 1
-  const paymentTotal = cartTotal + deliveryAmount
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
   return (
     < View
       style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
@@ -531,7 +531,7 @@ const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart
 
         <Column>
           <TitleText text={`${TextFormatter.formatCurrency(paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
-          <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} />
+          {/* <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
       </Row>
 
