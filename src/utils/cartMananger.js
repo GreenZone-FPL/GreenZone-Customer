@@ -3,6 +3,25 @@ import { AppAsyncStorage } from "./appAsyncStorage";
 import { Toaster } from "./toaster";
 export const CartManager = (() => {
 
+    const checkValid = (orderDetails) => {
+        const requiredFields = [
+            'deliveryMethod',
+            'fulfillmentDateTime',
+            'totalPrice',
+            'paymentMethod',
+            'owner',
+            'orderItems',
+            'store'
+        ];
+
+        const missingFields = requiredFields.filter(field =>
+            !orderDetails[field] ||
+            (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0)
+        );
+
+        return missingFields.length > 0 ? missingFields : null;
+    };
+
 
     const updateOrderInfo = async (dispatch, orderDetails) => {
         try {
@@ -19,7 +38,7 @@ export const CartManager = (() => {
                 payload: { ...orderDetails, owner: userId }
             });
 
-            Toaster.show('Đặt hàng thành công');
+            // Toaster.show('Update thành công');
 
             // await AppAsyncStorage.storeData('CART', []);
         } catch (error) {
@@ -45,6 +64,7 @@ export const CartManager = (() => {
         }
     };
 
+   
     const addToCart = async (product, variant, selectedToppings, price, quantity) => {
         try {
             const cart = await AppAsyncStorage.readData('CART', []);
@@ -59,9 +79,12 @@ export const CartManager = (() => {
                 ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
                 : [];
 
+            // Nếu không có variant, gán variantId là productId
+            const variantId = variant?._id || product._id;
+
             const existingIndex = cart.findIndex(item =>
                 item.productId === product._id &&
-                (item.variant === (variant?._id || null)) &&
+                item.variant === variantId &&
                 (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings))
             );
 
@@ -69,7 +92,7 @@ export const CartManager = (() => {
                 cart[existingIndex].quantity += quantity;
             } else {
                 cart.push({
-                    variant: variant?._id || null,
+                    variant: variantId, // Nếu không có variant, dùng productId
                     quantity: quantity,
                     price: price,
                     toppingItems: sortedToppings,
@@ -84,8 +107,7 @@ export const CartManager = (() => {
 
             await AppAsyncStorage.storeData('CART', cart);
             Toaster.show('Thêm vào giỏ hàng thành công');
-            return cart
-
+            return cart;
 
         } catch (error) {
             console.log('Error addToCart', error);
@@ -141,6 +163,7 @@ export const CartManager = (() => {
     }
 
     return {
+        checkValid,
         updateOrderInfo,
         getCartTotal,
         readCart,

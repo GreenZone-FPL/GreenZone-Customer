@@ -9,17 +9,28 @@ export const CartActionTypes = {
 
 }
 
-
-export const cartInitialState = {
+const fullInfo = {
     deliveryMethod: 'pickup',  // (Required) -Phương thức giao hàng
     fulfillmentDateTime: '',   // (Required) - Thời gian dự kiến giao/nhận hàng
     note: '',
     totalPrice: 0,             // (Required) - Tổng giá trị đơn hàng.
-    paymentMethod: 'online',   // (Required) - Phương thức thanh toán.
+    paymentMethod: 'cod',      // (Required) - Phương thức thanh toán.
     shippingAddress: '',       // id địa chỉ giao hàng (khi phương thức giao hàng là delivery).
     store: '',                 // ID cửa hàng
-    owner: '',                 // ID customer
+    owner: '',                 // (Required) ID customer
     voucher: '',               // ID voucher áp dụng (nếu có).
+    orderItems: []             // (Required)
+}
+
+
+export const cartInitialState = {
+    deliveryMethod: 'pickup',
+    fulfillmentDateTime: '',
+    note: '',
+    totalPrice: 0,
+    paymentMethod: 'cod',
+    store: '',
+    owner: '',
     orderItems: []
 }
 
