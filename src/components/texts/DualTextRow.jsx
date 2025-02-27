@@ -9,6 +9,7 @@ const DualTextRowPropTypes = {
     leftTextStyle: PropTypes.object,
     rightTextStyle: PropTypes.object,
     onRightPress: PropTypes.func,
+    onLeftPress: PropTypes.func,
     style: PropTypes.object
 };
 
@@ -32,11 +33,15 @@ export const DualTextRow = ({
     leftTextStyle = {},  // Style của text trái
     rightTextStyle = {}, // Style của text phải
     onRightPress, // Hàm xử lý khi nhấn vào text phải
+    onLeftPress,
     style, // Style của container
 }) => {
     return (
         <View style={[styles.row, style]}>
-            <Text style={[styles.normalText, leftTextStyle]}>{leftText}</Text>
+            <Pressable onPress={onLeftPress}>
+                <Text style={[styles.normalText, leftTextStyle]}>{leftText}</Text>
+            </Pressable>
+
             <Pressable onPress={onRightPress}>
                 <Text style={[styles.normalText, rightTextStyle]}>{rightText}</Text>
             </Pressable>

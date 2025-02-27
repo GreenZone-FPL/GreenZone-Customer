@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
         gap: GLOBAL_KEYS.GAP_SMALL,
         backgroundColor: colors.white,
         // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        elevation: 4,
+        elevation: 3,
         shadowColor: colors.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
