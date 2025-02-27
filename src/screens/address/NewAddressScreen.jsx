@@ -3,8 +3,8 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View, Alert } from 'react-na
 import { FlatInput, LightStatusBar, NormalHeader, PrimaryButton } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
-import { postAddress } from '../../axios';
-import { useAppContext } from '../../context/AppContext';
+import { postAddress, setDefaultAddress } from '../../axios';
+import { useAppContext } from '../../context/appContext';
 import ToggleSwitch from "toggle-switch-react-native";
 
 const NewAddressScreen = (props) => {
@@ -43,6 +43,7 @@ const NewAddressScreen = (props) => {
     useEffect(() => {
         setRecipientInfo({ home, name, phone });
     }, [home, name, phone, setRecipientInfo]);
+
 
     const handleSave = async () => {
         if (!specificAddress || !name || !phone) {

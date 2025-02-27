@@ -90,14 +90,21 @@ export const updateAddress = async (addressId, updateData) => {
 // đặt địa chỉ mặc định
 export const setDefaultAddress = async (addressId) => {
     try {
-        const { data } = await axiosInstance.patch(
-            `/v1/address/${addressId}/set-default`, 
-            { isDefault: true }
+        const response = await axiosInstance.post(
+            `/v1/address/${addressId}/set-default`,
+            { isDefault: true }, 
+            { headers: { 'Content-Type': 'application/json' } }
         );
-        return data;
+
+        if (response.data.success) {
+            alert(response.data.message); // "Set address as default successfully"
+        } else {
+            alert('Không thể đặt địa chỉ mặc định');
+        }
     } catch (error) {
-        console.error("Lỗi khi đặt địa chỉ mặc định:", error.response?.data || error.message);
-        throw error;
+        console.error('Lỗi khi đặt địa chỉ mặc định:', error);
+        alert('Có lỗi xảy ra, vui lòng thử lại!');
     }
 };
+;
 

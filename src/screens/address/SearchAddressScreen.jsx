@@ -5,7 +5,7 @@ import { CustomSearchBar, LightStatusBar, DialogBasic, PrimaryButton } from '../
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
 import SelectLocation from './locations/SelectLocation';
-import { useAppContext } from '../../context/AppContext';
+import { useAppContext } from '../../context/appContext';
 
 const SearchAddressScreen = (props) => {
     const navigation = props.navigation;
