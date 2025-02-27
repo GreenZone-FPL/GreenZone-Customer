@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-export const createOrder = async (body) => {
+export const createPickUpOrder = async (body) => {
     try {
 
         // {
@@ -33,10 +33,10 @@ export const createOrder = async (body) => {
             note: body.note,
             totalPrice: body.totalPrice,
             paymentMethod: body.paymentMethod,
-            shippingAddress: '67bf3c98b5ca3926e3df1a92',
+            // shippingAddress: '67bf3c98b5ca3926e3df1a92',
             store: body.store,
             owner: body.owner,
-            voucher: '67be977856cc7b945d83be06',
+            // voucher: '67be977856cc7b945d83be06',
             orderItems: body.orderItems.map(item => ({
                 variant: item.variant,
                 quantity: item.quantity,
