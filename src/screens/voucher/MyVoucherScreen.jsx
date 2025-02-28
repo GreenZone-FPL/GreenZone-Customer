@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -7,24 +7,20 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   Pressable,
 } from 'react-native';
-import { LightStatusBar, NormalHeader, CustomTabView } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph, VoucherGraph } from '../../layouts/graphs';
-import { getAllVoucher } from '../../axios/index';
-import { CartManager, TextFormatter } from '../../utils';
-import { useAppContext } from '../../context/appContext';
+import {LightStatusBar, NormalHeader} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {getAllVoucher} from '../../axios/index';
+import {CartManager, TextFormatter} from '../../utils';
+import {useAppContext} from '../../context/appContext';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const MyVoucherScreen = props => {
-  const { navigation, route } = props;
-  const [tabIndex, setTabIndex] = useState(0);
- 
+const MyVoucherScreen = ({navigation}) => {
   const [vouchers, setVouchers] = useState([]);
-  const { cartState, cartDispatch } = useAppContext()
+  const {cartDispatch} = useAppContext();
+
   const fetchVouchers = async () => {
     try {
       const response = await getAllVoucher();
@@ -38,10 +34,6 @@ const MyVoucherScreen = props => {
     fetchVouchers();
   }, []);
 
-  const navigateToVoucherDetail = item => {
-    navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
-  };
-
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -49,82 +41,41 @@ const MyVoucherScreen = props => {
         title="Phiếu ưu đãi của tôi"
         onLeftPress={() => navigation.goBack()}
       />
-      <CustomTabView
-        tabIndex={tabIndex}
-        setTabIndex={setTabIndex}
-        tabBarConfig={{
-          titles: ['Giao hàng', 'Tại cửa hàng', 'Mang đi'],
-          titleActiveColor: colors.primary,
-          titleInActiveColor: colors.gray700,
-        }}>
-        <Body
-          goBack={() => navigation.goBack()}
-          key="delivery"
-          cartDispatch={cartDispatch}
-          data={vouchers}
-        // handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-        <Body
-          goBack={() => navigation.goBack()}
-          cartDispatch={cartDispatch}
-          key="merchant"
-          data={vouchers}
-        // handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-        <Body
-          goBack={() => navigation.goBack()}
-          key="takeAway"
-          cartDispatch={cartDispatch}
-          data={vouchers}
-        // handleGoVoucherDetail={navigateToVoucherDetail}
-        />
-      </CustomTabView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.bodyContainer}>
+          {vouchers.length > 0 && (
+            <Text style={styles.bodyHeader}>Voucher khả dụng</Text>
+          )}
+          <FlatList
+            data={vouchers}
+            keyExtractor={item => item._id.toString()}
+            renderItem={({item}) => (
+              <ItemVoucher
+                goBack={() => navigation.goBack()}
+                cartDispatch={cartDispatch}
+                item={item}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
 
-const Body = ({ cartDispatch, goBack, data, handleGoVoucherDetail }) => (
-  <ScrollView showsVerticalScrollIndicator={false}>
-    <View style={styles.bodyContainer}>
-      {data.length > 0 && (
-        <Text style={styles.bodyHeader}>Voucher khả dụng</Text>
-      )}
-      <FlatList
-        data={data}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => {
-          // console.log('Render item:', item);
-          return (
-            <ItemVoucher goBack={goBack} cartDispatch={cartDispatch} item={item} />
-          );
-        }}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={false}
-      />
-    </View>
-  </ScrollView>
-);
-
-
-const ItemVoucher = ({ item, cartDispatch, goBack, handleGoVoucherDetail }) => {
+const ItemVoucher = ({item, cartDispatch, goBack}) => {
   return (
     <Pressable
       style={styles.itemVoucher}
       onPress={() => {
-        console.log('item Vouher = ', item)
         if (cartDispatch) {
-          CartManager.updateOrderInfo(
-            cartDispatch,
-            {
-              voucher: item._id
-            }
-          )
+          CartManager.updateOrderInfo(cartDispatch, {voucher: item._id});
         }
-
-        goBack()
-      }}
-    >
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+        goBack();
+      }}>
+      <Image source={{uri: item.image}} style={styles.itemImage} />
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>Voucher {item.name}</Text>
         <Text style={styles.itemTime}>
@@ -140,33 +91,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  tabView: {
-    backgroundColor: colors.white,
-  },
-  tabBar: {
-    backgroundColor: colors.white,
-  },
-  indicatorStyle: {
-    backgroundColor: colors.primary,
-  },
-  labelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '700',
-    color: colors.black,
-  },
-  activeLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  inactiveLabelStyle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '700',
-    color: colors.black,
-  },
   bodyContainer: {
     paddingVertical: 8,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
   },
   bodyHeader: {
@@ -180,13 +106,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemImage: {
@@ -198,7 +123,6 @@ const styles = StyleSheet.create({
   itemDetails: {
     flexDirection: 'column',
     justifyContent: 'space-evenly',
-    gap: 8,
     flex: 1,
   },
   itemTitle: {
