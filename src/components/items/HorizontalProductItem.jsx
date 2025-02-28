@@ -48,7 +48,7 @@ export const HorizontalProductItem = ({
 
             <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
             {
-                item.variantName &&
+               ( item.variantName && !item.isVariantDefault) &&
                 <Text style={[styles.normalText, { color: colors.yellow700 }, optionStyle]}>Size: {item.variantName}</Text>
             }
 

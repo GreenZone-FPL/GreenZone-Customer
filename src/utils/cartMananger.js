@@ -79,31 +79,31 @@ export const CartManager = (() => {
                 ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
                 : [];
 
-            // Nếu không có variant, gán variantId là productId
-            const variantId = variant?._id || product._id;
-
+          
             const existingIndex = cart.findIndex(item =>
                 item.productId === product._id &&
-                item.variant === variantId &&
+                item.variant === variant._id &&
                 (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings))
             );
 
             if (existingIndex !== -1) {
                 cart[existingIndex].quantity += quantity;
             } else {
-                cart.push({
-                    variant: variantId, // Nếu không có variant, dùng productId
+                cart.push({ //cartItem
+                    variant: variant?._id || null, 
                     quantity: quantity,
                     price: price,
                     toppingItems: sortedToppings,
 
-                    itemId: new Date().getTime(),
+                    itemId: new Date().getTime(), //cartitemid
                     productId: product._id,
                     productName: product.name,
                     variantName: variant?.size || '',
-                    image: product.image
+                    image: product.image,
+                    isVariantDefault: product.variant.length === 1
                 });
             }
+          
 
             await AppAsyncStorage.storeData('CART', cart);
             Toaster.show('Thêm vào giỏ hàng thành công');

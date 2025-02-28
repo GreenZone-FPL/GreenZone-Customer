@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View, Button } from 'react-native';
+import { Dimensions, FlatList, Image, Pressable, SafeAreaView, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View, Button } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { ActionDialog, Ani_ModalLoading, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
@@ -143,7 +143,7 @@ const CheckoutScreen = ({ navigation }) => {
 
             </ScrollView>
 
-            <Footer showDialog={() => setDialogCreateOrderVisible(true)} deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.orderItems} address={address} />
+            <Footer showDialog={() => setDialogCreateOrderVisible(true)} deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.orderItems} cartState={cartState} address={address} />
 
 
           </>
@@ -188,7 +188,8 @@ const CheckoutScreen = ({ navigation }) => {
             const body = { ...cartState, ...orderInfo }
             const missingFields = CartManager.checkValid(body)
             if (missingFields) {
-              Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
+              Alert.alert('Cảnh báo',`Thiếu thông tin: ${missingFields.join(', ')}` )
+              // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
               return
             }
 
@@ -527,7 +528,7 @@ const getPaymentTotal = () => {
   const paymentTotal = cartTotal + deliveryAmount - voucherAmount
 
 }
-const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart, address }) => {
+const Footer = ({ cartState, showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart, address }) => {
 
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
@@ -549,7 +550,31 @@ const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart
         </Column>
       </Row>
 
-      <PrimaryButton title='Đặt hàng' onPress={showDialog}
+      <PrimaryButton title='Đặt hàng' onPress={() => {
+         
+         const orderInfo = {
+           deliveryMethod: deliveryMethod === 'Mang đi' ? DeliveryMethod.PICK_UP : DeliveryMethod.DELIVERY,
+           fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+           totalPrice: paymentTotal,
+           note,
+           paymentMethod: PaymentMethod.COD
+         }
+
+         // Cập nhật state
+         CartManager.updateOrderInfo(cartDispatch, orderInfo)
+
+         // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
+         const body = { ...cartState, ...orderInfo }
+         CartManager.updateOrderInfo(cartDispatch, body)
+         const missingFields = CartManager.checkValid(body)
+         if (missingFields) {
+           Alert.alert('Cảnh báo',`Thiếu thông tin: ${missingFields.join(', ')}` )
+           // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
+           return
+         }
+         showDialog()
+
+      }}
       />
 
       {/* <DialogNotification
