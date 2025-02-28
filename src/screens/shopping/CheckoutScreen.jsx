@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View } from 'react-native';
+import { Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View, Button } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { ActionDialog, Ani_ModalLoading, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
@@ -7,8 +7,8 @@ import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../consta
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
-import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
-import { createOrder } from '../../axios/'
+import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+import { createPickUpOrder } from '../../axios/'
 import { types } from 'react-native-document-picker';
 
 
@@ -134,8 +134,13 @@ const CheckoutScreen = ({ navigation }) => {
                 )}
                 cart={cartState.orderItems}
               />
-              <PrimaryButton title='Log cartState' onPress={() => console.log('cartState =', cartState)} />
-              <PrimaryButton title='Reset cartState' onPress={() => cartDispatch({type: CartActionTypes.RESET_STATE})} />
+              <Column style={{ gap: 16, marginHorizontal: 16 }}>
+                <Button title='Log cartState' onPress={() => console.log('cartState =', cartState)} />
+
+                <Button title='Reset cartState' onPress={() => cartDispatch({ type: CartActionTypes.RESET_STATE })} />
+
+              </Column>
+
             </ScrollView>
 
             <Footer showDialog={() => setDialogCreateOrderVisible(true)} deliveryMethod={deliveryMethod} note={note} cartDispatch={cartDispatch} cart={cartState.orderItems} address={address} />
@@ -175,16 +180,25 @@ const CheckoutScreen = ({ navigation }) => {
               note,
               paymentMethod: PaymentMethod.COD
             }
-      
+
             // Cập nhật state
             CartManager.updateOrderInfo(cartDispatch, orderInfo)
-      
+
             // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
-            const response = await createOrder({
+            const body = { ...cartState, ...orderInfo }
+            const missingFields = CartManager.checkValid(body)
+            if (missingFields) {
+              Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
+              return
+            }
+
+            const response = await createPickUpOrder({
               ...cartState,  // Giữ nguyên dữ liệu hiện tại
               ...orderInfo   // Ghi đè các thông tin cập nhật
             });
             console.log('order data', response)
+
+
 
           } catch (error) {
             console.log('error', error)
@@ -377,8 +391,8 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 const PaymentDetails = ({ onSelectVoucher, cart, cartState }) => {
   const cartTotal = CartManager.getCartTotal(cart)
   const deliveryAmount = 18000
-  const voucherAmount = 1
-  const paymentTotal = cartTotal + deliveryAmount
+  const voucherAmount = 28000
+  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
   return (
     < View
       style={{ marginBottom: 8, marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT }}>
@@ -531,7 +545,7 @@ const Footer = ({ showDialog, timeInfo, note, deliveryMethod, cartDispatch, cart
 
         <Column>
           <TitleText text={`${TextFormatter.formatCurrency(paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
-          <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} />
+          {/* <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
       </Row>
 

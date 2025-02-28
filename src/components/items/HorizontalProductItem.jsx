@@ -69,7 +69,7 @@ export const HorizontalProductItem = ({
 
         <Column style={styles.priceContainer}>
            
-                <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price * item.quantity)}</Text>
+                <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
                
         
 

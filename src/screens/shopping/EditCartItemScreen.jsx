@@ -84,7 +84,7 @@ const EditCartItemScreen = ({route, navigation}) => {
             setTotalAmount(calculateTotal(firstVariant, selectedToppings));
           }
 
-          if (detail.productTopping.length > 0) {
+          if (detail.topping.length > 0) {
             setSelectedToppings(updateItem.toppingItems);
           }
           setQuantity(updateItem.quantity);
@@ -133,10 +133,10 @@ const EditCartItemScreen = ({route, navigation}) => {
               />
             )}
 
-            {product.productTopping.length > 0 && (
+            {product.topping.length > 0 && (
               <>
                 <SelectableGroup
-                  items={product.productTopping.map(item => item.topping)}
+                  items={product.topping}
                   title="Chọn topping"
                   selectedGroup={selectedToppings}
                   setSelectedGroup={setSelectedToppings}

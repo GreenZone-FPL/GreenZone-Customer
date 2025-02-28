@@ -4,20 +4,25 @@ import LoginScreen from '../../screens/auth/LoginScreen';
 import RegisterScreen from '../../screens/auth/RegisterScreen';
 import SplashScreen from '../../screens/auth/SplashScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
-import {AuthGraph} from '../graphs';
+import {AuthGraph, MainGraph} from '../graphs';
 import {useAppContext} from '../../context/appContext';
+import MainNavigation from '../MainNavigation';
 
 const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {
   const {authState} = useAppContext();
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
-      {authState.message !== 'Phiên đăng nhập hết hạn' && (
+
+
+      
+      {/* {authState.message !== 'Phiên đăng nhập hết hạn' && (
         <AuthStack.Screen
           name={AuthGraph.SplashScreen}
           component={SplashScreen}
         />
-      )}
+      )} */}
+      
 
       <AuthStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
       <AuthStack.Screen
