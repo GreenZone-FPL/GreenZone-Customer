@@ -15,6 +15,7 @@ import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
 import { useAppContext } from '../../context/appContext';
 import { AppAsyncStorage } from '../../utils';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -38,8 +39,8 @@ const ProfileScreen = ({ navigation }) => {
       <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
-
-      <Column style={styles.body}>
+<ScrollView>
+   <Column style={styles.body}>
         <TitleText text="Tài khoản" />
 
         <Column>
@@ -119,6 +120,8 @@ const ProfileScreen = ({ navigation }) => {
           )}
         </View>
       </Column>
+</ScrollView>
+     
     </SafeAreaView>
   );
 };
