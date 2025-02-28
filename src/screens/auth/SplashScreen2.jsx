@@ -20,7 +20,7 @@ const SplashScreen2 = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>SplashScreen 2</Text>
+      <Text style={styles.text}>SplashScreen</Text>
     </View>
   );
 };

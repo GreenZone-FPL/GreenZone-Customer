@@ -79,12 +79,10 @@ export const CartManager = (() => {
                 ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
                 : [];
 
-            // Nếu không có variant, gán variantId là productId
-            const variantId = variant?._id || product._id;
-
+          
             const existingIndex = cart.findIndex(item =>
                 item.productId === product._id &&
-                item.variant === variantId &&
+                item.variant === variant._id &&
                 (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings))
             );
 
@@ -92,7 +90,7 @@ export const CartManager = (() => {
                 cart[existingIndex].quantity += quantity;
             } else {
                 cart.push({ //cartItem
-                    variant: variantId, // Nếu không có variant, dùng productId
+                    variant: variant?._id || null, 
                     quantity: quantity,
                     price: price,
                     toppingItems: sortedToppings,
@@ -101,7 +99,8 @@ export const CartManager = (() => {
                     productId: product._id,
                     productName: product.name,
                     variantName: variant?.size || '',
-                    image: product.image
+                    image: product.image,
+                    isVariantDefault: product.variant.length === 1
                 });
             }
           
