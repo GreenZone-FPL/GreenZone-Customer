@@ -91,19 +91,20 @@ export const CartManager = (() => {
             if (existingIndex !== -1) {
                 cart[existingIndex].quantity += quantity;
             } else {
-                cart.push({
+                cart.push({ //cartItem
                     variant: variantId, // Nếu không có variant, dùng productId
                     quantity: quantity,
                     price: price,
                     toppingItems: sortedToppings,
 
-                    itemId: new Date().getTime(),
+                    itemId: new Date().getTime(), //cartitemid
                     productId: product._id,
                     productName: product.name,
                     variantName: variant?.size || '',
                     image: product.image
                 });
             }
+          
 
             await AppAsyncStorage.storeData('CART', cart);
             Toaster.show('Thêm vào giỏ hàng thành công');
