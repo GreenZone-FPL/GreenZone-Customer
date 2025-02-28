@@ -9,12 +9,22 @@ export const AppContext = createContext();
 
 export let globalAuthDispatch = null;
 
+
+export let appDispatch = null;
+
 export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
   const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState)
 
   const [favorites, setFavorites] = useState([]);
 
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [recipientInfo, setRecipientInfo] = useState({
+    home: '',
+    name: '',
+    phone: ''
+  });
 
   const addToFavorites = (product) => {
     setFavorites((prevFavorites) => [...prevFavorites, product]);
@@ -55,9 +65,18 @@ export const AppContextProvider = ({ children }) => {
     return () => { }
   }, [])
 
+  
+
+  const addAddress = (address) => {
+    setSelectedAddresses((prev) => [...prev, address]);
+  };
+  
+
+
   return (
-    <AppContext.Provider
-      value={{ authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites }}>
+    <AppContext.Provider value={{ authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,  
+      selectedAddresses, addAddress, selectedAddress, setSelectedAddress, 
+      recipientInfo, setRecipientInfo }}>
       {children}
     </AppContext.Provider>
   );
@@ -66,4 +85,3 @@ export const AppContextProvider = ({ children }) => {
 export function useAppContext() {
   return useContext(AppContext);
 }
-
