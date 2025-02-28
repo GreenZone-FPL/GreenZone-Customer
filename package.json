@@ -44,6 +44,8 @@
     "react-native-countdown-component": "^2.7.1",
     "react-native-device-info": "^14.0.2",
     "react-native-document-picker": "^9.3.1",
+    "react-native-dropdown-picker": "^5.4.6",
+    "react-native-element-dropdown": "^2.12.4",
     "react-native-elements": "^3.4.3",
     "react-native-encrypted-storage": "^4.0.3",
     "react-native-fast-image": "^8.6.3",
@@ -78,6 +80,7 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-webview": "^13.12.5",
     "socket.io-client": "^4.8.1",
+    "toggle-switch-react-native": "^3.3.0",
     "zego-express-engine-reactnative": "^3.17.2"
   },
   "devDependencies": {

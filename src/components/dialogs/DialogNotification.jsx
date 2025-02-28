@@ -19,9 +19,9 @@ const DialogNotificationPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
   title: PropTypes.string,
-  address: PropTypes.string,
-  time: PropTypes.string,
-  merchant: PropTypes.string,
+  textContent: PropTypes.string,
+  textHide: PropTypes.string,
+  textConfirm: PropTypes.string,
   onConfirm: PropTypes.func,
   style: PropTypes.oneOfType([
     PropTypes.object,
@@ -30,7 +30,7 @@ const DialogNotificationPropTypes = {
 };
 
 
-export const DialogNotification = ({ isVisible, onHide, title, style, address , time, merchant, onConfirm}) => {
+export const DialogNotification = ({ isVisible, onHide, title, style, textContent , textHide, textConfirm, onConfirm}) => {
 
   return (
     <Modal
@@ -47,13 +47,13 @@ export const DialogNotification = ({ isVisible, onHide, title, style, address , 
                 <Text style={styles.titleText}>{title}</Text>
               </Row>
               <Column style={styles.body}>
-                <Text style={styles.textOrder}>Đơn hàng tự đến lấy sẽ được giao tới {address} vào {time} tại {merchant}</Text>
+                <Text style={styles.textOrder}>{textContent} </Text>
               </Column>
               <TouchableOpacity style={styles.btn}>
-                <Text style={styles.textBtn} onPress={onHide}>Thay đổi thông tin</Text>
+                <Text style={styles.textBtn} onPress={onHide}>{textHide}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.btn} onPress={onConfirm}>
-                <Text style={styles.textBtn}>Xác nhận</Text>
+                <Text style={styles.textBtn}>{textConfirm}</Text>
               </TouchableOpacity>
             </KeyboardAvoidingView>
           </ScrollView>
