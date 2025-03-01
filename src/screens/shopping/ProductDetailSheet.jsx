@@ -92,7 +92,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         />
 
                         {
-                            product.variant.length > 0 && selectedVariant &&
+                            product.variant.length > 1 && selectedVariant &&
                             <RadioGroup
                                 items={product.variant}
                                 selectedValue={selectedVariant}
