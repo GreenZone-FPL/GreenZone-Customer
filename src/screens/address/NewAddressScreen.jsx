@@ -61,8 +61,7 @@ const NewAddressScreen = (props) => {
             };
             const response = await postAddress(requestData);
             console.log('API response:', response);
-            // navigation.goBack();
-            navigation.navigate('AddressScreen');
+            navigation.goBack();
         } catch (error) {
             console.log('Save error:', error?.response?.data || error.message);
         } finally {

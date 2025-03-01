@@ -27,7 +27,12 @@ const AddressScreen = (props) => {
   };
 
   useEffect(() => {
-    fetchAddresses();
+    fetchAddresses(); // Gọi API lần đầu khi vào màn hình
+    const interval = setInterval(() => {
+      fetchAddresses();
+    }, 2000); // Cập nhật mỗi 2 giây
+  
+    return () => clearInterval(interval); // Xóa interval khi rời màn hình
   }, []);
 
   const handleDeletePress = (addressId) => {
@@ -93,16 +98,16 @@ const AddressScreen = (props) => {
 
 const Card = ({ icon, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
-    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.green500} />
+    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardLocation = ({ address, onEdit, onDelete, isOn, setIsOn }) => (
+const CardLocation = ({ address, onEdit, onDelete}) => (
   <Pressable style={styles.cardLocation} onPress={() => console.log('Clicked on', address.specificAddress)}>
     <View style={{ flexDirection: 'row' }}>
       <View style={{ flexDirection: 'row', gap: 16, flex: 2, alignItems: 'center' }}>
-        <Icon source={"map-marker"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.green500} />
+        <Icon source={"map-marker"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
         <View>
           <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{address.specificAddress}</Text>
           <Text style={styles.location}>
@@ -113,7 +118,7 @@ const CardLocation = ({ address, onEdit, onDelete, isOn, setIsOn }) => (
       </View>
       <View style={{ gap: 16 , alignItems: 'center'}}>
         <Pressable onPress={onEdit}>
-          <Icon source={"book-edit"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.green500} />
+          <Icon source={"book-edit"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
         </Pressable>
         <Pressable onPress={onDelete}>
           <Icon source={"delete"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.red800} />
@@ -171,7 +176,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'justify',
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    width: '68%'
+    width: '60%'
   },
   distance: {
     color: colors.gray700,
