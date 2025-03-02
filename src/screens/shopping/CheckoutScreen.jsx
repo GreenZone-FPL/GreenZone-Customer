@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, Pressable, SafeAreaView, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, TextInput, View, Button } from 'react-native';
+import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
-import { ActionDialog, DeliveryMethodSheet, Ani_ModalLoading, Column, DialogBasic, DialogNotification, DialogShippingMethod, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { createPickUpOrder } from '../../axios/';
+import { ActionDialog, Ani_ModalLoading, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartActionTypes } from '../../reducers';
-import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
-import { createPickUpOrder } from '../../axios/'
+import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -127,14 +126,9 @@ const CheckoutScreen = ({ navigation }) => {
                 /> : null
               }
 
-              <PaymentDetails
+              <PaymentDetailsView
                 cartState={cartState}
-                onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen,
-                  {
-                    cartTotal: CartManager.getCartTotal(cartState),
-                    deliveryAmount: 18000
-                  }
-                )}
+                onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen, { isUpdateOrderInfo: true })}
 
               />
               <Column style={{ gap: 16, marginHorizontal: 16 }}>
@@ -332,7 +326,7 @@ const TimeSection = ({ timeInfo, showDialog }) => {
           </>
 
           :
-          <NormalText text='Chọn thời gian nhận' style={{color: colors.orange700}}/>
+          <NormalText text='Chọn thời gian nhận' style={{ color: colors.orange700 }} />
       }
 
     </Column>
@@ -358,10 +352,10 @@ const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
       />
       {
         cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ?
-          ((cartState.storeName && cartState.storeAddress) ? (
+          ((cartState?.storeInfo?.storeName && cartState?.storeInfo?.storeAddress) ? (
             <>
-              <TitleText text={cartState.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
-              <NormalText text={cartState.storeAddress} />
+              <TitleText text={cartState?.storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
+              <NormalText text={cartState?.storeInfo?.storeAddress} />
             </>
 
           ) : <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />) :
@@ -419,36 +413,36 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 );
 
 
-const PaymentDetails = ({ onSelectVoucher, cartState }) => {
-  const cartTotal = CartManager.getCartTotal(cartState)
-  const deliveryAmount = 20000
-  const voucherAmount = 28000
-  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+const PaymentDetailsView = ({ onSelectVoucher, cartState }) => {
+  const paymentDetails = CartManager.getPaymentDetails(cartState)
+
   return (
     < View
-      style={styles.containerItem}>
+      style={[styles.containerItem, { backgroundColor: colors.gray200, paddingHorizontal: 0, gap: 1, paddingVertical: 0 }]}>
       <DualTextRow
+        style={{ paddingVertical: 8, marginVertical: 0, paddingHorizontal: 16, backgroundColor: colors.white }}
         leftText="CHI TIẾT THANH TOÁN"
         leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
       />
       {
         [
-          { leftText: `Tạm tính (${cartState.orderItems.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(cartTotal)}` },
-          { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(deliveryAmount)}`, },
+          { leftText: `Tạm tính (${cartState.orderItems.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(paymentDetails.cartTotal)}` },
+          { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(paymentDetails.deliveryAmount)}`, },
           {
-            leftText: 'Giảm giá >>>',
-            rightText: `- ${TextFormatter.formatCurrency(voucherAmount)}`,
+            leftText: cartState.voucher ? `${cartState?.voucherInfo?.code}` : 'Chọn khuyến mãi',
+            leftTextStyle: { color: cartState.voucher ? colors.primary : colors.orange700, fontWeight: '500' },
+            rightText: paymentDetails.voucherAmount === 0 ? '' : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`,
             rightTextStyle: { color: colors.primary },
             onLeftPress: () => onSelectVoucher()
           },
           {
             leftText: 'Tổng tiền',
-            rightText: `${TextFormatter.formatCurrency(paymentTotal)}`,
-            leftTextStyle: { color: colors.black, fontWeight: '500' },
-            rightTextStyle: { fontWeight: '700', color: colors.primary },
+            rightText: `${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`,
+            leftTextStyle: { color: colors.black, fontWeight: '500', fontSize: 14 },
+            rightTextStyle: { fontWeight: '700', color: colors.primary, fontSize: 14 },
           },
         ].map((item, index) => (
-          <DualTextRow key={index} {...item} />
+          <DualTextRow key={index} {...item} style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }} />
         ))
       }
 
@@ -505,7 +499,7 @@ const PaymentMethodView = () => {
   };
 
   return (
-    <Row style={{ justifyContent: 'space-between', marginVertical: 8 }}>
+    <Row style={{ justifyContent: 'space-between', paddingHorizontal: 16, backgroundColor: colors.white, paddingVertical: 8 }}>
       <NormalText text='Phương thức thanh toán' />
 
       <TouchableOpacity
@@ -551,19 +545,9 @@ const PaymentMethodView = () => {
   );
 };
 
-const getPaymentTotal = () => {
-  const cartTotal = CartManager.getCartTotal(cart)
-  const deliveryAmount = 20000
-  const voucherAmount = 28000
-  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
 
-}
 const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
-
-  const cartTotal = CartManager.getCartTotal(cartState)
-  const deliveryAmount = 20000
-  const voucherAmount = 28000
-  const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+  const paymentDetails = CartManager.getPaymentDetails(cartState)
 
   return (
     <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
@@ -571,12 +555,18 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         <Column>
           <TitleText text='Tổng cộng' />
           <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
-          <NormalText text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(voucherAmount)}`} style={{ color: colors.green750 }} />
+          {
+            cartState?.voucher &&
+            <NormalText
+              text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}
+              style={{ color: colors.green750 }} />
+          }
+
         </Column>
 
         <Column>
-          <TitleText text={`${TextFormatter.formatCurrency(paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
-          {/* <NormalText text={`${TextFormatter.formatCurrency(cartTotal)}`} style={styles.textDiscount} /> */}
+          <TitleText text={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
+          {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
       </Row>
 
@@ -585,7 +575,7 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         const orderInfo = {
           deliveryMethod: cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ? DeliveryMethod.PICK_UP.value : DeliveryMethod.DELIVERY.value,
           fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
-          totalPrice: paymentTotal,
+          totalPrice: paymentDetails.paymentTotal,
           note,
           paymentMethod: PaymentMethod.COD.value
         }

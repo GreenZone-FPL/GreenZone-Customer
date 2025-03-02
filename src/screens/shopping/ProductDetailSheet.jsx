@@ -41,7 +41,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const calculateTotal = (product, variant, toppings, quantity) => {
         if (!product) return 0; // Nếu không có sản phẩm, trả về 0
 
-        const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
+        const basePrice = variant ? variant.sellingPrice : product.sellingPrice; // Nếu không có variant, lấy giá sản phẩm
         const toppingsAmount = toppings?.reduce((acc, item) => acc + item.extraPrice * item.quantity, 0) || 0; // Nếu không có toppings, giá là 0
 
         return quantity * (basePrice + toppingsAmount);
@@ -169,8 +169,9 @@ const ProductDetailSheet = ({ route, navigation }) => {
                             }));
 
                             console.log('updatedToppings = ', updatedToppings);
+                            const productPrice = totalAmount/ quantity
                             await CartManager
-                                .addToCart(product, selectedVariant, updatedToppings, totalAmount / quantity, quantity, cartDispatch)
+                                .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
 
 
                             navigation.goBack()

@@ -20,7 +20,10 @@ const fullInfo = {
     store: '',                 // ID cửa hàng
     owner: '',                 // (Required) ID customer
     voucher: '',               // ID voucher áp dụng (nếu có).
-    orderItems: []             // (Required)
+    orderItems: [],             // (Required)
+    storeInfo: '',
+    voucherInfo: {}
+
 }
 
 
@@ -30,10 +33,8 @@ export const cartInitialState = {
     note: '',
     totalPrice: 0,
     paymentMethod: PaymentMethod.COD.value,
-    shippingAddress: '',
     store: '',
     owner: '',
-    voucher: '',
     orderItems: []
 }
 
