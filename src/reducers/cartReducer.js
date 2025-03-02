@@ -1,9 +1,10 @@
+import { DeliveryMethod, PaymentMethod } from "../constants"
 import { AppAsyncStorage } from "../utils"
 
 export const CartActionTypes = {
     READ_CART: 'READ_CART',
-    CLEAR_CART: 'CLEAR_CART',
-    UPDATE_CART: 'UPDATE_CART',
+    CLEAR_ORDER_ITEMS: 'CLEAR_ORDER_ITEMS',
+    UPDATE_ORDER_ITEMS: 'UPDATE_ORDER_ITEMS',
     UPDATE_ORDER_INFO: 'UPDATE_ORDER_INFO',
     RESET_STATE: 'RESET_STATE'
 
@@ -24,27 +25,29 @@ const fullInfo = {
 
 
 export const cartInitialState = {
-    deliveryMethod: 'pickup',
+    deliveryMethod: DeliveryMethod.PICK_UP.value,
     fulfillmentDateTime: '',
     note: '',
     totalPrice: 0,
-    paymentMethod: 'cod',
+    paymentMethod: PaymentMethod.COD.value,
+    shippingAddress: '',
     store: '',
     owner: '',
+    voucher: '',
     orderItems: []
 }
 
 export const cartReducer = (state, action) => {
     switch (action.type) {
-        case CartActionTypes.READ_CART:
-        case CartActionTypes.UPDATE_CART: // dùng cho cả addToCart, updateItem, removeItem
+        case CartActionTypes.UPDATE_ORDER_ITEMS: // dùng cho cả addToCart, updateItem, removeItem
             return { ...state, orderItems: action.payload }
 
+        case CartActionTypes.READ_CART:
         case CartActionTypes.UPDATE_ORDER_INFO:
             // Chỉ cập nhật các thông tin liên quan đến đơn hàng mà không đụng đến orderItems
             return { ...state, ...action.payload };
 
-        case CartActionTypes.CLEAR_CART:
+        case CartActionTypes.CLEAR_ORDER_ITEMS:
             return { ...state, orderItems: [] }
 
         case CartActionTypes.RESET_STATE:

@@ -74,7 +74,7 @@ export const  DialogShippingMethod = ({
       phone: 'Ngọc Đại | 012345678',
     },
     {
-      label: 'Mang đi',
+      label: 'Tự đến lấy hàng',
       image: require('../../assets/images/ic_take_away.png'),
       address: 'HCM Đường D1 BTH',
       phone: '',

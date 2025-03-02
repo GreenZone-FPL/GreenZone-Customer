@@ -1,21 +1,39 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
-import {IconWithBadge} from './IconWithBadge';
+import { IconWithBadge } from './IconWithBadge';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types'
+import { Pressable } from 'react-native';
 
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
   onBadgePress: PropTypes.func,
   isHome: PropTypes.bool,
+  leftIcon: PropTypes.string,
+  enableLeftIcon: PropTypes.bool,
+  onLeftPress: PropTypes.func
 };
 
-export const  HeaderWithBadge = (props) => {
-  const { title, onBadgePress, isHome } = props;
+export const HeaderWithBadge = ({
+  title,
+  onBadgePress,
+  isHome,
+  leftIcon = 'arrow-left',
+  enableLeftIcon = false,
+  onLeftPress
+}) => {
+
   return (
     <View style={styles.header}>
+      {
+        enableLeftIcon &&
+        <Pressable onPress={onLeftPress}>
+          <Icon source={leftIcon} color={colors.black} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} />
+        </Pressable>
+
+      }
 
 
       { // Kiểm tra xem có phải trang Home hay không
@@ -27,7 +45,7 @@ export const  HeaderWithBadge = (props) => {
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
             />
-            <Text style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>{title}</Text>
+            <Text style={[styles.title, { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }]}>{title}</Text>
             <Icon source='hand-wave' color={colors.yellow700} size={GLOBAL_KEYS.ICON_SIZE_SMALL} />
           </View>
 
