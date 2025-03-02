@@ -7,7 +7,7 @@ import { useAppContext } from '../../context/appContext';
 import { VoucherGraph } from '../../layouts/graphs';
 import { CartManager, TextFormatter } from '../../utils';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 const MyVoucherScreen = ({ navigation, route }) => {
   const [vouchers, setVouchers] = useState([]);
@@ -100,13 +100,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemImage: {
