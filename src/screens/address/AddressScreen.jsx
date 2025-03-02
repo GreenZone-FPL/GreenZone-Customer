@@ -1,97 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, ActivityIndicator, FlatList } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { LightStatusBar, NormalHeader, DialogNotification } from '../../components';
+import { useFocusEffect } from '@react-navigation/native';
+import { LightStatusBar, NormalHeader} from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
-import { getUserAddresses, deleteAddress} from '../../axios';
-
+import { getUserAddresses } from '../../axios';
+import LoadingOverlay from '../../components/animations/LoadingOverlay';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation;
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [showList, setShowList] = useState(false);
 
   const fetchAddresses = async () => {
     try {
       setIsLoading(true);
+      setShowList(false);
       const response = await getUserAddresses();
       setAddresses(response);
     } catch (error) {
       console.error('Error fetching addresses:', error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+        setShowList(true);
+      }, 2000);
     }
   };
 
-  useEffect(() => {
-    fetchAddresses(); // Gọi API lần đầu khi vào màn hình
-    const interval = setInterval(() => {
+  useFocusEffect(
+    React.useCallback(() => {
       fetchAddresses();
-    }, 2000); // Cập nhật mỗi 2 giây
-  
-    return () => clearInterval(interval); // Xóa interval khi rời màn hình
-  }, []);
-
-  const handleDeletePress = (addressId) => {
-    setSelectedAddressId(addressId);
-    setIsDialogVisible(true);
-  };
-
-  const handleDeleteAddress = async () => {
-    if (!selectedAddressId) return;
-    try {
-      setIsLoading(true);
-      const response = await deleteAddress(selectedAddressId)
-      if (response?.acknowledged && response?.deletedCount > 0) {
-        setAddresses(prevAddresses => prevAddresses.filter(addr => addr._id !== selectedAddressId));
-      } else {
-        console.warn("Không thể xóa địa chỉ. Phản hồi API không hợp lệ:", response);
-      }
-    } catch (error) {
-      console.error("Lỗi khi xóa địa chỉ:", error.response?.data || error.message);
-    } finally {
-      setIsDialogVisible(false);
-      setSelectedAddressId(null);
-      setIsLoading(false);
-    }
-  };
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Địa chỉ đã lưu" onLeftPress={() => navigation.goBack()} />
+
       <View style={styles.content}>
-        <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen)} />
+        <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
       </View>
+
       <View style={{ height: '60%', margin: 16 }}>
+        {showList ? (
           <FlatList
             data={addresses}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
               <CardLocation
                 address={item}
-                isOn={selectedAddressId === item._id} // Chỉ bật nếu là địa chỉ đang được chọn
                 onEdit={() => navigation.navigate(UserGraph.NewAddressScreen, { address: item })}
-                onDelete={() => handleDeletePress(item._id)}
-                setIsOn={(newState) => handleToggle(item._id, newState)}
               />
             )}
           />
+        ) : null}
       </View>
 
-      {/* Dialog Notification */}
-      <DialogNotification
-        isVisible={isDialogVisible}
-        onHide={() => setIsDialogVisible(false)}
-        title="Xác nhận xóa"
-        textContent="Bạn có chắc chắn muốn xóa địa chỉ này?"
-        textHide="Hủy"
-        textConfirm="Xóa"
-        onConfirm={handleDeleteAddress}
-      />
+      {/* Sử dụng LoadingOverlay */}
+      <LoadingOverlay visible={isLoading} />
     </SafeAreaView>
   );
 };
@@ -103,8 +73,8 @@ const Card = ({ icon, title, onPress }) => (
   </Pressable>
 );
 
-const CardLocation = ({ address, onEdit, onDelete}) => (
-  <Pressable style={styles.cardLocation} onPress={() => console.log('Clicked on', address.specificAddress)}>
+const CardLocation = ({ address, onEdit }) => (
+  <Pressable style={styles.cardLocation} onPress={onEdit}>
     <View style={{ flexDirection: 'row' }}>
       <View style={{ flexDirection: 'row', gap: 16, flex: 2, alignItems: 'center' }}>
         <Icon source={"map-marker"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
@@ -116,15 +86,7 @@ const CardLocation = ({ address, onEdit, onDelete}) => (
           <Text style={styles.distance}>{address.consigneePhone} {address.consigneeName}</Text>
         </View>
       </View>
-      <View style={{ gap: 16 , alignItems: 'center'}}>
-        <Pressable onPress={onEdit}>
-          <Icon source={"book-edit"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
-        </Pressable>
-        <Pressable onPress={onDelete}>
-          <Icon source={"delete"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.red800} />
-        </Pressable>
-      </View>
-    </View >
+    </View>
   </Pressable>
 );
 
@@ -176,10 +138,20 @@ const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'justify',
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    width: '60%'
+    width: "65%"
   },
   distance: {
     color: colors.gray700,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject, // Chiếm toàn bộ màn hình
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Làm mờ nền
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lottie: {
+    width: 150,
+    height: 150,
   },
 })
