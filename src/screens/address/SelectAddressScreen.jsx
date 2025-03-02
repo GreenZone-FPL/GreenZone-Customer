@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -8,15 +8,19 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {LightStatusBar, NormalHeader} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {getAddresses} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { LightStatusBar, NormalHeader } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { getAddresses } from '../../axios';
 import { UserGraph } from '../../layouts/graphs';
+import { useAppContext } from '../../context/appContext';
+import { CartManager } from '../../utils';
 
-const SelectAddressScreen = props => {
+const SelectAddressScreen = ({ navigation, route }) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const { isUpdateOrderInfo } = route.params || false
+  const { cartDispatch } = useAppContext()
 
   useEffect(() => {
     const fetchAddress = async () => {
@@ -31,7 +35,27 @@ const SelectAddressScreen = props => {
     fetchAddress();
   }, []);
 
-  const navigation = props.navigation;
+
+  const onConfirmAddress = address => {
+    if (isUpdateOrderInfo) {
+      console.log('selectedAddress', address)
+      if (cartDispatch) {
+        CartManager.updateOrderInfo(cartDispatch,
+          {
+            shippingAddress: address._id,
+            shippingAddressInfo: {
+              ...address,
+              location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`
+            }
+          }
+        )
+      }
+      navigation.goBack()
+    } else {
+      console.log('selectedAddress', address)
+    }
+
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,12 +71,10 @@ const SelectAddressScreen = props => {
         {addresses.length > 0 ? (
           addresses.map(address => (
             <Card
+              address={address}
               key={address._id}
-              name={address.consigneeName}
-              phone={address.consigneePhone}
-              location={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
-              isSelected={selectedAddress === address._id}
-              onPress={() => setSelectedAddress(address._id)}
+              isSelected={selectedAddress === address}
+              onPress={() => setSelectedAddress(address)}
             />
           ))
         ) : (
@@ -64,7 +86,7 @@ const SelectAddressScreen = props => {
       {selectedAddress && (
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={() => console.log('Địa chỉ đã chọn:', selectedAddress)}>
+          onPress={() => onConfirmAddress(selectedAddress)}>
           <Text style={styles.confirmText}>Xác nhận</Text>
         </TouchableOpacity>
       )}
@@ -79,19 +101,21 @@ const SelectAddressScreen = props => {
   );
 };
 
-const Card = ({name, phone, location, isSelected, onPress}) => (
+const Card = ({ address, isSelected, onPress }) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
-    onPress={onPress}>
+    onPress={() => onPress(address)}>
     <Icon
       source="google-maps"
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
       color={colors.primary}
     />
     <View style={styles.textContainer}>
-      <Text style={styles.location}>Người nhận: {name}</Text>
-      <Text style={styles.location}>SĐT: {phone}</Text>
-      <Text style={styles.location}>Địa chỉ: {location}</Text>
+      <Text style={styles.location}>Người nhận: {address.consigneeName}</Text>
+      <Text style={styles.location}>SĐT: {address.consigneePhone}</Text>
+      <Text style={styles.location}>
+        Địa chỉ: {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
+      </Text>
     </View>
   </Pressable>
 );
@@ -113,7 +137,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 8,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,
