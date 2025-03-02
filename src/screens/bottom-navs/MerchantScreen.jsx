@@ -17,7 +17,7 @@ import { Icon } from 'react-native-paper';
 import { getAllMerchants } from '../../axios/modules/merchant';
 import { CustomSearchBar, HeaderWithBadge, Indicator } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import {AppGraph} from '../../layouts/graphs'
+import { AppGraph } from '../../layouts/graphs'
 
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
@@ -86,8 +86,10 @@ const MerchantScreen = ({ navigation, route }) => {
         CartManager.updateOrderInfo(cartDispatch,
           {
             store: merchant._id,
-            storeName: merchant.name,
-            storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`
+            storeInfo: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`
+            }
           }
         )
       }

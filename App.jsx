@@ -43,6 +43,7 @@ import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import { PaperProvider } from 'react-native-paper';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
+import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 
 const BaseStack = createNativeStackNavigator();
 
@@ -88,6 +89,15 @@ function App() {
                       headerShown: false,
                     }}
                     component={RecipientInfoSheet} />
+
+                  <BaseStack.Screen
+                    name={VoucherGraph.VoucherDetailSheet}
+                    options={{
+                      animation: 'slide_from_bottom',
+                      presentation: 'transparentModal',
+                      headerShown: false,
+                    }}
+                    component={VoucherDetailSheet} />
 
                   <BaseStack.Screen
                     name={ShoppingGraph.EditCartItemScreen}

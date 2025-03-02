@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
   qrCodeImage: {
     width: width / 3,
     height: width / 3,
+    // backgroundColor: 'green'
   },
   discountCode: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
