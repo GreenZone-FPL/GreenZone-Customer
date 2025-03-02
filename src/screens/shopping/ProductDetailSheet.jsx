@@ -146,6 +146,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                     </ScrollView>
 
                     <CheckoutFooter
+                       
                         quantity={quantity}
                         handlePlus={() => {
                             if (quantity < 10) {
@@ -168,13 +169,9 @@ const ProductDetailSheet = ({ route, navigation }) => {
                             }));
 
                             console.log('updatedToppings = ', updatedToppings);
-                            const newCart = await CartManager
-                                .addToCart(product, selectedVariant, updatedToppings, totalAmount/quantity, quantity, customNote)
+                            await CartManager
+                                .addToCart(product, selectedVariant, updatedToppings, totalAmount / quantity, quantity, cartDispatch)
 
-                            cartDispatch({
-                                type: CartActionTypes.UPDATE_CART,
-                                payload: newCart
-                            })
 
                             navigation.goBack()
 

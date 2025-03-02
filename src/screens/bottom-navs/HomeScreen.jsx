@@ -126,6 +126,7 @@ const HomeScreen = props => {
         onBadgePress={() => { }}
         isHome={false}
       />
+         
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -179,7 +180,7 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
 
-        cart={cartState.orderItems}
+        cartState={cartState}
 
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
