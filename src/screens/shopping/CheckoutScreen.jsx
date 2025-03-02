@@ -86,10 +86,8 @@ const CheckoutScreen = ({ navigation }) => {
               {
                 cartState.deliveryMethod === DeliveryMethod.DELIVERY.value &&
                 <RecipientInfo
-                  userInfo={userInfo || { name: 'Dai ngoc', phoneNumber: '1234567890' }}
-                  onChangeRecipientInfo={() =>
-                    //  navigation.navigate(ShoppingGraph.RecipientInfoSheet)}
-                    setDialogRecipientInfoVisible(true)}
+                  cartState={cartState}
+                  onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
                 />
               }
               <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} />
@@ -225,7 +223,15 @@ const CheckoutScreen = ({ navigation }) => {
         visible={dialogRecipientInforVisible}
         onHide={() => setDialogRecipientInfoVisible(false)}
         onConfirm={(data) => {
-          setUserInfo(data);
+          CartManager.updateOrderInfo(cartDispatch,
+            {
+              shippingAddressInfo: {
+                ...cartState?.shippingAddressInfo,
+                consigneeName: data.name,
+                consigneePhone: data.phoneNumber
+              }
+            }
+          )
           setDialogRecipientInfoVisible(false);
         }}
       />
@@ -352,14 +358,22 @@ const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
       />
       {
         cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ?
-          ((cartState?.storeInfo?.storeName && cartState?.storeInfo?.storeAddress) ? (
-            <>
-              <TitleText text={cartState?.storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
-              <NormalText text={cartState?.storeInfo?.storeAddress} />
-            </>
-
-          ) : <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />) :
-          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+          (
+            (cartState?.storeInfo?.storeName && cartState?.storeInfo?.storeAddress) ?
+              (
+                <>
+                  <TitleText text={cartState?.storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
+                  <NormalText text={cartState?.storeInfo?.storeAddress} />
+                </>
+              ) :
+              <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
+          )
+          :
+          (
+            cartState?.shippingAddress ?
+              <NormalText text={`${cartState?.shippingAddressInfo?.location}`} style={{ lineHeight: 20 }} /> :
+              <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+          )
       }
 
     </View >
@@ -367,7 +381,7 @@ const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
 };
 
 
-const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
+const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
 
   return (
     <View style={styles.containerItem}>
@@ -379,7 +393,12 @@ const RecipientInfo = ({ userInfo, onChangeRecipientInfo }) => {
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
       />
-      <NormalText text={`${userInfo?.name} | ${userInfo?.phoneNumber}`} />
+      {
+        cartState?.shippingAddress ?
+          <NormalText text={`${cartState?.shippingAddressInfo?.consigneeName} | ${cartState.shippingAddressInfo?.consigneePhone}`} style={{ lineHeight: 20 }} /> :
+          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+      }
+
     </View >
   );
 };
