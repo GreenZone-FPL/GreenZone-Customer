@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, FlatList } from 'react-native';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 import { Dialog, Portal, Button, Text, PaperProvider, List } from 'react-native-paper';
-import { GLOBAL_KEYS } from '../../constants';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 export const ActionDialog = ({
     visible,
@@ -18,7 +18,7 @@ export const ActionDialog = ({
         <Portal>
 
             <Dialog
-                style={{ borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT }}
+                style={{ borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, backgroundColor: colors.white }}
                 dismissable={false}
                 visible={visible}
             >

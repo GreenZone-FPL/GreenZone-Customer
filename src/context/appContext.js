@@ -54,8 +54,14 @@ export const AppContextProvider = ({ children }) => {
   useEffect(() => {
     const readCart = async () => {
       try {
-        const cartData = await CartManager.readCart();
-        cartDispatch({ type: CartActionTypes.READ_CART, payload: cartData });
+        const cart = await CartManager.readCart();
+        if (!cart.owner) {
+          const owner = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.userId);
+          if (owner) {
+            cart.owner = owner;
+          }
+        }
+        cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
       } catch (error) {
         console.log("Error loading cart", error);
       }
@@ -65,18 +71,20 @@ export const AppContextProvider = ({ children }) => {
     return () => { }
   }, [])
 
-  
+
 
   const addAddress = (address) => {
     setSelectedAddresses((prev) => [...prev, address]);
   };
-  
+
 
 
   return (
-    <AppContext.Provider value={{ authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,  
-      selectedAddresses, addAddress, selectedAddress, setSelectedAddress, 
-      recipientInfo, setRecipientInfo }}>
+    <AppContext.Provider value={{
+      authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,
+      selectedAddresses, addAddress, selectedAddress, setSelectedAddress,
+      recipientInfo, setRecipientInfo
+    }}>
       {children}
     </AppContext.Provider>
   );
