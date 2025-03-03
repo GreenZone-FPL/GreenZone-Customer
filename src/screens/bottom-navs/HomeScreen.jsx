@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import {
@@ -21,7 +21,7 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   CategoryMenu,
   DeliveryButton,
@@ -30,16 +30,15 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
-import { fetchData, fetchUserLocation } from '../../utils';
-
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {ShoppingGraph} from '../../layouts/graphs';
+import {fetchData, fetchUserLocation} from '../../utils';
 
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [categories, setCategories] = useState([]);
   const [currentLocation, setCurrentLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -50,7 +49,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const { cartState, cartDispatch } = useAppContext()
+  const {cartState, cartDispatch} = useAppContext();
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -78,7 +77,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
@@ -86,28 +85,32 @@ const HomeScreen = props => {
     console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-  const handleScroll = useCallback(event => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-    let closestCategory = 'Danh mục';
-    let minDistance = Number.MAX_VALUE;
+  const handleScroll = useCallback(
+    event => {
+      const scrollY = event.nativeEvent.contentOffset.y;
+      let closestCategory = 'Danh mục';
+      let minDistance = Number.MAX_VALUE;
 
-    Object.entries(positions).forEach(([categoryId, posY]) => {
-      const distance = Math.abs(scrollY - posY);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+      Object.entries(positions).forEach(([categoryId, posY]) => {
+        const distance = Math.abs(scrollY - posY);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCategory =
+            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        }
+      });
+
+      if (closestCategory !== lastCategoryRef.current) {
+        lastCategoryRef.current = closestCategory;
+        setCurrentCategory(closestCategory);
       }
-    });
-
-    if (closestCategory !== lastCategoryRef.current) {
-      lastCategoryRef.current = closestCategory;
-      setCurrentCategory(closestCategory);
-    }
-  }, [positions, allProducts]);
+    },
+    [positions, allProducts],
+  );
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 
   useEffect(() => {
@@ -115,18 +118,15 @@ const HomeScreen = props => {
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
   }, []);
 
-
-
-
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <HeaderWithBadge
         title={currentCategory}
-        onBadgePress={() => { }}
+        onBadgePress={() => {}}
         isHome={false}
       />
-         
+
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -156,7 +156,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
@@ -179,9 +179,7 @@ const HomeScreen = props => {
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-
         cartState={cartState}
-
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 
@@ -196,7 +194,7 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({ IconComponent, title, onPress }) => (
+const Item = ({IconComponent, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
@@ -209,7 +207,7 @@ const CardCategory = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
+        contentContainerStyle={{gap: 22}}>
         <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
@@ -265,11 +263,11 @@ const CardCategory = () => {
 
 const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const { navigation } = props;
+  const {navigation} = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', { searchQuery: query });
+      navigation.navigate('', {searchQuery: query});
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
@@ -285,7 +283,7 @@ const Searchbar = props => {
         borderRadius: 4,
         gap: 10,
       }}>
-      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput

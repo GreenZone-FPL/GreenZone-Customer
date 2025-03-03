@@ -29,13 +29,13 @@ const OrderDetailScreen = (props) => {
                     title={'Đơn hàng đang trên đường giao đến bạn'}
                     titleStyle={{ fontWeight: '500', marginVertical: 8 }}
                 />
-                <ShipperInfo messageClick = {() => navigation.navigate(ShoppingGraph.ChatScreen)}/>
+               <ShipperInfo messageClick = {() => navigation.navigate(ShoppingGraph.ChatScreen)}/>
                 <Image style={{ width: '100%', height: 400 }} source={require('../../assets/images/map.png')} />
 
                 <MerchantInfo />
                 <RecipientInfo />
 
-                <ProductsInfo />
+               {/*   <ProductsInfo /> */}
 
 
                 <PaymentDetails />

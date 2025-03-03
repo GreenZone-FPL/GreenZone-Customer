@@ -45,11 +45,11 @@ const OrderHistoryScreen = ({navigation}) => {
   }, []);
 
   const handleRepeatOrder = () => {
-    navigation.navigate(ShoppingGraph.CheckoutScreen);
+    navigation.navigate(OrderGraph.OrderDetailScreen);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container}> 
       <LightStatusBar />
       <NormalHeader
         title="Lịch sử đơn hàng"
