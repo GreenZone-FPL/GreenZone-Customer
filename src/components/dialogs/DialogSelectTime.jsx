@@ -4,11 +4,11 @@ import { Icon } from 'react-native-paper';
 import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 
+
 const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
     const dateOptions = ["Hôm nay", "Ngày mai"];
 
     // Hàm tạo danh sách thời gian dựa vào ngày được chọn
-
 
     const [selectedDay, setSelectedDay] = useState(dateOptions[0]);
     const [timeSlots, setTimeSlots] = useState(generateTimeSlots(selectedDay));

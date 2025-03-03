@@ -48,7 +48,7 @@ export const HorizontalProductItem = ({
 
             <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
             {
-               ( item.variantName && !item.isVariantDefault) &&
+                (item.variantName && !item.isVariantDefault) &&
                 <Text style={[styles.normalText, { color: colors.yellow700 }, optionStyle]}>Size: {item.variantName}</Text>
             }
 
@@ -68,13 +68,13 @@ export const HorizontalProductItem = ({
         </Column>
 
         <Column style={styles.priceContainer}>
-           
-                <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
-               
-        
+
+            <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price * item.quantity)}</Text>
+
+
 
             <Pressable onPress={confirmDelete}>
-                <NormalText text='Xóa' style={{color: colors.orange700}} />
+                <NormalText text='Xóa' style={{ color: colors.orange700 }} />
             </Pressable>
 
             {/* <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text> */}
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 6,
         marginBottom: 8,
-      
+
     },
     itemImage: {
         width: 50,
