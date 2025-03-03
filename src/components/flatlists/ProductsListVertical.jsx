@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,10 +9,8 @@ import {
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Icon } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
-import ToppingModal from '../modal/ToppingModal';
 
 const width = Dimensions.get('window').width;
 
@@ -50,26 +48,7 @@ export const ProductsListVertical = ({
 
 const ItemProduct = ({ item, onItemClick }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-
-  //   const fetchProductDetail = async () => {
-  //     try {
-  //       const data = await getProductDetail(item._id);
-  //       if (data) {
-  //         setProduct(data); // Lưu danh mục vào state
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetchProductDetail:", error);
-  //     } finally {
-  //       // setLoading(false);
-  //     }
-  //   };
-
-  //   fetchProductDetail();
-  // }, []);
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
@@ -90,7 +69,7 @@ const ItemProduct = ({ item, onItemClick }) => {
         </Text>
       </View>
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+
         style={styles.addButton}>
         <Icon
           source="plus"
@@ -98,23 +77,6 @@ const ItemProduct = ({ item, onItemClick }) => {
           color={colors.white}
         />
       </TouchableOpacity>
-      {
-        product &&
-        <ToppingModal
-          toppings={product.topping}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          item={item}
-          onConfirm={(selectedToppings, quantity) => {
-            console.log('Selected toppings:', selectedToppings);
-            console.log('Quantity:', quantity);
-            setModalVisible(false);
-          }}
-        />
-      }
-
-
-
     </View>
   );
 };
@@ -166,60 +128,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     end: 0,
     bottom: 0,
-  },
-  modalBackground: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  modalSubtitle: { fontSize: 14, color: 'gray', marginBottom: 10 },
-  toppingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  toppingText: { flex: 1, marginLeft: 10 },
-  priceText: { color: 'gray' },
-  quantityContainer: {
-    flex: 2,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
-  quantityButton: {
-    padding: 12,
-    backgroundColor: colors.green200,
-    borderRadius: 999,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
-  quantityText: { fontSize: 16, fontWeight: 'bold' },
-  confirmButton: {
-    flex: 3,
-    backgroundColor: colors.primary,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  confirmText: { fontSize: 16, fontWeight: 'bold', color: 'white' },
-  toppingTitleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 1,
-  },
+  }
+
 });
 
 
