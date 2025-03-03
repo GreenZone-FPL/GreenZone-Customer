@@ -17,14 +17,11 @@ const CheckoutScreen = ({ navigation }) => {
   const [dialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
   const [dialogSelecTimeVisible, setDialogSelectTimeVisible] = useState(false);
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
-  const [address, setAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState(DeliveryMethod.PICK_UP);
   const [note, setNote] = useState('');
-
   const { cartState, cartDispatch } = useAppContext()
-  const [userInfo, setUserInfo] = React.useState(null);
   const [timeInfo, setTimeInfo] = React.useState(null);
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
@@ -90,7 +87,7 @@ const CheckoutScreen = ({ navigation }) => {
                   onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
                 />
               }
-              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} />
+              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)}  cartState={cartState}/>
 
 
               <Column style={styles.containerItem}>
@@ -187,17 +184,18 @@ const CheckoutScreen = ({ navigation }) => {
             // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
             const body = { ...cartState, ...orderInfo }
             const missingFields = CartManager.checkValid(body)
-            if (missingFields) {
-              Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
-              // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
-              return
-            }
+            console.log('missingFields', missingFields)
+            // if (missingFields) {
+            //   Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
+            //   // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
+            //   return
+            // }
 
-            const response = await createPickUpOrder({
-              ...cartState,  // Giữ nguyên dữ liệu hiện tại
-              ...orderInfo   // Ghi đè các thông tin cập nhật
-            });
-            console.log('order data', response)
+            // const response = await createPickUpOrder({
+            //   ...cartState,  // Giữ nguyên dữ liệu hiện tại
+            //   ...orderInfo   // Ghi đè các thông tin cập nhật
+            // });
+            // console.log('order data', response)
 
 
 
@@ -305,39 +303,32 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
 }
 
 
-const TimeSection = ({ timeInfo, showDialog }) => {
-  console.log('timeInfo', timeInfo)
+const TimeSection = ({ timeInfo, showDialog, cartState }) => {
+  // Kiểm tra timeInfo có hợp lệ không
+  const { selectedDay, selectedTime, fulfillmentDateTime } = timeInfo || {};
+  const hasFulfillmentTime = !!cartState.fulfillmentDateTime;
+
   return (
     <Column style={styles.containerItem}>
       <DualTextRow
         style={{ marginVertical: 0 }}
-        leftText={'Thời gian nhận'}
-        rightText={'Thay đổi'}
+        leftText="Thời gian nhận"
+        rightText="Thay đổi"
         leftTextStyle={{ fontWeight: '600' }}
         rightTextStyle={{ color: colors.primary }}
         onRightPress={showDialog}
       />
 
-      {
-        timeInfo ?
-          <>
-            {
-              timeInfo.selectedDay === 'Hôm nay' && timeInfo.selectedTime === 'Sớm nhất có thể' &&
-              <TitleText text='15-30 phút' style={{ color: colors.green500 }} />
-            }
-
-            <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime} - ${timeInfo.fulfillmentDateTime}`} />
-
-
-          </>
-
-          :
-          <NormalText text='Chọn thời gian nhận' style={{ color: colors.orange700 }} />
-      }
-
+      {hasFulfillmentTime ? (
+        <NormalText text={`${selectedDay || ''} - ${selectedTime || ''} - ${fulfillmentDateTime || ''}`} />
+      ) : (
+        <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+      )}
     </Column>
   );
 };
+
+
 const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
 
   return (
@@ -578,13 +569,16 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
             cartState?.voucher &&
             <NormalText
               text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}
-              style={{ color: colors.green750 }} />
+              style={{ color: colors.primary, fontWeight: '500' }} />
           }
 
         </Column>
 
         <Column>
-          <TitleText text={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`} style={{ color: colors.primary, textAlign: 'right' }} />
+          <TitleText
+            text={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`}
+            style={{ color: colors.red900, textAlign: 'right', fontSize: 16 }}
+          />
           {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
       </Row>
@@ -606,12 +600,13 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         const body = { ...cartState, ...orderInfo }
         CartManager.updateOrderInfo(cartDispatch, body)
         const missingFields = CartManager.checkValid(body)
-        if (missingFields) {
-          Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
-          // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
-          return
-        }
-        showDialog()
+        console.log('missingFields',  missingFields)
+        // if (missingFields) {
+        //   Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
+        //   // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
+        //   return
+        // }
+        // showDialog()
 
       }}
       />

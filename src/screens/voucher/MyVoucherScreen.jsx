@@ -12,7 +12,6 @@ const {width} = Dimensions.get('window');
 const MyVoucherScreen = ({ navigation, route }) => {
   const [vouchers, setVouchers] = useState([]);
   const { cartDispatch } = useAppContext()
-
   const { isUpdateOrderInfo } = route.params || false
 
 
@@ -104,6 +103,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    gap: 16,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,

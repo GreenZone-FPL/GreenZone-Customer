@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   FlatList,
   Image,
@@ -8,10 +8,8 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
-import ToppingModal from '../modal/ToppingModal';
 
 export const ProductsListHorizontal = ({
   onItemClick,
@@ -42,26 +40,6 @@ export const ProductsListHorizontal = ({
 };
 
 const ItemProduct = ({ item, onItemClick }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [product, setProduct] = useState(null)
-
-  useEffect(() => {
-
-    const fetchProductDetail = async () => {
-      try {
-        const data = await getProductDetail(item._id);
-        if (data) {
-          setProduct(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetchProductDetail:", error);
-      } finally {
-        // setLoading(false);
-      }
-    };
-
-    fetchProductDetail();
-  }, []);
 
   return (
     <View style={styles.itemProduct}>
@@ -80,28 +58,13 @@ const ItemProduct = ({ item, onItemClick }) => {
       </Text>
       <TouchableOpacity
         style={styles.addButtonContainer}
-        onPress={() => setModalVisible(true)}>
+       >
         <Icon
           source="plus"
           color={colors.primary}
           size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         />
       </TouchableOpacity>
-
-      {
-        product &&
-        <ToppingModal
-          toppings={product.topping}
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          item={item}
-          onConfirm={(selectedToppings, quantity) => {
-            console.log('Selected toppings:', selectedToppings);
-            console.log('Quantity:', quantity);
-            setModalVisible(false);
-          }}
-        />
-      }
     </View>
   );
 };
