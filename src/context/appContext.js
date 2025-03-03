@@ -59,6 +59,7 @@ export const AppContextProvider = ({ children }) => {
           const owner = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.userId);
           if (owner) {
             cart.owner = owner;
+            await AppAsyncStorage.storeData('CART', cart)
           }
         }
         cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });

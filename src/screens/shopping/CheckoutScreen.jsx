@@ -7,7 +7,7 @@ import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
+import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -19,13 +19,22 @@ const CheckoutScreen = ({ navigation }) => {
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
-  const [deliveryMethod, setDeliveryMethod] = useState(DeliveryMethod.PICK_UP);
   const [note, setNote] = useState('');
   const { cartState, cartDispatch } = useAppContext()
-  const [timeInfo, setTimeInfo] = React.useState(null);
+  const [timeInfo, setTimeInfo] = React.useState({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
+  useEffect(() => {
+    if (timeInfo?.fulfillmentDateTime) {
+      const fulfillmentTimeISO = new Date(timeInfo.fulfillmentDateTime).toISOString();
+      const nowISO = new Date().toISOString();
+
+      if (fulfillmentTimeISO < nowISO) {
+        setTimeInfo({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
+      }
+    }
+  }, [timeInfo?.fulfillmentDateTime]);
 
   // Mở dialog với sản phẩm cần xóa
   const confirmDelete = (product) => {
@@ -87,7 +96,7 @@ const CheckoutScreen = ({ navigation }) => {
                   onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
                 />
               }
-              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)}  cartState={cartState}/>
+              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} cartState={cartState} />
 
 
               <Column style={styles.containerItem}>
@@ -127,9 +136,14 @@ const CheckoutScreen = ({ navigation }) => {
 
               />
               <Column style={{ gap: 16, marginHorizontal: 16 }}>
-                <Button title='Log cartState' onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))} />
+                <Button
+                  title='Log cartState'
+                  onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))}
+                />
 
-                <Button title='Clear cartState' onPress={() => CartManager.clearCart(cartDispatch)} />
+                <Button title='Clear cartState'
+                  onPress={() => CartManager.clearCart(cartDispatch)}
+                />
 
               </Column>
 
@@ -166,38 +180,11 @@ const CheckoutScreen = ({ navigation }) => {
         onApprove={async () => {
 
           try {
-            const cartTotal = CartManager.getCartTotal(cartState.orderItems)
-            const deliveryAmount = 18000
-            const voucherAmount = 28000
-            const paymentTotal = cartTotal + deliveryAmount - voucherAmount
-            const orderInfo = {
-              deliveryMethod: deliveryMethod.label === DeliveryMethod.PICK_UP.label ? DeliveryMethod.PICK_UP.value : DeliveryMethod.DELIVERY.value,
-              fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
-              totalPrice: paymentTotal,
-              note,
-              paymentMethod: PaymentMethod.COD.value
-            }
+            const pickupOrder = CartManager.setUpPickupOrder(cartState)
+            console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
 
-            // Cập nhật state
-            CartManager.updateOrderInfo(cartDispatch, orderInfo)
-
-            // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
-            const body = { ...cartState, ...orderInfo }
-            const missingFields = CartManager.checkValid(body)
-            console.log('missingFields', missingFields)
-            // if (missingFields) {
-            //   Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
-            //   // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
-            //   return
-            // }
-
-            // const response = await createPickUpOrder({
-            //   ...cartState,  // Giữ nguyên dữ liệu hiện tại
-            //   ...orderInfo   // Ghi đè các thông tin cập nhật
-            // });
-            // console.log('order data', response)
-
-
+            const response = await createPickUpOrder(pickupOrder);
+            console.log('order data', response)
 
           } catch (error) {
             console.log('error', error)
@@ -303,10 +290,9 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
 }
 
 
-const TimeSection = ({ timeInfo, showDialog, cartState }) => {
-  // Kiểm tra timeInfo có hợp lệ không
-  const { selectedDay, selectedTime, fulfillmentDateTime } = timeInfo || {};
-  const hasFulfillmentTime = !!cartState.fulfillmentDateTime;
+const TimeSection = ({ timeInfo, showDialog }) => {
+  const isToday = timeInfo?.selectedDay === "Hôm nay";
+  const isEarliest = timeInfo?.selectedTime === "Sớm nhất có thể";
 
   return (
     <Column style={styles.containerItem}>
@@ -319,14 +305,22 @@ const TimeSection = ({ timeInfo, showDialog, cartState }) => {
         onRightPress={showDialog}
       />
 
-      {hasFulfillmentTime ? (
-        <NormalText text={`${selectedDay || ''} - ${selectedTime || ''} - ${fulfillmentDateTime || ''}`} />
+      {timeInfo && timeInfo.fulfillmentDateTime ? (
+        <>
+          {isToday && isEarliest && <TitleText text="15-30 phút" style={{ color: colors.green500 }} />}
+          <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`} />
+
+        </>
       ) : (
-        <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+        <>
+          <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+          <NormalText text="Sớm nhất có thể" />
+        </>
       )}
     </Column>
   );
 };
+
 
 
 const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
@@ -583,30 +577,23 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         </Column>
       </Row>
 
-      <PrimaryButton title='Đặt hàng' onPress={() => {
+      <PrimaryButton title='Đặt hàng' onPress={async () => {
+
 
         const orderInfo = {
-          deliveryMethod: cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ? DeliveryMethod.PICK_UP.value : DeliveryMethod.DELIVERY.value,
           fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
           totalPrice: paymentDetails.paymentTotal,
           note,
-          paymentMethod: PaymentMethod.COD.value
         }
+        const newCart = await CartManager.updateOrderInfo(cartDispatch, orderInfo)
 
-        // Cập nhật state
-        CartManager.updateOrderInfo(cartDispatch, orderInfo)
-
-        // Gửi request tạo đơn hàng bằng dữ liệu mới (kết hợp state cũ + orderInfo mới)
-        const body = { ...cartState, ...orderInfo }
-        CartManager.updateOrderInfo(cartDispatch, body)
-        const missingFields = CartManager.checkValid(body)
-        console.log('missingFields',  missingFields)
-        // if (missingFields) {
-        //   Alert.alert('Cảnh báo', `Thiếu thông tin: ${missingFields.join(', ')}`)
-        //   // Toaster.show(`Thiếu thông tin: ${missingFields.join(', ')}`);
-        //   return
-        // }
-        // showDialog()
+        const missingFields = CartManager.checkValid(newCart)
+        console.log('missingFields', missingFields)
+        if (missingFields) {
+          Alert.alert('Cảnh báo', `${missingFields.join(', ')}`)
+          return
+        }
+        showDialog()
 
       }}
       />
