@@ -16,8 +16,9 @@ import {
 import { Icon } from 'react-native-paper';
 import { getAllMerchants } from '../../axios/modules/merchant';
 import { CustomSearchBar, HeaderWithBadge, Indicator } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppGraph } from '../../layouts/graphs/appGraph';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { AppGraph } from '../../layouts/graphs'
+
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -36,8 +37,8 @@ const MerchantScreen = ({ navigation, route }) => {
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
   const [selectedMerchant, setSelectedMerchant] = useState([]);
   const [queryMerchants, setQueryMerchants] = useState([]);
-  const { updateOrderInfo } = route.params || false
-  const { cartState, cartDispatch } = useAppContext()
+  const { isUpdateOrderInfo } = route.params || false
+  const { cartDispatch } = useAppContext()
   // hàm gọi api merchants
   const fetchMerchants = async () => {
     try {
@@ -80,12 +81,15 @@ const MerchantScreen = ({ navigation, route }) => {
 
   // hàm tới cửa hàng chi tiết
   const handleMerchant = merchant => {
-    if (updateOrderInfo) {
+    if (isUpdateOrderInfo) {
       if (cartDispatch) {
-        CartManager.updateOrderInfo(
-          cartDispatch,
+        CartManager.updateOrderInfo(cartDispatch,
           {
-            store: merchant._id
+            store: merchant._id,
+            storeInfo: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`
+            }
           }
         )
       }
@@ -95,7 +99,7 @@ const MerchantScreen = ({ navigation, route }) => {
         item: merchant
       })
     }
-   
+
   };
 
   // Handle Search Focus
@@ -185,7 +189,11 @@ const MerchantScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <HeaderWithBadge title={isMapView ? 'Bản đồ' : 'Cửa hàng'} />
+      <HeaderWithBadge
+        title={isMapView ? 'Bản đồ' : 'Cửa hàng'}
+        enableLeftIcon={isUpdateOrderInfo}
+        onLeftPress={() => navigation.goBack()}
+      />
 
       <View style={styles.content}>
         <View style={styles.tool}>
@@ -271,12 +279,12 @@ const MerchantScreen = ({ navigation, route }) => {
                   const merchant = merchants.find(m => m._id === properties.id);
                   if (merchant) {
                     setSelectedMerchant(merchant);
-                    
-                  
-                      navigation.navigate(AppGraph.MerchantDetailSheet, {
-                        item: merchant,
-                      })
-                    
+
+
+                    navigation.navigate(AppGraph.MerchantDetailSheet, {
+                      item: merchant,
+                    })
+
 
                   }
                 }}>

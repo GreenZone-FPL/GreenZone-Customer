@@ -201,12 +201,10 @@ const EditCartItemScreen = ({route, navigation}) => {
 
                   variantName: selectedVariant?.size,
                 },
+                cartDispatch
               );
 
-              cartDispatch({
-                type: CartActionTypes.UPDATE_CART,
-                payload: newCart,
-              });
+            
 
               navigation.goBack();
             }}

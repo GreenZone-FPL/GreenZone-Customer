@@ -81,7 +81,7 @@ export const CustomTabView = ({
         indicatorStyle={[styles.indicatorStyle, tabBarConfig.indicatorStyle]}
         containerStyle={[styles.tabContainer, tabBarConfig.containerStyle]}
         variant="primary"
-        scrollable={tabBarConfig.scrollable}>
+        scrollable={true}>
         {tabBarConfig.titles.map((title, index) => {
           return (
             <Tab.Item
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     backgroundColor: colors.white,
+    
   },
   tabItemContainer: {
     backgroundColor: colors.white,

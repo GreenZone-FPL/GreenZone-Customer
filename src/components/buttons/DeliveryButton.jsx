@@ -13,7 +13,7 @@ export const DeliveryButton = ({
   onPress,
   style,
   onPressCart,
-  cart,
+  cartState,
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
@@ -31,15 +31,15 @@ export const DeliveryButton = ({
       </Column>
 
       {
-        cart?.length > 0 &&
+        cartState?.orderItems?.length > 0 &&
         <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
           <Icon source="food-outline" color={colors.white} size={20} />
           <NormalText
-            text={TextFormatter.formatCurrency(CartManager.getCartTotal(cart))}
+            text={TextFormatter.formatCurrency(CartManager.getCartTotal(cartState))}
             style={{ color: colors.white, fontWeight: '500' }}
           />
 
-          <Text style={styles.quantity}>{cart.length}</Text>
+          <Text style={styles.quantity}>{cartState.orderItems.length}</Text>
         </TouchableOpacity>
       }
     </TouchableOpacity>
