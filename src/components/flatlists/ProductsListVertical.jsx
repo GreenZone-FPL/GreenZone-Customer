@@ -53,23 +53,23 @@ const ItemProduct = ({ item, onItemClick }) => {
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const fetchProductDetail = async () => {
-      try {
-        const data = await getProductDetail(item._id);
-        if (data) {
-          setProduct(data); // Lưu danh mục vào state
-        }
-      } catch (error) {
-        console.error("Error fetchProductDetail:", error);
-      } finally {
-        // setLoading(false);
-      }
-    };
+  //   const fetchProductDetail = async () => {
+  //     try {
+  //       const data = await getProductDetail(item._id);
+  //       if (data) {
+  //         setProduct(data); // Lưu danh mục vào state
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetchProductDetail:", error);
+  //     } finally {
+  //       // setLoading(false);
+  //     }
+  //   };
 
-    fetchProductDetail();
-  }, []);
+  //   fetchProductDetail();
+  // }, []);
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>

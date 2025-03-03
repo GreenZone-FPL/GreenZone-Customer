@@ -83,12 +83,4 @@ export const getOrderHistoryByStatus = async () => {
     console.log('error:', error);
     throw error;
   }
-// awaitingPayment -  Chờ thanh toán
-// pendingConfirmation - Chờ xác nhận đơn
-// processing - Thực hiện đơn
-// readyForPickup - Đã làm xong đơn, sẵn sàng giao
-// shippingOrder - Giao đơn hàng
-// completed -  Hoàn tất
-// cancelled - Đã hủy
-// failedDelivery - Giao hàng thất bại
 };

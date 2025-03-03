@@ -14,7 +14,7 @@ export const getAllProducts = async () => {
 
 export const getProductDetail = async (productId) => {
     try {
-
+        console.log('>>>>>>>>>>>>>>>>>>>>>')
         const response = await axiosInstance.get(`/v1/product/${productId}`);
 
         return response.data;

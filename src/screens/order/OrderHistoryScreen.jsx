@@ -32,7 +32,7 @@ const OrderHistoryScreen = ({navigation}) => {
     const fetchOrders = async () => {
       try {
         const data = await getOrderHistoryByStatus();
-        setOrders(data); // Cập nhật danh sách đơn hàng từ API
+        setOrders(data);
         console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
       } catch (error) {
         console.error('Lỗi khi lấy đơn hàng:', error);
