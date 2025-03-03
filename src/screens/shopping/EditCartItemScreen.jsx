@@ -195,7 +195,7 @@ const EditCartItemScreen = ({route, navigation}) => {
                 {
                   variant: selectedVariant?._id,
                   quantity,
-                  price: totalAmount,
+                  price: totalAmount/quantity,
                   productId: updateItem.productId,
                   toppingItems: sortedToppings,
 

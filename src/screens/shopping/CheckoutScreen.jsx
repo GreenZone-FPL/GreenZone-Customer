@@ -150,6 +150,7 @@ const CheckoutScreen = ({ navigation }) => {
             </ScrollView>
 
             <Footer
+              timeInfo={timeInfo}
               showDialog={() => setDialogCreateOrderVisible(true)}
               note={note}
               cartDispatch={cartDispatch}
@@ -165,6 +166,7 @@ const CheckoutScreen = ({ navigation }) => {
         visible={dialogSelecTimeVisible}
         onClose={() => setDialogSelectTimeVisible(false)}
         onConfirm={(data) => {
+          console.log('timeInfo', data)
           setTimeInfo(data)
           setDialogSelectTimeVisible(false)
         }}
@@ -580,6 +582,7 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
       <PrimaryButton title='Đặt hàng' onPress={async () => {
 
 
+        console.log('timeInfo', timeInfo)
         const orderInfo = {
           fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
           totalPrice: paymentDetails.paymentTotal,
@@ -590,7 +593,7 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         const missingFields = CartManager.checkValid(newCart)
         console.log('missingFields', missingFields)
         if (missingFields) {
-          Alert.alert('Cảnh báo', `${missingFields.join(', ')}`)
+          Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`)
           return
         }
         showDialog()
