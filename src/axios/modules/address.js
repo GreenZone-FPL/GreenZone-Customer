@@ -89,35 +89,39 @@ export const deleteAddress = async (addressId) => {
     }
 };
 
-// chỉnh sửa địa chỉ
-export const updateAddress = async (addressId, updateData) => {
+// Cập nhật địa chỉ theo ID
+export const updateAddress = async (addressId, addressData) => {
     try {
-        const { data } = await axiosInstance.put(`/v1/address/${addressId}`, updateData);
-        return data;
+        const response = await axiosInstance.put(`/v1/address/${addressId}`, addressData);
+        return response.data;
     } catch (error) {
-        console.error("Lỗi khi cập nhật địa chỉ:", error.response?.data || error.message);
+        console.error("❌ Lỗi khi cập nhật địa chỉ:", error.response?.data || error.message);
         throw error;
     }
 };
 
+
+
 // đặt địa chỉ mặc định
 export const setDefaultAddress = async (addressId) => {
     try {
-        const response = await axiosInstance.post(
-            `/v1/address/${addressId}/set-default`,
-            { isDefault: true }, 
-            { headers: { 'Content-Type': 'application/json' } }
-        );
+        const response = await axiosInstance.patch(`/v1/address/${addressId}/set-default`, {
+            isDefault: true, // API yêu cầu tham số này
+        });
 
-        if (response.data.success) {
-            alert(response.data.message); // "Set address as default successfully"
+        const data = response?.data || {}; // Đảm bảo không bị null
+
+        if (data.success) {
+            return { success: true, message: data.message || "Đã đặt địa chỉ mặc định thành công." };
         } else {
-            alert('Không thể đặt địa chỉ mặc định');
+            return { success: false, message: data.message || "Không thể đặt địa chỉ mặc định." };
         }
     } catch (error) {
-        console.error('Lỗi khi đặt địa chỉ mặc định:', error);
-        alert('Có lỗi xảy ra, vui lòng thử lại!');
+        console.error('❌ Lỗi khi đặt địa chỉ mặc định:', error?.response?.data || error.message);
+        return { success: false, message: 'Có lỗi xảy ra, vui lòng thử lại!' };
     }
 };
-;
+
+
+
 

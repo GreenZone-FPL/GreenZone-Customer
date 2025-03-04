@@ -2456,6 +2456,11 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/messaging/-/messaging-21.10.0.tgz"
   integrity sha512-vx3Ebk1zMOvo678vkyOY9Qf6GtiaWpQcbzW6bTw+RMODllFwHt0kj5SsDt4aeVSNlA6YC+zXURCzoqUxNEbE3Q==
 
+"@react-native-masked-view/masked-view@^0.2.3", "@react-native-masked-view/masked-view@>= 0.2.0":
+  version "0.2.9"
+  resolved "https://registry.npmjs.org/@react-native-masked-view/masked-view/-/masked-view-0.2.9.tgz"
+  integrity sha512-Hs4vKBKj+15VxHZHFtMaFWSBxXoOE5Ea8saoigWhahp8Mepssm0ezU+2pTl7DK9z8Y9s5uOl/aPb4QmBZ3R3Zw==
+
 "@react-native-picker/picker@^2.11.0":
   version "2.11.0"
   resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.11.0.tgz"
@@ -8466,7 +8471,7 @@ react-native-keep-awake@^4.0.0:
   resolved "https://registry.npmjs.org/react-native-keep-awake/-/react-native-keep-awake-4.0.0.tgz"
   integrity sha512-0Fotox+eLXQooeibVs3P60yASYUWjtRw9MZNmbuHt5UZQrgUrAKsE4jm7gTr4tPU1m1RkwGzcgUFpcOkh/ec7g==
 
-react-native-linear-gradient@^2.8.3:
+react-native-linear-gradient@^2.5.6, react-native-linear-gradient@^2.8.3:
   version "2.8.3"
   resolved "https://registry.npmjs.org/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
@@ -8593,6 +8598,11 @@ react-native-size-matters@^0.4.0:
   resolved "https://registry.npmjs.org/react-native-size-matters/-/react-native-size-matters-0.4.2.tgz"
   integrity sha512-DKE3f/sdcozd24oASgkP1iGg+YU3HoajRa5k3a4wkRzpiqREq8SGX12Y5zBgAt/8IivLQoTMYkyQu1/Giuy+zQ==
 
+react-native-skeleton-placeholder@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.npmjs.org/react-native-skeleton-placeholder/-/react-native-skeleton-placeholder-5.0.0.tgz"
+  integrity sha512-7sdG+Y2ENEVcxFC9XlpCgHy59XKkxaUyVqDwuAb66hvl7lwFr25uA5kHJ+JuDJ84ptVil5UEowW/2avwhsfoYg==
+
 react-native-sliding-panels@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/react-native-sliding-panels/-/react-native-sliding-panels-1.0.0.tgz"
@@ -8692,7 +8702,7 @@ react-native-windows@^0.75.0:
     ws "^6.2.2"
     yargs "^17.6.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.8.0:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.50.1, react-native@>=0.57, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.8.0:
   version "0.76.3"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.76.3.tgz"
   integrity sha512-0TUhgmlouRNf6yuDIIAdbQl0g1VsONgCMsLs7Et64hjj5VLMCA7np+4dMrZvGZ3wRNqzgeyT9oWJsUm49AcwSQ==
@@ -8808,7 +8818,7 @@ react-zlib-js@^1.0.5:
   resolved "https://registry.npmjs.org/react-zlib-js/-/react-zlib-js-1.0.5.tgz"
   integrity sha512-TLcPdmqhIl+ylwOwlfm1WUuI7NVvhAv3L74d1AabhjyaAbmLOROTA/Q4EQ/UMCFCOjIkVim9fT3UZOQSFk/mlA==
 
-react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^17 || ^18", react@^18.2.0, react@^18.3.1, "react@>= 16.9.0", "react@>= 17.0.1", "react@>= 18.2.0", react@>=15, react@>=16.0.0, react@>=16.3.0, react@>=16.6.1, react@>=16.8, react@>=17.0.0, react@>=18.0.0, react@>=18.1.0, react@18.3.1:
+react@*, "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^17 || ^18", react@^18.2.0, react@^18.3.1, "react@>= 16.9.0", "react@>= 17.0.1", "react@>= 18.2.0", react@>=0.14.8, react@>=15, react@>=16, react@>=16.0.0, react@>=16.3.0, react@>=16.6.1, react@>=16.8, react@>=17.0.0, react@>=18.0.0, react@>=18.1.0, react@18.3.1:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react/-/react-18.3.1.tgz"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
