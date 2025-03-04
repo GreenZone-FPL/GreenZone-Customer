@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import { LightStatusBar, NormalHeader} from '../../components';
+import { LightStatusBar, NormalHeader } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
 import { getUserAddresses } from '../../axios';
-import NomalLoading from '../../components/animations/NomalLoading';
+import NormalLoading from '../../components/animations/NormalLoading';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation;
@@ -40,10 +40,10 @@ const AddressScreen = (props) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Địa chỉ đã lưu" onLeftPress={() => navigation.goBack()} />
-        <View style={styles.content}>
-          <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
-        </View>
-     
+      <View style={styles.content}>
+        <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
+      </View>
+
 
       <View style={{ height: '60%', margin: 16 }}>
         {showList ? (
@@ -61,7 +61,7 @@ const AddressScreen = (props) => {
       </View>
 
       {/* Sử dụng LoadingOverlay */}
-      <NomalLoading visible={isLoading} />
+      <NormalLoading visible={isLoading} />
     </SafeAreaView>
   );
 };

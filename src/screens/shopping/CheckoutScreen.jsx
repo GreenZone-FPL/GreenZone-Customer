@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
-import { ActionDialog, Ani_ModalLoading, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { ActionDialog, NormalLoading, Ani_ModalLoading, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
@@ -69,7 +69,7 @@ const CheckoutScreen = ({ navigation }) => {
       <>
 
         {loading ? (
-          <Ani_ModalLoading loading={loading} message='Đang tải Giỏ hàng...' />
+          <NormalLoading visible={loading} message='Đang tải Giỏ hàng...' />
         ) : (
           <>
 
@@ -90,7 +90,7 @@ const CheckoutScreen = ({ navigation }) => {
               />
 
               {
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && cartState.shippingAddress &&
                 <RecipientInfo
                   cartState={cartState}
                   onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
@@ -193,7 +193,7 @@ const CheckoutScreen = ({ navigation }) => {
 
               const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
               console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
-              
+
               response = await createOrder(deliveryOrder);
 
             }
