@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
-import { createPickUpOrder } from '../../axios/';
+import { createOrder } from '../../axios/';
 import { ActionDialog, Ani_ModalLoading, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
@@ -182,10 +182,24 @@ const CheckoutScreen = ({ navigation }) => {
         onApprove={async () => {
 
           try {
-            const pickupOrder = CartManager.setUpPickupOrder(cartState)
-            console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+            let response = null
+            if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
 
-            const response = await createPickUpOrder(pickupOrder);
+              const pickupOrder = CartManager.setUpPickupOrder(cartState)
+              console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+              response = await createOrder(pickupOrder);
+
+            } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
+
+              const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
+              console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
+              
+              response = await createOrder(deliveryOrder);
+
+            }
+
+
+
             console.log('order data', response)
 
           } catch (error) {
@@ -580,9 +594,6 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
       </Row>
 
       <PrimaryButton title='Đặt hàng' onPress={async () => {
-
-
-        console.log('timeInfo', timeInfo)
         const orderInfo = {
           fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
           totalPrice: paymentDetails.paymentTotal,
