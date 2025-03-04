@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-export const createPickUpOrder = async (body) => {
+export const createOrder = async (body) => {
     try {
         const response = await axiosInstance.post("/v1/order/create", body);
 

@@ -28,9 +28,38 @@ const requiredFieldsDelivery = [
 ];
 export const CartManager = (() => {
 
+    const setupDeliveryOrder = (cartState) => {
+
+        const deliveryOrder = {
+            deliveryMethod: cartState.deliveryMethod,
+            fulfillmentDateTime: cartState.fulfillmentDateTime,
+            note: cartState.note,
+            totalPrice: cartState.totalPrice,
+            paymentMethod: cartState.paymentMethod,
+            store: cartState.store,
+            shippingAddress:cartState.shippingAddress,
+            owner: cartState.owner,
+            voucher: cartState.voucher,
+            orderItems: cartState.orderItems.map(item => ({
+                variant: item.variant,
+                quantity: item.quantity,
+                price: item.price,
+                toppingItems: item.toppingItems.map(t => ({
+                    topping: t.topping,
+                    quantity: t.quantity,
+                    price: t.price
+                }))
+            }))
+        };
+        if (!cartState.voucher) {
+            delete deliveryOrder.voucher
+        }
+        return deliveryOrder
+    }
+
+
     const setUpPickupOrder = (cartState) => {
-    
-        
+
         const pickupOrder = {
             deliveryMethod: cartState.deliveryMethod,
             fulfillmentDateTime: cartState.fulfillmentDateTime,
@@ -55,8 +84,6 @@ export const CartManager = (() => {
             delete pickupOrder.voucher
         }
         return pickupOrder
-
-
     }
 
 
@@ -235,6 +262,7 @@ export const CartManager = (() => {
     }
 
     return {
+        setupDeliveryOrder,
         setUpPickupOrder,
         getPaymentDetails,
         checkValid,
