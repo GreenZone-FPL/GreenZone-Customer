@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-const LoadingOverlay = ({ visible }) => {
+export const FillingJuiceLoading = ({ visible }) => {
   if (!visible) return null;
 
   return (
@@ -20,14 +20,14 @@ const LoadingOverlay = ({ visible }) => {
 const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Nền mờ
+    // backgroundColor: 'rgba(255, 255, 255, 0.8)', // Nền mờ
     justifyContent: 'center',
     alignItems: 'center',
   },
   lottie: {
-    width: 150,
-    height: 150,
+    width: 200,
+    height: 200,
   },
 });
 
-export default LoadingOverlay;
+export default FillingJuiceLoading;

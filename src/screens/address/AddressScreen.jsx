@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
-import { Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { FlatList, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { getUserAddresses } from '../../axios';
 import { LightStatusBar, NormalHeader } from '../../components';
+import NormalLoading from '../../components/animations/NormalLoading';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
-import { getUserAddresses } from '../../axios';
-import NormalLoading from '../../components/animations/NormalLoading';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation;
@@ -60,7 +60,7 @@ const AddressScreen = (props) => {
         ) : null}
       </View>
 
-      {/* Sử dụng LoadingOverlay */}
+
       <NormalLoading visible={isLoading} />
     </SafeAreaView>
   );
