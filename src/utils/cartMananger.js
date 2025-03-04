@@ -27,126 +27,106 @@ const requiredFieldsDelivery = [
 
 ];
 export const CartManager = (() => {
-    // const filteredBody = {
-    //     deliveryMethod: body.deliveryMethod,
-    //     fulfillmentDateTime: body.fulfillmentDateTime,
-    //     note: body.note,
-    //     totalPrice: body.totalPrice,
-    //     paymentMethod: body.paymentMethod,
-    //     // shippingAddress: '67bf3c98b5ca3926e3df1a92',
-    //     store: body.store,
-    //     owner: body.owner,
-    //     // voucher: '67be977856cc7b945d83be06',
-    //     orderItems: body.orderItems.map(item => ({
-    //         variant: item.variant,
-    //         quantity: item.quantity,
-    //         price: item.price,
-    //         toppingItems: item.toppingItems.map(t => ({
-    //             topping: t.topping,
-    //             quantity: t.quantity,
-    //             price: t.price
-    //         }))
-    //     }))
-    // };
-    const setUpPickUpOrder = async (cartState, cartDispatch) => {
-        const totalPrice = getPaymentDetails(cartState).paymentTotal
 
-        if (checkValid(cartState.deliveryMethod = DeliveryMethod.PICK_UP.value)) {
-            const body = {
-                deliveryMethod: cartState.deliveryMethod,
-                fulfillmentDateTime: cartState.fulfillmentDateTime,
-                note: cartState.note,
-                totalPrice: totalPrice,
-                paymentMethod: cartState.paymentMethod,
-                store: cartState.store,
-                owner: owner,
-                voucher: cartState.voucher,
-                orderItems: cartState.orderItems.map(item => ({
-                    variant: item.variant,
-                    quantity: item.quantity,
-                    price: item.price,
-                    toppingItems: item.toppingItems.map(t => ({
-                        topping: t.topping,
-                        quantity: t.quantity,
-                        price: t.price
-                    }))
+    const setupDeliveryOrder = (cartState) => {
+
+        const deliveryOrder = {
+            deliveryMethod: cartState.deliveryMethod,
+            fulfillmentDateTime: cartState.fulfillmentDateTime,
+            note: cartState.note,
+            totalPrice: cartState.totalPrice,
+            paymentMethod: cartState.paymentMethod,
+            store: cartState.store,
+            shippingAddress:cartState.shippingAddress,
+            owner: cartState.owner,
+            voucher: cartState.voucher,
+            orderItems: cartState.orderItems.map(item => ({
+                variant: item.variant,
+                quantity: item.quantity,
+                price: item.price,
+                toppingItems: item.toppingItems.map(t => ({
+                    topping: t.topping,
+                    quantity: t.quantity,
+                    price: t.price
                 }))
-            };
-            if (!cartState.voucher) {
-                delete body.voucher
-            }
+            }))
+        };
+        if (!cartState.voucher) {
+            delete deliveryOrder.voucher
         }
-
+        return deliveryOrder
     }
+
+
+    const setUpPickupOrder = (cartState) => {
+
+        const pickupOrder = {
+            deliveryMethod: cartState.deliveryMethod,
+            fulfillmentDateTime: cartState.fulfillmentDateTime,
+            note: cartState.note,
+            totalPrice: cartState.totalPrice,
+            paymentMethod: cartState.paymentMethod,
+            store: cartState.store,
+            owner: cartState.owner,
+            voucher: cartState.voucher,
+            orderItems: cartState.orderItems.map(item => ({
+                variant: item.variant,
+                quantity: item.quantity,
+                price: item.price,
+                toppingItems: item.toppingItems.map(t => ({
+                    topping: t.topping,
+                    quantity: t.quantity,
+                    price: t.price
+                }))
+            }))
+        };
+        if (!cartState.voucher) {
+            delete pickupOrder.voucher
+        }
+        return pickupOrder
+    }
+
+
+    const checkValid = (orderDetails, deliveryMethod = DeliveryMethod.PICK_UP.value) => {
+        const requiredFields = deliveryMethod === DeliveryMethod.PICK_UP.value
+            ? requiredFieldsPickUp
+            : requiredFieldsDelivery;
+
+        const errorMessages = {
+            fulfillmentDateTime: 'Vui lòng chọn thời gian nhận hàng',
+            store: 'Vui lòng chọn cửa hàng'
+        };
+
+        let missingFields = requiredFields
+            .filter(field => !orderDetails[field] || (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0))
+            .map(field => errorMessages[field] || `Thiếu thông tin: ${field}`);
+
+        return missingFields.length > 0 ? missingFields : null;
+    };
 
     const updateOrderInfo = async (cartDispatch, orderDetails) => {
         try {
             const cart = await AppAsyncStorage.readData('CART', cartInitialState);
-    
+
             if (cart.orderItems.length === 0) {
                 Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
                 return;
             }
-    
+
             cartDispatch({
                 type: CartActionTypes.UPDATE_ORDER_INFO,
                 payload: orderDetails
             });
-    
+
             const newCart = { ...cart, ...orderDetails };
-    
+
             await AppAsyncStorage.storeData('CART', newCart);
+            return newCart
         } catch (error) {
             console.log('Error update Order info:', error);
             Toaster.show('Lỗi khi tạo đơn hàng');
         }
     };
-    
-
-    const checkValid = (orderDetails, deliveryMethod = DeliveryMethod.PICK_UP.value) => {
-        const requiredFields = deliveryMethod === DeliveryMethod.PICK_UP.value 
-            ? requiredFieldsPickUp 
-            : requiredFieldsDelivery;
-    
-        const errorMessages = {
-            fulfillmentDateTime: 'Vui lòng chọn thời gian nhận hàng',
-            store: 'Vui lòng chọn cửa hàng'
-        };
-    
-        let missingFields = requiredFields
-            .filter(field => !orderDetails[field] || (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0))
-            .map(field => errorMessages[field] || `Thiếu thông tin: ${field}`);
-    
-        // Kiểm tra nếu totalPrice = 0 cũng là không hợp lệ
-        if (orderDetails.totalPrice === 0) {
-            missingFields.push('Tổng tiền không hợp lệ');
-        }
-    
-        return missingFields.length > 0 ? missingFields : null;
-    };
-    
-    // const checkValid = (orderDetails, deliveryMethod = DeliveryMethod.PICK_UP.value) => {
-    //     let missingFields = [];
-
-    //     if (deliveryMethod === DeliveryMethod.PICK_UP.value) {
-    //         missingFields = requiredFieldsPickUp.filter(field =>
-    //             !orderDetails[field] ||
-    //             (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0)
-    //         );
-    //     } else if (deliveryMethod === DeliveryMethod.DELIVERY.value) {
-    //         missingFields = requiredFieldsDelivery.filter(field =>
-    //             !orderDetails[field] ||
-    //             (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0)
-    //         );
-    //     }
-
-    //     // Kiểm tra nếu totalPrice = 0 cũng là không hợp lệ
-    //     if (orderDetails.totalPrice === 0) {
-    //         missingFields.push('totalPrice');
-    //     }
-
-    //     return missingFields.length > 0 ? missingFields : null;
-    // };
 
     const getPaymentDetails = (cartState) => {
         const cartTotal = CartManager.getCartTotal(cartState)
@@ -162,8 +142,6 @@ export const CartManager = (() => {
         const paymentTotal = cartTotal + deliveryAmount - voucherAmount
         return { cartTotal, deliveryAmount, voucherAmount, paymentTotal }
     }
-
-
 
 
 
@@ -284,6 +262,8 @@ export const CartManager = (() => {
     }
 
     return {
+        setupDeliveryOrder,
+        setUpPickupOrder,
         getPaymentDetails,
         checkValid,
         updateOrderInfo,
