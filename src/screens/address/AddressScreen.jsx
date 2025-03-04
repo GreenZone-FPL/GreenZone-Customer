@@ -6,7 +6,7 @@ import { LightStatusBar, NormalHeader} from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
 import { getUserAddresses } from '../../axios';
-import LoadingOverlay from '../../components/animations/LoadingOverlay';
+import NomalLoading from '../../components/animations/NomalLoading';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation;
@@ -40,10 +40,10 @@ const AddressScreen = (props) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Địa chỉ đã lưu" onLeftPress={() => navigation.goBack()} />
-
-      <View style={styles.content}>
-        <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
-      </View>
+        <View style={styles.content}>
+          <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
+        </View>
+     
 
       <View style={{ height: '60%', margin: 16 }}>
         {showList ? (
@@ -61,7 +61,7 @@ const AddressScreen = (props) => {
       </View>
 
       {/* Sử dụng LoadingOverlay */}
-      <LoadingOverlay visible={isLoading} />
+      <NomalLoading visible={isLoading} />
     </SafeAreaView>
   );
 };
