@@ -82,9 +82,9 @@ const OrderScreen = props => {
     });
   };
 
-  useEffect(() => {
-    console.log('Header title updated:', currentCategory);
-  }, [currentCategory]);
+  // useEffect(() => {
+  //   console.log('Header title updated:', currentCategory);
+  // }, [currentCategory]);
 
   const handleScroll = event => {
     const scrollY = event.nativeEvent.contentOffset.y;

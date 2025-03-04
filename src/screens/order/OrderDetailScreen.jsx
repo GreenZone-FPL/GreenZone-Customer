@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DualTextRow, HorizontalProductItem, PaymentMethodRow, NormalHeader, LightStatusBar, Row, Column, NormalText } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import { getOrderDetail, updateOrderStatus } from '../../axios';
+import { DualTextRow, HorizontalProductItem, FillingJuiceLoading, PaymentMethodRow, NormalHeader, LightStatusBar, Row, Column, NormalText } from '../../components';
+import { GLOBAL_KEYS, colors, OrderStatus } from '../../constants';
 import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 
 const OrderDetailScreen = (props) => {
 
-    const { navigation } = props;
+    // const { navigation } = props;
 
+    useEffect(() => {
+
+        const fetchDetail = async () => {
+            try {
+                const orderId = '67c6b93961edaf498f587588'
+                const response = await getOrderDetail(orderId)
+                console.log(`response`, response)
+
+            } catch (error) {
+                console.log(`error`, error)
+            }
+
+        }
+        fetchDetail()
+
+    }, [])
 
     return (
 
@@ -29,7 +46,7 @@ const OrderDetailScreen = (props) => {
                     title={'Đơn hàng đang trên đường giao đến bạn'}
                     titleStyle={{ fontWeight: '500', marginVertical: 8 }}
                 />
-                <ShipperInfo messageClick = {() => navigation.navigate(ShoppingGraph.ChatScreen)}/>
+                <ShipperInfo messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)} />
                 <Image style={{ width: '100%', height: 400 }} source={require('../../assets/images/map.png')} />
 
                 <MerchantInfo />
@@ -39,6 +56,28 @@ const OrderDetailScreen = (props) => {
 
 
                 <PaymentDetails />
+
+                {
+                    // order?.status === OrderStatus.PENDING_CONFIRMATION.value &&
+                    <Pressable style={styles.button} onPress={async () => {
+                        try {
+                            const orderId = '67c6b93961edaf498f587588'
+                            
+                            const response = await updateOrderStatus(orderId, OrderStatus.CANCELLED.value )
+                            console.log(`response`, response)
+            
+                        } catch (error) {
+                            console.log(`error`, error)
+                        }
+            
+
+                    }}>
+                        <Text style={styles.normalText}>Cancel this order</Text>
+                    </Pressable>
+
+
+                }
+
 
             </ScrollView>
 
@@ -51,7 +90,7 @@ const OrderDetailScreen = (props) => {
     );
 };
 
-const ShipperInfo = ({messageClick}) => {
+const ShipperInfo = ({ messageClick }) => {
     return (
         <Row style={{ gap: 16, marginVertical: 8 }}>
             <Image style={{ width: 40, height: 40 }} source={require('../../assets/images/helmet.png')} />
@@ -100,7 +139,8 @@ const ProductsInfo = () => {
                 data={products}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) => (
-                    <HorizontalProductItem item={item} />
+                    <NormalText text='test' />
+                    // <HorizontalProductItem item={item} />
                 )}
                 contentContainerStyle={styles.flatListContentContainer}
                 scrollEnabled={false}
@@ -180,9 +220,8 @@ const PaymentDetails = () => (
 
         <PaymentMethodRow enableChange={false} />
 
-        <Pressable style={styles.button} onPress={() => { }}>
-            <Text style={styles.normalText}>Cancel this order</Text>
-        </Pressable>
+
+
     </View>
 );
 

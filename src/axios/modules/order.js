@@ -1,15 +1,41 @@
 import axiosInstance from "../axiosInstance";
 export const createOrder = async (body) => {
-    try {
-        const response = await axiosInstance.post("/v1/order/create", body);
+  try {
+    const response = await axiosInstance.post("/v1/order/create", body);
 
-        return response;
+    return response;
 
-    } catch (error) {
-        console.log("error:", error);
-        throw error
-    }
+  } catch (error) {
+    console.log("error:", error);
+    throw error
+  }
 };
+
+export const getOrderDetail = async (orderId) => {
+  try {
+   
+    const response = await axiosInstance.get(`/v1/order/${orderId}`);
+    return response;
+
+  } catch (error) {
+    console.log("error:", error);
+    throw error
+  }
+};
+
+export const updateOrderStatus = async (orderId, status ) => {
+  try {
+   
+    const body = {status}
+    const response = await axiosInstance.patch(`/v1/order/${orderId}/status`, body);
+    return response;
+
+  } catch (error) {
+    console.log("error:", error);
+    throw error
+  }
+};
+
 
 export const getOrderHistoryByStatus = async () => {
   try {
@@ -24,7 +50,7 @@ export const getOrderHistoryByStatus = async () => {
       'failedDelivery', // Giao hàng thất bại
     ];
     const requests = statuses.map(status =>
-      axiosInstance.get(`v1/order/my-order`, {params: {status}}),
+      axiosInstance.get(`v1/order/my-order`, { params: { status } }),
     );
 
     const responses = await Promise.all(requests);
@@ -33,12 +59,12 @@ export const getOrderHistoryByStatus = async () => {
     console.log('error:', error);
     throw error;
   }
-// awaitingPayment -  Chờ thanh toán
-// pendingConfirmation - Chờ xác nhận đơn
-// processing - Thực hiện đơn
-// readyForPickup - Đã làm xong đơn, sẵn sàng giao
-// shippingOrder - Giao đơn hàng
-// completed -  Hoàn tất
-// cancelled - Đã hủy
-// failedDelivery - Giao hàng thất bại
+  // awaitingPayment -  Chờ thanh toán
+  // pendingConfirmation - Chờ xác nhận đơn
+  // processing - Thực hiện đơn
+  // readyForPickup - Đã làm xong đơn, sẵn sàng giao
+  // shippingOrder - Giao đơn hàng
+  // completed -  Hoàn tất
+  // cancelled - Đã hủy
+  // failedDelivery - Giao hàng thất bại
 };

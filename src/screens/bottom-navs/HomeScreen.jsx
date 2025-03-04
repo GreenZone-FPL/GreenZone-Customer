@@ -82,9 +82,9 @@ const HomeScreen = props => {
     });
   };
 
-  useEffect(() => {
-    console.log('Header title updated:', currentCategory);
-  }, [currentCategory]);
+  // useEffect(() => {
+  //   console.log('Header title updated:', currentCategory);
+  // }, [currentCategory]);
 
   const handleScroll = useCallback(event => {
     const scrollY = event.nativeEvent.contentOffset.y;

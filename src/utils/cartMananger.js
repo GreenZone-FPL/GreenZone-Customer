@@ -151,7 +151,7 @@ export const CartManager = (() => {
     const readCart = async () => {
         try {
             const cart = await AppAsyncStorage.readData('CART', cartInitialState);
-            console.log("readCart:", JSON.stringify(cart, null, 3));
+            // console.log("readCart:", JSON.stringify(cart, null, 3));
 
             return cart
         } catch (error) {
