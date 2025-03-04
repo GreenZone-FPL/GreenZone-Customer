@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { LightStatusBar, NormalHeader } from '../../components';
+import { LightStatusBar, NormalHeader, NormalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { getAddresses } from '../../axios';
 import { UserGraph } from '../../layouts/graphs';
@@ -20,16 +20,20 @@ const SelectAddressScreen = ({ navigation, route }) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const { isUpdateOrderInfo } = route.params || false
+   const [loading, setLoading] = useState(false);
   const { cartDispatch } = useAppContext()
 
   useEffect(() => {
     const fetchAddress = async () => {
       try {
+        setLoading(true)
         const response = await getAddresses();
         console.log('Dữ liệu API:', response);
         setAddresses(response || []);
       } catch (error) {
         console.error('Lỗi lấy địa chỉ:', error);
+      }finally{
+        setLoading(false)
       }
     };
     fetchAddress();
@@ -60,6 +64,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+       <NormalLoading visible={loading} />
       <NormalHeader
         title="Chọn địa chỉ"
         onLeftPress={() => navigation.goBack()}
