@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import {
   Pressable,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  SafeAreaView,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { getAddresses } from '../../axios';
 import { LightStatusBar, NormalHeader, NormalLoading } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { getAddresses } from '../../axios';
-import { UserGraph } from '../../layouts/graphs';
 import { useAppContext } from '../../context/appContext';
+import { UserGraph } from '../../layouts/graphs';
 import { CartManager } from '../../utils';
 
 const SelectAddressScreen = ({ navigation, route }) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const { isUpdateOrderInfo } = route.params || false
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { cartDispatch } = useAppContext()
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         setAddresses(response || []);
       } catch (error) {
         console.error('Lỗi lấy địa chỉ:', error);
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -64,7 +64,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-       <NormalLoading visible={loading} />
+      <NormalLoading visible={loading} />
       <NormalHeader
         title="Chọn địa chỉ"
         onLeftPress={() => navigation.goBack()}
