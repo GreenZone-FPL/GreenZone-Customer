@@ -7,6 +7,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
 import { getUserAddresses } from '../../axios';
 import NomalLoading from '../../components/animations/NomalLoading';
+import Success from '../../components/animations/Success';
 
 const AddressScreen = (props) => {
   const navigation = props.navigation;
@@ -61,7 +62,7 @@ const AddressScreen = (props) => {
       </View>
 
       {/* Sử dụng LoadingOverlay */}
-      <NomalLoading visible={isLoading} />
+      <Success visible={isLoading} />
     </SafeAreaView>
   );
 };

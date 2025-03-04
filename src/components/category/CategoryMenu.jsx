@@ -1,4 +1,3 @@
-import { Skeleton } from '@rneui/themed';
 import React, { useState } from 'react';
 import {
   Dimensions,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import LinearGradient from "react-native-linear-gradient";
 import { GLOBAL_KEYS, colors } from '../../constants';
+import Skeleton from '../../components/category/Skeleton';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -26,7 +26,7 @@ export const CategoryMenu = props => {
           data={Array(8).fill({})} // Tạo danh sách giả có 8 phần tử để hiển thị skeleton
           keyExtractor={(_, index) => index.toString()}
           renderItem={() => (
-            <Skeleton animation="wave" height={80}  style={styles.itemContainer} LinearGradientComponent={LinearGradient} />
+            <Skeleton height={80} width={'23%'} borderRadius={8} />
           )}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}
