@@ -22,6 +22,7 @@ export * from './carousel/CarouselBanner';
 
 // category
 export * from './category/CategoryMenu';
+export * from './category/SkeletonLoading';
 
 // containers
 export * from './containers/Column';

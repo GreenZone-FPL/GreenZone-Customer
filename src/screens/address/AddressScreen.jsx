@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList, Alert , Dimensions} from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import { LightStatusBar, NormalHeader } from '../../components';
+import { LightStatusBar, NormalHeader, ActionDialog} from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
-import { getUserAddresses } from '../../axios';
+import { getUserAddresses, deleteAddress } from '../../axios';
 import NormalLoading from '../../components/animations/NormalLoading';
+import { Swipeable } from 'react-native-gesture-handler';
+import SkeletonLoading from '../../components/category/SkeletonLoading';
 
-const AddressScreen = (props) => {
-  const navigation = props.navigation;
+const AddressScreen = ({ navigation }) => {
   const [addresses, setAddresses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showList, setShowList] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const fetchAddresses = async () => {
     try {
       setIsLoading(true);
-      setShowList(false);
       const response = await getUserAddresses();
       setAddresses(response);
     } catch (error) {
@@ -25,8 +26,7 @@ const AddressScreen = (props) => {
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-        setShowList(true);
-      }, 2000);
+      }, 4000);
     }
   };
 
@@ -36,17 +36,34 @@ const AddressScreen = (props) => {
     }, [])
   );
 
+  const handleDelete = async () => {
+    if (!selectedAddress) return;
+    try {
+      await deleteAddress(selectedAddress._id);
+      setAddresses((prev) => prev.filter((addr) => addr._id !== selectedAddress._id));
+    } catch (error) {
+      console.error('Error deleting address:', error);
+    } finally {
+      setShowDeleteDialog(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Địa chỉ đã lưu" onLeftPress={() => navigation.goBack()} />
+
       <View style={styles.content}>
         <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
       </View>
-
-
-      <View style={{ height: '60%', margin: 16 }}>
-        {showList ? (
+      <View style={{margin: 16}}>
+        {isLoading ? (
+          <View>
+            {[1, 2, 3].map((_, index) => (
+              <SkeletonLoading key={index} width={'100%'} height={30} borderRadius={16} layout="row" />
+            ))}
+          </View>
+        ) : (
           <FlatList
             data={addresses}
             keyExtractor={(item) => item._id}
@@ -54,14 +71,28 @@ const AddressScreen = (props) => {
               <CardLocation
                 address={item}
                 onEdit={() => navigation.navigate(UserGraph.NewAddressScreen, { address: item })}
+                onDelete={() => {
+                  setSelectedAddress(item);
+                  setShowDeleteDialog(true);
+                }}
               />
             )}
           />
-        ) : null}
+        )}
       </View>
+     
 
-      {/* Sử dụng LoadingOverlay */}
-      <NormalLoading visible={isLoading} />
+
+      {/* Dialog xác nhận xóa */}
+      <ActionDialog
+        visible={showDeleteDialog}
+        title="Xác nhận xóa"
+        content="Bạn có chắc muốn xóa địa chỉ này không?"
+        onCancel={() => setShowDeleteDialog(false)}
+        onApprove={handleDelete}
+        cancelText="Hủy"
+        approveText="Xóa"
+      />
     </SafeAreaView>
   );
 };
@@ -73,22 +104,35 @@ const Card = ({ icon, title, onPress }) => (
   </Pressable>
 );
 
-const CardLocation = ({ address, onEdit }) => (
-  <Pressable style={styles.cardLocation} onPress={onEdit}>
-    <View style={{ flexDirection: 'row' }}>
-      <View style={{ flexDirection: 'row', gap: 16, flex: 2, alignItems: 'center' }}>
-        <Icon source={"map-marker"} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
-        <View>
-          <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{address.specificAddress}</Text>
-          <Text style={styles.location}>
-            {address.specificAddress}, {address.ward}, {address.district}, {address.province}
-          </Text>
-          <Text style={styles.distance}>{address.consigneePhone} {address.consigneeName}</Text>
+const CardLocation = ({ address, onEdit, onDelete }) => {
+  const renderRightActions = () => (
+    <Pressable style={styles.deleteButton} onPress={onDelete}>
+      <Text style={styles.deleteText}>Xóa</Text>
+    </Pressable>
+  );
+
+  return (
+    <Swipeable renderRightActions={renderRightActions}>
+      <Pressable style={styles.cardLocation} onPress={onEdit}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', gap: 16, flex: 2, alignItems: 'center' }}>
+            <Icon source={'map-marker'} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
+            <View>
+              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{address.specificAddress}</Text>
+              <Text style={styles.location}>
+                {address.specificAddress}, {address.ward}, {address.district}, {address.province}
+              </Text>
+              <Text style={styles.distance}>{address.consigneePhone} {address.consigneeName}</Text>
+            </View>
+          </View>
+          <Pressable style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Icon source={'chevron-double-left'} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.gray200} />
+          </Pressable>
         </View>
-      </View>
-    </View>
-  </Pressable>
-);
+      </Pressable>
+    </Swipeable>
+  );
+};
 
 
 export default AddressScreen
@@ -125,7 +169,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.white,
-    borderRadius: 8,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -144,14 +187,24 @@ const styles = StyleSheet.create({
     color: colors.gray700,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
   },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject, // Chiếm toàn bộ màn hình
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Làm mờ nền
+  deleteButton: {
+    backgroundColor: colors.red800,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    marginBottom: 8,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
   },
-  lottie: {
-    width: 150,
-    height: 150,
+  deleteText: {
+    color: 'white',
+    fontWeight: 'bold',
+    margin: 16,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
 })
