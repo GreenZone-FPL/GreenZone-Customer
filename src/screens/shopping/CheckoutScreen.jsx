@@ -200,7 +200,7 @@ const CheckoutScreen = ({ navigation }) => {
 
 
 
-            console.log('order data', response)
+            console.log('order data', JSON.stringify(response, null, 2));
 
           } catch (error) {
             console.log('error', error)

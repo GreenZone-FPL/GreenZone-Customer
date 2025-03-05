@@ -53,7 +53,7 @@ export const HorizontalProductItem = ({
             }
 
             {
-                item.toppingItems.map((topping) => {
+                item.toppingItems?.map((topping) => {
                     return (
                         <Text key={topping._id} style={[styles.normalText, { color: colors.gray850 }, optionStyle]}>x{topping.quantity} {topping.name}</Text>
                     )
@@ -104,7 +104,8 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes
 const styles = StyleSheet.create({
     itemProduct: {
         flexDirection: 'row',
-        paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+        padding: GLOBAL_KEYS.PADDING_SMALL,
+        borderRadius:4,
         gap: GLOBAL_KEYS.GAP_SMALL,
         backgroundColor: colors.white,
         // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
