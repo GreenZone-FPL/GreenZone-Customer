@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
-import { ActionDialog, NormalLoading, Ani_ModalLoading, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { ActionDialog, Column, DeliveryMethodSheet, DialogBasic, DualTextRow, FillingJuiceLoading, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -69,7 +69,7 @@ const CheckoutScreen = ({ navigation }) => {
       <>
 
         {loading ? (
-          <NormalLoading visible={loading} message='Đang tải Giỏ hàng...' />
+          <FillingJuiceLoading visible={loading} message='Đang tải Giỏ hàng...' />
         ) : (
           <>
 
@@ -200,7 +200,7 @@ const CheckoutScreen = ({ navigation }) => {
 
 
 
-            console.log('order data', response)
+            console.log('order data', JSON.stringify(response, null, 2));
 
           } catch (error) {
             console.log('error', error)

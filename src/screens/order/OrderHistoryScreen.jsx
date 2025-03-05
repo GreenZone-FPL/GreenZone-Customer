@@ -32,7 +32,7 @@ const OrderHistoryScreen = ({navigation}) => {
     const fetchOrders = async () => {
       try {
         const data = await getOrderHistoryByStatus();
-        setOrders(data); // Cập nhật danh sách đơn hàng từ API
+        setOrders(data);
         console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
       } catch (error) {
         console.error('Lỗi khi lấy đơn hàng:', error);
@@ -45,7 +45,7 @@ const OrderHistoryScreen = ({navigation}) => {
   }, []);
 
   const handleRepeatOrder = () => {
-    navigation.navigate(ShoppingGraph.CheckoutScreen);
+    navigation.navigate(OrderGraph.OrderDetailScreen);
   };
 
   return (
@@ -67,8 +67,9 @@ const OrderHistoryScreen = ({navigation}) => {
           (status, index) => (
             <OrderListView
               key={index}
-              onItemPress={() =>
-                navigation.navigate(OrderGraph.OrderDetailScreen)
+              onItemPress={
+                order =>
+                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
               }
               status={status}
               orders={orders}
@@ -155,7 +156,9 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.orderItem}>
+    <TouchableOpacity
+      onPress={() => onPress(order)} // Truyền order vào onPress
+      style={styles.orderItem}>
       <ItemOrderType deliveryMethod={order?.deliveryMethod} />
       <Column style={styles.orderColumn}>
         <Text numberOfLines={2} style={styles.orderName}>
@@ -188,6 +191,7 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
     </TouchableOpacity>
   );
 };
+
 
 
 const ItemOrderType = ({deliveryMethod}) => {

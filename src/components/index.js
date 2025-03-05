@@ -1,6 +1,6 @@
 // animations
 export * from './animations/Ani_ModalLoading'
-export * from './animations/LoadingOverlay'
+export * from './animations/FillingJuiceLoading'
 export * from './animations/NormalLoading'
 // activity-indicator
 export * from './indicators/Indicator';
