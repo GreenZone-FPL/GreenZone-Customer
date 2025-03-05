@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, Pressable, StyleSheet } from 'react-native';
+import {
+  Text,
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import { getAllVoucher } from '../../axios/index';
 import { Column, LightStatusBar, NormalHeader, NormalText, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
@@ -74,16 +83,20 @@ const MyVoucherScreen = ({ navigation, route }) => {
 
 const ItemVoucher = ({ onPress, item }) => {
   return (
-    <Pressable
-      style={styles.itemVoucher}
-      onPress={onPress}
-    >
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+    <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
+      <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
-        <TitleText text={`Voucher ${item.name}`} />
-        <NormalText text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`} />
+        <View style={{maxWidth: width / 2}}>
+          <Text numberOfLines={2} style={{fontSize: 16, fontWeight: 'bold'}}>
+            {`Voucher ${item.name}`}
+          </Text>
+        </View>
+
+        <NormalText
+          text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
+        />
       </Column>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
@@ -95,6 +108,7 @@ const styles = StyleSheet.create({
   },
 
   itemVoucher: {
+    flex:1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
