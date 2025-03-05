@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
   Image,
@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   DualTextRow,
   HorizontalProductItem,
@@ -18,16 +18,18 @@ import {
   Row,
   Column,
   NormalText,
+  ActionDialog
 } from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {OrderGraph, ShoppingGraph} from '../../layouts/graphs';
+import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
+import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
+import { updateOrderStatus, getOrderDetail } from '../../axios';
 
-const OrderDetailScreen = props => {
-  const {navigation, route} = props;
-  const {order} = route.params;
-  const {deliveryMethod, store, owner, shippingAddress, shipper, orderItems} =
-    order;
-  // Lấy phương thức giao hàng
+const OrderDetailScreen2 = props => {
+  const { navigation, route } = props;
+  const { order } = route.params;
+  const { deliveryMethod, store, owner, shippingAddress, shipper, orderItems } = order;
+  const [actionDialogVisible, setActionDialogVisible] = useState(false)
+
 
   console.log('Dữ liệu đơn hàng:', JSON.stringify(order, null, 2));
 
@@ -35,7 +37,7 @@ const OrderDetailScreen = props => {
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader
-        title="Chi tiết đơn hàng"
+        title="Chi tiết đơn hàng2"
         onLeftPress={() => navigation.goBack()}
       />
 
@@ -48,7 +50,7 @@ const OrderDetailScreen = props => {
               ? 'Đơn hàng đang chờ lấy tại cửa hàng'
               : 'Đơn hàng đang trên đường giao đến bạn'
           }
-          titleStyle={{fontWeight: '500', margin: 16}}
+          titleStyle={{ fontWeight: '500', margin: 16 }}
         />
 
         {/* Hiển thị thông tin shipper nếu là giao hàng */}
@@ -70,27 +72,63 @@ const OrderDetailScreen = props => {
         <ProductsInfo orderItems={orderItems} />
 
         <PaymentDetails />
+
+        {
+          (order.status === OrderStatus.PENDING_CONFIRMATION.value ||
+            order.status === OrderStatus.AWAITING_PAYMENT.value) &&
+          <Pressable style={styles.button} onPress={() => setActionDialogVisible(true)}>
+            <Text style={styles.normalText}>Cancel this order</Text>
+          </Pressable>
+        }
+
       </ScrollView>
+
+
+      <ActionDialog
+        visible={actionDialogVisible}
+        title="Xác nhận"
+        content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
+        cancelText="Đóng"
+        approveText="Đồng ý"
+        onCancel={() => setActionDialogVisible(false)}
+        onApprove={async () => {
+          try {
+            const response = await updateOrderStatus(order._id, OrderStatus.CANCELLED.value)
+            // console.log('response', response)
+
+            const updatedOrder = await getOrderDetail(order._id);
+            console.log('Updated Order Detail:', updatedOrder);
+
+            // Cập nhật lại state nếu bạn lưu order trong state
+            // setOrder(updatedOrder);
+          } catch (error) {
+            console.log('error', error)
+          } finally {
+            setActionDialogVisible(false)
+          }
+
+        }}
+      />
     </View>
   );
 };
 
-const ShipperInfo = ({messageClick, shipper}) => {
+const ShipperInfo = ({ messageClick, shipper }) => {
   return (
-    <Row style={{gap: 16, margin: 16}}>
+    <Row style={{ gap: 16, margin: 16 }}>
       <Image
-        style={{width: 40, height: 40}}
+        style={{ width: 40, height: 40 }}
         source={require('../../assets/images/helmet.png')}
       />
-      <Column style={{flex: 1}}>
-        <NormalText text="Shipper" style={{fontWeight: '500'}} />
+      <Column style={{ flex: 1 }}>
+        <NormalText text="Shipper" style={{ fontWeight: '500' }} />
         <Text
-          style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black}}>
+          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black }}>
           {shipper.name} Tannie
         </Text>
       </Column>
 
-      <Row style={{gap: 24}}>
+      <Row style={{ gap: 24 }}>
         <Icon source="phone-outline" color={colors.black} size={20} />
         <Pressable onPress={messageClick}>
           <Icon source="message-outline" color={colors.black} size={20} />
@@ -100,27 +138,27 @@ const ShipperInfo = ({messageClick, shipper}) => {
   );
 };
 
-const ProductsInfo = ({orderItems}) => {
+const ProductsInfo = ({ orderItems }) => {
   return (
-    <View style={[styles.areaContainer, {borderBottomWidth: 0}]}>
-      <View style={{marginHorizontal: 16}}>
+    <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
+      <View style={{ marginHorizontal: 16 }}>
         <Title title={'Danh sách sản phẩm'} icon="sticker-text-outline" />
       </View>
 
       <FlatList
         data={orderItems}
         keyExtractor={item => item.product._id}
-        renderItem={({item}) => {
-            console.log('orderItems:', JSON.stringify(orderItems, null, 2));
+        renderItem={({ item }) => {
+          console.log('orderItems:', JSON.stringify(orderItems, null, 2));
           const formattedItem = {
-           
+
             productName: item.product.name,
             image: item.product.image,
             variantName: item.product.size, // Kích thước sản phẩm
             price: item.price, // Giá đã tính cho từng sản phẩm
             quantity: item.quantity, // Số lượng sản phẩm
             isVariantDefault: false, // Giả sử luôn có biến thể
-            toppingItems: item.toppings || [], 
+            toppingItems: item.toppings || [],
           };
 
           return (
@@ -139,11 +177,11 @@ const ProductsInfo = ({orderItems}) => {
   );
 };
 
-const MerchantInfo = ({store}) => {
+const MerchantInfo = ({ store }) => {
   return (
-    <View style={[styles.areaContainer, {marginHorizontal: 16}]}>
+    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
       <Title title="Cửa hàng" icon="store" />
-      <Title title={store.name} titleStyle={{color: colors.black}} />
+      <Title title={store.name} titleStyle={{ color: colors.black }} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
@@ -156,7 +194,7 @@ const MerchantInfo = ({store}) => {
   );
 };
 
-const RecipientInfo = ({deliveryMethod, owner, shippingAddress}) => {
+const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
   // Chọn nguồn dữ liệu phù hợp
   const recipientName =
     deliveryMethod === 'pickup'
@@ -169,11 +207,11 @@ const RecipientInfo = ({deliveryMethod, owner, shippingAddress}) => {
       : shippingAddress.consigneePhone;
 
   return (
-    <View style={[styles.areaContainer, {marginHorizontal: 16}]}>
+    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
       <Title title="Người nhận" icon="map-marker" />
       <Title
         title={[recipientName, '||', recipientPhone].join(' ')}
-        titleStyle={{color: colors.black}}
+        titleStyle={{ color: colors.black }}
       />
       {/* Chỉ hiển thị địa chỉ nếu không phải là "pickup" */}
       {deliveryMethod !== 'pickup' && (
@@ -202,19 +240,19 @@ const Title = ({
 };
 
 const PaymentDetails = () => (
-  <View style={{marginBottom: 8, marginHorizontal: 16}}>
+  <View style={{ marginBottom: 8, marginHorizontal: 16 }}>
     <DualTextRow
       leftText="CHI TIẾT THANH TOÁN"
-      leftTextStyle={{color: colors.primary, fontWeight: 'bold'}}
+      leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
     />
     <OrderId />
     {[
-      {leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ'},
-      {leftText: 'Phí giao hàng', rightText: '18.000đ'},
+      { leftText: 'Tạm tính (2 sản phẩm)', rightText: '69.000đ' },
+      { leftText: 'Phí giao hàng', rightText: '18.000đ' },
       {
         leftText: 'Giảm giá',
         rightText: '-28.000đ',
-        rightTextStyle: {color: colors.primary},
+        rightTextStyle: { color: colors.primary },
       },
       {
         leftText: 'Đã thanh toán',
@@ -227,27 +265,25 @@ const PaymentDetails = () => (
           borderColor: colors.primary,
           color: colors.primary,
         },
-        rightTextStyle: {fontWeight: '700', color: colors.primary},
+        rightTextStyle: { fontWeight: '700', color: colors.primary },
       },
-      {leftText: 'Thời gian đặt hàng', rightText: '2024/07/03, 20:08'},
+      { leftText: 'Thời gian đặt hàng', rightText: '2024/07/03, 20:08' },
     ].map((item, index) => (
       <DualTextRow key={index} {...item} />
     ))}
 
     <PaymentMethodRow enableChange={false} />
 
-    <Pressable style={styles.button} onPress={() => {}}>
-      <Text style={styles.normalText}>Cancel this order</Text>
-    </Pressable>
+
   </View>
 );
 
 const OrderId = () => {
   return (
-    <View style={[styles.row, {marginBottom: 6}]}>
+    <View style={[styles.row, { marginBottom: 6 }]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => {}}>
-        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
+      <Pressable style={styles.row} onPress={() => { }}>
+        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
           202407032008350
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
@@ -305,8 +341,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderColor: colors.gray200,
     borderWidth: 2,
-    marginVertical: 16,
+    margin: 16,
   },
 });
 
-export default OrderDetailScreen;
+export default OrderDetailScreen2;

@@ -45,7 +45,8 @@ const OrderHistoryScreen = ({navigation}) => {
   }, []);
 
   const handleRepeatOrder = () => {
-    navigation.navigate(OrderGraph.OrderDetailScreen);
+    // navigation.navigate(OrderGraph.OrderDetailScreen);
+    navigation.navigate('OrderDetailScreen2');
   };
 
   return (
@@ -69,7 +70,8 @@ const OrderHistoryScreen = ({navigation}) => {
               key={index}
               onItemPress={
                 order =>
-                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
+                  // navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
+                navigation.navigate('OrderDetailScreen2', {order})
               }
               status={status}
               orders={orders}
