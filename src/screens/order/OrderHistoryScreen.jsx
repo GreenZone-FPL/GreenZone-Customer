@@ -49,7 +49,7 @@ const OrderHistoryScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}> 
+    <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader
         title="Lịch sử đơn hàng"
@@ -67,8 +67,9 @@ const OrderHistoryScreen = ({navigation}) => {
           (status, index) => (
             <OrderListView
               key={index}
-              onItemPress={() =>
-                navigation.navigate(OrderGraph.OrderDetailScreen)
+              onItemPress={
+                order =>
+                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
               }
               status={status}
               orders={orders}
@@ -155,7 +156,9 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
   };
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.orderItem}>
+    <TouchableOpacity
+      onPress={() => onPress(order)} // Truyền order vào onPress
+      style={styles.orderItem}>
       <ItemOrderType deliveryMethod={order?.deliveryMethod} />
       <Column style={styles.orderColumn}>
         <Text numberOfLines={2} style={styles.orderName}>
@@ -188,6 +191,7 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
     </TouchableOpacity>
   );
 };
+
 
 
 const ItemOrderType = ({deliveryMethod}) => {
