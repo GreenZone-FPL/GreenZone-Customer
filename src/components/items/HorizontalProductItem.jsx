@@ -60,14 +60,18 @@ export const HorizontalProductItem = ({
       )}
 
       {item.toppingItems?.map(topping => {
-        return (
-          <Text
-            key={topping._id}
-            style={[styles.normalText, {color: colors.gray850}, optionStyle]}>
-            x{topping.quantity} {topping.name}
-          </Text>
-        );
+        if (topping.quantity > 0) {
+          return (
+            <Text
+              key={topping._id}
+              style={[styles.normalText, {color: colors.gray850}, optionStyle]}>
+              x{topping.quantity} {topping.name}
+            </Text>
+          );
+        }
+        return null;
       })}
+
       {item.note && (
         <Text style={[styles.normalText, {color: colors.orange700}, noteStyle]}>
           Note: {item.note}

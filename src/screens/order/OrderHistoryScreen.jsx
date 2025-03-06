@@ -13,8 +13,10 @@ import {
 import {
   Column,
   CustomTabView,
+  FillingJuiceLoading,
   LightStatusBar,
   NormalHeader,
+  NormalLoading,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {OrderGraph, ShoppingGraph} from '../../layouts/graphs';
@@ -26,23 +28,25 @@ const width = Dimensions.get('window').width;
 const OrderHistoryScreen = ({navigation}) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await getOrderHistoryByStatus();
-        setOrders(data);
-        console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
-      } catch (error) {
-        console.error('Lỗi khi lấy đơn hàng:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+ useEffect(() => {
+   const fetchOrders = async () => {
+     setLoading(true); 
+     try {
+       const data = await getOrderHistoryByStatus();
+       setOrders(data);
+       console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
+     } catch (error) {
+       console.error('Lỗi khi lấy đơn hàng:', error);
+     } finally {
+       setLoading(false); 
+     }
+   };
 
-    fetchOrders();
-  }, []);
+   fetchOrders();
+ }, []);
+
 
   const handleRepeatOrder = () => {
     navigation.navigate(OrderGraph.OrderDetailScreen);
@@ -108,7 +112,7 @@ const OrderListView = ({
   return (
     <View style={styles.scene}>
       {loading ? (
-        <ActivityIndicator size="large" color={colors.primary} />
+        <NormalLoading visible={true} message="Đang tải lịch sử đơn hàng..." />
       ) : filteredOrders.length > 0 ? (
         <FlatList
           data={filteredOrders}

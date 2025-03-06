@@ -14,9 +14,11 @@ import {getOrderDetail} from '../../axios';
 import {
   Column,
   DualTextRow,
+  FillingJuiceLoading,
   HorizontalProductItem,
   LightStatusBar,
   NormalHeader,
+  NormalLoading,
   NormalText,
   PaymentMethodRow,
   Row,
@@ -30,7 +32,7 @@ const OrderDetailScreen = props => {
   const {navigation, route} = props;
   const {order} = route.params; // Nhận dữ liệu tạm thời từ route
   const [orderDetail, setOrderDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [orderStatus, setOrderStatus] = useState(order.status);
 
   useEffect(() => {
@@ -78,13 +80,14 @@ const OrderDetailScreen = props => {
     fetchOrderDetail();
   }, [order]);
 
-  if (loading) {
-    return <Text>Đang tải...</Text>;
-  }
-
-  if (!orderDetail) {
-    return <Text>Không tìm thấy đơn hàng.</Text>;
-  }
+ if (loading || !orderDetail) {
+   return (
+     <NormalLoading
+       visible={true} 
+       message="Đang tải chi tiết đơn hàng..."
+     />
+   );
+ }
 
   const {
     deliveryMethod,
@@ -178,7 +181,7 @@ const ShipperInfo = ({messageClick, shipper}) => {
         <NormalText text="Shipper" style={{fontWeight: '500'}} />
         <Text
           style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black}}>
-          {shipper.name}
+          {shipper?.name ? shipper.name : 'Đang chuẩn bị ...'}
         </Text>
       </Column>
 
@@ -191,6 +194,7 @@ const ShipperInfo = ({messageClick, shipper}) => {
     </Row>
   );
 };
+
 
 const ProductsInfo = ({orderItems}) => {
   return (
@@ -374,7 +378,7 @@ const PaymentDetails = ({
         },
         {
           leftText: 'Giảm giá',
-          rightText: `-${discount.toLocaleString()}đ`,
+          rightText: `-${(discount || 0).toLocaleString('vi-VN')}đ`,
           rightTextStyle: {color: colors.primary},
         },
         {
@@ -398,7 +402,6 @@ const PaymentDetails = ({
       ].map((item, index) => (
         <DualTextRow key={index} {...item} />
       ))}
-
       {/* Phương thức thanh toán với icon */}
       <View
         style={{
@@ -421,7 +424,6 @@ const PaymentDetails = ({
           </Text>
         </View>
       </View>
-
       <Pressable style={styles.button} onPress={() => {}}>
         <Text style={styles.normalText}>Hủy đơn hàng</Text>
       </Pressable>
@@ -496,8 +498,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     marginVertical: 16,
   },
-  title: {fontSize: 18, fontWeight: 'bold', marginBottom: 10},
-  status: {fontSize: 16, color: 'blue'},
+  status: {fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.orange700},
 });
 
 export default OrderDetailScreen;
