@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FlatList,
   Image,
@@ -23,15 +23,38 @@ import {
 import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { updateOrderStatus, getOrderDetail } from '../../axios';
+import SocketService from '../../services/socketService';
+import { AppAsyncStorage } from '../../utils';
 
 const OrderDetailScreen2 = props => {
   const { navigation, route } = props;
   const { order } = route.params;
   const { deliveryMethod, store, owner, shippingAddress, shipper, orderItems } = order;
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
-
+  const [orderStatus, setOrderStatus] = useState("Đang xử lý...");
 
   console.log('Dữ liệu đơn hàng:', JSON.stringify(order, null, 2));
+
+
+  const handleOrderUpdate = useCallback((data) => {
+    setOrderStatus(data.status);
+  }, []);
+  useEffect(() => {
+    if (!order?._id) return;
+
+    const initSocket = async () => {
+      SocketService.initialize();
+
+      SocketService.joinOrder(order._id);
+
+      SocketService.onOrderUpdateStatus(handleOrderUpdate);
+    }
+    initSocket()
+
+    return () => {
+      SocketService.offOrderUpdateStatus(handleOrderUpdate);
+    };
+  }, [order?._id]);
 
   return (
     <View style={styles.container}>
@@ -95,6 +118,8 @@ const OrderDetailScreen2 = props => {
           try {
             const response = await updateOrderStatus(order._id, OrderStatus.CANCELLED.value)
             // console.log('response', response)
+
+            SocketService.updateOrderStatus(order._id, OrderStatus.CANCELLED.value)
 
             const updatedOrder = await getOrderDetail(order._id);
             console.log('Updated Order Detail:', updatedOrder);
