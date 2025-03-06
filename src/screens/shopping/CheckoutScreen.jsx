@@ -420,6 +420,7 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
           containerStyle={{ paddingHorizontal: 16 }}
           item={item}
           enableAction={false}
+          enableDelete={true}
         />
       </Pressable>
     )}
