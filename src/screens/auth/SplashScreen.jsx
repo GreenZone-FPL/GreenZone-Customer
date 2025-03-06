@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
+import { useAppContext } from '../../context/appContext';
+import { MainGraph } from '../../layouts/graphs';
 const SplashScreen = ({ navigation }) => {
-
+  const { authState, authDispatch } = useAppContext()
 
   useEffect(() => {
     const timer = setTimeout(() => {
+
       navigation.reset({
         index: 0,
-        routes: [{ name: "LoginScreen" }],
+        routes: [{ name: 'LoginScreen' }],
       });
+
     }, 1000);
 
 

@@ -1,7 +1,7 @@
-import React, {useContext, useState} from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-paper';
-import {getProfile} from '../../axios';
+import React, { useContext, useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { getProfile } from '../../axios';
 import {
   Ani_ModalLoading,
   Column,
@@ -10,21 +10,23 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppContext} from '../../context/appContext';
-import {OrderGraph, UserGraph} from '../../layouts/graphs';
-import {AuthActionTypes} from '../../reducers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { useAppContext } from '../../context/appContext';
+import { AppAsyncStorage } from '../../utils';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch} = useContext(AppContext);
+  const { authState, authDispatch } = useAppContext()
 
   const handleProfile = async () => {
     setLoading(true);
     try {
       const reponse = await getProfile();
       console.log('profile', reponse);
-      navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
+      navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -37,8 +39,8 @@ const ProfileScreen = ({navigation}) => {
       <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
-
-      <Column style={styles.body}>
+<ScrollView>
+   <Column style={styles.body}>
         <TitleText text="Tài khoản" />
 
         <Column>
@@ -100,27 +102,40 @@ const ProfileScreen = ({navigation}) => {
             <CardUtiliti
               icon="logout"
               title="Đăng xuất"
-              onPress={() => {
-                authDispatch({type: AuthActionTypes.LOGOUT});
+              onPress={async() => {
+                // Xóa token khỏi AsyncStorage
+                await AppAsyncStorage.removeData(
+                  AppAsyncStorage.STORAGE_KEYS.accessToken,
+                );
+                await AppAsyncStorage.removeData(
+                  AppAsyncStorage.STORAGE_KEYS.refreshToken,
+                );
+                authDispatch({ type: AuthActionTypes.LOGOUT });
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: MainGraph.graphName }],
+                });
               }}
             />
           )}
         </View>
       </Column>
+</ScrollView>
+     
     </SafeAreaView>
   );
 };
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

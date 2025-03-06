@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Text,
   View,
+  ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import {
   Column,
@@ -16,14 +18,34 @@ import {
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {OrderGraph, ShoppingGraph} from '../../layouts/graphs';
-import {TextFormatter} from '../../utils';
+import {getOrderHistoryByStatus} from '../../axios';
+import moment from 'moment/moment';
 
 const width = Dimensions.get('window').width;
 
 const OrderHistoryScreen = ({navigation}) => {
   const [tabIndex, setTabIndex] = useState(0);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const data = await getOrderHistoryByStatus();
+        setOrders(data);
+        console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
+      } catch (error) {
+        console.error('Lỗi khi lấy đơn hàng:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
   const handleRepeatOrder = () => {
-    navigation.navigate(ShoppingGraph.CheckoutScreen);
+    navigation.navigate(OrderGraph.OrderDetailScreen);
   };
 
   return (
@@ -37,37 +59,64 @@ const OrderHistoryScreen = ({navigation}) => {
         tabIndex={tabIndex}
         setTabIndex={setTabIndex}
         tabBarConfig={{
-          titles: ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'],
+          titles: ['Chờ xử lý', 'Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'],
           titleActiveColor: colors.primary,
           titleInActiveColor: colors.gray700,
         }}>
-        {['Picked', 'Completed', 'Cancelled'].map((status, index) => (
-          <OrderListView
-            key={index}
-            onItemPress={() =>
-              navigation.navigate(OrderGraph.OrderDetailScreen)
-            }
-            status={status}
-            handleRepeatOrder={handleRepeatOrder}
-          />
-        ))}
+        {['pendingConfirmation', 'processing', 'completed', 'cancelled'].map(
+          (status, index) => (
+            <OrderListView
+              key={index}
+              onItemPress={
+                order =>
+                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
+              }
+              status={status}
+              orders={orders}
+              loading={loading}
+              handleRepeatOrder={handleRepeatOrder}
+            />
+          ),
+        )}
       </CustomTabView>
     </View>
   );
 };
 
-const OrderListView = ({status, onItemPress, handleRepeatOrder}) => {
-  const filteredOrders = orders.filter(order => order.status === status);
+const OrderListView = ({
+  status,
+  orders,
+  loading,
+  onItemPress,
+  handleRepeatOrder,
+}) => {
+  const STATUS_GROUPS = {
+    pendingConfirmation: ['awaitingPayment', 'pendingConfirmation'],
+    processing: ['processing', 'readyForPickup', 'shippingOrder'],
+    completed: ['completed'],
+    cancelled: ['cancelled', 'failedDelivery'],
+  };
+
+  const filteredOrders =
+    orders
+      ?.filter(order => STATUS_GROUPS[status]?.includes(order.status))
+      .sort(
+        (a, b) =>
+          new Date(b.fulfillmentDateTime) - new Date(a.fulfillmentDateTime),
+      ) || [];
+
   return (
     <View style={styles.scene}>
-      {filteredOrders.length > 0 ? (
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.primary} />
+      ) : filteredOrders.length > 0 ? (
         <FlatList
           data={filteredOrders}
-          keyExtractor={item => item.orderId}
+          keyExtractor={item => item.orderId || item._id}
           renderItem={({item}) => (
             <OrderItem
-              onPress={onItemPress}
               order={item}
+              onPress={onItemPress}
               handleRepeatOrder={handleRepeatOrder}
             />
           )}
@@ -79,60 +128,95 @@ const OrderListView = ({status, onItemPress, handleRepeatOrder}) => {
   );
 };
 
+
 const getEmptyMessage = status => {
   switch (status) {
-    case 'Picked':
-      return 'Chưa có đơn hàng cần thực hiện';
-    case 'Completed':
+    case 'pendingConfirmation':
+      return 'Chưa có đơn hàng chờ xử lý';
+    case 'processing':
+      return 'Chưa có đơn hàng đang thực hiện';
+    case 'completed':
       return 'Chưa có đơn hàng hoàn thành';
-    case 'Cancelled':
+    case 'cancelled':
       return 'Chưa có đơn hàng đã hủy';
   }
 };
 
-const OrderItem = ({order, onPress, handleRepeatOrder}) => (
-  <Pressable onPress={onPress} style={styles.orderItem}>
-    <ItemOrderType orderType={order.orderType} />
-    <Column style={styles.orderColumn}>
-      <Text numberOfLines={2} style={styles.orderName}>
-        {order.items ? order.items.map(item => item.name).join(' - ') : ''}
-      </Text>
-      <ItemOrderText orderType={order.orderType} />
-      <Text style={styles.orderTime}>{order.createdAt}</Text>
-    </Column>
-    {order.status === 'Cancelled' ? (
-      <Text style={styles.orderTotal}>
-        {TextFormatter.formatCurrency(order.totalAmount)}
-      </Text>
-    ) : (
+const OrderItem = ({order, onPress, handleRepeatOrder}) => {
+  const getOrderItemsText = () => {
+    const items = order?.orderItems || [];
+    if (items.length > 2) {
+      return `${items[0].product.name} - ${items[1].product.name} và ${
+        items.length - 2
+      } sản phẩm khác`;
+    }
+    return (
+      items.map(item => item.product.name).join(' - ') || 'Chưa có sản phẩm'
+    );
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={() => onPress(order)} // Truyền order vào onPress
+      style={styles.orderItem}>
+      <ItemOrderType deliveryMethod={order?.deliveryMethod} />
+      <Column style={styles.orderColumn}>
+        <Text numberOfLines={2} style={styles.orderName}>
+          {getOrderItemsText()}
+        </Text>
+
+        <Text style={styles.orderTime}>
+          {order?.fulfillmentDateTime
+            ? moment(order.fulfillmentDateTime)
+                .utcOffset(7)
+                .format('HH:mm - DD/MM/YYYY')
+            : 'Chưa có thời gian'}
+        </Text>
+      </Column>
       <Column style={styles.orderColumnEnd}>
         <Text style={styles.orderTotal}>
-          {TextFormatter.formatCurrency(order.totalAmount)}
+          {order?.totalPrice
+            ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
+            : '0₫'}
         </Text>
-        <Pressable onPress={handleRepeatOrder} style={styles.buttonContainer}>
-          <Text style={styles.buttonText}>Đặt lại</Text>
-        </Pressable>
+        {order.status !== 'cancelled' &&
+          order.status !== 'pendingConfirmation' && (
+            <TouchableOpacity
+              onPress={handleRepeatOrder}
+              style={styles.buttonContainer}>
+              <Text style={styles.buttonText}>Đặt lại</Text>
+            </TouchableOpacity>
+          )}
       </Column>
-    )}
-  </Pressable>
-);
+    </TouchableOpacity>
+  );
+};
 
-const ItemOrderType = ({orderType}) => {
+
+
+const ItemOrderType = ({deliveryMethod}) => {
   const imageMap = {
-    'dine-in': require('../../assets/serving-method/dine-in.png'),
-    takeaway: require('../../assets/serving-method/takeaway.png'),
+    pickup: require('../../assets/serving-method/takeaway.png'),
     delivery: require('../../assets/serving-method/delivery.png'),
   };
 
-  return <Image style={styles.orderTypeIcon} source={imageMap[orderType]} />;
+  return (
+    <Image
+      style={styles.orderTypeIcon}
+      source={imageMap[deliveryMethod] || imageMap['pickup']} // Mặc định là takeaway nếu không xác định
+    />
+  );
 };
-const ItemOrderText = ({orderType}) => {
-  const text = {
-    'dine-in': 'Dùng tại chỗ',
-    takeaway: 'Mang đi',
+
+const ItemOrderText = ({deliveryMethod}) => {
+  const textMap = {
+    pickup: 'Mang đi',
     delivery: 'Giao tận nơi',
   };
-  return <Text style={styles.orderTime}>{text[orderType]}</Text>;
+
+  return (
+    <Text style={styles.orderTime}>{textMap[deliveryMethod] || 'Mang đi'}</Text>
+  );
 };
 
 const EmptyView = ({message}) => (
@@ -155,14 +239,17 @@ const styles = StyleSheet.create({
   emptyContainer: {justifyContent: 'center', alignItems: 'center'},
   emptyImage: {width: width / 2, height: width / 2},
   orderItem: {
+    margin: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     borderBottomColor: colors.gray200,
     borderBottomWidth: 1,
     flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_SMALL,
     alignItems: 'center',
     justifyContent: 'center',
+    elevation: 3,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   orderColumn: {
     width: '70%',
@@ -191,84 +278,5 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 });
-
-// Dữ liệu đơn hàng (mẫu)
-// const orders = [
-//   {
-//     orderId: '22124-3772987543535',
-//     totalAmount: 150000,
-//     status: 'Picked', // Đang thực hiện
-//     createdAt: '10:16-22/12/2024',
-//     estimatedTime: '10:30',
-//     orderType: 'dine-in',
-//     items: [
-//       {id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000},
-//       {id: '2', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '3', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '4', name: 'Kem Cheese', quantity: 2, price: 20000},
-//     ],
-//   },
-
-//   {
-//     orderId: '22124-3772987543537',
-//     totalAmount: 200000,
-//     status: 'Completed', // Đã hoàn thành
-//     createdAt: '10:16-22/12/2024',
-//     estimatedTime: null,
-//     orderType: 'takeaway',
-
-//     items: [
-//       {id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000},
-//       {id: '2', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '3', name: 'Trà Sữa Truyền Thống', quantity: 3, price: 50000},
-//     ],
-//   },
-//   {
-//     orderId: '22124-3772987543538',
-//     totalAmount: 80000,
-//     status: 'Cancelled', // Đã hủy
-//     createdAt: '10:16-22/12/2024',
-//     estimatedTime: null,
-//     orderType: 'delivery',
-
-//     items: [{id: '4', name: 'Trà Đào Cam Sả', quantity: 1, price: 80000}],
-//   },
-//   {
-//     orderId: '22124-3772987543539',
-//     totalAmount: 150000,
-//     status: 'Picked',
-//     createdAt: '10:16-22/12/2024',
-//     estimatedTime: '10:30',
-//     orderType: 'delivery',
-
-//     items: [
-//       {id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000},
-//       {id: '2', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '3', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '4', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '5', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000},
-//       {id: '6', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '7', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '8', name: 'Kem Cheese', quantity: 2, price: 20000},
-//     ],
-//   },
-//   {
-//     orderId: '22124-3772987543539',
-//     totalAmount: 150000,
-//     status: 'Cancelled',
-//     createdAt: '10:16-22/12/2024',
-//     estimatedTime: 'null',
-//     orderType: 'delivery',
-
-//     items: [
-//       {id: '1', name: 'Trà Sữa Trân Châu Hoàng Kim', quantity: 1, price: 10000},
-//       {id: '2', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '3', name: 'Kem Cheese', quantity: 2, price: 20000},
-//       {id: '4', name: 'Kem Cheese', quantity: 2, price: 20000},
-//     ],
-//   },
-// ];
-
-const orders = [];
 
 export default OrderHistoryScreen;

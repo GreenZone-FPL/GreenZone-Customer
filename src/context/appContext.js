@@ -1,54 +1,45 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react';
-import {AppAsyncStorage} from '../utils';
-import {
-  authReducer,
-  authInitialState,
-  AuthActionTypes,
-} from '../reducers/authReducer';
-import {
-  cartReducer,
-  cartInitialState,
-  CartActionTypes,
-} from '../reducers/cartReducer';
-import {CartManager} from '../utils';
+import React, { createContext, useContext, useEffect, useReducer, useState } from 'react';
+import { AppAsyncStorage } from '../utils';
+import { authReducer, authInitialState, AuthActionTypes } from '../reducers/authReducer';
+import { cartReducer, cartInitialState, CartActionTypes } from '../reducers/cartReducer';
+import { CartManager } from '../utils';
 
 export const AppContext = createContext();
 
-// fix file name
+
 export let globalAuthDispatch = null;
 
-export const AppContextProvider = ({children}) => {
+
+export let appDispatch = null;
+
+export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
-  const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState);
+  const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState)
 
   const [favorites, setFavorites] = useState([]);
 
-  const addToFavorites = product => {
-    setFavorites(prevFavorites => [...prevFavorites, product]);
+  const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [recipientInfo, setRecipientInfo] = useState({
+    home: '',
+    name: '',
+    phone: ''
+  });
+
+  const addToFavorites = (product) => {
+    setFavorites((prevFavorites) => [...prevFavorites, product]);
   };
 
-  const removeFromFavorites = productId => {
-    setFavorites(prevFavorites =>
-      prevFavorites.filter(item => item.id !== productId),
-    );
+
+  const removeFromFavorites = (productId) => {
+    setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== productId));
   };
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
       if (isValid) {
-        authDispatch({type: AuthActionTypes.LOGIN});
-      } else {
-        authDispatch({
-          type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
-          payload: 'Phiên đăng nhập hết hạn',
-        });
+        authDispatch({ type: AuthActionTypes.LOGIN })
       }
     };
     checkLoginStatus();
@@ -57,36 +48,44 @@ export const AppContextProvider = ({children}) => {
   useEffect(() => {
     globalAuthDispatch = authDispatch;
 
-    return () => {
-      globalAuthDispatch = null;
-    };
+    return () => { globalAuthDispatch = null; };
   }, [authState]);
 
   useEffect(() => {
     const readCart = async () => {
       try {
-        const cartData = await CartManager.readCart();
-        cartDispatch({type: CartActionTypes.READ_CART, payload: cartData});
+        const cart = await CartManager.readCart();
+        if (!cart.owner) {
+          const owner = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.userId);
+          if (owner) {
+            cart.owner = owner;
+            await AppAsyncStorage.storeData('CART', cart)
+          }
+        }
+        cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
       } catch (error) {
-        console.log('Error loading cart', error);
+        console.log("Error loading cart", error);
       }
     };
-    readCart();
+    readCart()
 
-    return () => {};
-  }, []);
+    return () => { }
+  }, [])
+
+
+
+  const addAddress = (address) => {
+    setSelectedAddresses((prev) => [...prev, address]);
+  };
+
+
 
   return (
-    <AppContext.Provider
-      value={{
-        authState,
-        authDispatch,
-        cartState,
-        cartDispatch,
-        favorites,
-        addToFavorites,
-        removeFromFavorites,
-      }}>
+    <AppContext.Provider value={{
+      authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,
+      selectedAddresses, addAddress, selectedAddress, setSelectedAddress,
+      recipientInfo, setRecipientInfo
+    }}>
       {children}
     </AppContext.Provider>
   );

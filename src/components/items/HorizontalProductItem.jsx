@@ -5,6 +5,9 @@ import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import { Row } from '../containers/Row';
+import { Column } from '../containers/Column';
+import { NormalText } from '../texts/NormalText';
+import { color } from '@rneui/base';
 
 
 const HorizontalProductItemPropTypes = {
@@ -31,6 +34,7 @@ export const HorizontalProductItem = ({
     optionStyle,
     noteStyle,
     priceStyle,
+    confirmDelete,
     oldPriceStyle }) => (
     <View style={[styles.itemProduct, containerStyle]}>
         <View style={styles.imageWrapper}>
@@ -40,21 +44,18 @@ export const HorizontalProductItem = ({
             </View>
         </View>
 
-        <View style={styles.productInfo}>
+        <Column style={styles.productInfo}>
 
             <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
-
-
-
             {
-                item.variantName &&
-                <Text style={[styles.normalText, { color: colors.black }, optionStyle]}>Size: {item.variantName}</Text>
+                (item.variantName && !item.isVariantDefault) &&
+                <Text style={[styles.normalText, { color: colors.yellow700 }, optionStyle]}>Size: {item.variantName}</Text>
             }
 
             {
-                item.toppingItems.map((topping) => {
+                item.toppingItems?.map((topping) => {
                     return (
-                        <Text key={topping._id} style={[styles.normalText, { color: colors.brown700 }, optionStyle]}>{topping.name}</Text>
+                        <Text key={topping._id} style={[styles.normalText, { color: colors.gray850 }, optionStyle]}>x{topping.quantity} {topping.name}</Text>
                     )
                 })
             }
@@ -64,17 +65,17 @@ export const HorizontalProductItem = ({
             }
 
 
-        </View>
+        </Column>
 
-        <View style={styles.priceContainer}>
-            <Row>
-                <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text>
-                <Icon
-                    source="chevron-right"
-                    color={colors.gray700}
-                    size={18}
-                />
-            </Row>
+        <Column style={styles.priceContainer}>
+
+            <Text style={[styles.productPrice, priceStyle]}>{TextFormatter.formatCurrency(item.price * item.quantity)}</Text>
+
+
+
+            <Pressable onPress={confirmDelete}>
+                <NormalText text='Xóa' style={{ color: colors.orange700 }} />
+            </Pressable>
 
             {/* <Text style={[styles.lineThroughText, oldPriceStyle]}>{TextFormatter.formatCurrency(item.price)}</Text> */}
             {
@@ -90,7 +91,7 @@ export const HorizontalProductItem = ({
 
 
 
-        </View>
+        </Column>
 
 
     </View>
@@ -103,16 +104,18 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes
 const styles = StyleSheet.create({
     itemProduct: {
         flexDirection: 'row',
-        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+        padding: GLOBAL_KEYS.PADDING_SMALL,
+        borderRadius:4,
         gap: GLOBAL_KEYS.GAP_SMALL,
         backgroundColor: colors.white,
-        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        elevation: 4,
+        // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+        elevation: 3,
         shadowColor: colors.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
-        marginBottom: 8
+        marginBottom: 8,
+
     },
     itemImage: {
         width: 50,

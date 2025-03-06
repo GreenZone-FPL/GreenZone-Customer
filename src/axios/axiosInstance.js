@@ -1,7 +1,8 @@
 import axios from 'axios';
-import {globalAuthDispatch} from '../context/appContext';
-import {AuthActionTypes} from '../reducers';
-import {AppAsyncStorage} from '../utils';
+import { globalAuthDispatch } from '../context/appContext';
+import { AuthActionTypes } from '../reducers';
+import { AppAsyncStorage } from '../utils';
+
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
 
 const axiosInstance = axios.create({
@@ -13,9 +14,10 @@ axiosInstance.interceptors.request.use(
     // Lấy token từ AsyncStorage
     const token = await AppAsyncStorage.readData('accessToken');
     // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDg2ODQ0MTI3MyIsImlhdCI6MTczOTk0NTgxMiwiZXhwIjoxNzM5OTQ1ODcyfQ.dJLwZHrHc-swD0ZwBiJWmUq0CIACK8tdLjwnbhL0j2A'
+    // console.log('Token:', token);
 
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`; // Thêm token vào header
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     config.headers['Accept'] = 'application/json';
@@ -31,20 +33,31 @@ axiosInstance.interceptors.response.use(
     if (err.response.data.statusCode === 401) {
       console.log('401 log out');
 
-      // Xóa token khỏi AsyncStorage
-      await AppAsyncStorage.removeData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-      await AppAsyncStorage.removeData(
-        AppAsyncStorage.STORAGE_KEYS.refreshToken,
-      );
+      const token = await AppAsyncStorage.readData('accessToken');
+      console.log('token', token)
+      if (token) { // chưa logout nhưng hết hạn token
+        // Xóa token khỏi AsyncStorage
+        await AppAsyncStorage.removeData(
+          AppAsyncStorage.STORAGE_KEYS.accessToken,
+        );
+        await AppAsyncStorage.removeData(
+          AppAsyncStorage.STORAGE_KEYS.refreshToken,
+        );
 
-      if (globalAuthDispatch) {
-        globalAuthDispatch({
-          type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
-          payload: 'Phiên đăng nhập hết hạn',
-        });
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+            payload: 'Phiên đăng nhập hết hạn',
+          });
+        }
+      }else{ // đã logout và hết hạn token
+        if (globalAuthDispatch) {
+          globalAuthDispatch({
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED
+          });
+        }
       }
+
       return Promise.reject(err.response.data);
     }
 

@@ -14,9 +14,10 @@ export const getAllProducts = async () => {
 
 export const getProductDetail = async (productId) => {
     try {
+        console.log('>>>>>>>>>>>>>>>>>>>>>')
 
         const response = await axiosInstance.get(`/v1/product/${productId}`);
-
+        console.log("call API get detail");
         return response.data;
     } catch (error) {
         console.log("error:", error);

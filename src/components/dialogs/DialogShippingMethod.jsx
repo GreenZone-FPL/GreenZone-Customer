@@ -14,6 +14,7 @@ import {
 import {Icon} from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import { fetchUserLocation } from '../../utils';
 
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -45,6 +46,8 @@ export const  DialogShippingMethod = ({
     });
   }, []);
 
+  
+
   const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
@@ -71,7 +74,7 @@ export const  DialogShippingMethod = ({
       phone: 'Ngọc Đại | 012345678',
     },
     {
-      label: 'Mang đi',
+      label: 'Tự đến lấy hàng',
       image: require('../../assets/images/ic_take_away.png'),
       address: 'HCM Đường D1 BTH',
       phone: '',

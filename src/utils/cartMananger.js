@@ -1,25 +1,170 @@
+import { DeliveryMethod } from "../constants";
+import { CartActionTypes, cartInitialState } from "../reducers";
 import { AppAsyncStorage } from "./appAsyncStorage";
 import { Toaster } from "./toaster";
 
-// closure
+const requiredFieldsPickUp = [
+    'deliveryMethod',
+    'fulfillmentDateTime',
+    'totalPrice',
+    'paymentMethod',
+    'store',
+    'owner',
+    'orderItems',
+
+];
+
+
+const requiredFieldsDelivery = [
+    'deliveryMethod',
+    'fulfillmentDateTime',
+    'totalPrice',
+    'paymentMethod',
+    'shippingAddress',
+    'store',
+    'owner',
+    'orderItems',
+
+];
 export const CartManager = (() => {
-    
-    const readCart = async () => {
+
+    const setupDeliveryOrder = (cartState) => {
+
+        const deliveryOrder = {
+            deliveryMethod: cartState.deliveryMethod,
+            fulfillmentDateTime: cartState.fulfillmentDateTime,
+            note: cartState.note,
+            totalPrice: cartState.totalPrice,
+            paymentMethod: cartState.paymentMethod,
+            store: cartState.store,
+            shippingAddress:cartState.shippingAddress,
+            owner: cartState.owner,
+            voucher: cartState.voucher,
+            orderItems: cartState.orderItems.map(item => ({
+                variant: item.variant,
+                quantity: item.quantity,
+                price: item.price,
+                toppingItems: item.toppingItems.map(t => ({
+                    topping: t.topping,
+                    quantity: t.quantity,
+                    price: t.price
+                }))
+            }))
+        };
+        if (!cartState.voucher) {
+            delete deliveryOrder.voucher
+        }
+        return deliveryOrder
+    }
+
+
+    const setUpPickupOrder = (cartState) => {
+
+        const pickupOrder = {
+            deliveryMethod: cartState.deliveryMethod,
+            fulfillmentDateTime: cartState.fulfillmentDateTime,
+            note: cartState.note,
+            totalPrice: cartState.totalPrice,
+            paymentMethod: cartState.paymentMethod,
+            store: cartState.store,
+            owner: cartState.owner,
+            voucher: cartState.voucher,
+            orderItems: cartState.orderItems.map(item => ({
+                variant: item.variant,
+                quantity: item.quantity,
+                price: item.price,
+                toppingItems: item.toppingItems.map(t => ({
+                    topping: t.topping,
+                    quantity: t.quantity,
+                    price: t.price
+                }))
+            }))
+        };
+        if (!cartState.voucher) {
+            delete pickupOrder.voucher
+        }
+        return pickupOrder
+    }
+
+
+    const checkValid = (orderDetails, deliveryMethod = DeliveryMethod.PICK_UP.value) => {
+        const requiredFields = deliveryMethod === DeliveryMethod.PICK_UP.value
+            ? requiredFieldsPickUp
+            : requiredFieldsDelivery;
+
+        const errorMessages = {
+            fulfillmentDateTime: 'Vui lòng chọn thời gian nhận hàng',
+            store: 'Vui lòng chọn cửa hàng'
+        };
+
+        let missingFields = requiredFields
+            .filter(field => !orderDetails[field] || (Array.isArray(orderDetails[field]) && orderDetails[field].length === 0))
+            .map(field => errorMessages[field] || `Thiếu thông tin: ${field}`);
+
+        return missingFields.length > 0 ? missingFields : null;
+    };
+
+    const updateOrderInfo = async (cartDispatch, orderDetails) => {
         try {
-            const CART = await AppAsyncStorage.readData('CART', null);
-            console.log('read CART ', CART);
-            console.log('read cart length', CART?.length || 0);
-            return CART
+            const cart = await AppAsyncStorage.readData('CART', cartInitialState);
+
+            if (cart.orderItems.length === 0) {
+                Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
+                return;
+            }
+
+            cartDispatch({
+                type: CartActionTypes.UPDATE_ORDER_INFO,
+                payload: orderDetails
+            });
+
+            const newCart = { ...cart, ...orderDetails };
+
+            await AppAsyncStorage.storeData('CART', newCart);
+            return newCart
         } catch (error) {
-            console.log('error read CART', error);
+            console.log('Error update Order info:', error);
+            Toaster.show('Lỗi khi tạo đơn hàng');
         }
     };
 
-    const addToCart = async (product, variant, selectedToppings, amount, quantity, note) => {
-        try {
-            const cart = await AppAsyncStorage.readData('CART', []);
+    const getPaymentDetails = (cartState) => {
+        const cartTotal = CartManager.getCartTotal(cartState)
+        const deliveryAmount = 20000
+        let voucherAmount = 0
 
-            const cartLength = cart.reduce((total, item) => total + item.quantity, 0);
+        if (cartState?.voucherInfo?.discountType === 'percentage') {
+            voucherAmount = cartState?.voucherInfo?.discountValue * cartTotal / 100
+        } else if (cartState?.voucherInfo?.discountType === 'fixedAmount') {
+            voucherAmount = cartState?.voucherInfo?.discountValue
+        }
+
+        const paymentTotal = cartTotal + deliveryAmount - voucherAmount
+        return { cartTotal, deliveryAmount, voucherAmount, paymentTotal }
+    }
+
+
+
+    const getCartTotal = (cart) => {
+        return cart.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    }
+    const readCart = async () => {
+        try {
+            const cart = await AppAsyncStorage.readData('CART', cartInitialState);
+            console.log("readCart:", JSON.stringify(cart, null, 3));
+
+            return cart
+        } catch (error) {
+            console.log('error read cart', error);
+        }
+    };
+
+
+    const addToCart = async (product, variant, selectedToppings, price, quantity, cartDispatch) => {
+        try {
+            const cart = await AppAsyncStorage.readData('CART', cartInitialState);
+
+            const cartLength = cart.orderItems.reduce((total, item) => total + item.quantity, 0);
             if (cartLength + quantity > 10) {
                 Toaster.show('Giỏ hàng tối đa 10 sản phẩm');
                 return;
@@ -29,47 +174,51 @@ export const CartManager = (() => {
                 ? [...selectedToppings].sort((a, b) => a._id.localeCompare(b._id))
                 : [];
 
-            const existingIndex = cart.findIndex(item =>
+
+            const existingIndex = cart.orderItems.findIndex(item =>
                 item.productId === product._id &&
-                (item.variant === (variant?._id || null)) &&
+                item.variant === variant._id &&
                 (JSON.stringify(item.toppings || []) === JSON.stringify(sortedToppings))
             );
 
             if (existingIndex !== -1) {
-                cart[existingIndex].quantity += quantity;
+                cart.orderItems[existingIndex].quantity += quantity;
             } else {
-                cart.push({
+                cart.orderItems.push({ //cartItem
                     variant: variant?._id || null,
                     quantity: quantity,
-                    price: amount,
+                    price: price,
                     toppingItems: sortedToppings,
-                    
-                    itemId: new Date().getTime(),
+
+                    itemId: new Date().getTime(), //cartitemid
                     productId: product._id,
                     productName: product.name,
                     variantName: variant?.size || '',
-                    image: product.image
+                    image: product.image,
+                    isVariantDefault: product.variant.length === 1
                 });
             }
- 
-            await AppAsyncStorage.storeData('CART', cart);
-            Toaster.show('Thêm vào giỏ hàng thành công');
-            return cart
 
+
+            await AppAsyncStorage.storeData('CART', cart);
+            cartDispatch({ type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart })
+            Toaster.show('Thêm vào giỏ hàng thành công');
+            return cart;
 
         } catch (error) {
             console.log('Error addToCart', error);
         }
     };
 
-    const removeFromCart = async (itemId) => {
+    const removeFromCart = async (itemId, cartDispatch) => {
         try {
-            let cart = await AppAsyncStorage.readData('CART', []);
+            let cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
 
-            cart = cart.filter(item => item.itemId !== itemId);
+            cart.orderItems = cart.orderItems.filter(item => item.itemId !== itemId);
 
             await AppAsyncStorage.storeData('CART', cart);
+            cartDispatch({ type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart })
             return cart
 
 
@@ -79,19 +228,20 @@ export const CartManager = (() => {
     };
 
 
-    const updateCartItem = async (itemId, updatedProductData) => {
+    const updateCartItem = async (itemId, updatedProductData, cartDispatch) => {
         try {
-            let cart = await AppAsyncStorage.readData('CART', []);
+            let cart = await AppAsyncStorage.readData('CART', {});
 
-            const itemIndex = cart.findIndex(item => item.itemId === itemId);
+            const itemIndex = cart.orderItems.findIndex(item => item.itemId === itemId);
             if (itemIndex !== -1) {
-                cart[itemIndex] = {
-                    ...cart[itemIndex],
+                cart.orderItems[itemIndex] = {
+                    ...cart.orderItems[itemIndex],
                     ...updatedProductData,
                 };
             }
 
             await AppAsyncStorage.storeData('CART', cart);
+            cartDispatch({ type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart })
 
             Toaster.show('Cập nhật giỏ hàng thành công');
             return cart
@@ -102,16 +252,22 @@ export const CartManager = (() => {
 
 
 
-    const clearCart = async () => {
+    const clearCart = async (cartDispatch) => {
         try {
-            await AppAsyncStorage.storeData('CART', []);
+            await AppAsyncStorage.storeData('CART', cartInitialState);
+            cartDispatch({ type: CartActionTypes.RESET_STATE })
         } catch (error) {
             console.log('Error clearCart:', error);
         }
     }
 
     return {
-       
+        setupDeliveryOrder,
+        setUpPickupOrder,
+        getPaymentDetails,
+        checkValid,
+        updateOrderInfo,
+        getCartTotal,
         readCart,
         addToCart,
         removeFromCart,

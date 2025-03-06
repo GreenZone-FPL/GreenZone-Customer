@@ -1,6 +1,4 @@
-import Geolocation from '@react-native-community/geolocation';
-import axios from 'axios';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import {
@@ -23,7 +21,7 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   CategoryMenu,
   DeliveryButton,
@@ -32,16 +30,17 @@ import {
   LightStatusBar,
   ProductsListHorizontal,
   ProductsListVertical,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {ShoppingGraph} from '../../layouts/graphs';
+import {fetchData, fetchUserLocation} from '../../utils';
 
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
-  const [currentLocation, setCurrenLocation] = useState('');
+  const [currentLocation, setCurrentLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('');
@@ -50,7 +49,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch} = useAppContext()
+  const {cartState, cartDispatch} = useAppContext();
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -62,63 +61,19 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
-    const handleEditOption = option => {
-      setEditOption(option);
-  
-      if (option === 'Giao hàng') {
-        setIsModalVisible(false);
-      } else if (option === 'Mang đi') {
-        navigation.navigate(UserGraph.AddressMerchantScreen);
-      }
-    };
-  
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
+  const handleEditOption = option => {
+    setEditOption(option);
 
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-      }
-    } catch (error) {
-      console.log(error);
+    if (option === 'Giao hàng') {
+      setIsModalVisible(false);
+    } else if (option === 'Mang đi') {
+      navigation.navigate(UserGraph.AddressMerchantScreen);
     }
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      Geolocation.getCurrentPosition(
-        position => {
-          if (position.coords) {
-            reverseGeocode({
-              lat: position.coords.latitude,
-              long: position.coords.longitude,
-            });
-          }
-        },
-        error => console.log(error),
-        {timeout: 5000}, // Giới hạn 5 giây
-      );
-    }, 1000);
-
-    return () => clearTimeout(timeoutId);
+    fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
-
-  // Hàm gọi API chung
-  const fetchData = async (api, setter, callback) => {
-    try {
-      const data = await api();
-      setter(data); // Cập nhật state
-      if (callback) {
-        callback(data); // Truyền dữ liệu vào callback thay vì sử dụng state
-      }
-    } catch (error) {
-      console.log(`Error`, error);
-    } finally {
-      setLoading(false); // Dừng loading khi lấy dữ liệu xong
-    }
-  };
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
@@ -130,24 +85,28 @@ const HomeScreen = props => {
     console.log('Header title updated:', currentCategory);
   }, [currentCategory]);
 
-  const handleScroll = useCallback(event => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-    let closestCategory = 'Danh mục';
-    let minDistance = Number.MAX_VALUE;
+  const handleScroll = useCallback(
+    event => {
+      const scrollY = event.nativeEvent.contentOffset.y;
+      let closestCategory = 'Danh mục';
+      let minDistance = Number.MAX_VALUE;
 
-    Object.entries(positions).forEach(([categoryId, posY]) => {
-      const distance = Math.abs(scrollY - posY);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+      Object.entries(positions).forEach(([categoryId, posY]) => {
+        const distance = Math.abs(scrollY - posY);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCategory =
+            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        }
+      });
+
+      if (closestCategory !== lastCategoryRef.current) {
+        lastCategoryRef.current = closestCategory;
+        setCurrentCategory(closestCategory);
       }
-    });
-
-    if (closestCategory !== lastCategoryRef.current) {
-      lastCategoryRef.current = closestCategory;
-      setCurrentCategory(closestCategory);
-    }
-  }, [positions, allProducts]);
+    },
+    [positions, allProducts],
+  );
 
   const onItemClick = productId => {
     console.log('Product clicked:', productId);
@@ -157,12 +116,7 @@ const HomeScreen = props => {
   useEffect(() => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
-
-
   }, []);
-
-  
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -172,6 +126,7 @@ const HomeScreen = props => {
         onBadgePress={() => {}}
         isHome={false}
       />
+
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -224,9 +179,7 @@ const HomeScreen = props => {
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-       
-        cart = {cartState.items}
-        
+        cartState={cartState}
         onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
       />
 
@@ -363,7 +316,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
     position: 'relative',
     height: Dimensions.get('window').height,
   },
@@ -404,13 +357,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   searchBar: {
-    flexDirection: 'row', // Đặt icon và TextInput trên cùng một hàng
-    alignItems: 'center', // Căn giữa theo chiều dọc
-    backgroundColor: colors.gray200, // Màu nền của thanh tìm kiếm
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT, // Bo góc thanh tìm kiếm
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, // Khoảng cách hai bên
-    paddingVertical: 8, // Độ cao của thanh tìm kiếm
-    width: '84%', // Khoảng cách xung quanh thanh tìm kiếm
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.gray200,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 8,
+    width: '84%',
   },
   icon: {
     marginRight: 10, // Khoảng cách giữa icon và TextInput

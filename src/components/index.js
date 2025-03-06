@@ -1,5 +1,7 @@
 // animations
 export * from './animations/Ani_ModalLoading'
+export * from './animations/FillingJuiceLoading'
+export * from './animations/NormalLoading'
 // activity-indicator
 export * from './indicators/Indicator';
 //barcode
@@ -26,6 +28,8 @@ export * from './containers/Column';
 export * from './containers/Row';
 
 // dialogs
+export * from './dialogs/ActionDialog';
+export * from './bottom-sheets/DeliveryMethodSheet';
 export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';

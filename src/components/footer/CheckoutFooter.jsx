@@ -36,6 +36,7 @@ const CheckoutFooterPropTypes = {
     />
  */
 export const CheckoutFooter = ({
+    
     quantity,
     handlePlus,
     handleMinus,
