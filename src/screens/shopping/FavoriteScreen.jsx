@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import {
   Dimensions,
   Image,
@@ -7,20 +7,18 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {Column, LightStatusBar, NormalHeader, Row} from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {TextFormatter} from '../../utils';
-import {ShoppingGraph} from '../../layouts/graphs';
-import {AppContext} from '../../context/appContext';
-const {width} = Dimensions.get('window');
+import { Icon } from 'react-native-paper';
+import { Column, LightStatusBar, NormalHeader, Row } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
+import { getFavoriteProducts } from '../../axios';
+import { useFocusEffect } from '@react-navigation/native';
 
-const FavoriteScreen = ({navigation}) => {
-  const {favorites, addToFavorites, removeFromFavorites} =
-    useContext(AppContext);
-  const navigateProductDetail = id => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {id});
+const FavoriteScreen = ({ navigation }) => {
+  const navigateProductDetail = (productId) => {
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
   return (
@@ -30,76 +28,66 @@ const FavoriteScreen = ({navigation}) => {
         title="Sản phẩm yêu thích"
         onLeftPress={() => navigation.goBack()}
       />
-
-      <Body
-        favorites={favorites}
-        navigateProductDetail={navigateProductDetail}
-      />
+      <FavoriteProductList navigateProductDetail={navigateProductDetail} />
     </Column>
   );
 };
 
-const Body = ({navigateProductDetail, favorites}) => {
+const FavoriteProductList = ({ navigateProductDetail }) => {
+  const [favorites, setFavorites] = useState([]);
+
+  const fetchFavorites = async () => {
+    try {
+      const products = await getFavoriteProducts();
+      setFavorites(products.map(item => item.product));
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchFavorites();
+    }, [])
+  );
+
+  const renderItem = ({ item }) => {
+    return (
+      <TouchableOpacity onPress={() => navigateProductDetail(item._id)} style={styles.itemContainer}>
+        <Image source={{ uri: item.image }} style={styles.productImage} />
+        <View style={[styles.infoContainer]}>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>{item.originalPrice} đ</Text>
+          <View style={styles.iconContainer}>
+            <Pressable>
+              <Icon
+                source="plus-circle"
+                color={colors.primary}
+                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              />
+            </Pressable>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.flatListContent}>
       <FlatList
         data={favorites}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
-          <Item item={item} navigateProductDetail={navigateProductDetail} />
-        )}
-        contentContainerStyle={styles.flatListContainer}
+        keyExtractor={item => item._id.toString()} // Đảm bảo key hợp lệ
+        renderItem={renderItem}
       />
     </View>
   );
 };
 
-const Item = ({item, navigateProductDetail}) => {
-  return (
-    <Row style={styles.itemContainer}>
-      <View style={styles.imageWrapper}>
-        <Image source={{uri: item.image}} style={styles.itemImage} />
-        {item.discount > 0 && (
-          <Text style={styles.discountBadge}>
-            {TextFormatter.formatCurrency((item.discount * item.price) / 100)}
-          </Text>
-        )}
-      </View>
-      <Column>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <Row>
-          {item.discount > 0 && (
-            <Text
-              style={[styles.itemPrice, {textDecorationLine: 'line-through'}]}>
-              {TextFormatter.formatCurrency(item.price)}
-            </Text>
-          )}
-          <Text style={[styles.itemPrice]}>
-            {TextFormatter.formatCurrency(item.sellingPrice)}
-          </Text>
-        </Row>
-      </Column>
-      <TouchableOpacity
-        onPress={() => navigateProductDetail(item.id)}
-        style={styles.addButton}>
-        <Icon
-          source="plus"
-          color={colors.white}
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        />
-      </TouchableOpacity>
-    </Row>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     flex: 1,
-  },
-
-  flatListContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   flatListContent: {
     backgroundColor: colors.grayBg,
@@ -107,85 +95,36 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    backgroundColor: colors.white,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    elevation: 1.7,
-  },
-  imageWrapper: {
+    flexDirection: 'row',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    backgroundColor: 'white',
+    marginBottom: 10,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
   },
-  itemImage: {
-    width: width / 5,
-    height: width / 5,
-    resizeMode: 'cover',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+  productImage: {
+    borderRadius: 8,
+    marginRight: 10,
+    flex: 1,
+    height: 100
   },
-  discountBadge: {
-    position: 'absolute',
-    backgroundColor: colors.primary,
-    paddingLeft: GLOBAL_KEYS.PADDING_SMALL,
-    paddingRight: GLOBAL_KEYS.PADDING_SMALL,
-    textAlign: 'center',
-    borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    borderBottomLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    end: 0,
-    top: GLOBAL_KEYS.PADDING_SMALL,
-    color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    elevation: 5,
-    fontWeight: '500',
-  },
-  itemName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+  productName: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
   },
-  itemPrice: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '400',
+  infoContainer: {
+    flex: 2,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    justifyContent: "space-between", // Đẩy icon xuống dưới
+    paddingBottom: 10, // Tạo khoảng cách đẹp hơn
   },
-  addButton: {
-    backgroundColor: colors.primary,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    position: 'absolute',
-    end: GLOBAL_KEYS.PADDING_DEFAULT,
-    bottom: GLOBAL_KEYS.PADDING_DEFAULT,
+  iconContainer: {
+    alignSelf: "flex-end", // Đưa icon về cuối
   },
 });
 
-const productsFavorite = [
-  {
-    id: '1',
-    name: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
-    image:
-      'https://thuytinhluminarc.com/wp-content/uploads/2022/08/Hinh-anh-nhung-ly-tra-sua-dep-3-1.jpg',
-    price: 69000,
-    discount: 10,
-  },
-  {
-    id: '2',
-    name: 'Combo 3 Olong Tea',
-    image:
-      'https://i.pinimg.com/736x/30/e2/4a/30e24a9f2fc4ca01b9b969b9aed83cad.jpg',
-    price: 79000,
-    discount: 15,
-  },
-  {
-    id: '3',
-    name: 'Combo 3 Olong Tea',
-    image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
-    price: 79000,
-    discount: 5,
-  },
-  {
-    id: '4',
-    name: 'Combo 3 Olong Tea',
-    image: 'https://ambalgvn.org.vn/wp-content/uploads/anh-tra-sua-478.jpg',
-    price: 79000,
-    discount: 0,
-  },
-];
 
 export default FavoriteScreen;

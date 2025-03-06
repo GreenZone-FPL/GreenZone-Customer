@@ -44,6 +44,8 @@ import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import { PaperProvider } from 'react-native-paper';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
+import Toast from 'react-native-toast-message';
+import toastMessage from './src/utils/toastMessage';
 
 const BaseStack = createNativeStackNavigator();
 
@@ -53,7 +55,6 @@ function App() {
 
   return (
     <PaperProvider>
-
       <GestureHandlerRootView style={{ flex: 1 }}>
 
         <SafeAreaProvider>
@@ -135,6 +136,7 @@ function App() {
 
             </BaseStack.Navigator>
           </NavigationContainer>
+          <Toast config={toastMessage}/>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </PaperProvider>
