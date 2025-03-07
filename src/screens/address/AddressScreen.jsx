@@ -26,7 +26,7 @@ const AddressScreen = ({ navigation }) => {
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-      }, 4000);
+      }, 1000);
     }
   };
 
