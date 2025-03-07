@@ -40,7 +40,7 @@ export const getOrderHistoryByStatus = async () => {
     throw error;
   }
 };
-
+// chi tiết đơn hàng
 export const getOrderDetail = async (orderId) => {
   try {
     const response = await axiosInstance.get(`/v1/order/${orderId}`);
@@ -51,4 +51,7 @@ export const getOrderDetail = async (orderId) => {
     throw error;
   }
 }
+// Gửi đơn thanh toán online
+
+
 
