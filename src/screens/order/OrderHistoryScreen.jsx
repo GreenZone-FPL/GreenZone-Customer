@@ -42,7 +42,7 @@ const OrderHistoryScreen = ({navigation}) => {
     };
 
     fetchOrders();
-  }, []);
+  }, [tabIndex]);
 
   const handleRepeatOrder = () => {
     navigation.navigate(OrderGraph.OrderDetailScreen);
@@ -79,7 +79,9 @@ const OrderHistoryScreen = ({navigation}) => {
           <OrderListView
             key={index}
             onItemPress={order =>
-              navigation.navigate(OrderGraph.OrderDetailScreen, {order})
+              navigation.navigate(OrderGraph.OrderDetailScreen, {
+                orderId: order._id,
+                })
             }
             status={status}
             orders={orders}
