@@ -318,7 +318,7 @@ const FavoriteButton = ({ productId }) => {
             icon={isFavorite ? "heart" : "heart-outline"}
             iconColor={isFavorite ? colors.red800 : colors.gray300}
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            onPress={toggleFavorite}
+            onPress={() => {}}
         />
     );
 };
