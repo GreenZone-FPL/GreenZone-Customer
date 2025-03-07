@@ -14,45 +14,21 @@ import {getOrderDetail} from '../../axios';
 import {
   Column,
   DualTextRow,
-  FillingJuiceLoading,
   HorizontalProductItem,
   LightStatusBar,
   NormalHeader,
   NormalLoading,
   NormalText,
-  PaymentMethodRow,
   Row,
 } from '../../components';
 import {GLOBAL_KEYS, OrderStatus, colors} from '../../constants';
 import {ShoppingGraph} from '../../layouts/graphs';
 
-const socket = io(' https://greenzone.motcaiweb.io.vn');
-
 const OrderDetailScreen = props => {
   const {navigation, route} = props;
-  const {order} = route.params; // Nhận dữ liệu tạm thời từ route
+  const {orderId} = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [orderStatus, setOrderStatus] = useState(order.status);
-
-  useEffect(() => {
-    if (!order._id) return;
-
-    // Kết nối vào phòng đơn hàng
-    socket.emit('order.join', order._id);
-    console.log('Đã tham gia vào phòng đơn hàng:', order._id);
-
-    // Lắng nghe sự kiện cập nhật trạng thái
-    socket.on('order.updateStatus', data => {
-      console.log('Cập nhật trạng thái đơn hàng:', data);
-      setOrderStatus(data.status);
-    });
-
-    return () => {
-      socket.off('order.updateStatus');
-      console.log('Đã ngắt kết nối với phòng đơn hàng:', order._id);
-    };
-  }, [order._id]);
+  const [loading, setLoading] = useState(true);
 
   const getOrderStatusLabel = value => {
     const statusEntry = Object.values(OrderStatus).find(
@@ -64,11 +40,11 @@ const OrderDetailScreen = props => {
   useEffect(() => {
     const fetchOrderDetail = async () => {
       try {
-        if (!order?._id) {
-          console.error('Lỗi: order._id không hợp lệ');
-          return;
+        if (!orderId) {
+          console.error('Lỗi: orderId không hợp lệ');
+          return; 
         }
-        const response = await getOrderDetail(order._id);
+        const response = await getOrderDetail(orderId);
         setOrderDetail(response);
       } catch (error) {
         console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
@@ -78,16 +54,13 @@ const OrderDetailScreen = props => {
     };
 
     fetchOrderDetail();
-  }, [order]);
+  }, [orderId]);
 
- if (loading || !orderDetail) {
-   return (
-     <NormalLoading
-       visible={true} 
-       message="Đang tải chi tiết đơn hàng..."
-     />
-   );
- }
+  if (loading || !orderDetail) {
+    return (
+      <NormalLoading visible={true} message="Đang tải chi tiết đơn hàng..." />
+    );
+  }
 
   const {
     deliveryMethod,
@@ -133,7 +106,7 @@ const OrderDetailScreen = props => {
           }}>
           <Title title="Trạng thái đơn hàng" color={colors.black} />
           <Text style={styles.status}>
-            {getOrderStatusLabel(order?.status)}
+            {getOrderStatusLabel(orderDetail.status)}
           </Text>
         </View>
 
@@ -194,7 +167,6 @@ const ShipperInfo = ({messageClick, shipper}) => {
     </Row>
   );
 };
-
 
 const ProductsInfo = ({orderItems}) => {
   return (
@@ -430,8 +402,6 @@ const PaymentDetails = ({
     </View>
   );
 };
-
-
 
 const OrderId = ({_id}) => {
   return (
