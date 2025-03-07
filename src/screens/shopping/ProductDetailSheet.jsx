@@ -8,6 +8,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { CartManager, Toaster } from '../../utils';
 import { useAppContext } from '../../context/appContext';
 import Toast from "react-native-toast-message";
+import { ToastAndroid } from "react-native";
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
@@ -286,30 +287,15 @@ const FavoriteButton = ({ productId }) => {
         try {
             if (isFavorite) {
                 await deleteFavoriteProduct({ productId });
-                Toast.show({
-                    type: "custom_error", // Sử dụng loại tùy chỉnh
-                    text1: "Đã xóa khỏi yêu thích",
-                    props: { iconName: "heart-broken" }, 
-                    visibilityTime: 1000,
-                });
+                ToastAndroid.show("Đã xóa khỏi danh sách yêu thích", ToastAndroid.SHORT);
             } else {
                 await postFavoriteProduct({ productId });
-                Toast.show({
-                    type: "custom_success", // Sử dụng loại tùy chỉnh
-                    text1: "Đã thêm vào yêu thích",
-                    props: { iconName: "heart" },
-                    visibilityTime: 1000,
-                });
+                ToastAndroid.show("Đã thêm vào danh sách yêu thích", ToastAndroid.SHORT);
             }
             setIsFavorite(!isFavorite);
         } catch (error) {
-            Toast.show({
-                type: "custom_error",
-                text1: "Lỗi!",
-                text2: "Không thể thay đổi trạng thái yêu thích.",
-                props: { iconName: "alert-circle" },
-                visibilityTime: 1000,
-            });
+            ToastAndroid.show("Có lỗi xảy ra!", ToastAndroid.SHORT);
+            console.error("Error updating favorite status:", error);
         }
     };
 
