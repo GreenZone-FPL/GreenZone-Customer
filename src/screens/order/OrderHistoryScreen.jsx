@@ -1,27 +1,24 @@
-import React, {useState, useEffect} from 'react';
+import moment from 'moment/moment';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
-  Pressable,
   StyleSheet,
   Text,
-  View,
-  ActivityIndicator,
   TouchableOpacity,
+  View,
 } from 'react-native';
+import {getOrderHistoryByStatus} from '../../axios';
 import {
   Column,
   CustomTabView,
-  FillingJuiceLoading,
   LightStatusBar,
   NormalHeader,
   NormalLoading,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {OrderGraph, ShoppingGraph} from '../../layouts/graphs';
-import {getOrderHistoryByStatus} from '../../axios';
-import moment from 'moment/moment';
+import {OrderGraph} from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
 
@@ -30,23 +27,22 @@ const OrderHistoryScreen = ({navigation}) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
- useEffect(() => {
-   const fetchOrders = async () => {
-     setLoading(true); 
-     try {
-       const data = await getOrderHistoryByStatus();
-       setOrders(data);
-       console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
-     } catch (error) {
-       console.error('Lỗi khi lấy đơn hàng:', error);
-     } finally {
-       setLoading(false); 
-     }
-   };
+  useEffect(() => {
+    const fetchOrders = async () => {
+      setLoading(true);
+      try {
+        const data = await getOrderHistoryByStatus();
+        setOrders(data);
+        console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
+      } catch (error) {
+        console.error('Lỗi khi lấy đơn hàng:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-   fetchOrders();
- }, []);
-
+    fetchOrders();
+  }, []);
 
   const handleRepeatOrder = () => {
     navigation.navigate(OrderGraph.OrderDetailScreen);
@@ -63,25 +59,34 @@ const OrderHistoryScreen = ({navigation}) => {
         tabIndex={tabIndex}
         setTabIndex={setTabIndex}
         tabBarConfig={{
-          titles: ['Chờ xử lý', 'Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'],
+          titles: [
+            'Chờ Thanh Toán',
+            'Chờ xử lý',
+            'Đang thực hiện',
+            'Đã hoàn tất',
+            'Đã huỷ',
+          ],
           titleActiveColor: colors.primary,
           titleInActiveColor: colors.gray700,
         }}>
-        {['pendingConfirmation', 'processing', 'completed', 'cancelled'].map(
-          (status, index) => (
-            <OrderListView
-              key={index}
-              onItemPress={
-                order =>
-                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
-              }
-              status={status}
-              orders={orders}
-              loading={loading}
-              handleRepeatOrder={handleRepeatOrder}
-            />
-          ),
-        )}
+        {[
+          'awaitingPayment',
+          'pendingConfirmation',
+          'processing',
+          'completed',
+          'cancelled',
+        ].map((status, index) => (
+          <OrderListView
+            key={index}
+            onItemPress={order =>
+              navigation.navigate(OrderGraph.OrderDetailScreen, {order})
+            }
+            status={status}
+            orders={orders}
+            loading={loading}
+            handleRepeatOrder={handleRepeatOrder}
+          />
+        ))}
       </CustomTabView>
     </View>
   );
@@ -95,7 +100,8 @@ const OrderListView = ({
   handleRepeatOrder,
 }) => {
   const STATUS_GROUPS = {
-    pendingConfirmation: ['awaitingPayment', 'pendingConfirmation'],
+    awaitingPayment: ['awaitingPayment'],
+    pendingConfirmation: ['pendingConfirmation'],
     processing: ['processing', 'readyForPickup', 'shippingOrder'],
     completed: ['completed'],
     cancelled: ['cancelled', 'failedDelivery'],
@@ -131,7 +137,6 @@ const OrderListView = ({
     </View>
   );
 };
-
 
 const getEmptyMessage = status => {
   switch (status) {
@@ -195,8 +200,6 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
     </TouchableOpacity>
   );
 };
-
-
 
 const ItemOrderType = ({deliveryMethod}) => {
   const imageMap = {
