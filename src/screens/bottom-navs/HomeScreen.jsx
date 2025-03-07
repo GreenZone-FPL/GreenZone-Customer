@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     position: 'relative',
     height: Dimensions.get('window').height,
   },

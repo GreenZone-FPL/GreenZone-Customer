@@ -29,6 +29,10 @@ class SocketService {
           console.log("Socket disconnected");
         });
 
+        this.socket.on("thuthao", (data) => {
+          console.log("thuthao message", data);
+        });
+
       } catch (error) {
         console.log("Lỗi khi khởi tạo socket:", error);
       }
@@ -66,6 +70,13 @@ class SocketService {
     if (this.socket) {
       this.socket.emit("order.updateStatus", { orderId, status });
       console.log(`Đã emit event cập nhật trạng thái đơn hàng: ${orderId}, Status: ${status}`);
+    }
+  }
+
+  emitThuThao() {
+    if (this.socket) {
+      this.socket.emit("thuthao", { message: 'abc' });
+      console.log(`Đã emit event thuthao`);
     }
   }
 

@@ -25,7 +25,10 @@ import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { updateOrderStatus, getOrderDetail } from '../../axios';
 import SocketService from '../../services/socketService';
 import { AppAsyncStorage } from '../../utils';
+import { io } from 'socket.io-client';
+// const socket = io('wss://greenzone.motcaiweb.io.vn/socket.io/?EIO=4&transport=websocket');
 
+const socket = io('https://serversocket-4oew.onrender.com/');
 const OrderDetailScreen2 = props => {
   const { navigation, route } = props;
   const { order } = route.params;
@@ -39,15 +42,19 @@ const OrderDetailScreen2 = props => {
   const handleOrderUpdate = useCallback((data) => {
     setOrderStatus(data.status);
   }, []);
+
+
   useEffect(() => {
     if (!order?._id) return;
 
     const initSocket = async () => {
-      SocketService.initialize();
+      await SocketService.initialize();
 
       SocketService.joinOrder(order._id);
 
       SocketService.onOrderUpdateStatus(handleOrderUpdate);
+
+
     }
     initSocket()
 
@@ -103,6 +110,13 @@ const OrderDetailScreen2 = props => {
             <Text style={styles.normalText}>Cancel this order</Text>
           </Pressable>
         }
+
+        <Pressable style={styles.button} onPress={() =>
+          socket.emit('thuthao', { message: 'abc' })
+        }
+        >
+          <Text style={styles.normalText}>Emit event</Text>
+        </Pressable>
 
       </ScrollView>
 

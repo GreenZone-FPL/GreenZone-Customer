@@ -12,17 +12,17 @@ export const createOrder = async (body) => {
   }
 };
 
-export const getOrderDetail = async (orderId) => {
-  try {
+// export const getOrderDetail = async (orderId) => {
+//   try {
    
-    const response = await axiosInstance.get(`/v1/order/${orderId}`);
-    return response;
+//     const response = await axiosInstance.get(`/v1/order/${orderId}`);
+//     return response;
 
-  } catch (error) {
-    console.log("error:", error);
-    throw error
-  }
-};
+//   } catch (error) {
+//     console.log("error:", error);
+//     throw error
+//   }
+// };
 
 export const updateOrderStatus = async (orderId, status ) => {
   try {
@@ -65,3 +65,15 @@ export const getOrderHistoryByStatus = async () => {
     throw error;
   }
 };
+
+export const getOrderDetail = async (orderId) => {
+  try {
+    const response = await axiosInstance.get(`/v1/order/${orderId}`);
+    console.log('Chi tiết đơn hàng >>>>>>>>>>>>>>:', JSON.stringify(response.data, null, 2));
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi lấy chi tiết đơn hàng:', error.response?.data || error.message);
+    throw error;
+  }
+}
+

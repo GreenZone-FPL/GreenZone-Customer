@@ -14,7 +14,7 @@ export const OrderStatus = Object.freeze({
     AWAITING_PAYMENT: { label: "Chờ thanh toán", value: "awaitingPayment" },
     PENDING_CONFIRMATION: { label: "Chờ xác nhận", value: "pendingConfirmation" },
     PROCESSING: { label: "Đang xử lý", value: "processing" },
-    READY_FOR_PICKUP: { label: "Chờ lấy hàng", value: "readyForPickup" },
+    READY_FOR_PICKUP: { label: "Chờ lấy hàng", value: "readyForPickup" },  // dành cho đơn delivery, sản phẩm đã được chuẩn bị xong, và đang đợi nhân viên đem đi giao
     SHIPPING_ORDER: { label: "Đang giao hàng", value: "shippingOrder" },
     COMPLETED: { label: "Hoàn thành", value: "completed" },
     CANCELLED: { label: "Đã hủy", value: "cancelled" },
