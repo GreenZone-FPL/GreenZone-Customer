@@ -8,7 +8,7 @@ export const FillingJuiceLoading = ({ visible }) => {
   return (
     <View style={styles.overlay}>
       <LottieView
-        source={require('../../assets/animations/loading.json')}
+        source={require('../../assets/animations/loadingdrink.json')}
         autoPlay
         loop
         style={styles.lottie}

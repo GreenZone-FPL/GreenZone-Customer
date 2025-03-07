@@ -1,18 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View , ActivityIndicator} from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 
-import { getProductDetail } from '../../axios';
+import { getProductDetail, postFavoriteProduct, deleteFavoriteProduct, getFavoriteProducts } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
 import { useAppContext } from '../../context/appContext';
-import { CartActionTypes } from '../../reducers';
+import Toast from "react-native-toast-message";
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
-    const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState(null)
@@ -84,9 +82,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                         <ProductImage hideModal={() => navigation.goBack()} product={product} />
 
                         <ProductInfo
-                            favorites={favorites}
                             product={product}
-                            addToFavorites={addToFavorites}
                             showFullDescription={showFullDescription}
                             toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
                         />
@@ -236,9 +232,7 @@ const ProductImage = ({ hideModal, product }) => {
     );
 };
 
-const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescription, favorites }) => {
-    // Kiểm tra xem sản phẩm có trong mảng favorites không
-    const isFavorite = favorites.some(fav => fav._id === product._id); // Hoặc bạn có thể so sánh dựa trên một thuộc tính khác
+const ProductInfo = ({ product, showFullDescription, toggleDescription}) => {
 
     return (
         <View style={styles.infoContainer}>
@@ -251,13 +245,7 @@ const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescr
                 >
                     {product.name}
                 </Text>
-                <Pressable onPress={() => addToFavorites(product)}>
-                    <Icon
-                        source={isFavorite ? "heart" : "heart-outline"}  // Nếu sản phẩm trong favorites thì chọn icon "heart"
-                        color={isFavorite ? colors.pink500 : colors.gray700}  // Màu sắc tùy thuộc vào trạng thái yêu thích
-                        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    />
-                </Pressable>
+                <FavoriteButton productId={product._id} />
             </View>
 
             {/* Product Description */}
@@ -275,6 +263,63 @@ const ProductInfo = ({ product, addToFavorites, showFullDescription, toggleDescr
                 </Pressable>
             </View>
         </View>
+    );
+};
+
+const FavoriteButton = ({ productId }) => {
+    const [isFavorite, setIsFavorite] = useState(false);
+
+    useEffect(() => {
+        const fetchFavorites = async () => {
+            try {
+                const favorites = await getFavoriteProducts();
+                setIsFavorite(favorites.some(item => item.product._id === productId));
+            } catch (error) {
+                console.error("Error fetching favorite status:", error);
+            }
+        };
+
+        fetchFavorites();
+    }, [productId]);
+
+    const toggleFavorite = async () => {
+        try {
+            if (isFavorite) {
+                await deleteFavoriteProduct({ productId });
+                Toast.show({
+                    type: "custom_error", // Sử dụng loại tùy chỉnh
+                    text1: "Đã xóa khỏi yêu thích",
+                    props: { iconName: "heart-broken" }, 
+                    visibilityTime: 1000,
+                });
+            } else {
+                await postFavoriteProduct({ productId });
+                Toast.show({
+                    type: "custom_success", // Sử dụng loại tùy chỉnh
+                    text1: "Đã thêm vào yêu thích",
+                    props: { iconName: "heart" },
+                    visibilityTime: 1000,
+                });
+            }
+            setIsFavorite(!isFavorite);
+        } catch (error) {
+            Toast.show({
+                type: "custom_error",
+                text1: "Lỗi!",
+                text2: "Không thể thay đổi trạng thái yêu thích.",
+                props: { iconName: "alert-circle" },
+                visibilityTime: 1000,
+            });
+        }
+    };
+
+    return (
+        <IconButton
+            icon={isFavorite ? "heart" : "heart-outline"}
+            iconColor={isFavorite ? colors.red800 : colors.gray300}
+            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+            onPress={toggleFavorite}
+        />
     );
 };
 

@@ -59,7 +59,7 @@ const SearchAddressScreen = (props) => {
             </Pressable>
             <Pressable style={styles.map} onPress={() => setIsVisible(true)}>
                 <Icon source="form-select" color={colors.primary} size={GLOBAL_KEYS.ICON_SIZE_LARGE} />
-                <Text style={styles.normalText}>Chọn địa chỉ</Text>
+                <Text style={{fontSize: 13}}>Chọn địa chỉ</Text>
                 <Icon source="chevron-down" color={colors.primary} size={GLOBAL_KEYS.ICON_SIZE_LARGE} />
             </Pressable>
             {isVisible && <SelectLocation onHide={() => setIsVisible(false)} onSelectAddress={handleSelectAddress} />}
