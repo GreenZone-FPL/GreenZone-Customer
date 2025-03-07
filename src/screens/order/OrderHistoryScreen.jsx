@@ -74,8 +74,8 @@ const OrderHistoryScreen = ({navigation}) => {
               key={index}
               onItemPress={
                 order =>
-                  // navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
-                navigation.navigate('OrderDetailScreen2', {order})
+                  navigation.navigate(OrderGraph.OrderDetailScreen, {order}) 
+                // navigation.navigate('OrderDetailScreen2', {order})
               }
               status={status}
               orders={orders}
