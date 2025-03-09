@@ -44,7 +44,7 @@ import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import { PaperProvider } from 'react-native-paper';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
-
+import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -107,6 +107,7 @@ function App() {
                     }}
                     component={EditCartItemScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
+                  <BaseStack.Screen name={ShoppingGraph.OrderSuccessScreen} component={OrderSuccessScreen} />
                   <BaseStack.Screen name={BottomGraph.MerchantScreen} component={MerchantScreen} />
                   <BaseStack.Screen name={VoucherGraph.MyVouchersScreen} component={MyVoucherScreen} />
                   <BaseStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
