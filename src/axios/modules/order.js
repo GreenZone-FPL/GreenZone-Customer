@@ -1,15 +1,40 @@
 import { OrderStatus } from "../../constants";
 import axiosInstance from "../axiosInstance";
 export const createOrder = async (body) => {
-    try {
-        const response = await axiosInstance.post("/v1/order/create", body);
+  try {
+    const response = await axiosInstance.post("/v1/order/create", body);
 
-        return response;
+    return response;
 
-    } catch (error) {
-        console.log("error:", error);
-        throw error
-    }
+  } catch (error) {
+    console.log("error:", error);
+    throw error
+  }
+};
+
+// export const getOrderDetail = async (orderId) => {
+//   try {
+   
+//     const response = await axiosInstance.get(`/v1/order/${orderId}`);
+//     return response;
+
+//   } catch (error) {
+//     console.log("error:", error);
+//     throw error
+//   }
+// };
+
+export const updateOrderStatus = async (orderId, status ) => {
+  try {
+   
+    const body = {status}
+    const response = await axiosInstance.patch(`/v1/order/${orderId}/status`, body);
+    return response;
+
+  } catch (error) {
+    console.log("error:", error);
+    throw error
+  }
 };
 
 

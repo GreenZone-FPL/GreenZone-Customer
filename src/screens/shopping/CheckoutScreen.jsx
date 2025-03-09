@@ -7,7 +7,8 @@ import DialogSelectTime from '../../components/dialogs/DialogSelectTime';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
+import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+import socketService from '../../services/socketService';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -25,6 +26,19 @@ const CheckoutScreen = ({ navigation }) => {
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
+  useEffect(() => {
+
+
+    const initSocket = async () => {
+      await socketService.initialize();
+
+    }
+    initSocket()
+
+    return () => {
+
+    };
+  }, []);
   useEffect(() => {
     if (timeInfo?.fulfillmentDateTime) {
       const fulfillmentTimeISO = new Date(timeInfo.fulfillmentDateTime).toISOString();
@@ -59,6 +73,7 @@ const CheckoutScreen = ({ navigation }) => {
       <EmptyView goBack={() => navigation.goBack()} />
     )
   }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,6 +151,9 @@ const CheckoutScreen = ({ navigation }) => {
 
               />
               <Column style={{ gap: 16, marginHorizontal: 16 }}>
+                <Button title='Emit order new'
+                  onPress={() => socketService.createNewOrder({ message: 'hello' })}
+                />
                 <Button
                   title='Log cartState'
                   onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))}
@@ -175,40 +193,51 @@ const CheckoutScreen = ({ navigation }) => {
       <ActionDialog
         visible={dialogCreateOrderVisible}
         title="Xác nhận"
-        content={`Bạn xác nhận đặt đơn hàng"?`}
+        content={`Bạn xác nhận đặt đơn hàng?`}
         cancelText="Hủy"
         approveText="Đồng ý"
         onCancel={() => setDialogCreateOrderVisible(false)}
-        onApprove={async () => {
+        // onApprove={() => {
+        //   setDialogCreateOrderVisible(false)
+        //   setTimeout(() => {
+        //     const orderId = '67c6b93961edaf498f587588'
+        //     navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId })
+        //   }, 1000)
+        // }}
 
-          try {
-            let response = null
-            if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
+      onApprove={async () => {
 
-              const pickupOrder = CartManager.setUpPickupOrder(cartState)
-              console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
-              response = await createOrder(pickupOrder);
+        try {
+          let response = null
+          if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
 
-            } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
+            const pickupOrder = CartManager.setUpPickupOrder(cartState)
+            console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+            response = await createOrder(pickupOrder);
 
-              const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
-              console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
+          } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
 
-              response = await createOrder(deliveryOrder);
+            const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
+            console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
 
-            }
+            response = await createOrder(deliveryOrder);
 
-
-
-            console.log('order data', JSON.stringify(response, null, 2));
-
-          } catch (error) {
-            console.log('error', error)
-          } finally {
-            setDialogCreateOrderVisible(false)
           }
 
-        }}
+
+          console.log('order data', JSON.stringify(response, null, 2));
+          socketService.joinOrder(response?.data?._id)
+
+          navigation.navigate(ShoppingGraph.OrderSuccessScreen, {orderId: response?.data?._id})
+        } catch (error) {
+          console.log('error', error)
+          Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
+        } finally {
+          setDialogCreateOrderVisible(false)
+        }
+
+      }}
+
       />
       <ActionDialog
         visible={actionDialogVisible}

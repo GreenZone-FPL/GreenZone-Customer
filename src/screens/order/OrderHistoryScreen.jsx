@@ -45,7 +45,8 @@ const OrderHistoryScreen = ({navigation}) => {
   }, [tabIndex]);
 
   const handleRepeatOrder = () => {
-    navigation.navigate(OrderGraph.OrderDetailScreen);
+    // navigation.navigate(OrderGraph.OrderDetailScreen);
+    navigation.navigate('OrderDetailScreen2');
   };
 
   return (

@@ -9,7 +9,7 @@ const requiredFieldsPickUp = [
     'totalPrice',
     'paymentMethod',
     'store',
-    'owner',
+    // 'owner',
     'orderItems',
 
 ];
@@ -22,7 +22,7 @@ const requiredFieldsDelivery = [
     'paymentMethod',
     'shippingAddress',
     'store',
-    'owner',
+    // 'owner',
     'orderItems',
 
 ];
@@ -38,7 +38,7 @@ export const CartManager = (() => {
             paymentMethod: cartState.paymentMethod,
             store: cartState.store,
             shippingAddress:cartState.shippingAddress,
-            owner: cartState.owner,
+            // owner: cartState.owner,
             voucher: cartState.voucher,
             orderItems: cartState.orderItems.map(item => ({
                 variant: item.variant,
@@ -67,7 +67,7 @@ export const CartManager = (() => {
             totalPrice: cartState.totalPrice,
             paymentMethod: cartState.paymentMethod,
             store: cartState.store,
-            owner: cartState.owner,
+            // owner: cartState.owner,
             voucher: cartState.voucher,
             orderItems: cartState.orderItems.map(item => ({
                 variant: item.variant,
@@ -151,7 +151,7 @@ export const CartManager = (() => {
     const readCart = async () => {
         try {
             const cart = await AppAsyncStorage.readData('CART', cartInitialState);
-            console.log("readCart:", JSON.stringify(cart, null, 3));
+            // console.log("readCart:", JSON.stringify(cart, null, 3));
 
             return cart
         } catch (error) {

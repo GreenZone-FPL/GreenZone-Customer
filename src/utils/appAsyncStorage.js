@@ -54,7 +54,7 @@ export class AppAsyncStorage {
 
         try {
             const decoded = jwtDecode(accessToken); // Sử dụng jwt_decode thay vì jwtDecode
-            console.log('decoded', decoded);
+            // console.log('decoded', decoded);
             const currentTime = Math.floor(Date.now() / 1000); // Thời gian hiện tại (tính theo giây)
 
             return decoded.exp > currentTime; // Nếu exp lớn hơn currentTime thì token còn hạn

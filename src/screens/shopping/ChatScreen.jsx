@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   FlatList,
@@ -10,8 +10,8 @@ import {
   View,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
-import {launchCamera} from 'react-native-image-picker';
-import {Icon} from 'react-native-paper';
+import { launchCamera } from 'react-native-image-picker';
+import { Icon } from 'react-native-paper';
 import io from 'socket.io-client';
 import {
   Column,
@@ -21,13 +21,14 @@ import {
   PrimaryButton,
   Row,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {Notifications} from 'react-native-notifications';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { Notifications } from 'react-native-notifications';
 
-const socket = io('https://serversocket-4oew.onrender.com/');
+// const socket = io('https://serversocket-4oew.onrender.com/');
+const socket = io('https://greenzone.motcaiweb.io.vn/socket.io/');
 // const socket = io("http://192.168.0.110:3000/");
 
-const ChatScreen = ({navigation}) => {
+const ChatScreen = ({ navigation }) => {
   const [userName, setUserName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [message, setMessage] = useState('');
@@ -37,31 +38,48 @@ const ChatScreen = ({navigation}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
 
+
   useEffect(() => {
-    socket.on('receive message', data => {
-      addMessage(data.userName, data.message, data.image);
 
-      // Gửi thông báo khi nhận tin nhắn
-      if (data.userName !== userName) {
-        // Nếu tin nhắn không phải của chính bạn
-        Notifications.postLocalNotification({
-          title: `${data.userName} gửi tin nhắn mới`,
-          body: data.message,
-          extra: 'Dữ liệu thêm', // Bạn có thể thêm dữ liệu thêm nếu cần
-        });
-      }
+    socket.on('connect', () => {
+      console.log('socket Id', socket.id)
+    })
+    socket.on("thuthao", (data) => {
+      console.log("thuthao message", data);
     });
 
-    socket.on('user typing', data => {
-      setTypingStatus(`${data.userName} đang soạn tin...`);
-      setTimeout(() => setTypingStatus(''), 3000);
-    });
+
 
     return () => {
-      socket.off('receive message');
-      socket.off('user typing');
+      socket.off('thuthao');
     };
   }, []);
+
+  // useEffect(() => {
+  //   socket.on('receive message', data => {
+  //     addMessage(data.userName, data.message, data.image);
+
+  //     // Gửi thông báo khi nhận tin nhắn
+  //     if (data.userName !== userName) {
+  //       // Nếu tin nhắn không phải của chính bạn
+  //       Notifications.postLocalNotification({
+  //         title: `${data.userName} gửi tin nhắn mới`,
+  //         body: data.message,
+  //         extra: 'Dữ liệu thêm', // Bạn có thể thêm dữ liệu thêm nếu cần
+  //       });
+  //     }
+  //   });
+
+  //   socket.on('user typing', data => {
+  //     setTypingStatus(`${data.userName} đang soạn tin...`);
+  //     setTimeout(() => setTypingStatus(''), 3000);
+  //   });
+
+  //   return () => {
+  //     socket.off('receive message');
+  //     socket.off('user typing');
+  //   };
+  // }, []);
 
   const joinChat = () => {
     if (userName.trim()) {
@@ -75,7 +93,7 @@ const ChatScreen = ({navigation}) => {
 
   const sendMessage = (imageUri = null) => {
     if (message.trim() || imageUri) {
-      const msgData = {message, image: imageUri};
+      const msgData = { message, image: imageUri };
       socket.emit('send message', msgData);
       addMessage('You', message, imageUri, true);
       setMessage('');
@@ -84,7 +102,7 @@ const ChatScreen = ({navigation}) => {
   };
 
   const addMessage = (userName, message, image = null, isYou = false) => {
-    const newMessage = {userName, message, image, isYou};
+    const newMessage = { userName, message, image, isYou };
     setMessages(prevMessages => [...prevMessages, newMessage]);
   };
 
@@ -101,7 +119,7 @@ const ChatScreen = ({navigation}) => {
 
   const pickImage = () => {
     ImagePicker.launchImageLibrary(
-      {mediaType: 'photo', quality: 0.8},
+      { mediaType: 'photo', quality: 0.8 },
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {
@@ -122,7 +140,7 @@ const ChatScreen = ({navigation}) => {
   return (
     <>
       {!isLoggedIn ? (
-        <Column style={{padding: 16}}>
+        <Column style={{ padding: 16 }}>
           <Text style={styles.header}>Join Chat Room</Text>
           <FlatInput
             label="Enter your name"
@@ -136,25 +154,25 @@ const ChatScreen = ({navigation}) => {
       ) : (
         <Column style={styles.chatRoom}>
           <NormalHeader
-            style={{backgroundColor: colors.transparent}}
+            style={{ backgroundColor: colors.transparent }}
             title="Chat room"
             onLeftPress={() => navigation.goBack()}
           />
-          <Column style={{flex: 1, paddingHorizontal: 16}}>
+          <Column style={{ flex: 1, paddingHorizontal: 16 }}>
             <FlatList
               data={messages}
               keyExtractor={(_, index) => index.toString()}
               renderItem={MessageItem}
-              contentContainerStyle={{flexGrow: 1, gap: 12}}
+              contentContainerStyle={{ flexGrow: 1, gap: 12 }}
             />
-            <NormalText style={{fontStyle: 'italic'}} text={typingStatus} />
+            <NormalText style={{ fontStyle: 'italic' }} text={typingStatus} />
 
             <Row>
               <FlatInput
                 label="Enter message"
                 placeholder=""
                 value={message}
-                style={{flex: 1}}
+                style={{ flex: 1 }}
                 setValue={setMessage}
                 onSubmitEditing={() => sendMessage()}
                 returnKeyType="send"
@@ -168,7 +186,7 @@ const ChatScreen = ({navigation}) => {
             <View style={styles.previewContainer}>
               <Text>Hình ảnh đã chọn:</Text>
               <Image
-                source={{uri: selectedImage}}
+                source={{ uri: selectedImage }}
                 style={styles.previewImage}
               />
             </View>
@@ -201,7 +219,7 @@ const ChatScreen = ({navigation}) => {
   );
 };
 
-const MessageItem = ({item}) => {
+const MessageItem = ({ item }) => {
   const isYou = item.isYou;
 
   return (
@@ -218,13 +236,13 @@ const MessageItem = ({item}) => {
       <Column
         style={[
           styles.messageContent,
-          isYou && {backgroundColor: colors.green100},
+          isYou && { backgroundColor: colors.green100 },
         ]}>
         {!isYou && (
-          <NormalText text={item.userName} style={{fontWeight: '500'}} />
+          <NormalText text={item.userName} style={{ fontWeight: '500' }} />
         )}
         {item.image ? (
-          <Image source={{uri: item.image}} style={styles.sentImage} />
+          <Image source={{ uri: item.image }} style={styles.sentImage} />
         ) : (
           <NormalText text={item.message} />
         )}

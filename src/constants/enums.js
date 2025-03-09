@@ -12,14 +12,28 @@ export const PaymentMethod = Object.freeze({
 
 export const OrderStatus = Object.freeze({
     AWAITING_PAYMENT: { label: "Chờ thanh toán", value: "awaitingPayment" },
-    PENDING_CONFIRMATION: { label: "Chờ xác nhận đơn", value: "pendingConfirmation" },
-    PROCESSING: { label: "Thực hiện đơn", value: "processing" },
-    READY_FOR_PICKUP: { label: "Đã làm xong đơn, sẵn sàng giao", value: "readyForPickup" },
-    SHIPPING_ORDER: { label: "Giao đơn hàng", value: "shippingOrder" },
-    COMPLETED: { label: "Hoàn tất", value: "completed" },
+    PENDING_CONFIRMATION: { label: "Chờ xác nhận", value: "pendingConfirmation" },
+    PROCESSING: { label: "Đang xử lý", value: "processing" },
+    READY_FOR_PICKUP: { label: "Chờ lấy hàng", value: "readyForPickup" },  // dành cho đơn delivery, sản phẩm đã được chuẩn bị xong, và đang đợi nhân viên đem đi giao
+    SHIPPING_ORDER: { label: "Đang giao hàng", value: "shippingOrder" },
+    COMPLETED: { label: "Hoàn thành", value: "completed" },
     CANCELLED: { label: "Đã hủy", value: "cancelled" },
-    FAILED_DELIVERY: { label: "Giao hàng thất bại", value: "failedDelivery" }
+    FAILED_DELIVERY: { label: "Giao hàng thất bại", value: "failedDelivery" },
+
+
+    getLabels() {
+        return Object.values(this).map(status => status.label);
+    },
+
+    getValues() {
+        return Object.values(this).map(status => status.value);
+    }
 });
+
+// Cách sử dụng:
+// console.log(OrderStatus.getLabels()); // Lấy toàn bộ label
+// console.log(OrderStatus.getValues()); // Lấy toàn bộ value
+
 
 
 

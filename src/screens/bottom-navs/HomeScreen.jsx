@@ -81,9 +81,9 @@ const HomeScreen = props => {
     });
   };
 
-  useEffect(() => {
-    console.log('Header title updated:', currentCategory);
-  }, [currentCategory]);
+  // useEffect(() => {
+  //   console.log('Header title updated:', currentCategory);
+  // }, [currentCategory]);
 
   const handleScroll = useCallback(
     event => {
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     position: 'relative',
     height: Dimensions.get('window').height,
   },

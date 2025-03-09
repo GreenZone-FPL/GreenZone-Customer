@@ -180,6 +180,7 @@ const ProductsInfo = ({orderItems}) => {
         keyExtractor={item => item.product._id}
         renderItem={({item}) => {
           const formattedItem = {
+           
             productName: item.product.name,
             image: item.product.image,
             variantName: item.product.size,
