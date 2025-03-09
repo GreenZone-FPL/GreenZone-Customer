@@ -29,9 +29,6 @@ class SocketService {
           console.log("Socket disconnected");
         });
 
-        this.socket.on("thuthao", (data) => {
-          console.log("thuthao message", data);
-        });
 
       } catch (error) {
         console.log("Lỗi khi khởi tạo socket:", error);
@@ -39,15 +36,15 @@ class SocketService {
     }
   }
 
-  joinOrder(orderId) {
+  joinOrder(orderId, callback) {
     if (this.socket) {
-      this.socket.emit("order.join", orderId);
-      console.log(`Đã tham gia order ${orderId}`);
-    }
-  }
+      this.socket.emit("order.join", orderId, () => {
+        console.log(`Đã tham gia order ${orderId}`);
+      });
 
-  onOrderUpdateStatus(callback) {
-    if (this.socket) {
+      // Xóa listener cũ trước khi đăng ký mới
+      this.socket.off("order.updateStatus");
+
       this.socket.on("order.updateStatus", (data) => {
         console.log("Trạng thái đơn hàng cập nhật:", data);
         callback?.(data);
@@ -55,30 +52,11 @@ class SocketService {
     }
   }
 
-  offOrderUpdateStatus(callback) {
-    if (this.socket) {
-      this.socket.off("order.updateStatus", callback);
-    }
-  }
 
   isConnected() {
     return this.socket && this.socket.connected;
   }
 
-  // Emit event khi cập nhật trạng thái đơn hàng
-  updateOrderStatus(orderId, status) {
-    if (this.socket) {
-      this.socket.emit("order.updateStatus", { orderId, status });
-      console.log(`Đã emit event cập nhật trạng thái đơn hàng: ${orderId}, Status: ${status}`);
-    }
-  }
-
-  emitThuThao() {
-    if (this.socket) {
-      this.socket.emit("thuthao", { message: 'abc' });
-      console.log(`Đã emit event thuthao`);
-    }
-  }
 
   disconnect() {
     if (this.socket) {

@@ -8,6 +8,7 @@ import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../consta
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartManager, TextFormatter, fetchUserLocation } from '../../utils';
+import socketService from '../../services/socketService';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -25,6 +26,19 @@ const CheckoutScreen = ({ navigation }) => {
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
+  useEffect(() => {
+
+
+    const initSocket = async () => {
+      await socketService.initialize();
+
+    }
+    initSocket()
+
+    return () => {
+      
+    };
+  }, []);
   useEffect(() => {
     if (timeInfo?.fulfillmentDateTime) {
       const fulfillmentTimeISO = new Date(timeInfo.fulfillmentDateTime).toISOString();
@@ -136,6 +150,9 @@ const CheckoutScreen = ({ navigation }) => {
 
               />
               <Column style={{ gap: 16, marginHorizontal: 16 }}>
+              <Button title='Emit order new'
+                  onPress={() => socketService.createNewOrder({message: 'hello'})}
+                />
                 <Button
                   title='Log cartState'
                   onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))}
@@ -197,10 +214,10 @@ const CheckoutScreen = ({ navigation }) => {
               response = await createOrder(deliveryOrder);
 
             }
-
-
+         
 
             console.log('order data', JSON.stringify(response, null, 2));
+            socketService.joinOrder(response?.data?._id)
 
           } catch (error) {
             console.log('error', error)

@@ -123,7 +123,6 @@ function App() {
                   <BaseStack.Screen name={UserGraph.SettingScreen} component={SettingScreen} />
                   <BaseStack.Screen name={UserGraph.ContactScreen} component={ContactScreen} />
                   <BaseStack.Screen name={OrderGraph.OrderHistoryScreen} component={OrderHistoryScreen} />
-                  <BaseStack.Screen name={'OrderDetailScreen2'} component={OrderDetailScreen2} />
                   <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
                   <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />

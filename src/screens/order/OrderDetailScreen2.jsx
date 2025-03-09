@@ -24,9 +24,7 @@ import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { updateOrderStatus, getOrderDetail } from '../../axios';
 import SocketService from '../../services/socketService';
-import { AppAsyncStorage } from '../../utils';
-import { io } from 'socket.io-client';
-// const socket = io('wss://greenzone.motcaiweb.io.vn/socket.io/?EIO=4&transport=websocket');
+
 
 const socket = io('https://serversocket-4oew.onrender.com/');
 const OrderDetailScreen2 = props => {
@@ -43,25 +41,6 @@ const OrderDetailScreen2 = props => {
     setOrderStatus(data.status);
   }, []);
 
-
-  useEffect(() => {
-    if (!order?._id) return;
-
-    const initSocket = async () => {
-      await SocketService.initialize();
-
-      SocketService.joinOrder(order._id);
-
-      SocketService.onOrderUpdateStatus(handleOrderUpdate);
-
-
-    }
-    initSocket()
-
-    return () => {
-      SocketService.offOrderUpdateStatus(handleOrderUpdate);
-    };
-  }, [order?._id]);
 
   return (
     <View style={styles.container}>
@@ -111,12 +90,6 @@ const OrderDetailScreen2 = props => {
           </Pressable>
         }
 
-        <Pressable style={styles.button} onPress={() =>
-          socket.emit('thuthao', { message: 'abc' })
-        }
-        >
-          <Text style={styles.normalText}>Emit event</Text>
-        </Pressable>
 
       </ScrollView>
 
@@ -132,8 +105,6 @@ const OrderDetailScreen2 = props => {
           try {
             const response = await updateOrderStatus(order._id, OrderStatus.CANCELLED.value)
             // console.log('response', response)
-
-            SocketService.updateOrderStatus(order._id, OrderStatus.CANCELLED.value)
 
             const updatedOrder = await getOrderDetail(order._id);
             console.log('Updated Order Detail:', updatedOrder);
