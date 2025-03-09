@@ -6,7 +6,7 @@ import { colors, GLOBAL_KEYS } from "../../constants";
 import { MainGraph, OrderGraph } from "../../layouts/graphs";
 
 const OrderSuccessScreen = ({ route, navigation }) => {
-    const  orderId  = "67c6b93961edaf498f587588";
+    const  {orderId}  = route.params || ""
 
     const [showButtons, setShowButtons] = useState(false);
 

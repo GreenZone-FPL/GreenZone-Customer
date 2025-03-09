@@ -197,46 +197,46 @@ const CheckoutScreen = ({ navigation }) => {
         cancelText="Hủy"
         approveText="Đồng ý"
         onCancel={() => setDialogCreateOrderVisible(false)}
-        onApprove={() => {
+        // onApprove={() => {
+        //   setDialogCreateOrderVisible(false)
+        //   setTimeout(() => {
+        //     const orderId = '67c6b93961edaf498f587588'
+        //     navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId })
+        //   }, 1000)
+        // }}
+
+      onApprove={async () => {
+
+        try {
+          let response = null
+          if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
+
+            const pickupOrder = CartManager.setUpPickupOrder(cartState)
+            console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+            response = await createOrder(pickupOrder);
+
+          } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
+
+            const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
+            console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
+
+            response = await createOrder(deliveryOrder);
+
+          }
+
+
+          console.log('order data', JSON.stringify(response, null, 2));
+          socketService.joinOrder(response?.data?._id)
+
+          navigation.navigate(ShoppingGraph.OrderSuccessScreen, {orderId: response?.data?._id})
+        } catch (error) {
+          console.log('error', error)
+          Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
+        } finally {
           setDialogCreateOrderVisible(false)
-          setTimeout(() => {
-            const orderId = '67c6b93961edaf498f587588'
-            navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId })
-          }, 1000)
-        }}
+        }
 
-      // onApprove={async () => {
-
-      //   try {
-      //     // let response = null
-      //     // if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-
-      //     //   const pickupOrder = CartManager.setUpPickupOrder(cartState)
-      //     //   console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
-      //     //   response = await createOrder(pickupOrder);
-
-      //     // } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
-
-      //     //   const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
-      //     //   console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
-
-      //     //   response = await createOrder(deliveryOrder);
-
-      //     // }
-
-
-      //     // console.log('order data', JSON.stringify(response, null, 2));
-      //     // socketService.joinOrder(response?.data?._id)
-
-      //     navigation.navigate(ShoppingGraph.OrderSuccessScreen, {orderId: response?.data?._id})
-      //   } catch (error) {
-      //     console.log('error', error)
-      //     Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
-      //   } finally {
-      //     setDialogCreateOrderVisible(false)
-      //   }
-
-      // }}
+      }}
 
       />
       <ActionDialog
