@@ -9,6 +9,7 @@ import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 import socketService from '../../services/socketService';
+import { CartActionTypes } from '../../reducers';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -146,6 +147,7 @@ const CheckoutScreen = ({ navigation }) => {
               }
 
               <PaymentDetailsView
+                cartDispatch={cartDispatch}
                 cartState={cartState}
                 onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen, { isUpdateOrderInfo: true })}
 
@@ -465,7 +467,7 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 );
 
 
-const PaymentDetailsView = ({ onSelectVoucher, cartState }) => {
+const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState)
 
   return (
@@ -498,13 +500,13 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState }) => {
         ))
       }
 
-      <PaymentMethodView />
+      <PaymentMethodView cartDispatch={cartDispatch} />
     </View >
   )
 }
 
 
-const PaymentMethodView = () => {
+const PaymentMethodView = ({ cartDispatch }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState({
     name: 'Thanh toán khi nhận hàng',
@@ -547,6 +549,7 @@ const PaymentMethodView = () => {
 
   const handleSelectMethod = method => {
     setSelectedMethod(method);
+    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE })
     setIsVisible(false);
   };
 
