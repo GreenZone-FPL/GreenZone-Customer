@@ -7,7 +7,6 @@ import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGrou
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { CartManager, Toaster } from '../../utils';
 import { useAppContext } from '../../context/appContext';
-import Toast from "react-native-toast-message";
 import { ToastAndroid } from "react-native";
 
 const ProductDetailSheet = ({ route, navigation }) => {
