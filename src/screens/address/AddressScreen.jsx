@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList, Alert , Dimensions} from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, View, FlatList, Alert, Dimensions } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useFocusEffect } from '@react-navigation/native';
-import { LightStatusBar, NormalHeader, ActionDialog} from '../../components';
+import { LightStatusBar, NormalHeader, ActionDialog } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { UserGraph } from '../../layouts/graphs';
 import { getUserAddresses, deleteAddress } from '../../axios';
 import NormalLoading from '../../components/animations/NormalLoading';
 import { Swipeable } from 'react-native-gesture-handler';
-import SkeletonLoading from '../../components/category/SkeletonLoading';
+
 
 const AddressScreen = ({ navigation }) => {
   const [addresses, setAddresses] = useState([]);
@@ -56,13 +56,12 @@ const AddressScreen = ({ navigation }) => {
       <View style={styles.content}>
         <Card icon="plus-circle" title="Thêm địa chỉ" onPress={() => navigation.navigate(UserGraph.NewAddressScreen, { address: null })} />
       </View>
-      <View style={{margin: 16}}>
+      <View style={{ margin: 16 }}>
         {isLoading ? (
-          <View>
-            {[1, 2, 3].map((_, index) => (
-              <SkeletonLoading key={index} width={'100%'} height={30} borderRadius={16} layout="row" />
-            ))}
-          </View>
+
+          <NormalLoading visible={isLoading} />
+
+
         ) : (
           <FlatList
             data={addresses}
@@ -80,7 +79,7 @@ const AddressScreen = ({ navigation }) => {
           />
         )}
       </View>
-     
+
 
 
       {/* Dialog xác nhận xóa */}

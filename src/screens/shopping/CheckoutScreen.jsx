@@ -9,6 +9,7 @@ import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 import socketService from '../../services/socketService';
+import { CartActionTypes } from '../../reducers';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -21,7 +22,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const { cartState, cartDispatch } = useAppContext()
+  const { cartState, cartDispatch, setUpdateOrderMessageVisible } = useAppContext()
   const [timeInfo, setTimeInfo] = React.useState({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
@@ -146,6 +147,7 @@ const CheckoutScreen = ({ navigation }) => {
               }
 
               <PaymentDetailsView
+                cartDispatch={cartDispatch}
                 cartState={cartState}
                 onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen, { isUpdateOrderInfo: true })}
 
@@ -205,38 +207,40 @@ const CheckoutScreen = ({ navigation }) => {
         //   }, 1000)
         // }}
 
-      onApprove={async () => {
+        onApprove={async () => {
 
-        try {
-          let response = null
-          if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
+          try {
+            let response = null
+            if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
 
-            const pickupOrder = CartManager.setUpPickupOrder(cartState)
-            console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
-            response = await createOrder(pickupOrder);
+              const pickupOrder = CartManager.setUpPickupOrder(cartState)
+              console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+              response = await createOrder(pickupOrder);
 
-          } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
+            } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
 
-            const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
-            console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
+              const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
+              console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
 
-            response = await createOrder(deliveryOrder);
+              response = await createOrder(deliveryOrder);
 
+            }
+
+
+            console.log('order data', JSON.stringify(response, null, 2));
+            socketService.joinOrder(response?.data?._id, () => {
+              setUpdateOrderMessageVisible(true)
+            })
+
+            navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId: response?.data?._id })
+          } catch (error) {
+            console.log('error', error)
+            Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
+          } finally {
+            setDialogCreateOrderVisible(false)
           }
 
-
-          console.log('order data', JSON.stringify(response, null, 2));
-          socketService.joinOrder(response?.data?._id)
-
-          navigation.navigate(ShoppingGraph.OrderSuccessScreen, {orderId: response?.data?._id})
-        } catch (error) {
-          console.log('error', error)
-          Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
-        } finally {
-          setDialogCreateOrderVisible(false)
-        }
-
-      }}
+        }}
 
       />
       <ActionDialog
@@ -463,7 +467,7 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 );
 
 
-const PaymentDetailsView = ({ onSelectVoucher, cartState }) => {
+const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState)
 
   return (
@@ -496,13 +500,13 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState }) => {
         ))
       }
 
-      <PaymentMethodView />
+      <PaymentMethodView cartDispatch={cartDispatch} />
     </View >
   )
 }
 
 
-const PaymentMethodView = () => {
+const PaymentMethodView = ({ cartDispatch }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState({
     name: 'Thanh toán khi nhận hàng',
@@ -545,6 +549,7 @@ const PaymentMethodView = () => {
 
   const handleSelectMethod = method => {
     setSelectedMethod(method);
+    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE })
     setIsVisible(false);
   };
 
