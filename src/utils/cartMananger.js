@@ -9,7 +9,6 @@ const requiredFieldsPickUp = [
     'totalPrice',
     'paymentMethod',
     'store',
-    // 'owner',
     'orderItems',
 
 ];
@@ -22,7 +21,6 @@ const requiredFieldsDelivery = [
     'paymentMethod',
     'shippingAddress',
     'store',
-    // 'owner',
     'orderItems',
 
 ];
@@ -37,8 +35,7 @@ export const CartManager = (() => {
             totalPrice: cartState.totalPrice,
             paymentMethod: cartState.paymentMethod,
             store: cartState.store,
-            shippingAddress:cartState.shippingAddress,
-            // owner: cartState.owner,
+            shippingAddress: cartState.shippingAddress,
             voucher: cartState.voucher,
             orderItems: cartState.orderItems.map(item => ({
                 variant: item.variant,
@@ -67,7 +64,6 @@ export const CartManager = (() => {
             totalPrice: cartState.totalPrice,
             paymentMethod: cartState.paymentMethod,
             store: cartState.store,
-            // owner: cartState.owner,
             voucher: cartState.voucher,
             orderItems: cartState.orderItems.map(item => ({
                 variant: item.variant,
@@ -130,7 +126,7 @@ export const CartManager = (() => {
 
     const getPaymentDetails = (cartState) => {
         const cartTotal = CartManager.getCartTotal(cartState)
-        const deliveryAmount = 20000
+        const deliveryAmount = cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? 20000 : 0
         let voucherAmount = 0
 
         if (cartState?.voucherInfo?.discountType === 'percentage') {
