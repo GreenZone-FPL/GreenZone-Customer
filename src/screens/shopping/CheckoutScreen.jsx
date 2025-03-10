@@ -221,7 +221,14 @@ const CheckoutScreen = ({ navigation }) => {
               setUpdateOrderMessageVisible(true)
             })
 
-            navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId: response?.data?._id })
+            if(response?.data?.status === 'awaitingPayment'){
+              navigation.navigate(ShoppingGraph.PayOsScreen, 
+                {  
+                  orderId: response.data._id,
+                  totalPrice: response.data.totalPrice })
+            }else{
+              navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
+            }
           } catch (error) {
             console.log('error', error)
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
@@ -519,12 +526,6 @@ const PaymentMethodView = ({ cartDispatch }) => {
       image: require('../../assets/images/logo_vnd.png'),
       value: 'cash',
       paymentMethod: PaymentMethod.COD.value
-    },
-    {
-      name: 'Momo',
-      image: require('../../assets/images/logo_momo.png'),
-      value: 'momo',
-      paymentMethod: PaymentMethod.ONLINE.value
     },
     {
       name: 'ZaloPay',
