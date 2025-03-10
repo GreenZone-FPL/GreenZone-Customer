@@ -57,15 +57,16 @@ function App() {
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
-      const message = OrderStatus.getMessageByOrder(updateOrderMessage.order);
-  
-      showMessage({
-        message,
-        type: 'success',
-        duration: 3000,
-      });
+        const { message, type, icon } = OrderStatus.getMessageByOrder(updateOrderMessage.order);
+        showMessage({
+            message,
+            type,
+            icon,
+            duration: 4000,
+        });
     }
-  }, [updateOrderMessage]);
+}, [updateOrderMessage]);
+
 
   return (
     <PaperProvider>

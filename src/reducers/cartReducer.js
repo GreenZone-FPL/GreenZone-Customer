@@ -24,13 +24,12 @@ const fullInfo = {
     voucherInfo: {}
 }
 
-
 export const cartInitialState = {
     deliveryMethod: DeliveryMethod.PICK_UP.value,
     fulfillmentDateTime: '',
     note: '',
     totalPrice: 0,
-    paymentMethod: PaymentMethod.COD.value,
+    paymentMethod: PaymentMethod.ONLINE.value,
     store: '',
     orderItems: []
 }

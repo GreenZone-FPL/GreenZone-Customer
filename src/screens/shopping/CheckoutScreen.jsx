@@ -3,7 +3,7 @@ import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, Sc
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
 import { ActionDialog, Column, DeliveryMethodSheet, DialogBasic, DialogSelectTime, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, TitleText } from '../../components';
-import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
+import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import socketService from '../../services/socketService';
@@ -27,7 +27,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
   useEffect(() => {
-    const initSocket = async () => {await socketService.initialize()}
+    const initSocket = async () => { await socketService.initialize() }
     initSocket()
 
     return () => {
@@ -210,13 +210,30 @@ const CheckoutScreen = ({ navigation }) => {
             }
 
 
-            console.log('order data', JSON.stringify(response, null, 2));
-            socketService.joinOrder(response?.data?._id, () => {
-              setUpdateOrderMessage({ visible: true, response });
-   
-            })
+            console.log('order data =', JSON.stringify(response, null, 2));
+            socketService.joinOrder(response?.data?._id, (data) => {
+              setUpdateOrderMessage({
+                  visible: true,
+                  order: {
+                      ...response, 
+                      data: {
+                          ...response.data,
+                          status: data?.status || response.data.status 
+                      }
+                  }
+              });
+          });
+          
 
-            navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId: response?.data?._id })
+
+
+            if (response?.data?.status === OrderStatus.AWAITING_PAYMENT.value) {
+              navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
+            } else {
+              navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
+            }
+
+
           } catch (error) {
             console.log('error', error)
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
@@ -406,7 +423,7 @@ const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
       <DualTextRow
         style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Thông tin người nhận"
-        rightText="Thay đổi"
+        // rightText="Thay đổi"
         leftTextStyle={{ color: colors.black, fontWeight: '600' }}
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
@@ -493,58 +510,57 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
         rightTextStyle={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}
       />
 
-      <PaymentMethodView cartDispatch={cartDispatch} />
+      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} />
     </View>
   );
 };
 
 
-
-const PaymentMethodView = ({ cartDispatch }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState({
+const paymentMethods = [
+  {
+    name: 'PayOs',
+    image: require('../../assets/images/logo_payos.png'),
+    value: 'PayOs',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+  {
     name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
-  });
+    value: 'cash',
+    paymentMethod: PaymentMethod.COD.value
+  },
+  {
+    name: 'Momo',
+    image: require('../../assets/images/logo_momo.png'),
+    value: 'momo',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+  {
+    name: 'ZaloPay',
+    image: require('../../assets/images/logo_zalopay.png'),
+    value: 'zalopay',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+  {
+    name: 'Thanh toán bằng thẻ',
+    image: require('../../assets/images/logo_card.png'),
+    value: 'Card',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+];
+const PaymentMethodView = ({ cartDispatch, cartState }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
 
+  const handleSelectMethod = (method, disabled) => {
+    if (!disabled) {
+      setSelectedMethod(method);
+      CartManager.updateOrderInfo(cartDispatch, { paymentMethod: method.paymentMethod })
+      setIsVisible(false);
+    } else {
+      Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
+    }
 
-  const paymentMethods = [
-    {
-      name: 'Thanh toán khi nhận hàng',
-      image: require('../../assets/images/logo_vnd.png'),
-      value: 'cash',
-      paymentMethod: PaymentMethod.COD.value
-    },
-    {
-      name: 'Momo',
-      image: require('../../assets/images/logo_momo.png'),
-      value: 'momo',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-    {
-      name: 'ZaloPay',
-      image: require('../../assets/images/logo_zalopay.png'),
-      value: 'zalopay',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-    {
-      name: 'PayOs',
-      image: require('../../assets/images/logo_payos.png'),
-      value: 'PayOs',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-    {
-      name: 'Thanh toán bằng thẻ',
-      image: require('../../assets/images/logo_card.png'),
-      value: 'Card',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-  ];
-
-  const handleSelectMethod = method => {
-    setSelectedMethod(method);
-    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE.value })
-    setIsVisible(false);
   };
 
   return (
@@ -572,22 +588,28 @@ const PaymentMethodView = ({ cartDispatch }) => {
         title="Chọn phương thức thanh toán"
       >
         <Column style={{ marginHorizontal: 16 }}>
-          {paymentMethods.map((method) => (
-            <TouchableOpacity
-              key={method.value}
-              onPress={() => handleSelectMethod(method)}
-              style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-            >
-              <RadioButton
-                value={method.value}
-                status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
-                color={colors.primary}
-                onPress={() => handleSelectMethod(method)}
-              />
-              <Image source={method.image} style={styles.image} />
-              <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
-            </TouchableOpacity>
-          ))}
+          {paymentMethods.map((method) => {
+            const disabled = cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && method.paymentMethod === PaymentMethod.COD.value;
+
+            return (
+              <TouchableOpacity
+                key={method.value}
+                onPress={() => handleSelectMethod(method, disabled)}
+                style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+              >
+                <RadioButton
+                  disabled={disabled}
+                  value={method.value}
+                  status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
+                  color={colors.primary}
+                  onPress={() => handleSelectMethod(method, disabled)}
+                />
+                <Image source={method.image} style={styles.image} />
+                <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
+
         </Column>
       </DialogBasic>
     </Row>

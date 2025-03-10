@@ -31,7 +31,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         console.log('Dữ liệu API:', response);
         setAddresses(response || []);
       } catch (error) {
-        console.error('Lỗi lấy địa chỉ:', error);
+        console.log('Lỗi lấy địa chỉ:', error);
       } finally {
         setLoading(false)
       }
