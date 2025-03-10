@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
-import { ActionDialog, Column, DialogSelectTime, DeliveryMethodSheet, DialogBasic, DualTextRow, FillingJuiceLoading, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, NormalLoading } from '../../components';
+import { ActionDialog, Column, DeliveryMethodSheet, DialogBasic, DialogSelectTime, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, TitleText } from '../../components';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 import socketService from '../../services/socketService';
-import { CartActionTypes } from '../../reducers';
+import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -21,18 +21,13 @@ const CheckoutScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const { cartState, cartDispatch, setUpdateOrderMessageVisible } = useAppContext()
+  const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext()
   const [timeInfo, setTimeInfo] = React.useState({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
   useEffect(() => {
-
-
-    const initSocket = async () => {
-      await socketService.initialize();
-
-    }
+    const initSocket = async () => {await socketService.initialize()}
     initSocket()
 
     return () => {
@@ -59,7 +54,6 @@ const CheckoutScreen = ({ navigation }) => {
   // Xóa sản phẩm sau khi xác nhận
   const deleteProduct = async (id) => {
     await CartManager.removeFromCart(id, cartDispatch);
-    // cartDispatch({ type: CartActionTypes.UPDATE_ORDER_ITEMS, payload: newCart })
     setActionDialogVisible(false);
   }
 
@@ -218,7 +212,8 @@ const CheckoutScreen = ({ navigation }) => {
 
             console.log('order data', JSON.stringify(response, null, 2));
             socketService.joinOrder(response?.data?._id, () => {
-              setUpdateOrderMessageVisible(true)
+              setUpdateOrderMessage({ visible: true, response });
+   
             })
 
             navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId: response?.data?._id })

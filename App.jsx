@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
@@ -45,11 +45,27 @@ import { PaperProvider } from 'react-native-paper';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
+import { OrderStatus } from './src/constants';
+
+
 const BaseStack = createNativeStackNavigator();
 
 function App() {
-  const { authState } = useAppContext();
+  const { authState, updateOrderMessage } = useAppContext();
   console.log('needAuthen', authState.needAuthen)
+
+  useEffect(() => {
+    if (updateOrderMessage.visible) {
+      const message = OrderStatus.getMessageByOrder(updateOrderMessage.order);
+  
+      showMessage({
+        message,
+        type: 'success',
+        duration: 3000,
+      });
+    }
+  }, [updateOrderMessage]);
 
   return (
     <PaperProvider>
@@ -135,6 +151,7 @@ function App() {
 
             </BaseStack.Navigator>
           </NavigationContainer>
+          <FlashMessage position='top' />
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </PaperProvider>

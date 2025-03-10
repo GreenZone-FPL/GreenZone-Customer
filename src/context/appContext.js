@@ -26,7 +26,8 @@ export const AppContextProvider = ({ children }) => {
     phone: ''
   });
 
-  const [updateOrderMessageVisible, setUpdateOrderMessageVisible] = useState(false);
+  const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
+
 
   const addToFavorites = (product) => {
     setFavorites((prevFavorites) => [...prevFavorites, product]);
@@ -86,7 +87,7 @@ export const AppContextProvider = ({ children }) => {
     <AppContext.Provider value={{
       authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,
       selectedAddresses, addAddress, selectedAddress, setSelectedAddress,
-      recipientInfo, setRecipientInfo, updateOrderMessageVisible, setUpdateOrderMessageVisible
+      recipientInfo, setRecipientInfo, updateOrderMessage, setUpdateOrderMessage
     }}>
       {children}
     </AppContext.Provider>
