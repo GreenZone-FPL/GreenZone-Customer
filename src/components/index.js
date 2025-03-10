@@ -23,7 +23,7 @@ export * from './carousel/CarouselBanner';
 
 // category
 export * from './category/CategoryMenu';
-export * from './category/SkeletonLoading';
+
 
 // containers
 export * from './containers/Column';
@@ -37,6 +37,7 @@ export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
 export * from './dialogs/DialogReviewOder';
 export * from './dialogs/DialogNotification';
+export * from './dialogs/DialogSelectTime';
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';
