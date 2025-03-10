@@ -8459,6 +8459,14 @@ react-native-file-picker@^0.0.21:
   resolved "https://registry.npmjs.org/react-native-file-picker/-/react-native-file-picker-0.0.21.tgz"
   integrity sha512-qsvdqYmDjjgPFNlabBXFNU+h1Yndl35aEsGlnPVV070qRYuCOaDx6VQYHLBqMequppb98Gb82zIGjvekbILMXQ==
 
+react-native-flash-message@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.npmjs.org/react-native-flash-message/-/react-native-flash-message-0.4.2.tgz"
+  integrity sha512-YvdXRW9AGMTI99S3DJZhLO0mbk/ehKv/UQf4/Df+3dtGi8DlkidRbyqCQZk1WMtZ7rN85PMTGr/xEI9CF9z0YA==
+  dependencies:
+    prop-types "^15.8.1"
+    react-native-iphone-screen-helper "^2.0.2"
+
 react-native-fs@^2.20.0:
   version "2.20.0"
   resolved "https://registry.npmjs.org/react-native-fs/-/react-native-fs-2.20.0.tgz"
@@ -8502,6 +8510,11 @@ react-native-image-zoom-viewer@^3.0.1:
   integrity sha512-la6s5DNSuq4GCRLsi5CZ29FPjgTpdCuGIRdO5T9rUrAtxrlpBPhhSnHrbmPVxsdtOUvxHacTh2Gfa9+RraMZQA==
   dependencies:
     react-native-image-pan-zoom "^2.1.12"
+
+react-native-iphone-screen-helper@^2.0.2:
+  version "2.1.2"
+  resolved "https://registry.npmjs.org/react-native-iphone-screen-helper/-/react-native-iphone-screen-helper-2.1.2.tgz"
+  integrity sha512-xczoNSb582bPW9na9f5ASlJ19vn/JBJ/jPzZ8f+u06F3tCa23dOIml7d4tHmbHdmVaWqf6tgRc95+tyavWg4Fw==
 
 react-native-is-edge-to-edge@1.1.6:
   version "1.1.6"
@@ -8737,7 +8750,7 @@ react-native-windows@^0.75.0:
     ws "^6.2.2"
     yargs "^17.6.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.57, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.73.0:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.42.0, react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.57, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.73.0:
   version "0.76.3"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.76.3.tgz"
   integrity sha512-0TUhgmlouRNf6yuDIIAdbQl0g1VsONgCMsLs7Et64hjj5VLMCA7np+4dMrZvGZ3wRNqzgeyT9oWJsUm49AcwSQ==

@@ -18,12 +18,10 @@ const fullInfo = {
     paymentMethod: 'cod',      // (Required) - Phương thức thanh toán.
     shippingAddress: '',       // id địa chỉ giao hàng (khi phương thức giao hàng là delivery).
     store: '',                 // ID cửa hàng
-    // owner: '',       
     voucher: '',               // ID voucher áp dụng (nếu có).
     orderItems: [],             // (Required)
     storeInfo: '',
     voucherInfo: {}
-
 }
 
 
@@ -34,7 +32,6 @@ export const cartInitialState = {
     totalPrice: 0,
     paymentMethod: PaymentMethod.COD.value,
     store: '',
-    owner: '',
     orderItems: []
 }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
-import { ActionDialog, Column, DialogSelectTime, DeliveryMethodSheet, DialogBasic, DualTextRow, FillingJuiceLoading, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { ActionDialog, Column, DialogSelectTime, DeliveryMethodSheet, DialogBasic, DualTextRow, FillingJuiceLoading, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, NormalLoading } from '../../components';
 import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
@@ -84,7 +84,7 @@ const CheckoutScreen = ({ navigation }) => {
       <>
 
         {loading ? (
-          <FillingJuiceLoading visible={loading} message='Đang tải Giỏ hàng...' />
+          <NormalLoading visible={loading} message='Đang tải Giỏ hàng...' />
         ) : (
           <>
 
@@ -152,9 +152,7 @@ const CheckoutScreen = ({ navigation }) => {
 
               />
               <Column style={{ gap: 16, marginHorizontal: 16 }}>
-                <Button title='Emit order new'
-                  onPress={() => socketService.createNewOrder({ message: 'hello' })}
-                />
+
                 <Button
                   title='Log cartState'
                   onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))}
@@ -198,14 +196,6 @@ const CheckoutScreen = ({ navigation }) => {
         cancelText="Hủy"
         approveText="Đồng ý"
         onCancel={() => setDialogCreateOrderVisible(false)}
-        // onApprove={() => {
-        //   setDialogCreateOrderVisible(false)
-        //   setTimeout(() => {
-        //     const orderId = '67c6b93961edaf498f587588'
-        //     navigation.navigate(ShoppingGraph.OrderSuccessScreen, { orderId })
-        //   }, 1000)
-        // }}
-
         onApprove={async () => {
 
           try {
@@ -467,42 +457,52 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 
 
 const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
-  const paymentDetails = CartManager.getPaymentDetails(cartState)
+  const paymentDetails = CartManager.getPaymentDetails(cartState);
 
   return (
-    < View
-      style={[styles.containerItem, { backgroundColor: colors.gray200, paddingHorizontal: 0, gap: 1, paddingVertical: 0 }]}>
+    <View style={[styles.containerItem, { backgroundColor: colors.gray200, paddingHorizontal: 0, gap: 1, paddingVertical: 0 }]}>
       <DualTextRow
         style={{ paddingVertical: 8, marginVertical: 0, paddingHorizontal: 16, backgroundColor: colors.white }}
         leftText="CHI TIẾT THANH TOÁN"
         leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
       />
-      {
-        [
-          { leftText: `Tạm tính (${cartState.orderItems.length} sản phẩm)`, rightText: `${TextFormatter.formatCurrency(paymentDetails.cartTotal)}` },
-          { leftText: 'Phí giao hàng', rightText: `${TextFormatter.formatCurrency(paymentDetails.deliveryAmount)}`, },
-          {
-            leftText: cartState.voucher ? `${cartState?.voucherInfo?.code}` : 'Chọn khuyến mãi',
-            leftTextStyle: { color: cartState.voucher ? colors.primary : colors.orange700, fontWeight: '500' },
-            rightText: paymentDetails.voucherAmount === 0 ? '' : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`,
-            rightTextStyle: { color: colors.primary },
-            onLeftPress: () => onSelectVoucher()
-          },
-          {
-            leftText: 'Tổng tiền',
-            rightText: `${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`,
-            leftTextStyle: { color: colors.black, fontWeight: '500', fontSize: 14 },
-            rightTextStyle: { fontWeight: '700', color: colors.primary, fontSize: 14 },
-          },
-        ].map((item, index) => (
-          <DualTextRow key={index} {...item} style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }} />
-        ))
-      }
+
+      <DualTextRow
+        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+        leftText={`Tạm tính (${cartState.orderItems.length} sản phẩm)`}
+        rightText={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`}
+      />
+
+      {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
+        <DualTextRow
+          style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+          leftText="Phí giao hàng"
+          rightText={`${TextFormatter.formatCurrency(paymentDetails.deliveryAmount)}`}
+        />
+      )}
+
+      <DualTextRow
+        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+        leftText={cartState.voucher ? `${cartState?.voucherInfo?.code}` : 'Chọn khuyến mãi'}
+        leftTextStyle={{ color: cartState.voucher ? colors.primary : colors.orange700, fontWeight: '500' }}
+        rightText={paymentDetails.voucherAmount === 0 ? '' : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}
+        rightTextStyle={{ color: colors.primary }}
+        onLeftPress={() => onSelectVoucher()}
+      />
+
+      <DualTextRow
+        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+        leftText="Tổng tiền"
+        rightText={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`}
+        leftTextStyle={{ color: colors.black, fontWeight: '500', fontSize: 14 }}
+        rightTextStyle={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}
+      />
 
       <PaymentMethodView cartDispatch={cartDispatch} />
-    </View >
-  )
-}
+    </View>
+  );
+};
+
 
 
 const PaymentMethodView = ({ cartDispatch }) => {
@@ -548,7 +548,7 @@ const PaymentMethodView = ({ cartDispatch }) => {
 
   const handleSelectMethod = method => {
     setSelectedMethod(method);
-    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE })
+    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE.value })
     setIsVisible(false);
   };
 
