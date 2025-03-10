@@ -5,7 +5,7 @@ import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../c
 import { colors, GLOBAL_KEYS } from '../../constants';
 
 
-const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
+export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
     const dateOptions = ["Hôm nay", "Ngày mai"];
 
     // Hàm tạo danh sách thời gian dựa vào ngày được chọn
@@ -187,4 +187,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default DialogSelectTime;
+

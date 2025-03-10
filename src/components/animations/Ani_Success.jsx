@@ -18,8 +18,8 @@ const Ani_Success = ({ visible }) => {
 
 const styles = StyleSheet.create({
   lottie: {
-    width: 200,
-    height: 200,
+    width: 250,
+    height: 250,
 
   },
 });
