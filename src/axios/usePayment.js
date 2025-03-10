@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
-import hmacSHA256 from 'react-native-hmac';
+import {hmacSHA256} from 'react-native-hmac';
 
-const clientID = '<clientID>'; // Lấy từ PayOs
-const apiKey = '<api_key>'; // Lấy từ PayOs
-const checkSum = '<checkSum>'; // Lấy từ PayOs
+const clientID = 'fe4d0414-d208-41a0-9f57-6de694aac3e6';
+const apiKey = '0fa73b9a-da72-444c-adc9-2721333c74a9';
+const checkSum ='fde67b6bedccff59b32d19676ab3aca2061facd79450ac232e6f75a7747e7a89';
 
 const usePayment = () => {
   const [paymentLink, setPaymentLink] = useState('');

@@ -51,7 +51,24 @@ export const getOrderDetail = async (orderId) => {
     throw error;
   }
 }
-// Gửi đơn thanh toán online
+
+// Cập nhật trạng thái thanh toán của đơn hàng
+
+export const updatePaymentStatus = async (orderId, paymentStatus, transactionId) => {
+  try {
+    const response = await axiosInstance.patch(`/v1/order/${orderId}/payment`, {
+      paymentStatus: paymentStatus, // 'success', 'failed', 'cancelled'
+      transactionId: transactionId, // ID giao dịch do PayOS cung cấp
+    });
+
+    console.log('Cập nhật thanh toán thành công:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Lỗi khi cập nhật thanh toán:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 
 
 

@@ -10,5 +10,6 @@ export const ShoppingGraph = Object.freeze({
   SearchProductScreen: 'SearchProductScreen',
   RecipientInfoSheet: 'RecipientInfoSheet',
   ChatScreen: 'ChatScreen',
-  ConfirmDeliveryTimeScreen: 'ConfirmDeliveryTimeScreen'
+  ConfirmDeliveryTimeScreen: 'ConfirmDeliveryTimeScreen',
+  PayOsScreen: 'PayOsScreen',
 });

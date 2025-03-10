@@ -119,3 +119,9 @@ dependencies {
         implementation jscFlavor
     }
 }
+afterEvaluate {
+    tasks.named("generateDebugLintReportModel").configure {
+        dependsOn tasks.named("copyReactNativeVectorIconFonts")
+    }
+}
+
