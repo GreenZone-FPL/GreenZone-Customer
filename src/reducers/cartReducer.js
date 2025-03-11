@@ -25,14 +25,15 @@ const fullInfo = {
 }
 
 export const cartInitialState = {
-    deliveryMethod: DeliveryMethod.PICK_UP.value,
+    deliveryMethod: DeliveryMethod.DELIVERY.value,
     fulfillmentDateTime: '',
     note: '',
     totalPrice: 0,
-    paymentMethod: PaymentMethod.ONLINE.value,
+    paymentMethod: PaymentMethod.COD.value,
     store: '',
     orderItems: []
 }
+
 
 export const cartReducer = (state, action) => {
     switch (action.type) {

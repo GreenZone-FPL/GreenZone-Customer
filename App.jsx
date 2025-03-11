@@ -46,6 +46,7 @@ import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
+import OrderHistoryScreen2 from './src/screens/order/OrderHistoryScreen2';
 import { OrderStatus } from './src/constants';
 
 
@@ -124,6 +125,7 @@ function App() {
                     }}
                     component={EditCartItemScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
+                  <BaseStack.Screen name={'OrderHistoryScreen2'} component={OrderHistoryScreen2} />
                   <BaseStack.Screen name={ShoppingGraph.OrderSuccessScreen} component={OrderSuccessScreen} />
                   <BaseStack.Screen name={BottomGraph.MerchantScreen} component={MerchantScreen} />
                   <BaseStack.Screen name={VoucherGraph.MyVouchersScreen} component={MyVoucherScreen} />

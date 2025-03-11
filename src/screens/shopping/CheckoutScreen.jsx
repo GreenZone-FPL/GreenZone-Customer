@@ -92,18 +92,32 @@ const CheckoutScreen = ({ navigation }) => {
                 onRightPress={() => setDialogShippingMethodVisible(true)}
               />
 
-              <AddressSection
-                cartState={cartState}
-                chooseUserAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen, { isUpdateOrderInfo: true }) }}
+              <StoreAddress
+                storeInfo={cartState?.storeInfo}
                 chooseMerchant={() => { navigation.navigate(BottomGraph.MerchantScreen, { isUpdateOrderInfo: true }) }}
               />
 
+
+
+
               {
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && cartState.shippingAddress &&
-                <RecipientInfo
-                  cartState={cartState}
-                  onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
-                />
+                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+                <>
+                  <ShippingAddress
+                    deliveryMethod={cartState?.deliveryMethod}
+                    shippingAddressInfo={cartState?.shippingAddressInfo}
+                    chooseUserAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen, { isUpdateOrderInfo: true }) }}
+                  />
+                  {
+                    cartState?.shippingAddressInfo &&
+                    <RecipientInfo
+                      cartState={cartState}
+                      onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
+                    />
+                  }
+
+                </>
+
               }
               <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} cartState={cartState} />
 
@@ -212,18 +226,22 @@ const CheckoutScreen = ({ navigation }) => {
 
             console.log('order data =', JSON.stringify(response, null, 2));
             socketService.joinOrder(response?.data?._id, (data) => {
-              setUpdateOrderMessage({
-                  visible: true,
-                  order: {
-                      ...response, 
-                      data: {
-                          ...response.data,
-                          status: data?.status || response.data.status 
-                      }
+              setUpdateOrderMessage((prev) => ({
+                visible: true,
+                oldStatus: prev.order?.data?.status || 'pendingConfirmation',
+                order: {
+                  ...response,
+                  data: {
+                    ...response.data,
+                    status: data?.status || response.data.status
                   }
-              });
-          });
-          
+                }
+              }));
+            });
+
+
+
+
 
 
 
@@ -370,11 +388,7 @@ const TimeSection = ({ timeInfo, showDialog }) => {
     </Column>
   );
 };
-
-
-
-const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
-
+const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
   return (
     <View style={styles.containerItem}>
       <DualTextRow
@@ -383,35 +397,42 @@ const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
         leftTextStyle={{ fontWeight: '600' }}
         rightText="Thay đổi"
         rightTextStyle={{ color: colors.primary }}
-        onRightPress={() => {
-          if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-            chooseMerchant()
-          } else {
-            chooseUserAddress()
-          }
-        }}
+        onRightPress={chooseUserAddress}
       />
       {
-        cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ?
-          (
-            (cartState?.storeInfo?.storeName && cartState?.storeInfo?.storeAddress) ?
-              (
-                <>
-                  <TitleText text={cartState?.storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
-                  <NormalText text={cartState?.storeInfo?.storeAddress} />
-                </>
-              ) :
-              <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
-          )
-          :
-          (
-            cartState?.shippingAddress ?
-              <NormalText text={`${cartState?.shippingAddressInfo?.location}`} style={{ lineHeight: 20 }} /> :
-              <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
-          )
+        deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo?.location ? (
+          <NormalText text={shippingAddressInfo?.location} style={{ lineHeight: 20 }} />
+        ) : (
+          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+        )
       }
+    </View>
+  );
+};
 
-    </View >
+
+const StoreAddress = ({ storeInfo, chooseMerchant }) => {
+  return (
+    <View style={styles.containerItem}>
+      <DualTextRow
+        style={{ marginVertical: 0, marginBottom: 8 }}
+        leftText="Địa chỉ cửa hàng"
+        leftTextStyle={{ fontWeight: '600' }}
+        rightText="Thay đổi"
+        rightTextStyle={{ color: colors.primary }}
+        onRightPress={chooseMerchant}
+      />
+      {
+        storeInfo?.storeName && storeInfo?.storeAddress ? (
+          <>
+            <TitleText text={storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
+            <NormalText text={storeInfo?.storeAddress} />
+          </>
+        ) : (
+          <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
+        )
+      }
+    </View>
   );
 };
 
@@ -518,17 +539,18 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
 
 const paymentMethods = [
   {
-    name: 'PayOs',
-    image: require('../../assets/images/logo_payos.png'),
-    value: 'PayOs',
-    paymentMethod: PaymentMethod.ONLINE.value
-  },
-  {
     name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
     value: 'cash',
     paymentMethod: PaymentMethod.COD.value
   },
+  {
+    name: 'PayOs',
+    image: require('../../assets/images/logo_payos.png'),
+    value: 'PayOs',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+
   {
     name: 'Momo',
     image: require('../../assets/images/logo_momo.png'),
