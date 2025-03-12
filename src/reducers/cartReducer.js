@@ -24,9 +24,8 @@ const fullInfo = {
     voucherInfo: {}
 }
 
-
 export const cartInitialState = {
-    deliveryMethod: DeliveryMethod.PICK_UP.value,
+    deliveryMethod: DeliveryMethod.DELIVERY.value,
     fulfillmentDateTime: '',
     note: '',
     totalPrice: 0,
@@ -34,6 +33,7 @@ export const cartInitialState = {
     store: '',
     orderItems: []
 }
+
 
 export const cartReducer = (state, action) => {
     switch (action.type) {

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
-import { ActionDialog, Column, DialogSelectTime, DeliveryMethodSheet, DialogBasic, DualTextRow, FillingJuiceLoading, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalText, PrimaryButton, Row, TitleText, NormalLoading } from '../../components';
-import { DeliveryMethod, GLOBAL_KEYS, PaymentMethod, colors } from '../../constants';
+import { ActionDialog, Column, DeliveryMethodSheet, DialogBasic, DialogSelectTime, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, TitleText } from '../../components';
+import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, PaymentMethod, colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 import socketService from '../../services/socketService';
-import { CartActionTypes } from '../../reducers';
+import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -21,18 +21,13 @@ const CheckoutScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const { cartState, cartDispatch, setUpdateOrderMessageVisible } = useAppContext()
+  const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext()
   const [timeInfo, setTimeInfo] = React.useState({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
   useEffect(() => {
-
-
-    const initSocket = async () => {
-      await socketService.initialize();
-
-    }
+    const initSocket = async () => { await socketService.initialize() }
     initSocket()
 
     return () => {
@@ -59,7 +54,6 @@ const CheckoutScreen = ({ navigation }) => {
   // Xóa sản phẩm sau khi xác nhận
   const deleteProduct = async (id) => {
     await CartManager.removeFromCart(id, cartDispatch);
-    // cartDispatch({ type: CartActionTypes.UPDATE_ORDER_ITEMS, payload: newCart })
     setActionDialogVisible(false);
   }
 
@@ -98,18 +92,32 @@ const CheckoutScreen = ({ navigation }) => {
                 onRightPress={() => setDialogShippingMethodVisible(true)}
               />
 
-              <AddressSection
-                cartState={cartState}
-                chooseUserAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen, { isUpdateOrderInfo: true }) }}
+              <StoreAddress
+                storeInfo={cartState?.storeInfo}
                 chooseMerchant={() => { navigation.navigate(BottomGraph.MerchantScreen, { isUpdateOrderInfo: true }) }}
               />
 
+
+
+
               {
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && cartState.shippingAddress &&
-                <RecipientInfo
-                  cartState={cartState}
-                  onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
-                />
+                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+                <>
+                  <ShippingAddress
+                    deliveryMethod={cartState?.deliveryMethod}
+                    shippingAddressInfo={cartState?.shippingAddressInfo}
+                    chooseUserAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen, { isUpdateOrderInfo: true }) }}
+                  />
+                  {
+                    cartState?.shippingAddressInfo &&
+                    <RecipientInfo
+                      cartState={cartState}
+                      onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
+                    />
+                  }
+
+                </>
+
               }
               <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} cartState={cartState} />
 
@@ -216,10 +224,21 @@ const CheckoutScreen = ({ navigation }) => {
             }
 
 
-            console.log('order data', JSON.stringify(response, null, 2));
-            socketService.joinOrder(response?.data?._id, () => {
-              setUpdateOrderMessageVisible(true)
-            })
+            console.log('order data =', JSON.stringify(response, null, 2));
+            socketService.joinOrder(response?.data?._id, (data) => {
+              setUpdateOrderMessage((prev) => ({
+                visible: true,
+                oldStatus: prev.order?.data?.status || 'pendingConfirmation',
+                order: {
+                  ...response,
+                  data: {
+                    ...response.data,
+                    status: data?.status || response.data.status
+                  }
+                }
+              }));
+            });
+
 
             if(response?.data?.status === 'awaitingPayment'){
               navigation.navigate(ShoppingGraph.PayOsScreen, 
@@ -365,11 +384,7 @@ const TimeSection = ({ timeInfo, showDialog }) => {
     </Column>
   );
 };
-
-
-
-const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
-
+const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
   return (
     <View style={styles.containerItem}>
       <DualTextRow
@@ -378,35 +393,42 @@ const AddressSection = ({ cartState, chooseMerchant, chooseUserAddress }) => {
         leftTextStyle={{ fontWeight: '600' }}
         rightText="Thay đổi"
         rightTextStyle={{ color: colors.primary }}
-        onRightPress={() => {
-          if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-            chooseMerchant()
-          } else {
-            chooseUserAddress()
-          }
-        }}
+        onRightPress={chooseUserAddress}
       />
       {
-        cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ?
-          (
-            (cartState?.storeInfo?.storeName && cartState?.storeInfo?.storeAddress) ?
-              (
-                <>
-                  <TitleText text={cartState?.storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
-                  <NormalText text={cartState?.storeInfo?.storeAddress} />
-                </>
-              ) :
-              <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
-          )
-          :
-          (
-            cartState?.shippingAddress ?
-              <NormalText text={`${cartState?.shippingAddressInfo?.location}`} style={{ lineHeight: 20 }} /> :
-              <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
-          )
+        deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo?.location ? (
+          <NormalText text={shippingAddressInfo?.location} style={{ lineHeight: 20 }} />
+        ) : (
+          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+        )
       }
+    </View>
+  );
+};
 
-    </View >
+
+const StoreAddress = ({ storeInfo, chooseMerchant }) => {
+  return (
+    <View style={styles.containerItem}>
+      <DualTextRow
+        style={{ marginVertical: 0, marginBottom: 8 }}
+        leftText="Địa chỉ cửa hàng"
+        leftTextStyle={{ fontWeight: '600' }}
+        rightText="Thay đổi"
+        rightTextStyle={{ color: colors.primary }}
+        onRightPress={chooseMerchant}
+      />
+      {
+        storeInfo?.storeName && storeInfo?.storeAddress ? (
+          <>
+            <TitleText text={storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
+            <NormalText text={storeInfo?.storeAddress} />
+          </>
+        ) : (
+          <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
+        )
+      }
+    </View>
   );
 };
 
@@ -418,7 +440,7 @@ const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
       <DualTextRow
         style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Thông tin người nhận"
-        rightText="Thay đổi"
+        // rightText="Thay đổi"
         leftTextStyle={{ color: colors.black, fontWeight: '600' }}
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
@@ -505,21 +527,57 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
         rightTextStyle={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}
       />
 
-      <PaymentMethodView cartDispatch={cartDispatch} />
+      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} />
     </View>
   );
 };
 
 
-
-const PaymentMethodView = ({ cartDispatch }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState({
+const paymentMethods = [
+  {
     name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
-  });
+    value: 'cash',
+    paymentMethod: PaymentMethod.COD.value
+  },
+  {
+    name: 'PayOs',
+    image: require('../../assets/images/logo_payos.png'),
+    value: 'PayOs',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
 
+  {
+    name: 'Momo',
+    image: require('../../assets/images/logo_momo.png'),
+    value: 'momo',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+  {
+    name: 'ZaloPay',
+    image: require('../../assets/images/logo_zalopay.png'),
+    value: 'zalopay',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+  {
+    name: 'Thanh toán bằng thẻ',
+    image: require('../../assets/images/logo_card.png'),
+    value: 'Card',
+    paymentMethod: PaymentMethod.ONLINE.value
+  },
+];
+const PaymentMethodView = ({ cartDispatch, cartState }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
 
+  const handleSelectMethod = (method, disabled) => {
+    if (!disabled) {
+      setSelectedMethod(method);
+      CartManager.updateOrderInfo(cartDispatch, { paymentMethod: method.paymentMethod })
+      setIsVisible(false);
+    } else {
+      Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
+    }
   const paymentMethods = [
     {
       name: 'Thanh toán khi nhận hàng',
@@ -547,10 +605,6 @@ const PaymentMethodView = ({ cartDispatch }) => {
     },
   ];
 
-  const handleSelectMethod = method => {
-    setSelectedMethod(method);
-    CartManager.updateOrderInfo(cartDispatch, { paymentMethod: PaymentMethod.ONLINE.value })
-    setIsVisible(false);
   };
 
   return (
@@ -578,22 +632,28 @@ const PaymentMethodView = ({ cartDispatch }) => {
         title="Chọn phương thức thanh toán"
       >
         <Column style={{ marginHorizontal: 16 }}>
-          {paymentMethods.map((method) => (
-            <TouchableOpacity
-              key={method.value}
-              onPress={() => handleSelectMethod(method)}
-              style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-            >
-              <RadioButton
-                value={method.value}
-                status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
-                color={colors.primary}
-                onPress={() => handleSelectMethod(method)}
-              />
-              <Image source={method.image} style={styles.image} />
-              <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
-            </TouchableOpacity>
-          ))}
+          {paymentMethods.map((method) => {
+            const disabled = cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && method.paymentMethod === PaymentMethod.COD.value;
+
+            return (
+              <TouchableOpacity
+                key={method.value}
+                onPress={() => handleSelectMethod(method, disabled)}
+                style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+              >
+                <RadioButton
+                  disabled={disabled}
+                  value={method.value}
+                  status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
+                  color={colors.primary}
+                  onPress={() => handleSelectMethod(method, disabled)}
+                />
+                <Image source={method.image} style={styles.image} />
+                <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
+              </TouchableOpacity>
+            );
+          })}
+
         </Column>
       </DialogBasic>
     </Row>
