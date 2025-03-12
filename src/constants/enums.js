@@ -24,6 +24,10 @@ export const OrderStatus = Object.freeze({
     getLabels() {
         return Object.values(this).map(status => status.label);
     },
+    getLabelByValue(value) {
+        const status = Object.values(this).find(status => status.value === value);
+        return status ? status.label : "Không xác định";
+    },
 
     getValues() {
         return Object.values(this).map(status => status.value);
