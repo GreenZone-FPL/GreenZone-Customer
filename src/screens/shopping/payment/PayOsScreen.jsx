@@ -4,8 +4,11 @@ import axios from 'axios';
 import WebView from 'react-native-webview';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { hmacSHA256 } from 'react-native-hmac';
-import { updatePaymentStatus } from '../../../axios';
-import { ShoppingGraph } from '../../../layouts/graphs';
+import { updatePaymentStatus, updateOrderStatus } from '../../../axios';
+import { colors } from '../../../constants';
+import { NormalLoading } from '../../../components';
+import { MainGraph } from "../../../layouts/graphs";
+import ToastDialog from '../../../components/dialogs/ToastDialog';
 
 const PayOsScreen = () => {
   const clientID = 'fe4d0414-d208-41a0-9f57-6de694aac3e6';
@@ -14,6 +17,7 @@ const PayOsScreen = () => {
 
   const [paymentLink, setPaymentLink] = useState('');
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
   const route = useRoute();
   const navigation = useNavigation();
   const [paymentLinkId, setPaymentLinkId] = useState('');
@@ -32,8 +36,6 @@ const PayOsScreen = () => {
     }
   }, [paymentLink]);
   
-  
-
   const handlePayment = async () => {
     try {
       setLoading(true);
@@ -66,61 +68,64 @@ const PayOsScreen = () => {
       console.log("PayOS Response:", response.data);
   
       if (response.data.code === "00" && response.data.data?.checkoutUrl) {
-        console.log("Checkout URL từ API:", response.data.data.checkoutUrl);
-        console.log("Payment Link ID:", response.data.data.paymentLinkId);
-  
         setPaymentLink(response.data.data.checkoutUrl);
-        setPaymentLinkId(response.data.data.paymentLinkId); // Lưu paymentLinkId
+        setPaymentLinkId(response.data.data.paymentLinkId);
       } else {
-        Alert.alert('Lỗi', 'Không thể tạo yêu cầu thanh toán');
+        setToast({ visible: true, message: 'Không thể tạo yêu cầu thanh toán', type: 'error' });
       }
-      
     } catch (error) {
       console.error('Lỗi thanh toán:', error);
+      setToast({ visible: true, message: 'Lỗi thanh toán', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
-  
 
   const handleNavigationChange = async (navState) => {
     const { url } = navState;
+    console.log("Current URL:", url);
+    
     if (url.includes('/success')) {
       try {
         await updatePaymentStatus(orderId, 'success', paymentLinkId);
+        setToast({ visible: true, message: 'Thanh toán thành công', type: 'success' });
       } catch (error) {
-        Alert.alert('Lỗi', 'Cập nhật trạng thái thanh toán thất bại.');
+        setToast({ visible: true, message: 'Cập nhật trạng thái thanh toán thất bại.', type: 'error' });
       }
-  
       navigation.replace('OrderSuccessScreen', { orderId });
-    } else if (url.includes('/cancel')) {
-      Alert.alert('Thất bại', 'Đã hủy thanh toán.');
-  
+    } else if (url.includes('status=CANCELLED')) {  
+      setToast({ visible: true, message: 'Bạn đã hủy thanh toán.', type: 'warning' });
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
       } catch (error) {
-        Alert.alert('Lỗi', 'Không thể cập nhật trạng thái hủy.');
+        setToast({ visible: true, message: 'Không thể cập nhật trạng thái hủy.', type: 'error' });
       }
+      navigation.navigate(MainGraph.graphName);
     }
   };
-  
-  
 
   return (
-    <View>
-      <Button onPress={handlePayment} title="Thanh Toán"></Button>
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        <WebView
-          source={{uri: paymentLink}}
-          style={{width: '100%', height: 600}}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          onNavigationStateChange={handleNavigationChange}
-        />
-      </ScrollView>
+    <View style={{ flex: 1 }}>
+      <Button onPress={handlePayment} title="Cập nhật mã thanh toán" />
+      {loading && <NormalLoading visible={loading} />} 
+      {toast.visible && <ToastDialog isVisible={toast.visible} onHide={() => setToast({ ...toast, visible: false })} title={toast.message} icon="alert" iconColor="red" />} 
+      {paymentLink ? (
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <WebView
+            source={{ uri: paymentLink }}
+            style={{ width: '100%', height: 600 }}
+            javaScriptEnabled={true}
+            domStorageEnabled={true}
+            onNavigationStateChange={handleNavigationChange}
+          />
+        </ScrollView>
+      ) : (
+        <Text style={styles.message}>Đang tạo liên kết thanh toán...</Text>
+      )}
     </View>
   );
 };
+
 
 export default PayOsScreen;
 
@@ -132,6 +137,12 @@ const styles = StyleSheet.create({
   },
   webView: {
     width: '100%',
-    height: 600,
+    height: 700,
+  },
+  message: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: colors.primary,
   },
 });
