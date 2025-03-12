@@ -45,6 +45,7 @@ import { PaperProvider } from 'react-native-paper';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
+import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -127,6 +128,7 @@ function App() {
                   <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
                   <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />
+                  <BaseStack.Screen name={ShoppingGraph.PayOsScreen} component={PayOsScreen} />
                 </>
               ) : (
                 <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />
