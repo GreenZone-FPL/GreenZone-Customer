@@ -240,18 +240,14 @@ const CheckoutScreen = ({ navigation }) => {
             });
 
 
-
-
-
-
-
-            if (response?.data?.status === OrderStatus.AWAITING_PAYMENT.value) {
-              navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
-            } else {
+            if(response?.data?.status === 'awaitingPayment'){
+              navigation.navigate(ShoppingGraph.PayOsScreen, 
+                {  
+                  orderId: response.data._id,
+                  totalPrice: response.data.totalPrice })
+            }else{
               navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
             }
-
-
           } catch (error) {
             console.log('error', error)
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
@@ -582,6 +578,32 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
     } else {
       Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
     }
+  const paymentMethods = [
+    {
+      name: 'Thanh toán khi nhận hàng',
+      image: require('../../assets/images/logo_vnd.png'),
+      value: 'cash',
+      paymentMethod: PaymentMethod.COD.value
+    },
+    {
+      name: 'ZaloPay',
+      image: require('../../assets/images/logo_zalopay.png'),
+      value: 'zalopay',
+      paymentMethod: PaymentMethod.ONLINE.value
+    },
+    {
+      name: 'PayOs',
+      image: require('../../assets/images/logo_payos.png'),
+      value: 'PayOs',
+      paymentMethod: PaymentMethod.ONLINE.value
+    },
+    {
+      name: 'Thanh toán bằng thẻ',
+      image: require('../../assets/images/logo_card.png'),
+      value: 'Card',
+      paymentMethod: PaymentMethod.ONLINE.value
+    },
+  ];
 
   };
 

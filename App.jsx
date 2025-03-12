@@ -50,6 +50,7 @@ import OrderHistoryScreen2 from './src/screens/order/OrderHistoryScreen2';
 import { OrderStatus } from './src/constants';
 
 
+import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 const BaseStack = createNativeStackNavigator();
 
 function App() {
@@ -146,6 +147,7 @@ function App() {
                   <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
                   <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
                   <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />
+                  <BaseStack.Screen name={ShoppingGraph.PayOsScreen} component={PayOsScreen} />
                 </>
               ) : (
                 <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />
