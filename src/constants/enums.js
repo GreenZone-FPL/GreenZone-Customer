@@ -10,6 +10,7 @@ export const PaymentMethod = Object.freeze({
     COD: { label: "cod", value: "cod" }
 })
 
+
 export const OrderStatus = Object.freeze({
     AWAITING_PAYMENT: { label: "Chờ thanh toán", value: "awaitingPayment" },
     PENDING_CONFIRMATION: { label: "Chờ xác nhận", value: "pendingConfirmation" },

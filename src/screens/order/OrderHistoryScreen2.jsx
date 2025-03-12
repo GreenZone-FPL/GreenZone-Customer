@@ -17,11 +17,11 @@ const OrderHistoryScreen2 = ({ navigation }) => {
 
   const { updateOrderMessage } = useAppContext();
   
-  // Hàm fetch đơn hàng từ API
+ 
   const fetchOrders = async (status) => {
     setLoading(true);
     try {
-      const data = await getOrdersByStatus(status); // Lấy đơn hàng theo trạng thái của tab
+      const data = await getOrdersByStatus(status); 
       setOrders(data);
 
     } catch (error) {
@@ -32,29 +32,29 @@ const OrderHistoryScreen2 = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // Gọi API khi tabIndex thay đổi
-    const status = orderStatuses[tabIndex]; // Lấy trạng thái tương ứng với tab hiện tại
+   
+    const status = orderStatuses[tabIndex]; 
     fetchOrders(status);
-  }, [tabIndex]); // Chỉ gọi lại API khi tabIndex thay đổi
+  }, [tabIndex]); 
 
   useEffect(() => {
-    // Lắng nghe sự thay đổi của trạng thái đơn hàng từ socket
+   
     if (updateOrderMessage.order?.data) {
       const { status: newStatus } = updateOrderMessage.order.data;
-      const oldStatus = updateOrderMessage.oldStatus || 'pendingConfirmation'; // Cung cấp giá trị mặc định nếu oldStatus là undefined
+      const oldStatus = updateOrderMessage.oldStatus || 'pendingConfirmation'; 
   
       console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, newStatus });
   
-      // Kiểm tra nếu trạng thái mới là của tab hiện tại, mới gọi fetchOrders
+    
       if (orderStatuses.indexOf(newStatus) === tabIndex) {
-        fetchOrders(newStatus); // Làm mới dữ liệu cho trạng thái mới nếu tab hiện tại đang hiển thị trạng thái đó
+        fetchOrders(newStatus); 
       }
-      // Nếu trạng thái cũ là của tab hiện tại, thì gọi lại API cho trạng thái cũ
+   
       else if (orderStatuses.indexOf(oldStatus) === tabIndex) {
-        fetchOrders(oldStatus); // Làm mới dữ liệu cho trạng thái cũ
+        fetchOrders(oldStatus);
       }
     }
-  }, [updateOrderMessage]); // Chỉ lắng nghe khi có sự thay đổi trạng thái đơn hàng
+  }, [updateOrderMessage]); 
   
 
   return (
@@ -82,8 +82,8 @@ const OrderHistoryScreen2 = ({ navigation }) => {
               })
             }
             status={status}
-            orders={orders} // Hiển thị danh sách đơn hàng cho tất cả các trạng thái
-            loading={loading && tabIndex === index} // Chỉ hiển thị loading khi tab đang được load
+            orders={orders} 
+            loading={loading && tabIndex === index} 
           />
         ))}
       </CustomTabView>
@@ -92,12 +92,11 @@ const OrderHistoryScreen2 = ({ navigation }) => {
 };
 
 
-
-
 const orderStatuses = [
   'awaitingPayment',
   'pendingConfirmation',
   'processing',
+  'shippingOrder',
   'completed',
   'cancelled',
 ];
@@ -106,6 +105,7 @@ const titles = [
   'Chờ Thanh Toán',
   'Chờ xác nhận',
   'Đang thực hiện',
+  'Đang giao hàng',
   'Đã hoàn tất',
   'Đã huỷ',
 ]
