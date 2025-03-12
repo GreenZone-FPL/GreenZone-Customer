@@ -97,8 +97,9 @@ const PayOsScreen = () => {
       setToast({ visible: true, message: 'Bạn đã hủy thanh toán.', type: 'warning' });
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
+        await updateOrderStatus(orderId, OrderStatus.CANCELLED.value)
       } catch (error) {
-        setToast({ visible: true, message: 'Không thể cập nhật trạng thái hủy.', type: 'error' });
+        console.log('không cập nhật')
       }
       navigation.navigate(MainGraph.graphName);
     }
