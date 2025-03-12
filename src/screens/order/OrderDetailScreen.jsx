@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -8,9 +8,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import io from 'socket.io-client';
-import {getOrderDetail} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { ActionDialog, PrimaryButton } from '../../components';
+import { getOrderDetail, updateOrderStatus } from '../../axios';
 import {
   Column,
   DualTextRow,
@@ -21,14 +21,15 @@ import {
   NormalText,
   Row,
 } from '../../components';
-import {GLOBAL_KEYS, OrderStatus, colors} from '../../constants';
-import {ShoppingGraph} from '../../layouts/graphs';
+import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
 
 const OrderDetailScreen = props => {
-  const {navigation, route} = props;
-  const {orderId} = route.params;
+  const { navigation, route } = props;
+  const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [actionDialogVisible, setActionDialogVisible] = useState(false)
 
   const getOrderStatusLabel = value => {
     const statusEntry = Object.values(OrderStatus).find(
@@ -37,22 +38,23 @@ const OrderDetailScreen = props => {
     return statusEntry ? statusEntry.label : 'Trạng thái không xác định';
   };
 
-  useEffect(() => {
-    const fetchOrderDetail = async () => {
-      try {
-        if (!orderId) {
-          console.error('Lỗi: orderId không hợp lệ');
-          return; 
-        }
-        const response = await getOrderDetail(orderId);
-        setOrderDetail(response);
-      } catch (error) {
-        console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
-      } finally {
-        setLoading(false);
+  const fetchOrderDetail = async () => {
+    try {
+      if (!orderId) {
+        console.error('Lỗi: orderId không hợp lệ');
+        return;
       }
-    };
+      const response = await getOrderDetail(orderId);
+      console.log('detail', JSON.stringify(response, null, 3))
+      setOrderDetail(response);
+    } catch (error) {
+      console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOrderDetail();
   }, [orderId]);
 
@@ -89,17 +91,7 @@ const OrderDetailScreen = props => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        <Title
-          title={
-            deliveryMethod === 'pickup'
-              ? 'Đơn hàng đang chờ lấy tại cửa hàng'
-              : 'Đơn hàng đang trên đường giao đến bạn'
-          }
-          titleStyle={{fontWeight: '500', margin: 16}}
-        />
-
-        {/* trạng thái đơn hàng*/}
-        <View
+        <Column
           style={{
             marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
             marginBottom: GLOBAL_KEYS.GAP_SMALL,
@@ -108,7 +100,7 @@ const OrderDetailScreen = props => {
           <Text style={styles.status}>
             {getOrderStatusLabel(orderDetail.status)}
           </Text>
-        </View>
+        </Column>
 
         {/* Hiển thị thông tin shipper nếu là giao hàng */}
         {deliveryMethod !== 'pickup' && shipper && (
@@ -138,27 +130,79 @@ const OrderDetailScreen = props => {
           totalPrice={totalPrice}
           status={status}
         />
+
+        <Row style={{ flex: 1 }}>
+          {
+            status === OrderStatus.AWAITING_PAYMENT.value &&
+            <PrimaryButton
+            titleStyle={{fontSize: 12}}
+              style={{ marginHorizontal: 16, flex: 1 }}
+              title='Thanh toán'
+              onPress={() => {
+                navigation.navigate(ShoppingGraph.PayOsScreen,
+                  {
+                    orderId: _id,
+                    totalPrice: totalPrice
+                  })
+              }} />
+
+          }
+
+          {
+            (status === OrderStatus.PENDING_CONFIRMATION.value ||
+              status === OrderStatus.AWAITING_PAYMENT.value) &&
+            <Pressable style={[styles.button, { flex: 1 }]} onPress={() => setActionDialogVisible(true)}>
+              <Text style={styles.normalText}>Hủy đơn hàng</Text>
+            </Pressable>
+          }
+
+        </Row>
+
+
+
+
+
       </ScrollView>
+
+      <ActionDialog
+        visible={actionDialogVisible}
+        title="Xác nhận"
+        content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
+        cancelText="Đóng"
+        approveText="Đồng ý"
+        onCancel={() => setActionDialogVisible(false)}
+        onApprove={async () => {
+          try {
+            await updateOrderStatus(_id, OrderStatus.CANCELLED.value)
+            await fetchOrderDetail()
+          } catch (error) {
+            console.log('error', error)
+          } finally {
+            setActionDialogVisible(false)
+          }
+
+        }}
+      />
     </View>
   );
 };
 
-const ShipperInfo = ({messageClick, shipper}) => {
+const ShipperInfo = ({ messageClick, shipper }) => {
   return (
-    <Row style={{gap: 16, margin: 16}}>
+    <Row style={{ gap: 16, margin: 16 }}>
       <Image
-        style={{width: 40, height: 40}}
+        style={{ width: 40, height: 40 }}
         source={require('../../assets/images/helmet.png')}
       />
-      <Column style={{flex: 1}}>
-        <NormalText text="Shipper" style={{fontWeight: '500'}} />
+      <Column style={{ flex: 1 }}>
+        <NormalText text="Shipper" style={{ fontWeight: '500' }} />
         <Text
-          style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black}}>
-          {shipper?.name ? shipper.name : 'Đang chuẩn bị ...'}
+          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black }}>
+          {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
         </Text>
       </Column>
 
-      <Row style={{gap: 24}}>
+      <Row style={{ gap: 24 }}>
         <Icon source="phone-outline" color={colors.black} size={20} />
         <Pressable onPress={messageClick}>
           <Icon source="message-outline" color={colors.black} size={20} />
@@ -168,19 +212,19 @@ const ShipperInfo = ({messageClick, shipper}) => {
   );
 };
 
-const ProductsInfo = ({orderItems}) => {
+const ProductsInfo = ({ orderItems }) => {
   return (
-    <View style={[styles.areaContainer, {borderBottomWidth: 0}]}>
-      <View style={{marginHorizontal: 16}}>
-        <Title title={'Danh sách sản phẩm'} icon="sticker-text-outline" />
+    <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
+      <View style={{ marginHorizontal: 16 }}>
+        <Title title={'Danh sách sản phẩm'} icon="clipboard-list" />
       </View>
 
       <FlatList
         data={orderItems}
         keyExtractor={item => item.product._id}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           const formattedItem = {
-           
+
             productName: item.product.name,
             image: item.product.image,
             variantName: item.product.size,
@@ -208,11 +252,11 @@ const ProductsInfo = ({orderItems}) => {
   );
 };
 
-const MerchantInfo = ({store}) => {
+const MerchantInfo = ({ store }) => {
   return (
-    <View style={[styles.areaContainer, {marginHorizontal: 16}]}>
+    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
       <Title title="Cửa hàng" icon="store" />
-      <Title title={store.name} titleStyle={{color: colors.black}} />
+      <Title title={store.name} titleStyle={{ color: colors.black }} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
@@ -225,7 +269,7 @@ const MerchantInfo = ({store}) => {
   );
 };
 
-const RecipientInfo = ({deliveryMethod, owner, shippingAddress}) => {
+const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
   // Chọn nguồn dữ liệu phù hợp
   const recipientName =
     deliveryMethod === 'pickup'
@@ -238,11 +282,11 @@ const RecipientInfo = ({deliveryMethod, owner, shippingAddress}) => {
       : shippingAddress.consigneePhone;
 
   return (
-    <View style={[styles.areaContainer, {marginHorizontal: 16}]}>
+    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
       <Title title="Người nhận" icon="map-marker" />
       <Title
         title={[recipientName, '||', recipientPhone].join(' ')}
-        titleStyle={{color: colors.black}}
+        titleStyle={{ color: colors.black }}
       />
       {/* Chỉ hiển thị địa chỉ nếu không phải là "pickup" */}
       {deliveryMethod !== 'pickup' && (
@@ -299,45 +343,49 @@ const PaymentDetails = ({
       case 'cod':
         return (
           <Image
-            style={{width: 24, height: 24}}
+            style={{ width: 24, height: 24 }}
             source={require('../../assets/images/logo_vnd.png')}
           />
         );
       case 'payOs':
         return (
           <Image
-            style={{width: 24, height: 24}}
+            style={{ width: 24, height: 24 }}
             source={require('../../assets/images/logo_payos.png')}
           />
         );
       case 'zalopay':
         return (
           <Image
-            style={{width: 24, height: 24}}
+            style={{ width: 24, height: 24 }}
             source={require('../../assets/images/logo_zalopay.png')}
           />
         );
-        return null;
+
     }
   };
   // Xác định trạng thái thanh toán
   const getPaymentStatus = () => {
+    if (status === 'completed') {
+      return { text: 'Đã thanh toán', color: colors.primary };
+    }
     if (paymentMethod === 'cod') {
-      return {text: 'Chưa thanh toán', color: 'red'};
+      return { text: 'Chưa thanh toán', color: 'red' };
     }
     if (status === 'awaitingPayment') {
-      return {text: 'Chờ thanh toán', color: 'orange'};
+      return { text: 'Chờ thanh toán', color: 'orange' };
     }
-    return {text: 'Đã thanh toán', color: colors.primary};
+    return { text: 'Đã thanh toán', color: colors.primary };
   };
+
 
   const paymentStatus = getPaymentStatus();
 
   return (
-    <View style={{marginBottom: 8, marginHorizontal: 16}}>
+    <View style={{ marginBottom: 8, marginHorizontal: 16 }}>
       <DualTextRow
         leftText="CHI TIẾT THANH TOÁN"
-        leftTextStyle={{color: colors.primary, fontWeight: 'bold'}}
+        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
       />
       <OrderId _id={_id} />
       {[
@@ -352,7 +400,7 @@ const PaymentDetails = ({
         {
           leftText: 'Giảm giá',
           rightText: `-${(discount || 0).toLocaleString('vi-VN')}đ`,
-          rightTextStyle: {color: colors.primary},
+          rightTextStyle: { color: colors.primary },
         },
         {
           leftText: 'Trạng thái thanh toán',
@@ -365,7 +413,7 @@ const PaymentDetails = ({
             borderColor: paymentStatus.color,
             color: paymentStatus.color,
           },
-          rightTextStyle: {fontWeight: '700', color: paymentStatus.color},
+          rightTextStyle: { fontWeight: '700', color: paymentStatus.color },
         },
 
         {
@@ -383,7 +431,7 @@ const PaymentDetails = ({
           marginVertical: 8,
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 16, color: '#000', marginRight: 8}}>
+        <Text style={{ fontSize: 12, color: '#000', marginRight: 8 }}>
           Phương thức thanh toán:
         </Text>
         <View
@@ -392,24 +440,21 @@ const PaymentDetails = ({
             alignItems: 'center',
           }}>
           {getPaymentIcon(paymentMethod)}
-          <Text style={{fontSize: 16, color: '#000', marginLeft: 8}}>
+          <Text style={{ fontSize: 12, color: '#000', marginLeft: 8 }}>
             {paymentMethod.toUpperCase()}
           </Text>
         </View>
       </View>
-      <Pressable style={styles.button} onPress={() => {}}>
-        <Text style={styles.normalText}>Hủy đơn hàng</Text>
-      </Pressable>
     </View>
   );
 };
 
-const OrderId = ({_id}) => {
+const OrderId = ({ _id }) => {
   return (
-    <View style={[styles.row, {marginBottom: 6}]}>
+    <View style={[styles.row, { marginBottom: 6 }]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => {}}>
-        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
+      <Pressable style={styles.row} onPress={() => { }}>
+        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
@@ -456,8 +501,9 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
   },
   areaContainer: {
-    borderBottomWidth: 5,
+    borderBottomWidth: 3,
     borderColor: colors.gray200,
+    paddingVertical: 12
   },
   button: {
     backgroundColor: colors.white,
@@ -467,9 +513,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderColor: colors.gray200,
     borderWidth: 2,
-    marginVertical: 16,
+    margin: 16,
   },
-  status: {fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.orange700},
+  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.orange700 },
 });
 
 export default OrderDetailScreen;

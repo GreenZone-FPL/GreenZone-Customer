@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Column, Row } from "../../components";
 import Ani_Success from "../../components/animations/Ani_Success";
-import { colors, GLOBAL_KEYS } from "../../constants";
+import { colors, GLOBAL_KEYS, OrderStatus } from "../../constants";
 import { MainGraph, OrderGraph } from "../../layouts/graphs";
 
 const OrderSuccessScreen = ({ route, navigation }) => {
-    const  {orderId}  = route.params || ""
+    const { order } = route.params || null
 
     const [showButtons, setShowButtons] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowButtons(true);
-        }, 2000); // Hiển thị nút sau 2s
+        }, 2000);
 
-        return () => clearTimeout(timer); // Xóa timeout khi component bị unmount
+        return () => clearTimeout(timer);
     }, []);
 
     return (
@@ -25,9 +25,9 @@ const OrderSuccessScreen = ({ route, navigation }) => {
 
             {showButtons && (
                 <>
-                    <Text style={styles.successText}>🎉 Đơn hàng đang chờ xác nhận</Text>
+                    <Text style={styles.successText}>🎉 {OrderStatus.getMessageByOrder(order).message}</Text>
                     <Row>
-                        {/* Nút Tiếp tục mua hàng */}
+
                         <TouchableOpacity
                             style={[styles.button, styles.continueButton]}
                             onPress={() => navigation.navigate(MainGraph.graphName)}
@@ -35,10 +35,10 @@ const OrderSuccessScreen = ({ route, navigation }) => {
                             <Text style={styles.buttonText}>Tiếp tục mua hàng</Text>
                         </TouchableOpacity>
 
-                        {/* Nút Xem đơn mua */}
+
                         <TouchableOpacity
                             style={[styles.button, styles.orderButton]}
-                            onPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId })}
+                            onPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: order?.data?._id })}
                         >
                             <Text style={[styles.buttonText, { color: colors.primary }]}>Đơn mua</Text>
                         </TouchableOpacity>
@@ -60,10 +60,12 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     successText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-        fontWeight: "600",
-        color: "#28a745",
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+        fontWeight: "500",
+        color: colors.black,
         marginBottom: 10,
+        textAlign: 'justify',
+        lineHeight: 22
     },
     button: {
         flex: 1,

@@ -27,8 +27,9 @@ const ProfileScreen = ({ navigation }) => {
       const reponse = await getProfile();
       console.log('profile', reponse);
       navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
+
     } catch (error) {
-      console.log('error', error);
+      console.log('error', error); 
     } finally {
       setLoading(false);
     }
@@ -39,89 +40,90 @@ const ProfileScreen = ({ navigation }) => {
       <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
-<ScrollView>
-   <Column style={styles.body}>
-        <TitleText text="Tài khoản" />
+      <ScrollView>
+        <Column style={styles.body}>
+          <TitleText text="Tài khoản" />
 
-        <Column>
-          <Row style={styles.accountContainer}>
-            <CardAccount
-              icon="account"
-              color={colors.primary}
-              title="Thông tin cá nhân"
-              onPress={handleProfile}
-            />
-            <CardAccount
-              icon="google-maps"
-              color={colors.pink500}
-              title="Địa chỉ"
-              onPress={() => navigation.navigate(UserGraph.AddressScreen)}
-            />
-          </Row>
+          <Column>
+            <Row style={styles.accountContainer}>
+              <CardAccount
+                icon="account"
+                color={colors.primary}
+                title="Thông tin cá nhân"
+                onPress={handleProfile}
+              />
+              <CardAccount
+                icon="google-maps"
+                color={colors.pink500}
+                title="Địa chỉ"
+                onPress={() => navigation.navigate(UserGraph.AddressScreen)}
+              />
+            </Row>
 
-          <Row style={styles.accountContainer}>
-            <CardAccount
-              icon="file-document-edit"
-              color={colors.orange700}
-              title="Lịch sử đơn hàng"
-              onPress={() => {
-                navigation.navigate(OrderGraph.OrderHistoryScreen);
-              }}
-            />
-          </Row>
-        </Column>
+            <Row style={styles.accountContainer}>
+              <CardAccount
+                icon="file-document-edit"
+                color={colors.orange700}
+                title="Lịch sử đơn hàng"
+                onPress={() => {
+                  // navigation.navigate(OrderGraph.OrderHistoryScreen);
+                  navigation.navigate('OrderHistoryScreen2');
+                }}
+              />
+            </Row>
+          </Column>
 
-        <TitleText text="Tiện ích" />
+          <TitleText text="Tiện ích" />
 
-        <View style={styles.utilities}>
-          <CardUtiliti
-            icon="cog"
-            title="Cài đặt"
-            onPress={() => {
-              navigation.navigate(UserGraph.SettingScreen);
-            }}
-          />
-          <View style={styles.separator} />
-          <CardUtiliti
-            icon="chat"
-            title="Liên hệ góp ý"
-            onPress={() => {
-              navigation.navigate(UserGraph.ContactScreen);
-            }}
-          />
-          <View style={styles.separator} />
-          <CardUtiliti
-            icon="star"
-            title="Đánh giá đơn hàng"
-            onPress={() => {
-              navigation.navigate(OrderGraph.RatingOrderScreen);
-            }}
-          />
-          <View style={styles.separator} />
-          {authState.isLoggedIn && (
+          <View style={styles.utilities}>
             <CardUtiliti
-              icon="logout"
-              title="Đăng xuất"
-              onPress={async() => {
-                // Xóa token khỏi AsyncStorage
-                await AppAsyncStorage.removeData(
-                  AppAsyncStorage.STORAGE_KEYS.accessToken,
-                );
-                await AppAsyncStorage.removeData(
-                  AppAsyncStorage.STORAGE_KEYS.refreshToken,
-                );
-                authDispatch({ type: AuthActionTypes.LOGOUT });
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: MainGraph.graphName }],
-                });
+              icon="cog"
+              title="Cài đặt"
+              onPress={() => {
+                navigation.navigate(UserGraph.SettingScreen);
               }}
             />
-          )}
-        </View>
-      </Column>
-</ScrollView>
-     
+            <View style={styles.separator} />
+            <CardUtiliti
+              icon="chat"
+              title="Liên hệ góp ý"
+              onPress={() => {
+                navigation.navigate(UserGraph.ContactScreen);
+              }}
+            />
+            <View style={styles.separator} />
+            <CardUtiliti
+              icon="star"
+              title="Đánh giá đơn hàng"
+              onPress={() => {
+                navigation.navigate(OrderGraph.RatingOrderScreen);
+              }}
+            />
+            <View style={styles.separator} />
+            {authState.isLoggedIn && (
+              <CardUtiliti
+                icon="logout"
+                title="Đăng xuất"
+                onPress={async () => {
+                  // Xóa token khỏi AsyncStorage
+                  await AppAsyncStorage.removeData(
+                    AppAsyncStorage.STORAGE_KEYS.accessToken,
+                  );
+                  await AppAsyncStorage.removeData(
+                    AppAsyncStorage.STORAGE_KEYS.refreshToken,
+                  );
+                  authDispatch({ type: AuthActionTypes.LOGOUT });
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: MainGraph.graphName }],
+                  });
+                }}
+              />
+            )}
+          </View>
+        </Column>
+      </ScrollView>
+
     </SafeAreaView>
   );
 };
