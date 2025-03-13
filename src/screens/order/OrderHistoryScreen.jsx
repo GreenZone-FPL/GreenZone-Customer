@@ -1,12 +1,12 @@
 import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View, Button } from 'react-native';
-import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, MyTabView, Row } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { OrderGraph } from '../../layouts/graphs';
-import { useAppContext } from '../../context/appContext';
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
+import { getOrdersByStatus } from '../../axios';
+import { ButtonGroup, Column, LightStatusBar, NormalHeader, NormalLoading } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+
 
 
 const width = Dimensions.get('window').width;
@@ -21,12 +21,9 @@ const OrderHistoryScreen = ({ navigation }) => {
 
   const { updateOrderMessage } = useAppContext();
 
-  // Cập nhật hàm fetchOrders để kiểm tra trường hợp không có status
   const fetchOrders = async (status = '') => {
-  
     try {
       setLoading(true);
-      // Nếu không có status, gọi API với URL mặc định không có params
       const data = await getOrdersByStatus(status);
       setOrders(data);
     } catch (error) {
@@ -36,31 +33,7 @@ const OrderHistoryScreen = ({ navigation }) => {
     }
   };
 
-  const TabButton = (title, index) => {
-    return (
-      <TouchableOpacity
-        key={index}
-        style={[
-          styles.tabItem,
-          tabIndex === index && { borderBottomWidth: 2, borderBottomColor: colors.primary }, // Thêm borderBottom khi active
-        ]}
-        onPress={() => handleTabChange(index)}
-      >
-        <Text
-          style={[
-            styles.tabText,
-            tabIndex === index ? styles.activeText : styles.inactiveText,
-          ]}
-        >
-          {title}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
-  
-
   useEffect(() => {
-    // Khi không có status, gọi API mà không có params (mặc định lấy đơn hàng đang thực hiện)
     const status = tabIndex === 0 ? '' : orderStatuses[tabIndex]; // Tab 0 là "Đang thực hiện"
     fetchOrders(status);
   }, [tabIndex]);
@@ -80,10 +53,6 @@ const OrderHistoryScreen = ({ navigation }) => {
     }
   }, [updateOrderMessage]);
 
-  const handleTabChange = (index) => {
-    setTabIndex(index);
-    fetchOrders(orderStatuses[index]);
-  };
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -92,9 +61,13 @@ const OrderHistoryScreen = ({ navigation }) => {
         onLeftPress={() => navigation.goBack()}
       />
 
-      <Row style={{ marginHorizontal: 16 }}>
-        {titles.map((title, index) => TabButton(title, index))}
-      </Row>
+
+      <ButtonGroup
+        titles={titles}
+        tabIndex={tabIndex}
+        onTabChange={setTabIndex}
+      />
+
 
       <PagerView
         style={{ flex: 1 }}
@@ -103,7 +76,6 @@ const OrderHistoryScreen = ({ navigation }) => {
       >
         {orderStatuses.map((status, index) => (
           <View key={index} style={{ paddingHorizontal: 16 }}>
-
             <OrderListView
               orders={orders}
               loading={loading}
@@ -114,13 +86,9 @@ const OrderHistoryScreen = ({ navigation }) => {
           </View>
         ))}
       </PagerView>
-
     </View>
   );
 };
-
-
-
 
 
 const OrderListView = ({
@@ -136,6 +104,7 @@ const OrderListView = ({
         <NormalLoading visible={loading} />
       ) : orders.length > 0 ? (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={orders}
           keyExtractor={item => item._id}
           renderItem={({ item }) => (
@@ -291,23 +260,35 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 
-  tabBar: {
+  tabContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16,
+    backgroundColor: 'white',
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+    marginHorizontal: 16,
   },
   tabItem: {
-    padding: 10,
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: colors.primary,
   },
   tabText: {
     fontSize: 12,
+    fontWeight: '500',
   },
   activeText: {
+    color: colors.primary,
     fontWeight: 'bold',
-    color: colors.primary
   },
   inactiveText: {
-    color: 'gray',
+    color: '#666',
   },
 });
 
