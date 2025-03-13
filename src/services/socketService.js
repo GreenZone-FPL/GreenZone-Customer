@@ -36,6 +36,61 @@ class SocketService {
     }
   }
 
+  async joinOrder2(orderId) {
+    if (this.socket) {
+      this.socket.emit("order.join", orderId, () => {
+        console.log(`Đã tham gia order ${orderId}`);
+      });
+  
+      // Lấy danh sách activeOrders
+      let activeOrders = await AppAsyncStorage.getActiveOrders();
+  
+      // Tìm order cũ để lấy trạng thái trước khi update
+      const existingOrder = activeOrders.find(order => order.order.data._id === orderId);
+      const oldStatus = existingOrder ? existingOrder.order.data.status : "pendingConfirmation";
+  
+      // Lưu lại order nếu chưa có trong danh sách
+      if (!existingOrder) {
+        activeOrders.push({
+          visible: true,
+          oldStatus,
+          order: { data: { _id: orderId, status: "processing" } },
+        });
+  
+        await AppAsyncStorage.saveActiveOrders(activeOrders);
+      }
+  
+      // Lưu callback vào RAM để xử lý sự kiện cập nhật 
+      if (callback) {
+        this.orderCallbacks.set(orderId, callback);
+      }
+  
+      // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
+      this.socket.off("order.updateStatus").on("order.updateStatus", async (data) => {
+        console.log("Trạng thái đơn hàng cập nhật:", data);
+  
+        // Lấy trạng thái cũ từ activeOrders
+        const updatedOrder = activeOrders.find(order => order.order.data._id === data._id);
+        const prevStatus = updatedOrder ? updatedOrder.order.data.status : "pendingConfirmation";
+  
+        // Cập nhật lại activeOrders trong AsyncStorage
+        const newActiveOrders = activeOrders.map(order => 
+          order.order.data._id === data._id 
+            ? { ...order, oldStatus: prevStatus, order: { ...order.order, data: { ...order.order.data, status: data.status } } } 
+            : order
+        );
+  
+        await AppAsyncStorage.saveActiveOrders(newActiveOrders);
+  
+        // Gọi callback để cập nhật UI
+        callback?.(data, prevStatus);
+      });
+    }
+  }
+  
+
+ 
+
   joinOrder(orderId, callback) {
     if (this.socket) {
       this.socket.emit("order.join", orderId, () => {
@@ -51,6 +106,9 @@ class SocketService {
       });
     }
   }
+
+  saveOr
+
 
 
   isConnected() {

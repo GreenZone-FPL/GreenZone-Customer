@@ -440,7 +440,7 @@ const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
       <DualTextRow
         style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Thông tin người nhận"
-        // rightText="Thay đổi"
+        rightText="Thay đổi"
         leftTextStyle={{ color: colors.black, fontWeight: '600' }}
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}

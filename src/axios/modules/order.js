@@ -39,13 +39,17 @@ export const updateOrderStatus = async (orderId, status ) => {
 
 export const getOrdersByStatus = async (status) => {
   try {
-    const response = await axiosInstance.get(`/v1/order/my-order`, {params: {status}})
-    return response.data
+   
+    const url = status ? `/v1/order/my-order?status=${status}` : '/v1/order/my-order';
+    
+    const response = await axiosInstance.get(url);
+    return response.data;
   } catch (error) {
-    console.log('error', error)
+    console.log('error', error);
     throw error;
   }
 };
+
 
 
 export const getOrderHistoryByStatus = async () => {

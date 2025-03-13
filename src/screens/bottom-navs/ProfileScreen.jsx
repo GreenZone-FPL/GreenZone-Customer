@@ -3,6 +3,7 @@ import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import {
+  NormalLoading,
   Ani_ModalLoading,
   Column,
   HeaderWithBadge,
@@ -37,7 +38,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Ani_ModalLoading loading={loading} />
+      <NormalLoading visible={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>
@@ -66,8 +67,7 @@ const ProfileScreen = ({ navigation }) => {
                 color={colors.orange700}
                 title="Lịch sử đơn hàng"
                 onPress={() => {
-                  // navigation.navigate(OrderGraph.OrderHistoryScreen);
-                  navigation.navigate('OrderHistoryScreen2');
+                  navigation.navigate(OrderGraph.OrderHistoryScreen);
                 }}
               />
             </Row>

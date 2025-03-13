@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
@@ -46,128 +46,144 @@ import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
-import OrderHistoryScreen2 from './src/screens/order/OrderHistoryScreen2';
 import { OrderStatus } from './src/constants';
 
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 const BaseStack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
+
+  return (
+    <AppContextProvider>
+      <PaperProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+
+          <SafeAreaProvider>
+            <NavigationContainer>
+              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+                <BaseStack.Screen name="AppNavigator" component={AppNavigator} />
+                <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+              </BaseStack.Navigator>
+            </NavigationContainer>
+            <FlashMessage position='top' />
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </PaperProvider>
+
+    </AppContextProvider>
+
+
+  );
+}
+
+
+function AppNavigator({ navigation }) {
   const { authState, updateOrderMessage } = useAppContext();
-  console.log('needAuthen', authState.needAuthen)
+  console.log('updateOrderMessage', JSON.stringify(updateOrderMessage, null, 3))
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
-        const { message, type, icon } = OrderStatus.getMessageByOrder(updateOrderMessage.order);
-        showMessage({
-            message,
-            type,
-            icon,
-            duration: 4000,
-        });
+      const { message, type, icon } = OrderStatus.getMessageByOrder(updateOrderMessage.order);
+      showMessage({
+        message,
+        type,
+        icon,
+        duration: 4000,
+        onPress: () => {
+          navigation.navigate(OrderGraph.OrderDetailScreen, {
+            orderId: updateOrderMessage.order.data._id,
+          });
+        },
+      });
     }
-}, [updateOrderMessage]);
-
+  }, [updateOrderMessage]);
 
   return (
-    <PaperProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-
-        <SafeAreaProvider>
-          <NavigationContainer>
-            <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+    <BaseStack.Navigator screenOptions={{ headerShown: false }}>
 
 
-              {authState.needAuthen === false ? (
-                <>
+      {authState.needAuthen === false ? (
+        <>
 
-                  {authState.needFlash && (
-                    <BaseStack.Screen
-                      name={AuthGraph.SplashScreen2}
-                      component={SplashScreen2}
-                    />
-                  )}
-                  {/* <BaseStack.Screen name={AuthGraph.SplashScreen2} component={SplashScreen2} /> */}
-                  <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
-                  <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
-                  <BaseStack.Screen
-                    name={ShoppingGraph.ProductDetailSheet}
-                    options={{
-                      animation: 'slide_from_bottom',
-                      presentation: 'transparentModal',
-                      headerShown: false,
-                    }}
-                    component={ProductDetailSheet} />
-                  <BaseStack.Screen
-                    name={ShoppingGraph.RecipientInfoSheet}
-                    options={{
-                      animation: 'slide_from_bottom',
-                      presentation: 'transparentModal',
-                      headerShown: false,
-                    }}
-                    component={RecipientInfoSheet} />
+          {authState.needFlash && (
+            <BaseStack.Screen
+              name={AuthGraph.SplashScreen2}
+              component={SplashScreen2}
+            />
+          )}
+          {/* <BaseStack.Screen name={AuthGraph.SplashScreen2} component={SplashScreen2} /> */}
+          <BaseStack.Screen name={MainGraph.graphName} component={MainNavigation} />
+          <BaseStack.Screen name={AppGraph.MembershipScreen} component={MembershipScreen} />
+          <BaseStack.Screen
+            name={ShoppingGraph.ProductDetailSheet}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+            component={ProductDetailSheet} />
+          <BaseStack.Screen
+            name={ShoppingGraph.RecipientInfoSheet}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+            component={RecipientInfoSheet} />
 
-                  <BaseStack.Screen
-                    name={VoucherGraph.VoucherDetailSheet}
-                    options={{
-                      animation: 'slide_from_bottom',
-                      presentation: 'transparentModal',
-                      headerShown: false,
-                    }}
-                    component={VoucherDetailSheet} />
+          <BaseStack.Screen
+            name={VoucherGraph.VoucherDetailSheet}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+            component={VoucherDetailSheet} />
 
-                  <BaseStack.Screen
-                    name={ShoppingGraph.EditCartItemScreen}
-                    options={{
-                      animation: 'slide_from_bottom',
-                      presentation: 'transparentModal',
-                      headerShown: false,
-                    }}
-                    component={EditCartItemScreen} />
-                  <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
-                  <BaseStack.Screen name={'OrderHistoryScreen2'} component={OrderHistoryScreen2} />
-                  <BaseStack.Screen name={ShoppingGraph.OrderSuccessScreen} component={OrderSuccessScreen} />
-                  <BaseStack.Screen name={BottomGraph.MerchantScreen} component={MerchantScreen} />
-                  <BaseStack.Screen name={VoucherGraph.MyVouchersScreen} component={MyVoucherScreen} />
-                  <BaseStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
-                  <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
-                  <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />
-                  <BaseStack.Screen name={AppGraph.AdvertisingScreen} component={AdvertisingScreen} />
-                  <BaseStack.Screen name={ShoppingGraph.SearchProductScreen} component={SearchProductScreen} />
-                  <BaseStack.Screen name={AppGraph.UpdateProfileScreen} component={UpdateProfileScreen} />
-                  <BaseStack.Screen name={UserGraph.AddressScreen} component={AddressScreen} />
-                  <BaseStack.Screen name={UserGraph.NewAddressScreen} component={NewAddressScreen} />
-                  <BaseStack.Screen name={UserGraph.SearchAddressScreen} component={SearchAddressScreen} />
-                  <BaseStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
-                  <BaseStack.Screen name={UserGraph.SelectAddressScreen} component={SelectAddressScreen} />
-                  <BaseStack.Screen name={UserGraph.SettingScreen} component={SettingScreen} />
-                  <BaseStack.Screen name={UserGraph.ContactScreen} component={ContactScreen} />
-                  <BaseStack.Screen name={OrderGraph.OrderHistoryScreen} component={OrderHistoryScreen} />
-                  <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
-                  <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
-                  <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />
-                  <BaseStack.Screen name={ShoppingGraph.PayOsScreen} component={PayOsScreen} />
-                </>
-              ) : (
-                <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />
+          <BaseStack.Screen
+            name={ShoppingGraph.EditCartItemScreen}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+            component={EditCartItemScreen} />
+          <BaseStack.Screen name={ShoppingGraph.ChatScreen} component={ChatScreen} />
+          <BaseStack.Screen name={ShoppingGraph.OrderSuccessScreen} component={OrderSuccessScreen} />
+          <BaseStack.Screen name={BottomGraph.MerchantScreen} component={MerchantScreen} />
+          <BaseStack.Screen name={VoucherGraph.MyVouchersScreen} component={MyVoucherScreen} />
+          <BaseStack.Screen name={UserGraph.AddressMerchantScreen} component={AddressMerchantScreen} />
+          <BaseStack.Screen name={ShoppingGraph.CheckoutScreen} component={CheckoutScreen} />
+          <BaseStack.Screen name={AppGraph.FavoriteScreen} component={FavoriteScreen} />
+          <BaseStack.Screen name={AppGraph.AdvertisingScreen} component={AdvertisingScreen} />
+          <BaseStack.Screen name={ShoppingGraph.SearchProductScreen} component={SearchProductScreen} />
+          <BaseStack.Screen name={AppGraph.UpdateProfileScreen} component={UpdateProfileScreen} />
+          <BaseStack.Screen name={UserGraph.AddressScreen} component={AddressScreen} />
+          <BaseStack.Screen name={UserGraph.NewAddressScreen} component={NewAddressScreen} />
+          <BaseStack.Screen name={UserGraph.SearchAddressScreen} component={SearchAddressScreen} />
+          <BaseStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
+          <BaseStack.Screen name={UserGraph.SelectAddressScreen} component={SelectAddressScreen} />
+          <BaseStack.Screen name={UserGraph.SettingScreen} component={SettingScreen} />
+          <BaseStack.Screen name={UserGraph.ContactScreen} component={ContactScreen} />
+          <BaseStack.Screen name={OrderGraph.OrderHistoryScreen} component={OrderHistoryScreen} />
+          <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+          <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
+          <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />
+          <BaseStack.Screen name={ShoppingGraph.PayOsScreen} component={PayOsScreen} />
+        </>
+      ) : (
+        <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />
 
-              )}
+      )}
 
-            </BaseStack.Navigator>
-          </NavigationContainer>
-          <FlashMessage position='top' />
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    </PaperProvider>
-
-  );
+    </BaseStack.Navigator>
+  )
 }
-
-export default function AppWrapper() {
-  return (
-    <AppContextProvider>
-      <App />
-    </AppContextProvider>
-  );
-}
+// export default function AppWrapper() {
+//   return (
+//     <AppContextProvider>
+//       <App />
+//     </AppContextProvider>
+//   );
+// }

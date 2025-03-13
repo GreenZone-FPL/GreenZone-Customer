@@ -77,6 +77,7 @@ export * from './status-bars/OverlayStatusBar';
 
 //tabviews
 export * from './tabviews/CustomTabView';
+export * from './tabviews/MyTabView';
 
 // texts
 export * from './texts/DualTextRow';
