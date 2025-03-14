@@ -5,8 +5,9 @@ import { Icon, IconButton } from 'react-native-paper';
 import { getProductDetail, postFavoriteProduct, deleteFavoriteProduct, getFavoriteProducts } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { CartManager, Toaster } from '../../utils';
+import { CartManager } from '../../utils';
 import { useAppContext } from '../../context/appContext';
+import ToastDialog from '../../components/dialogs/ToastDialog';
 
 import { ToastAndroid } from "react-native";
 
@@ -269,6 +270,10 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription}) => {
 
 const FavoriteButton = ({ productId }) => {
     const [isFavorite, setIsFavorite] = useState(false);
+    const [toastMessage, setToastMessage] = useState("");
+    const [toastIcon, setToastIcon] = useState("heart-outline");
+    const [toastIconColor, setToastIconColor] = useState(colors.gray300);
+    const [isToastVisible, setIsToastVisible] = useState(false);
 
     useEffect(() => {
         const fetchFavorites = async () => {
@@ -287,25 +292,42 @@ const FavoriteButton = ({ productId }) => {
         try {
             if (isFavorite) {
                 await deleteFavoriteProduct({ productId });
-                ToastAndroid.show("Đã xóa khỏi danh sách yêu thích", ToastAndroid.SHORT);
+                setToastMessage("Đã xóa khỏi danh sách yêu thích");
+                setToastIcon("heart-outline");
+                setToastIconColor(colors.gray300);
             } else {
                 await postFavoriteProduct({ productId });
-                ToastAndroid.show("Đã thêm vào danh sách yêu thích", ToastAndroid.SHORT);
+                setToastMessage("Đã thêm vào danh sách yêu thích");
+                setToastIcon("heart");
+                setToastIconColor(colors.red800);
             }
             setIsFavorite(!isFavorite);
+            setIsToastVisible(true);
         } catch (error) {
-            ToastAndroid.show("Có lỗi xảy ra!", ToastAndroid.SHORT);
+            setToastMessage("Có lỗi xảy ra!");
+            setToastIcon("alert-circle");
+            setToastIconColor(colors.red800);
+            setIsToastVisible(true);
             console.error("Error updating favorite status:", error);
         }
     };
 
     return (
-        <IconButton
-            icon={isFavorite ? "heart" : "heart-outline"}
-            iconColor={isFavorite ? colors.red800 : colors.gray300}
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            onPress={() => {}}
-        />
+        <>
+            <IconButton
+                icon={isFavorite ? "heart" : "heart-outline"}
+                iconColor={isFavorite ? colors.red800 : colors.gray300}
+                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                onPress={toggleFavorite}
+            />
+            <ToastDialog 
+                isVisible={isToastVisible} 
+                onHide={() => setIsToastVisible(false)} 
+                icon={toastIcon}
+                iconColor={toastIconColor}
+                title={toastMessage}
+            />
+        </>
     );
 };
 
