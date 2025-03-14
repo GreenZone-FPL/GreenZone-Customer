@@ -85,9 +85,8 @@ export const AppContextProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{
-      authState, authDispatch, cartState, cartDispatch, favorites, addToFavorites, removeFromFavorites,
-      selectedAddresses, addAddress, selectedAddress, setSelectedAddress,
-      recipientInfo, setRecipientInfo, updateOrderMessage, setUpdateOrderMessage
+      authState, authDispatch, cartState, cartDispatch, selectedAddresses, addAddress, selectedAddress, setSelectedAddress, recipientInfo, setRecipientInfo,
+      updateOrderMessage, setUpdateOrderMessage
     }}>
       {children}
     </AppContext.Provider>
