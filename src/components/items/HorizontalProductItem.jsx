@@ -11,17 +11,17 @@ import { color } from '@rneui/base';
 
 
 const HorizontalProductItemPropTypes = {
-    item: PropTypes.object.isRequired,
-    enableAction: PropTypes.bool,
-    enableDelete: PropTypes.bool,
-    onAction: PropTypes.func,
-    imageStyle: PropTypes.object,
-    containerStyle: PropTypes.object,
-    titleStyle: PropTypes.object,
-    optionStyle: PropTypes.object,
-    noteStyle: PropTypes.object,
-    priceStyle: PropTypes.object,
-    oldPriceStyle: PropTypes.object,
+  item: PropTypes.object.isRequired,
+  enableAction: PropTypes.bool,
+  enableDelete: PropTypes.bool,
+  onAction: PropTypes.func,
+  imageStyle: PropTypes.object,
+  containerStyle: PropTypes.object,
+  titleStyle: PropTypes.object,
+  optionStyle: PropTypes.object,
+  noteStyle: PropTypes.object,
+  priceStyle: PropTypes.object,
+  oldPriceStyle: PropTypes.object,
 };
 
 
@@ -43,7 +43,7 @@ export const HorizontalProductItem = ({
     <View style={styles.imageWrapper}>
       <Image
         style={[styles.itemImage, imageStyle]}
-        source={{uri: item.image}}
+        source={{ uri: item.image }}
       />
       <View style={styles.quantityBadge}>
         <Text style={styles.quantityText}>x{item.quantity}</Text>
@@ -54,8 +54,8 @@ export const HorizontalProductItem = ({
       <Text style={[styles.productName, titleStyle]}>{item.productName}</Text>
       {item.variantName && !item.isVariantDefault && (
         <Text
-          style={[styles.normalText, {color: colors.yellow700}, optionStyle]}>
-          Size: {item.variantName}
+          style={[styles.normalText, { color: colors.pink500, fontWeight: '500' }, optionStyle]}>
+          {item.variantName}
         </Text>
       )}
 
@@ -64,7 +64,7 @@ export const HorizontalProductItem = ({
           return (
             <Text
               key={topping._id}
-              style={[styles.normalText, {color: colors.gray850}, optionStyle]}>
+              style={[styles.normalText, { color: colors.gray850 }, optionStyle]}>
               x{topping.quantity} {topping.name}
             </Text>
           );
@@ -73,7 +73,7 @@ export const HorizontalProductItem = ({
       })}
 
       {item.note && (
-        <Text style={[styles.normalText, {color: colors.orange700}, noteStyle]}>
+        <Text style={[styles.normalText, { color: colors.orange700 }, noteStyle]}>
           Note: {item.note}
         </Text>
       )}
@@ -86,7 +86,7 @@ export const HorizontalProductItem = ({
 
       {enableDelete && (
         <Pressable onPress={confirmDelete}>
-          <NormalText text="Xóa" style={{color: colors.orange700}} />
+          <NormalText text="Xóa" style={{ color: colors.orange700 }} />
         </Pressable>
       )}
 
@@ -109,78 +109,74 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes
 
 
 const styles = StyleSheet.create({
-    itemProduct: {
-        flexDirection: 'row',
-        padding: GLOBAL_KEYS.PADDING_SMALL,
-        borderRadius:4,
-        gap: GLOBAL_KEYS.GAP_SMALL,
-        backgroundColor: colors.white,
-        // borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        elevation: 3,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        marginBottom: 8,
+  itemProduct: {
+    flexDirection: 'row',
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    borderRadius: 4,
+    gap: GLOBAL_KEYS.GAP_SMALL,
+    backgroundColor: colors.white,
+    borderBottomColor: colors.gray200,
+    borderBottomWidth: 1,
+    marginBottom: 8,
+  },
+  itemImage: {
+    width: 50,
+    height: 50,
+    resizeMode: 'cover',
+    borderRadius: 25,
+  },
+  normalText: {
+    textAlign: 'justify',
+    lineHeight: 20,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
 
-    },
-    itemImage: {
-        width: 50,
-        height: 50,
-        resizeMode: 'cover',
-        borderRadius: 25,
-    },
-    normalText: {
-        textAlign: 'justify',
-        lineHeight: 20,
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black
-    },
-    productInfo: {
-        flexDirection: 'column',
-        flex: 1,
-        gap: 5,
-    },
-    productName: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        fontWeight: '500',
+  },
+  productInfo: {
+    flexDirection: 'column',
+    flex: 1,
+    gap: 5,
+  },
+  productName: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontWeight: '500',
 
-    },
-    productPrice: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black,
-        fontWeight: '500'
-    },
+  },
+  productPrice: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
+    fontWeight: '500'
+  },
 
-    imageWrapper: {
-        position: 'relative',
-    },
-    quantityBadge: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        backgroundColor: colors.green100,
-        borderColor: colors.white,
-        borderWidth: 2,
-        borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-        width: 20,
-        height: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    quantityText: {
-        color: colors.black,
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        fontWeight: '500',
-    },
-    priceContainer: {
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        alignItems: 'flex-end'
-    },
-    lineThroughText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.gray700,
-        textDecorationLine: 'line-through',
-    },
+  imageWrapper: {
+    position: 'relative',
+  },
+  quantityBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: colors.green100,
+    borderColor: colors.white,
+    borderWidth: 2,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityText: {
+    color: colors.black,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontWeight: '500',
+  },
+  priceContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end'
+  },
+  lineThroughText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.gray700,
+    textDecorationLine: 'line-through',
+  },
 })
