@@ -109,7 +109,6 @@ const HomeScreen = props => {
   );
 
   const onItemClick = productId => {
-    console.log('Product clicked:', productId);
     navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 

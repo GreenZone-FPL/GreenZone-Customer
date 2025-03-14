@@ -7,7 +7,7 @@ import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, PaymentMethod, colors } from 
 import { useAppContext } from '../../context/appContext';
 import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import socketService from '../../services/socketService';
-import { CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+import { AppAsyncStorage, CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
 
 
 const { width } = Dimensions.get('window');
@@ -170,6 +170,14 @@ const CheckoutScreen = ({ navigation }) => {
                   onPress={() => CartManager.clearCart(cartDispatch)}
                 />
 
+                <Button title='Clear activeOrder'
+                  onPress={async () => await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, [])}
+                />
+
+                <Button title='Read activeOrder'
+                  onPress={async () => await AppAsyncStorage.getActiveOrders()}
+                />
+
               </Column>
 
             </ScrollView>
@@ -222,30 +230,39 @@ const CheckoutScreen = ({ navigation }) => {
               response = await createOrder(deliveryOrder);
 
             }
+            const newActiveOrder = {
+              visible: true,
+              orderId: response?.data?._id,
+              oldStatus: response?.data?.status,
+              message: "Đặt hàng thành công",
+              status: response?.data?.status
+            }
+            await AppAsyncStorage.addToActiveOrders(newActiveOrder)
+            setUpdateOrderMessage(newActiveOrder)
 
-
-            console.log('order data =', JSON.stringify(response, null, 2));
-            socketService.joinOrder(response?.data?._id, (data) => {
+            await socketService.joinOrder2(response?.data?._id, response?.data?.status, (data) => {
               setUpdateOrderMessage((prev) => ({
                 visible: true,
-                oldStatus: prev.order?.data?.status || 'pendingConfirmation',
-                order: {
-                  ...response,
-                  data: {
-                    ...response.data,
-                    status: data?.status || response.data.status
-                  }
-                }
+                orderId: data.orderId,
+                oldStatus: prev.status,
+                message: data.message,
+                status: data.status
               }));
             });
 
 
-            if(response?.data?.status === 'awaitingPayment'){
-              navigation.navigate(ShoppingGraph.PayOsScreen, 
-                {  
+            console.log('order data =', JSON.stringify(response, null, 2));
+
+
+
+
+            if (response?.data?.status === 'awaitingPayment') {
+              navigation.navigate(ShoppingGraph.PayOsScreen,
+                {
                   orderId: response.data._id,
-                  totalPrice: response.data.totalPrice })
-            }else{
+                  totalPrice: response.data.totalPrice
+                })
+            } else {
               navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
             }
           } catch (error) {
@@ -578,32 +595,32 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
     } else {
       Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
     }
-  const paymentMethods = [
-    {
-      name: 'Thanh toán khi nhận hàng',
-      image: require('../../assets/images/logo_vnd.png'),
-      value: 'cash',
-      paymentMethod: PaymentMethod.COD.value
-    },
-    {
-      name: 'ZaloPay',
-      image: require('../../assets/images/logo_zalopay.png'),
-      value: 'zalopay',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-    {
-      name: 'PayOs',
-      image: require('../../assets/images/logo_payos.png'),
-      value: 'PayOs',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-    {
-      name: 'Thanh toán bằng thẻ',
-      image: require('../../assets/images/logo_card.png'),
-      value: 'Card',
-      paymentMethod: PaymentMethod.ONLINE.value
-    },
-  ];
+    const paymentMethods = [
+      {
+        name: 'Thanh toán khi nhận hàng',
+        image: require('../../assets/images/logo_vnd.png'),
+        value: 'cash',
+        paymentMethod: PaymentMethod.COD.value
+      },
+      {
+        name: 'ZaloPay',
+        image: require('../../assets/images/logo_zalopay.png'),
+        value: 'zalopay',
+        paymentMethod: PaymentMethod.ONLINE.value
+      },
+      {
+        name: 'PayOs',
+        image: require('../../assets/images/logo_payos.png'),
+        value: 'PayOs',
+        paymentMethod: PaymentMethod.ONLINE.value
+      },
+      {
+        name: 'Thanh toán bằng thẻ',
+        image: require('../../assets/images/logo_card.png'),
+        value: 'Card',
+        paymentMethod: PaymentMethod.ONLINE.value
+      },
+    ];
 
   };
 

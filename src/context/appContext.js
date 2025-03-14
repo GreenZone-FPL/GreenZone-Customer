@@ -16,8 +16,6 @@ export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
   const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState)
 
-  const [favorites, setFavorites] = useState([]);
-
   const [selectedAddresses, setSelectedAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [recipientInfo, setRecipientInfo] = useState({
@@ -27,16 +25,8 @@ export const AppContextProvider = ({ children }) => {
   });
 
   const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
+  const [activeOrders, setActiveOrders] = useState([]);
 
-
-  const addToFavorites = (product) => {
-    setFavorites((prevFavorites) => [...prevFavorites, product]);
-  };
-
-
-  const removeFromFavorites = (productId) => {
-    setFavorites((prevFavorites) => prevFavorites.filter((item) => item.id !== productId));
-  };
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -58,13 +48,6 @@ export const AppContextProvider = ({ children }) => {
     const readCart = async () => {
       try {
         const cart = await CartManager.readCart();
-        if (!cart.owner) {
-          const owner = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.userId);
-          if (owner) {
-            cart.owner = owner;
-            await AppAsyncStorage.storeData('CART', cart)
-          }
-        }
         cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
       } catch (error) {
         console.log("Error loading cart", error);
@@ -86,7 +69,7 @@ export const AppContextProvider = ({ children }) => {
   return (
     <AppContext.Provider value={{
       authState, authDispatch, cartState, cartDispatch, selectedAddresses, addAddress, selectedAddress, setSelectedAddress, recipientInfo, setRecipientInfo,
-      updateOrderMessage, setUpdateOrderMessage
+      updateOrderMessage, setUpdateOrderMessage, activeOrders, setActiveOrders
     }}>
       {children}
     </AppContext.Provider>

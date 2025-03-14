@@ -50,6 +50,7 @@ import { OrderStatus } from './src/constants';
 
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import { AppAsyncStorage } from './src/utils';
 const BaseStack = createNativeStackNavigator();
 
 export default function App() {
@@ -79,20 +80,21 @@ export default function App() {
 
 
 function AppNavigator({ navigation }) {
-  const { authState, updateOrderMessage } = useAppContext();
-  console.log('updateOrderMessage', JSON.stringify(updateOrderMessage, null, 3))
+  const { authState, updateOrderMessage, activeOrders } = useAppContext();
+
+
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
-      const { message, type, icon } = OrderStatus.getMessageByOrder(updateOrderMessage.order);
+      const { type, icon } = OrderStatus.getMessageInfoByStatus(updateOrderMessage.status);
       showMessage({
-        message,
+        message: updateOrderMessage.message,
         type,
         icon,
         duration: 4000,
         onPress: () => {
           navigation.navigate(OrderGraph.OrderDetailScreen, {
-            orderId: updateOrderMessage.order.data._id,
+            orderId: updateOrderMessage.orderId,
           });
         },
       });

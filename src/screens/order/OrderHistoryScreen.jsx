@@ -178,8 +178,8 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
         </Text>
-        {(order.status === 'cancelled' ||
-          order.status === 'completed') && (
+        {
+          order.status === 'completed' && (
             <TouchableOpacity
               onPress={handleRepeatOrder}
               style={styles.buttonContainer}>

@@ -62,16 +62,18 @@ const OrderDetailScreen = props => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
 
-        <Column
+        <Row
           style={{
             marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
             marginBottom: GLOBAL_KEYS.GAP_SMALL,
+            justifyContent: 'space-between',
+            flex: 1
           }}>
-          <Title title="Trạng thái đơn hàng" color={colors.black} />
-          <Text style={styles.status}>
+          <Title title="Trạng thái đơn hàng" color={colors.green500} />
+          <Text style={[styles.status, {color: orderDetail.status === 'cancelled' ? colors.black : colors.green500}]}>
             {getOrderStatusLabel(orderDetail.status)}
           </Text>
-        </Column>
+        </Row>
 
 
         {orderDetail.status === OrderStatus.SHIPPING_ORDER.value && (
@@ -298,8 +300,6 @@ const PaymentDetails = ({
       : voucher.discountValue
     : 0;
 
-  // Tổng tiền thực tế phải trả
-  const paidAmount = totalPrice;
 
   // Chọn icon phù hợp với phương thức thanh toán
   const getPaymentIcon = method => {
@@ -334,10 +334,10 @@ const PaymentDetails = ({
       return { text: 'Đã thanh toán', color: colors.primary };
     }
     if (paymentMethod === 'cod') {
-      return { text: 'Chưa thanh toán', color: 'red' };
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
     }
     if (status === 'awaitingPayment') {
-      return { text: 'Chờ thanh toán', color: 'orange' };
+      return { text: 'Chờ thanh toán', color: colors.pink500 };
     }
     return { text: 'Đã thanh toán', color: colors.primary };
   };
@@ -384,7 +384,7 @@ const PaymentDetails = ({
             borderColor: paymentStatus.color,
             color: paymentStatus.color,
           },
-          rightTextStyle: { fontWeight: '700', color: paymentStatus.color },
+          rightTextStyle: {color: paymentStatus.color },
         },
 
         {
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 16,
   },
-  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.pink500 },
+  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.green500, fontWeight: '500' },
 });
 
 export default OrderDetailScreen;

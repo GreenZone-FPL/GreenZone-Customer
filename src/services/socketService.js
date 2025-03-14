@@ -36,60 +36,76 @@ class SocketService {
     }
   }
 
-  async joinOrder2(orderId) {
-    if (this.socket) {
+  async joinOrder2(orderId, status, callback) {
+    try {
+      if (!this.socket) throw new Error("Socket chưa được khởi tạo");
+
       this.socket.emit("order.join", orderId, () => {
         console.log(`Đã tham gia order ${orderId}`);
       });
-  
-      // Lấy danh sách activeOrders
+
+      // Lấy danh sách activeOrders từ AsyncStorage
       let activeOrders = await AppAsyncStorage.getActiveOrders();
-  
+
       // Tìm order cũ để lấy trạng thái trước khi update
-      const existingOrder = activeOrders.find(order => order.order.data._id === orderId);
-      const oldStatus = existingOrder ? existingOrder.order.data.status : "pendingConfirmation";
-  
-      // Lưu lại order nếu chưa có trong danh sách
+      const existingOrder = activeOrders.find(order => order.orderId === orderId);
+
+      // Nếu chưa có trong danh sách thì thêm vào
       if (!existingOrder) {
-        activeOrders.push({
+        const newOrder = {
           visible: true,
-          oldStatus,
-          order: { data: { _id: orderId, status: "processing" } },
-        });
-  
-        await AppAsyncStorage.saveActiveOrders(activeOrders);
+          orderId,
+          oldStatus: status,
+          message: "",
+          status: status
+        };
+
+        activeOrders.push(newOrder);
+        await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, activeOrders);
       }
-  
-      // Lưu callback vào RAM để xử lý sự kiện cập nhật 
-      if (callback) {
-        this.orderCallbacks.set(orderId, callback);
-      }
-  
+
+      // // Xóa các listener cũ trước khi thêm listener mới
+      // this.socket.off("order.updateStatus");
+
       // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
-      this.socket.off("order.updateStatus").on("order.updateStatus", async (data) => {
-        console.log("Trạng thái đơn hàng cập nhật:", data);
-  
-        // Lấy trạng thái cũ từ activeOrders
-        const updatedOrder = activeOrders.find(order => order.order.data._id === data._id);
-        const prevStatus = updatedOrder ? updatedOrder.order.data.status : "pendingConfirmation";
-  
-        // Cập nhật lại activeOrders trong AsyncStorage
-        const newActiveOrders = activeOrders.map(order => 
-          order.order.data._id === data._id 
-            ? { ...order, oldStatus: prevStatus, order: { ...order.order, data: { ...order.order.data, status: data.status } } } 
-            : order
-        );
-  
-        await AppAsyncStorage.saveActiveOrders(newActiveOrders);
-  
-        // Gọi callback để cập nhật UI
-        callback?.(data, prevStatus);
+      this.socket.on("order.updateStatus", async (data) => {
+        try {
+          console.log("Trạng thái đơn hàng cập nhật:", data);
+
+          // Lấy trạng thái cũ từ AsyncStorage
+          let currentActiveOrders = await AppAsyncStorage.getActiveOrders();
+
+          // Cập nhật trạng thái mới cho đơn hàng
+          const newActiveOrders = currentActiveOrders.map(order =>
+            order.orderId === data.orderId
+              ? {
+                ...order,
+                oldStatus: order.status, // Lưu trạng thái cũ trước khi cập nhật
+                message: data.message,
+                status: data.status
+              }
+              : order
+          );
+
+          await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, newActiveOrders);
+          console.log('Cập nhật newActiveOrders =', JSON.stringify(newActiveOrders, null, 2));
+
+          // Gọi callback để cập nhật UI
+          if (callback) callback(data);
+        } catch (error) {
+          console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
+        }
       });
+
+    } catch (error) {
+      console.error("Lỗi trong joinOrder2:", error);
     }
   }
-  
 
- 
+
+
+
+
 
   joinOrder(orderId, callback) {
     if (this.socket) {
@@ -101,6 +117,8 @@ class SocketService {
       this.socket.off("order.updateStatus");
 
       this.socket.on("order.updateStatus", (data) => {
+        // Trạng thái đơn hàng cập nhật: 
+        // {"message": "🚀 Đơn hàng của bạn đang được chuẩn bị", "orderId": "67d43e500c8091ebd360ac6f", "status": "processing"}
         console.log("Trạng thái đơn hàng cập nhật:", data);
         callback?.(data);
       });
