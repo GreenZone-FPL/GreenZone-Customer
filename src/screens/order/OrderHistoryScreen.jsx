@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import { getOrdersByStatus } from '../../axios';
-import { ButtonGroup, Column, LightStatusBar, NormalHeader, NormalLoading } from '../../components';
+import { ButtonGroup, Column, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { OrderStatus } from '../../constants';
 
 
 
@@ -75,7 +76,7 @@ const OrderHistoryScreen = ({ navigation }) => {
         onPageSelected={(e) => setTabIndex(e.nativeEvent.position)}
       >
         {orderStatuses.map((status, index) => (
-          <View key={index} style={{ paddingHorizontal: 16 }}>
+          <View key={index} style={{}}>
             <OrderListView
               orders={orders}
               loading={loading}
@@ -113,6 +114,7 @@ const OrderListView = ({
               onPress={onItemPress}
             />
           )}
+          contentContainerStyle={{ gap: 5 }}
         />
       ) : (
         <EmptyView message={getEmptyMessage(status)} />
@@ -165,6 +167,10 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
               .format('HH:mm - DD/MM/YYYY')
             : 'Chưa có thời gian'}
         </Text>
+
+        <NormalText
+          style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.green500 }}
+          text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
       </Column>
       <Column style={styles.orderColumnEnd}>
         <Text style={styles.orderTotal}>
@@ -172,14 +178,15 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
         </Text>
-        {order.status !== 'cancelled' &&
-          order.status !== 'pendingConfirmation' && (
+        {(order.status === 'cancelled' ||
+          order.status === 'completed') && (
             <TouchableOpacity
               onPress={handleRepeatOrder}
               style={styles.buttonContainer}>
               <Text style={styles.buttonText}>Đặt lại</Text>
             </TouchableOpacity>
-          )}
+          ) 
+        }
       </Column>
     </TouchableOpacity>
   );
@@ -192,10 +199,13 @@ const ItemOrderType = ({ deliveryMethod }) => {
   };
 
   return (
-    <Image
-      style={styles.orderTypeIcon}
-      source={imageMap[deliveryMethod] || imageMap['pickup']}
-    />
+    <Column style={{ alignItems: 'center' }}>
+      <Image
+        style={styles.orderTypeIcon}
+        source={imageMap[deliveryMethod] || imageMap['pickup']}
+      />
+    </Column>
+
   );
 };
 
@@ -217,42 +227,44 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     paddingTop: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.fbBg
   },
   emptyContainer: { justifyContent: 'center', alignItems: 'center' },
   emptyImage: { width: width / 2, height: width / 2 },
   orderItem: {
-    margin: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomColor: colors.gray200,
-    borderBottomWidth: 1,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingHorizontal: 16,
     flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_SMALL,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    justifyContent: 'space-between',
   },
   orderColumn: {
-    width: '70%',
+    flex: 1
   },
-  orderColumnEnd: { justifyContent: 'center', alignItems: 'center' },
+  orderColumnEnd: { justifyContent: 'center' },
   orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500' },
-  orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL, color: colors.gray850 },
+  orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray700 },
   orderTotal: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     color: colors.pink500,
+    textAlign: 'right'
   },
-  buttonContainer: { alignItems: 'center', justifyContent: 'center' },
-  buttonText: {
-    padding: 6,
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
     backgroundColor: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingVertical: 4,
+    // paddingHorizontal: 10
+  },
+  buttonText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.white,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
+    // fontWeight: '500',
   },
   orderTypeIcon: {
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
