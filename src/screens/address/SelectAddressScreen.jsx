@@ -28,7 +28,6 @@ const SelectAddressScreen = ({ navigation, route }) => {
       try {
         setLoading(true)
         const response = await getAddresses();
-        console.log('Dữ liệu API:', response);
         setAddresses(response || []);
       } catch (error) {
         console.log('Lỗi lấy địa chỉ:', error);
@@ -42,7 +41,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
 
   const onConfirmAddress = address => {
     if (isUpdateOrderInfo) {
-      console.log('selectedAddress', address)
+
       if (cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch,
           {

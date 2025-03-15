@@ -14,7 +14,7 @@ export const PaymentMethod = Object.freeze({
 export const OrderStatus = Object.freeze({
     AWAITING_PAYMENT: { label: "Chờ thanh toán", value: "awaitingPayment" },
     PENDING_CONFIRMATION: { label: "Chờ xác nhận", value: "pendingConfirmation" },
-    PROCESSING: { label: "Đang xử lý", value: "processing" },
+    PROCESSING: { label: "Đang chuẩn bị", value: "processing" },
     READY_FOR_PICKUP: { label: "Chờ lấy hàng", value: "readyForPickup" },  // chỉ dành cho đơn hàng Pickup
     SHIPPING_ORDER: { label: "Đang giao hàng", value: "shippingOrder" },
     COMPLETED: { label: "Hoàn thành", value: "completed" },
@@ -29,69 +29,34 @@ export const OrderStatus = Object.freeze({
         return status ? status.label : "Không xác định";
     },
 
+    
     getValues() {
         return Object.values(this).map(status => status.value);
     },
-    getMessageByOrder(order) {
-        const orderId = order?.data?._id;
-
-        switch (order.data.status) {
+    getMessageInfoByStatus(status) {
+        switch (status) {
             case this.AWAITING_PAYMENT.value:
-                return {
-                    message: `Đơn hàng ${orderId} đang chờ thanh toán${order.data.paymentMethod === "online" ? ".\nVui lòng thanh toán trực tuyến." : ""}`,
-                    type: "warning",
-                    icon: "warning"
-                };
+                return { type: "warning", icon: status === this.AWAITING_PAYMENT.value ? "warning" : "info" };
             case this.PENDING_CONFIRMATION.value:
-                return {
-                    message: `Đơn hàng ${orderId} của bạn đang chờ xác nhận từ cửa hàng.`,
-                    type: "warning",
-                    icon: "info"
-                };
+                return { type: "success", icon: "success" };
+
             case this.PROCESSING.value:
-                return {
-                    message: `Đơn hàng ${orderId} đang được xử lý.`,
-                    type: "info",
-                    icon: "info"
-                };
-            case this.READY_FOR_PICKUP.value:
-                return {
-                    message: `Đơn hàng ${orderId} đã chuẩn bị xong. Sẵn sàng giao hàng.`,
-                    type: "success",
-                    icon: "success"
-                };
             case this.SHIPPING_ORDER.value:
-                return {
-                    message: `Đơn hàng ${orderId} đang trên đường giao.Hãy theo dõi tình trạng vận chuyển.`,
-                    type: "info",
-                    icon: "info"
-                };
+                return { type: "info", icon: "info" };
+    
+            case this.READY_FOR_PICKUP.value:
             case this.COMPLETED.value:
-                return {
-                    message: `Đơn hàng ${orderId} đã giao thành công.Cảm ơn bạn đã mua sắm!`,
-                    type: "success",
-                    icon: "success"
-                };
+                return { type: "success", icon: "success" };
+    
             case this.CANCELLED.value:
-                return {
-                    message: `Đơn hàng ${orderId} đã bị hủy. Nếu có thắc mắc, vui lòng liên hệ hỗ trợ.`,
-                    type: "danger",
-                    icon: "danger"
-                };
             case this.FAILED_DELIVERY.value:
-                return {
-                    message: `Đơn hàng ${orderId} giao hàng không thành công. Vui lòng kiểm tra lại thông tin giao hàng.`,
-                    type: "danger",
-                    icon: "danger"
-                };
+                return { type: "danger", icon: "danger" };
+    
             default:
-                return {
-                    message: `Đơn hàng ${orderId} có trạng thái không xác định.`,
-                    type: "default",
-                    icon: "info"
-                };
+                return { type: "default", icon: "info" };
         }
     }
+    
 });
 
 

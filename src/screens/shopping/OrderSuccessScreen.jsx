@@ -4,10 +4,11 @@ import { Column, Row } from "../../components";
 import Ani_Success from "../../components/animations/Ani_Success";
 import { colors, GLOBAL_KEYS, OrderStatus } from "../../constants";
 import { MainGraph, OrderGraph } from "../../layouts/graphs";
+import { useAppContext } from "../../context/appContext";
 
 const OrderSuccessScreen = ({ route, navigation }) => {
     const { order } = route.params || null
-
+    const { updateOrderMessage } = useAppContext();
     const [showButtons, setShowButtons] = useState(false);
 
     useEffect(() => {
@@ -25,7 +26,7 @@ const OrderSuccessScreen = ({ route, navigation }) => {
 
             {showButtons && (
                 <>
-                    <Text style={styles.successText}>🎉 {OrderStatus.getMessageByOrder(order).message}</Text>
+                    <Text style={styles.successText}>🎉 {updateOrderMessage.message}</Text>
                     <Row>
 
                         <TouchableOpacity

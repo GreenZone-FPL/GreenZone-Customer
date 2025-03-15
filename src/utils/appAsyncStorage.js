@@ -65,9 +65,9 @@ export class AppAsyncStorage {
         }
     };
 
-    static async saveActiveOrders(order) {
+    static async addToActiveOrders(order) {
         try {
-            const orderId = order?.order?.data?._id;
+            const orderId = order.orderId
             if (!orderId) {
                 console.log("Không tìm thấy orderId, không thể lưu!");
                 return;
@@ -76,7 +76,7 @@ export class AppAsyncStorage {
             let activeOrders = await this.readData(this.STORAGE_KEYS.activeOrders, []);
 
 
-            const index = activeOrders.findIndex(o => o.order.data._id === orderId);
+            const index = activeOrders.findIndex(o => o.orderId === orderId);
             if (index !== -1) {
                 activeOrders[index] = order;
             } else {
@@ -92,13 +92,15 @@ export class AppAsyncStorage {
 
 
     static async getActiveOrders() {
-        return await this.readData(this.STORAGE_KEYS.activeOrders, []);
+        const activeOrders = await this.readData(this.STORAGE_KEYS.activeOrders, []);
+        console.log('activeOrders', JSON.stringify(activeOrders, null, 2))
+        return activeOrders
     }
 
     static async removeFromActiveOrder(orderId) {
         try {
             let activeOrders = await this.readData(this.STORAGE_KEYS.activeOrders, []);
-            activeOrders = activeOrders.filter(o => o.order.data._id !== orderId);
+            activeOrders = activeOrders.filter(o => o.orderId !== orderId);
             await this.storeData(this.STORAGE_KEYS.activeOrders, activeOrders);
             console.log(`Order ${orderId} đã được xóa khỏi activeOrders`);
         } catch (error) {

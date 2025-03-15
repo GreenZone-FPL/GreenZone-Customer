@@ -29,11 +29,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
     useEffect(() => {
         if (product) {
-            console.log("Số lượng hiện tại:", quantity);
-
             const newTotalAmount = calculateTotal(product, selectedVariant, selectedToppings, quantity);
-            console.log("Giá tổng mới:", newTotalAmount);
-
             setTotalAmount(newTotalAmount);
         }
     }, [product, selectedVariant, selectedToppings, quantity]);
@@ -166,7 +162,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                                 price: topping.extraPrice
                             }));
 
-                            console.log('updatedToppings = ', updatedToppings);
+                         
                             const productPrice = totalAmount/ quantity
                             await CartManager
                                 .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
