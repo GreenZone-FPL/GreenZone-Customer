@@ -50,6 +50,7 @@ import { OrderStatus } from './src/constants';
 import socketService from './src/services/socketService';
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import LoginScreenFake from './src/screens/auth/LoginScreenFake';
 import { AppAsyncStorage } from './src/utils';
 const BaseStack = createNativeStackNavigator();
 
