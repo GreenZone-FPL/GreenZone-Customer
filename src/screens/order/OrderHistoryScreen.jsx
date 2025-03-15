@@ -58,7 +58,7 @@ const OrderHistoryScreen = ({ navigation }) => {
         fetchOrders(""); // Tab "Đang thực hiện" luôn là ""
       }
     }
-  }, [updateOrderMessage]);
+  }, [updateOrderMessage.status]);
   
   
 

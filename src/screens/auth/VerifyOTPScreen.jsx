@@ -1,14 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
-import {AppContext} from '../../context/appContext';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {OtpInput} from 'react-native-otp-entry';
-import {verifyOTP} from '../../axios';
-import {colors} from '../../constants';
-import {AppGraph, AuthGraph, MainGraph} from '../../layouts/graphs';
-import {Toaster} from '../../utils/toaster';
-import {Ani_ModalLoading} from '../../components';
-import {useAppContext} from '../../context/appContext';
-import {AuthActionTypes} from '../../reducers';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { OtpInput } from 'react-native-otp-entry';
+import { verifyOTP } from '../../axios';
+import { NormalLoading } from '../../components';
+import { colors } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { AuthGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils/toaster';
 const VerifyOTPScreen = ({route, navigation}) => {
   const {authDispatch} = useAppContext();
   const {phoneNumber} = route.params;
@@ -45,7 +44,7 @@ const VerifyOTPScreen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Ani_ModalLoading loading={loading} message="Đang xác thực..." />
+      <NormalLoading visible={loading} />
       <Text style={styles.title}>Xác thực OTP</Text>
       <Text style={styles.subtitle}>Nhập mã OTP gửi đến {phoneNumber}</Text>
 

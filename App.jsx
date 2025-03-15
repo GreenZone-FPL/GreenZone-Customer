@@ -47,7 +47,7 @@ import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { OrderStatus } from './src/constants';
-
+import socketService from './src/services/socketService';
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import { AppAsyncStorage } from './src/utils';
@@ -80,8 +80,40 @@ export default function App() {
 
 
 function AppNavigator({ navigation }) {
-  const { authState, updateOrderMessage, activeOrders } = useAppContext();
+  const { authState, updateOrderMessage, setUpdateOrderMessage } = useAppContext();
 
+
+  useEffect(() => {
+    const initializeSocket = async () => {
+      try {
+        // Khởi tạo socket
+        await socketService.initialize();
+
+        // Gọi lại tất cả các đơn hàng đã có trong activeOrders
+        await socketService.rejoinOrder((data) => {
+          // Cập nhật trạng thái đơn hàng khi join thành công
+          setUpdateOrderMessage((prev) => ({
+            visible: true,
+            orderId: data.orderId,
+            oldStatus: prev.status,
+            message: data.message,
+            status: data.status,
+          }));
+        });
+
+      } catch (error) {
+        console.error("Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:", error);
+      }
+    };
+
+    // Gọi hàm khởi tạo khi app khởi động
+    initializeSocket();
+
+    return () => {
+      // Ngắt kết nối socket khi component bị unmount
+      socketService.disconnect();
+    };
+  }, [updateOrderMessage]);
 
 
   useEffect(() => {
@@ -99,7 +131,7 @@ function AppNavigator({ navigation }) {
         },
       });
     }
-  }, [updateOrderMessage]);
+  }, [updateOrderMessage.status]);
 
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>

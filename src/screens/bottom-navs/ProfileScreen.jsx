@@ -1,22 +1,22 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import {
-  NormalLoading,
-  Ani_ModalLoading,
   Column,
   HeaderWithBadge,
   LightStatusBar,
+  NormalLoading,
+  Ani_ModalLoading,
   Row,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
 import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
-import { useAppContext } from '../../context/appContext';
 import { AppAsyncStorage } from '../../utils';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -30,15 +30,17 @@ const ProfileScreen = ({ navigation }) => {
       navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
 
     } catch (error) {
-      console.log('error', error); 
+      console.log('error', error);
     } finally {
       setLoading(false);
     }
   };
 
+ 
+
   return (
     <SafeAreaView style={styles.container}>
-      <NormalLoading visible={loading} />
+      <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -7,20 +7,20 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {sendOTP} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { sendOTP } from '../../axios';
 import {
-  Ani_ModalLoading,
   Column,
   FlatInput,
   LightStatusBar,
-  TitleText,
+  NormalLoading,
+  TitleText
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AuthGraph} from '../../layouts/graphs';
-import {Toaster} from '../../utils';
-import {useAppContext} from '../../context/appContext';
-import {AuthActionTypes} from '../../reducers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { AuthGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils';
 const LoginScreen = ({route, navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0779188717');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
@@ -119,7 +119,7 @@ const LoginScreen = ({route, navigation}) => {
         <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
       </Pressable> */}
 
-      <Ani_ModalLoading loading={loading} />
+      <NormalLoading visible={loading} />
     </Column>
   );
 };
