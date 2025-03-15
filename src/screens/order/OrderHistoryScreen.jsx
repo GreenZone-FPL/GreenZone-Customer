@@ -20,7 +20,9 @@ const OrderHistoryScreen = ({ navigation }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
+
   const { updateOrderMessage } = useAppContext();
+  console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
   const fetchOrders = async (status = '') => {
     try {
@@ -39,20 +41,27 @@ const OrderHistoryScreen = ({ navigation }) => {
     fetchOrders(status);
   }, [tabIndex]);
 
+
   useEffect(() => {
-    if (updateOrderMessage.order?.data) {
-      const { status: newStatus } = updateOrderMessage.order.data;
-      const oldStatus = updateOrderMessage.oldStatus || 'pendingConfirmation';
-
-      console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, newStatus });
-
-      if (orderStatuses.indexOf(newStatus) === tabIndex) {
-        fetchOrders(newStatus);
-      } else if (orderStatuses.indexOf(oldStatus) === tabIndex) {
-        fetchOrders(oldStatus);
+    if (updateOrderMessage?.status) {
+      const { status, oldStatus } = updateOrderMessage;
+      console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
+  
+      // Nếu trạng thái mới là "Hoàn thành" hoặc "Đã hủy" thì không cần reload
+      if (["completed", "cancelled"].includes(status)) return;
+  
+      const isOldStatusProcessing = !["completed", "cancelled"].includes(oldStatus);
+      const isNewStatusProcessing = !["completed", "cancelled"].includes(status);
+  
+      // Nếu trạng thái cũ thuộc tab "Đang thực hiện" nhưng trạng thái mới KHÔNG còn trong đó => Reload
+      if (isOldStatusProcessing && !isNewStatusProcessing) {
+        fetchOrders(""); // Tab "Đang thực hiện" luôn là ""
       }
     }
   }, [updateOrderMessage]);
+  
+  
+
 
   return (
     <View style={styles.container}>
@@ -185,7 +194,7 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
               style={styles.buttonContainer}>
               <Text style={styles.buttonText}>Đặt lại</Text>
             </TouchableOpacity>
-          ) 
+          )
         }
       </Column>
     </TouchableOpacity>

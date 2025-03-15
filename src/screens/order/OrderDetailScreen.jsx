@@ -6,13 +6,17 @@ import { getOrderDetail, updateOrderStatus } from '../../axios';
 import { Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
 import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { ShoppingGraph } from '../../layouts/graphs';
-
+import { useAppContext } from '../../context/appContext';
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
   const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
+
+  const { updateOrderMessage } = useAppContext();
+  console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
+
 
   const getOrderStatusLabel = value => {
     const statusEntry = Object.values(OrderStatus).find(
@@ -25,7 +29,7 @@ const OrderDetailScreen = props => {
     const fetchOrderDetail = async () => {
       try {
         const response = await getOrderDetail(orderId);
-        console.log('detail', JSON.stringify(response, null, 3))
+        console.log('detail', JSON.stringify(response, null, 3));
         setOrderDetail(response);
       } catch (error) {
         console.error('error', error);
@@ -33,8 +37,9 @@ const OrderDetailScreen = props => {
         setLoading(false);
       }
     };
+
     fetchOrderDetail();
-  }, [orderId]);
+  }, [orderId, updateOrderMessage]);
 
 
   if (loading) {
@@ -70,18 +75,19 @@ const OrderDetailScreen = props => {
             flex: 1
           }}>
           <Title title="Trạng thái đơn hàng" color={colors.green500} />
-          <Text style={[styles.status, {color: orderDetail.status === 'cancelled' ? colors.black : colors.green500}]}>
+          <Text style={[styles.status, { color: orderDetail.status === 'cancelled' ? colors.black : colors.green500 }]}>
             {getOrderStatusLabel(orderDetail.status)}
           </Text>
         </Row>
 
 
-        {orderDetail.status === OrderStatus.SHIPPING_ORDER.value && (
+        {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(orderDetail.status) && (
           <ShipperInfo
             messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
             shipper={orderDetail.shipper}
           />
         )}
+
         {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
 
         <RecipientInfo
@@ -158,20 +164,20 @@ const ShipperInfo = ({ messageClick, shipper }) => {
         source={require('../../assets/images/helmet.png')}
       />
       <Column style={{ flex: 1 }}>
-        <NormalText text="Shipper" style={{ fontWeight: '500' }} />
+        <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
         <Text
-          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black }}>
+          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.yellow700, fontWeight: '500' }}>
           {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
         </Text>
       </Column>
 
 
-      <Row style={{ gap: 24 }}>
+      {/* <Row style={{ gap: 24 }}>
         <Icon source="phone-outline" color={colors.black} size={20} />
         <Pressable onPress={messageClick}>
           <Icon source="message-outline" color={colors.black} size={20} />
         </Pressable>
-      </Row>
+      </Row> */}
 
 
     </Row>
@@ -384,7 +390,7 @@ const PaymentDetails = ({
             borderColor: paymentStatus.color,
             color: paymentStatus.color,
           },
-          rightTextStyle: {color: paymentStatus.color },
+          rightTextStyle: { color: paymentStatus.color },
         },
 
         {
