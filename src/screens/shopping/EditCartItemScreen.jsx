@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -8,8 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon, IconButton} from 'react-native-paper';
-import {getProductDetail} from '../../axios';
+import { Icon, IconButton } from 'react-native-paper';
+import { getProductDetail } from '../../axios';
 import {
   CheckoutFooter,
   NotesList,
@@ -17,10 +17,9 @@ import {
   RadioGroup,
   SelectableGroup,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppContext, useAppContext} from '../../context/appContext';
-import {CartActionTypes} from '../../reducers';
-import {CartManager} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { CartManager } from '../../utils';
 
 const EditCartItemScreen = ({route, navigation}) => {
  
@@ -109,7 +108,6 @@ const EditCartItemScreen = ({route, navigation}) => {
             />
 
             <ProductInfo
-              favorites={favorites}
               product={product}
               showFullDescription={showFullDescription}
               toggleDescription={() => {
