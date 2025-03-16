@@ -1,30 +1,19 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
+import { useAppContext } from '../../context/appContext';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import RegisterScreen from '../../screens/auth/RegisterScreen';
-import SplashScreen from '../../screens/auth/SplashScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
-import {AuthGraph, MainGraph} from '../graphs';
-import {useAppContext} from '../../context/appContext';
-import MainNavigation from '../MainNavigation';
+import { AuthGraph } from '../graphs';
 
 const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {
   const {authState} = useAppContext();
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
-
-
-      
-      {/* {authState.message !== 'Phiên đăng nhập hết hạn' && (
-        <AuthStack.Screen
-          name={AuthGraph.SplashScreen}
-          component={SplashScreen}
-        />
-      )} */}
-      
-
+      {/* <AuthStack.Screen name={'LoginScreenFake'} component={LoginScreenFake} /> */}
       <AuthStack.Screen name={AuthGraph.LoginScreen} component={LoginScreen} />
+   
       <AuthStack.Screen
         name={AuthGraph.VerifyOTPScreen}
         component={VerifyOTPScreen}

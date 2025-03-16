@@ -1,35 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import {
-  FlatList,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { ActionDialog, PrimaryButton } from '../../components';
 import { getOrderDetail, updateOrderStatus } from '../../axios';
-import {
-  Column,
-  DualTextRow,
-  HorizontalProductItem,
-  LightStatusBar,
-  NormalHeader,
-  NormalLoading,
-  NormalText,
-  Row,
-} from '../../components';
+import { Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
 import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
 import { ShoppingGraph } from '../../layouts/graphs';
-
+import { useAppContext } from '../../context/appContext';
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
   const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
+
+  const { updateOrderMessage } = useAppContext();
+  console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
+
 
   const getOrderStatusLabel = value => {
     const statusEntry = Object.values(OrderStatus).find(
@@ -38,47 +25,35 @@ const OrderDetailScreen = props => {
     return statusEntry ? statusEntry.label : 'Trạng thái không xác định';
   };
 
-  const fetchOrderDetail = async () => {
-    try {
-      if (!orderId) {
-        console.error('Lỗi: orderId không hợp lệ');
-        return;
-      }
-      const response = await getOrderDetail(orderId);
-      console.log('detail', JSON.stringify(response, null, 3))
-      setOrderDetail(response);
-    } catch (error) {
-      console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchOrderDetail();
-  }, [orderId]);
+    const fetchOrderDetail = async () => {
+      try {
+        const response = await getOrderDetail(orderId);
+        console.log('detail', JSON.stringify(response, null, 3));
+        setOrderDetail(response);
+      } catch (error) {
+        console.error('error', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (loading || !orderDetail) {
+    fetchOrderDetail();
+  }, [orderId, updateOrderMessage]);
+
+
+  if (loading) {
     return (
-      <NormalLoading visible={true} message="Đang tải chi tiết đơn hàng..." />
+      <View style={styles.container}>
+        <LightStatusBar />
+        <NormalHeader
+          title="Chi tiết đơn hàng"
+          onLeftPress={() => navigation.goBack()}
+        />
+        <NormalLoading visible={true} />
+      </View>
     );
   }
-
-  const {
-    deliveryMethod,
-    store,
-    owner,
-    shippingAddress,
-    shipper,
-    orderItems,
-    _id,
-    shippingFee,
-    voucher,
-    paymentMethod,
-    fulfillmentDateTime,
-    totalPrice,
-    status,
-  } = orderDetail;
 
   return (
     <View style={styles.container}>
@@ -91,76 +66,69 @@ const OrderDetailScreen = props => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        <Column
+
+        <Row
           style={{
             marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
             marginBottom: GLOBAL_KEYS.GAP_SMALL,
+            justifyContent: 'space-between',
+            flex: 1
           }}>
-          <Title title="Trạng thái đơn hàng" color={colors.black} />
-          <Text style={styles.status}>
+          <Title title="Trạng thái đơn hàng" color={colors.green500} />
+          <Text style={[styles.status, { color: orderDetail.status === 'cancelled' ? colors.black : colors.green500 }]}>
             {getOrderStatusLabel(orderDetail.status)}
           </Text>
-        </Column>
+        </Row>
 
-        {/* Hiển thị thông tin shipper nếu là giao hàng */}
-        {deliveryMethod !== 'pickup' && shipper && (
+
+        {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(orderDetail.status) && (
           <ShipperInfo
             messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
-            shipper={shipper}
+            shipper={orderDetail.shipper}
           />
         )}
-        {store && <MerchantInfo store={store} />}
 
-        {/* Luôn hiển thị tên và số điện thoại người nhận */}
+        {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
+
         <RecipientInfo
-          deliveryMethod={deliveryMethod}
-          owner={owner}
-          shippingAddress={shippingAddress}
+          deliveryMethod={orderDetail.deliveryMethod}
+          owner={orderDetail.owner}
+          shippingAddress={orderDetail.shippingAddress}
         />
 
-        {orderItems && <ProductsInfo orderItems={orderItems} />}
+        {orderDetail.orderItems && <ProductsInfo orderItems={orderDetail.orderItems} />}
 
         <PaymentDetails
-          _id={_id}
-          shippingFee={shippingFee}
-          voucher={voucher}
-          paymentMethod={paymentMethod}
-          fulfillmentDateTime={fulfillmentDateTime}
-          orderItems={orderItems}
-          totalPrice={totalPrice}
-          status={status}
+          _id={orderDetail._id}
+          shippingFee={orderDetail.shippingFee}
+          voucher={orderDetail.voucher}
+          paymentMethod={orderDetail.paymentMethod}
+          fulfillmentDateTime={orderDetail.fulfillmentDateTime}
+          orderItems={orderDetail.orderItems}
+          totalPrice={orderDetail.totalPrice}
+          status={orderDetail.status}
         />
 
         <Row style={{ flex: 1 }}>
           {
-            status === OrderStatus.AWAITING_PAYMENT.value &&
+            orderDetail.status === OrderStatus.AWAITING_PAYMENT.value &&
             <PrimaryButton
-            titleStyle={{fontSize: 12}}
+              titleStyle={{ fontSize: 12 }}
               style={{ marginHorizontal: 16, flex: 1 }}
               title='Thanh toán'
               onPress={() => {
-                navigation.navigate(ShoppingGraph.PayOsScreen,
-                  {
-                    orderId: _id,
-                    totalPrice: totalPrice
-                  })
+                navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })
               }} />
-
           }
 
           {
-            (status === OrderStatus.PENDING_CONFIRMATION.value ||
-              status === OrderStatus.AWAITING_PAYMENT.value) &&
+            (orderDetail.status === OrderStatus.PENDING_CONFIRMATION.value ||
+              orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) &&
             <Pressable style={[styles.button, { flex: 1 }]} onPress={() => setActionDialogVisible(true)}>
               <Text style={styles.normalText}>Hủy đơn hàng</Text>
             </Pressable>
           }
-
         </Row>
-
-
-
-
 
       </ScrollView>
 
@@ -173,21 +141,22 @@ const OrderDetailScreen = props => {
         onCancel={() => setActionDialogVisible(false)}
         onApprove={async () => {
           try {
-            await updateOrderStatus(_id, OrderStatus.CANCELLED.value)
+            await updateOrderStatus(orderDetail._id, OrderStatus.CANCELLED.value)
             await fetchOrderDetail()
           } catch (error) {
             console.log('error', error)
           } finally {
             setActionDialogVisible(false)
           }
-
         }}
       />
     </View>
   );
 };
 
+
 const ShipperInfo = ({ messageClick, shipper }) => {
+  console.log('shipper', shipper)
   return (
     <Row style={{ gap: 16, margin: 16 }}>
       <Image
@@ -195,19 +164,22 @@ const ShipperInfo = ({ messageClick, shipper }) => {
         source={require('../../assets/images/helmet.png')}
       />
       <Column style={{ flex: 1 }}>
-        <NormalText text="Shipper" style={{ fontWeight: '500' }} />
+        <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
         <Text
-          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black }}>
+          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.yellow700, fontWeight: '500' }}>
           {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
         </Text>
       </Column>
 
-      <Row style={{ gap: 24 }}>
+
+      {/* <Row style={{ gap: 24 }}>
         <Icon source="phone-outline" color={colors.black} size={20} />
         <Pressable onPress={messageClick}>
           <Icon source="message-outline" color={colors.black} size={20} />
         </Pressable>
-      </Row>
+      </Row> */}
+
+
     </Row>
   );
 };
@@ -284,9 +256,9 @@ const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
   return (
     <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
       <Title title="Người nhận" icon="map-marker" />
-      <Title
-        title={[recipientName, '||', recipientPhone].join(' ')}
-        titleStyle={{ color: colors.black }}
+      <NormalText
+        text={[recipientName, '||', recipientPhone].join(' ')}
+        style={{ color: colors.black }}
       />
       {/* Chỉ hiển thị địa chỉ nếu không phải là "pickup" */}
       {deliveryMethod !== 'pickup' && (
@@ -325,7 +297,7 @@ const PaymentDetails = ({
   status,
 }) => {
   // Tính tổng tiền sản phẩm (chưa bao gồm phí giao hàng và giảm giá)
-  const subTotal = orderItems.reduce((sum, item) => sum + item.price, 0);
+  const subTotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   // Số tiền giảm giá từ voucher (nếu có)
   const discount = voucher
@@ -334,8 +306,6 @@ const PaymentDetails = ({
       : voucher.discountValue
     : 0;
 
-  // Tổng tiền thực tế phải trả
-  const paidAmount = totalPrice;
 
   // Chọn icon phù hợp với phương thức thanh toán
   const getPaymentIcon = method => {
@@ -370,10 +340,10 @@ const PaymentDetails = ({
       return { text: 'Đã thanh toán', color: colors.primary };
     }
     if (paymentMethod === 'cod') {
-      return { text: 'Chưa thanh toán', color: 'red' };
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
     }
     if (status === 'awaitingPayment') {
-      return { text: 'Chờ thanh toán', color: 'orange' };
+      return { text: 'Chờ thanh toán', color: colors.pink500 };
     }
     return { text: 'Đã thanh toán', color: colors.primary };
   };
@@ -402,6 +372,13 @@ const PaymentDetails = ({
           rightText: `-${(discount || 0).toLocaleString('vi-VN')}đ`,
           rightTextStyle: { color: colors.primary },
         },
+
+        {
+          leftText: 'Tổng tiền',
+          rightText: `${(totalPrice).toLocaleString('vi-VN')}đ`,
+          rightTextStyle: { color: colors.primary, fontWeight: '700' },
+          leftTextStyle: { color: colors.primary, fontWeight: '700' },
+        },
         {
           leftText: 'Trạng thái thanh toán',
           rightText: paymentStatus.text,
@@ -413,7 +390,7 @@ const PaymentDetails = ({
             borderColor: paymentStatus.color,
             color: paymentStatus.color,
           },
-          rightTextStyle: { fontWeight: '700', color: paymentStatus.color },
+          rightTextStyle: { color: paymentStatus.color },
         },
 
         {
@@ -515,7 +492,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 16,
   },
-  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.orange700 },
+  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.green500, fontWeight: '500' },
 });
 
 export default OrderDetailScreen;

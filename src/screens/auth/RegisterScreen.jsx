@@ -1,5 +1,5 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, {useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Image,
@@ -12,24 +12,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {Icon} from 'react-native-paper';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Icon } from 'react-native-paper';
 import {
   Column,
-  Row,
   CustomFlatInput,
+  NormalLoading,
   NormalText,
-  TitleText,
-  Ani_ModalLoading,
+  Row,
+  TitleText
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
-import {AppAsyncStorage, Toaster} from '../../utils';
-import {register} from '../../axios';
-import {AppGraph} from '../../layouts/graphs';
-import {baseURL} from '../../axios/axiosInstance';
-import {useAppContext} from '../../context/appContext';
-import {AuthActionTypes} from '../../reducers';
+import { register } from '../../axios';
+import { useAppContext } from '../../context/appContext';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils';
 const RegisterScreen = ({navigation}) => {
   const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
@@ -175,7 +173,7 @@ const RegisterScreen = ({navigation}) => {
       <ScrollView
         contentContainerStyle={styles.innerContainer}
         keyboardShouldPersistTaps="handled">
-        <Ani_ModalLoading loading={loading} />
+        <NormalLoading visible={loading} />
         <Image
           source={require('../../assets/images/register_bg.png')}
           style={{width: '100%', height: 200}}

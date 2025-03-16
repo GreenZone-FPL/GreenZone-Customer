@@ -66,8 +66,20 @@ const OrderScreen = props => {
 
 
   useEffect(() => {
+
     // Fetch categories
-    fetchData(getAllCategories, setCategories);
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data.docs);
+      } catch (error) {
+        console.log(`Error`, error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCategories()
 
     // Fetch toppings
     fetchData(getAllToppings, setToppings);
@@ -124,7 +136,6 @@ const OrderScreen = props => {
   };
 
   const onItemClick = productId => {
-    console.log('Product clicked:', productId);
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 

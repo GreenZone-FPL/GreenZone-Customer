@@ -21,27 +21,68 @@ import { useAppContext } from '../../context/appContext';
 import { AuthGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
-const LoginScreen = ({route, navigation}) => {
+import axios from 'axios';
+
+
+const LoginScreenFake = ({route, navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0779188717');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch} = useAppContext();
-
+  // const {authState, authDispatch} = useAppContext();
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  useEffect(() => {
-    if (authState.message) {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 2000,
-        delay: 2000,
-        useNativeDriver: true,
-      }).start(() => {
-        authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
+  // useEffect(() => {
+  //   if (authState.message) {
+  //     Animated.timing(fadeAnim, {
+  //       toValue: 0,
+  //       duration: 2000,
+  //       delay: 2000,
+  //       useNativeDriver: true,
+  //     }).start(() => {
+  //       authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
+  //     });
+  //   }
+  // }, [authState.message]);
+
+  // Hàm tạo mã OTP 6 chữ số
+  const generateOtp = () => {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log('Mã OTP:', otp); // Log ra console
+    return otp;
+  };
+
+  // Hàm gửi SMS OTP
+  const sendSms = async (phoneNumber, otpCode) => {
+    const API_URL =
+      'https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/';
+    const API_KEY = '7F3DD9B9C2A7A5F9466A718170142E';
+    const SECRET_KEY = 'C6F6C14B91E616D1CB60D66DCF6F39';
+    const BRAND_NAME = 'Baotrixemay';
+
+    const smsData = {
+      ApiKey: API_KEY,
+      Content: `${otpCode} là mã xác minh đăng ký Baotrixemay của bạn`,
+      Phone: phoneNumber,
+      SecretKey: SECRET_KEY,
+      Brandname: BRAND_NAME,
+      SmsType: '2',
+    };
+
+    try {
+      const response = await axios.post(API_URL, smsData, {
+        headers: {'Content-Type': 'application/json'},
       });
+      console.log('Kết quả gửi SMS:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        'Lỗi khi gửi SMS:',
+        error.response ? error.response.data : error.message,
+      );
+      throw error;
     }
-  }, [authState.message]);
+  };
 
   const handleSendOTP = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
@@ -51,16 +92,18 @@ const LoginScreen = ({route, navigation}) => {
     }
 
     setLoading(true);
+    const otp = generateOtp(); // Tạo mã OTP
+
     try {
-      const response = await sendOTP({phoneNumber});
-      if (response) {
-        console.log('otp = ', response.code);
-        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
+      const result = await sendSms(phoneNumber, otp);
+      if (result.CodeResult === '100') {
+      
+        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber, otp}); 
       } else {
-        Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
+        Alert.alert('Thất bại', `Lỗi gửi SMS: ${result.ErrorMessage}`);
       }
     } catch (error) {
-      console.log('error', error);
+      console.log('Gửi SMS thất bại', error);
     } finally {
       setLoading(false);
     }
@@ -68,12 +111,12 @@ const LoginScreen = ({route, navigation}) => {
 
   return (
     <Column style={styles.container}>
-      {authState.message ? (
+      {/* {authState.message ? (
         <Animated.View style={[styles.toast, {opacity: fadeAnim}]}>
           <Icon source="information" size={20} color={colors.primary} />
           <Text style={styles.toastText}>{authState.message}</Text>
         </Animated.View>
-      ) : null}
+      ) : null} */}
 
       <LightStatusBar />
       <Image
@@ -81,7 +124,7 @@ const LoginScreen = ({route, navigation}) => {
         style={{width: '100%', height: 200}}
       />
       <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />
-      <TitleText text="GREEN ZONE" style={styles.title} />
+      <TitleText text="GREEN ZONE Fake" style={styles.title} />
 
       <FlatInput
         value={phoneNumber}
@@ -102,29 +145,12 @@ const LoginScreen = ({route, navigation}) => {
         <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
-
-      {/* <Row style={styles.separatorContainer}>
-        <View style={styles.separator} />
-        <NormalText text="Hoặc" />
-        <View style={styles.separator} />
-      </Row>
-
-      <Pressable style={styles.socialButton}>
-        <AntDesign name="facebook-square" color={colors.white} size={24} />
-        <Text style={styles.socialText}>Tiếp tục bằng Facebook</Text>
-      </Pressable>
-
-      <Pressable style={[styles.socialButton, styles.googleButton]}>
-        <AntDesign name="google" color={colors.primary} size={24} />
-        <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
-      </Pressable> */}
-
       <NormalLoading visible={loading} />
     </Column>
   );
 };
 
-export default LoginScreen;
+export default LoginScreenFake;
 
 const styles = StyleSheet.create({
   container: {

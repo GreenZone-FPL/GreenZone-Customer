@@ -9,7 +9,6 @@ import { ShoppingGraph } from '../../layouts/graphs';
 
 const ProductDetailContent = ({ productId, closeSheet }) => {
 
-    // const { favorites, addToFavorites, removeFromFavorites } = useContext(AppContext);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
     const favorites = []

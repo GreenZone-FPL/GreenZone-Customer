@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -8,8 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon, IconButton} from 'react-native-paper';
-import {getProductDetail} from '../../axios';
+import { Icon, IconButton } from 'react-native-paper';
+import { getProductDetail } from '../../axios';
 import {
   CheckoutFooter,
   NotesList,
@@ -17,14 +17,12 @@ import {
   RadioGroup,
   SelectableGroup,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppContext, useAppContext} from '../../context/appContext';
-import {CartActionTypes} from '../../reducers';
-import {CartManager} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { CartManager } from '../../utils';
 
 const EditCartItemScreen = ({route, navigation}) => {
-  const {favorites, addToFavorites, removeFromFavorites} =
-    useContext(AppContext);
+ 
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -47,7 +45,6 @@ const EditCartItemScreen = ({route, navigation}) => {
         selectedToppings,
         quantity,
       );
-      console.log('Giá tổng mới:', newTotalAmount);
 
       setTotalAmount(newTotalAmount);
     }
@@ -111,9 +108,7 @@ const EditCartItemScreen = ({route, navigation}) => {
             />
 
             <ProductInfo
-              favorites={favorites}
               product={product}
-              addToFavorites={addToFavorites}
               showFullDescription={showFullDescription}
               toggleDescription={() => {
                 setShowFullDescription(!showFullDescription);
@@ -245,13 +240,9 @@ const ProductImage = ({hideModal, product}) => {
 
 const ProductInfo = ({
   product,
-  addToFavorites,
   showFullDescription,
   toggleDescription,
-  favorites,
 }) => {
-  // Kiểm tra xem sản phẩm có trong mảng favorites không
-  const isFavorite = favorites.some(fav => fav._id === product._id); // Hoặc bạn có thể so sánh dựa trên một thuộc tính khác
 
   return (
     <View style={styles.infoContainer}>
@@ -259,10 +250,10 @@ const ProductInfo = ({
         <Text style={styles.productName} numberOfLines={2} ellipsizeMode="tail">
           {product.name}
         </Text>
-        <Pressable onPress={() => addToFavorites(product)}>
+        <Pressable>
           <Icon
-            source={isFavorite ? 'heart' : 'heart-outline'} // Nếu sản phẩm trong favorites thì chọn icon "heart"
-            color={isFavorite ? colors.pink500 : colors.gray700} // Màu sắc tùy thuộc vào trạng thái yêu thích
+            source={'heart-outline'} 
+            color={colors.pink500} 
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
           />
         </Pressable>

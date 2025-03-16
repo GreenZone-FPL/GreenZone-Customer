@@ -1,53 +1,67 @@
 import moment from 'moment/moment';
-import React, {useEffect, useState} from 'react';
-import {
-  Dimensions,
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {getOrderHistoryByStatus} from '../../axios';
-import {
-  Column,
-  CustomTabView,
-  LightStatusBar,
-  NormalHeader,
-  NormalLoading,
-} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {OrderGraph} from '../../layouts/graphs';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import PagerView from 'react-native-pager-view';
+import { getOrdersByStatus } from '../../axios';
+import { ButtonGroup, Column, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { OrderStatus } from '../../constants';
+
+
 
 const width = Dimensions.get('window').width;
 
-const OrderHistoryScreen = ({navigation}) => {
+const orderStatuses = ['', 'completed', 'cancelled'];
+const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
+
+const OrderHistoryScreen = ({ navigation }) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      setLoading(true);
-      try {
-        const data = await getOrderHistoryByStatus();
-        setOrders(data);
-        console.log('Danh sách đơn hàng:', JSON.stringify(data, null, 2));
-      } catch (error) {
-        console.error('Lỗi khi lấy đơn hàng:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchOrders();
+  const { updateOrderMessage } = useAppContext();
+  console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
+
+  const fetchOrders = async (status = '') => {
+    try {
+      setLoading(true);
+      const data = await getOrdersByStatus(status);
+      setOrders(data);
+    } catch (error) {
+      console.error('Lỗi khi lấy đơn hàng:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const status = tabIndex === 0 ? '' : orderStatuses[tabIndex]; // Tab 0 là "Đang thực hiện"
+    fetchOrders(status);
   }, [tabIndex]);
 
-  const handleRepeatOrder = () => {
-    // navigation.navigate(OrderGraph.OrderDetailScreen);
-    navigation.navigate('OrderDetailScreen2');
-  };
+
+  useEffect(() => {
+    if (updateOrderMessage?.status) {
+      const { status, oldStatus } = updateOrderMessage;
+      console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
+  
+      // Nếu trạng thái mới là "Hoàn thành" hoặc "Đã hủy" thì không cần reload
+      if (["completed", "cancelled"].includes(status)) return;
+  
+      const isOldStatusProcessing = !["completed", "cancelled"].includes(oldStatus);
+      const isNewStatusProcessing = !["completed", "cancelled"].includes(status);
+  
+      // Nếu trạng thái cũ thuộc tab "Đang thực hiện" nhưng trạng thái mới KHÔNG còn trong đó => Reload
+      if (isOldStatusProcessing && !isNewStatusProcessing) {
+        fetchOrders(""); // Tab "Đang thực hiện" luôn là ""
+      }
+    }
+  }, [updateOrderMessage.status]);
+  
+  
+
 
   return (
     <View style={styles.container}>
@@ -56,83 +70,60 @@ const OrderHistoryScreen = ({navigation}) => {
         title="Lịch sử đơn hàng"
         onLeftPress={() => navigation.goBack()}
       />
-      <CustomTabView
+
+
+      <ButtonGroup
+        titles={titles}
         tabIndex={tabIndex}
-        setTabIndex={setTabIndex}
-        tabBarConfig={{
-          titles: [
-            'Chờ Thanh Toán',
-            'Chờ xử lý',
-            'Đang thực hiện',
-            'Đã hoàn tất',
-            'Đã huỷ',
-          ],
-          titleActiveColor: colors.primary,
-          titleInActiveColor: colors.gray700,
-        }}>
-        {[
-          'awaitingPayment',
-          'pendingConfirmation',
-          'processing',
-          'completed',
-          'cancelled',
-        ].map((status, index) => (
-          <OrderListView
-            key={index}
-            onItemPress={order =>
-              navigation.navigate(OrderGraph.OrderDetailScreen, {
-                orderId: order._id,
-                })
-            }
-            status={status}
-            orders={orders}
-            loading={loading}
-            handleRepeatOrder={handleRepeatOrder}
-          />
+        onTabChange={setTabIndex}
+      />
+
+
+      <PagerView
+        style={{ flex: 1 }}
+        initialPage={tabIndex}
+        onPageSelected={(e) => setTabIndex(e.nativeEvent.position)}
+      >
+        {orderStatuses.map((status, index) => (
+          <View key={index} style={{}}>
+            <OrderListView
+              orders={orders}
+              loading={loading}
+              onItemPress={(order) =>
+                navigation.navigate('OrderDetailScreen', { orderId: order._id })
+              }
+            />
+          </View>
         ))}
-      </CustomTabView>
+      </PagerView>
     </View>
   );
 };
+
 
 const OrderListView = ({
   status,
   orders,
   loading,
   onItemPress,
-  handleRepeatOrder,
 }) => {
-  const STATUS_GROUPS = {
-    awaitingPayment: ['awaitingPayment'],
-    pendingConfirmation: ['pendingConfirmation'],
-    processing: ['processing', 'readyForPickup', 'shippingOrder'],
-    completed: ['completed'],
-    cancelled: ['cancelled', 'failedDelivery'],
-  };
-
-  const filteredOrders =
-    orders
-      ?.filter(order => STATUS_GROUPS[status]?.includes(order.status))
-      .sort(
-        (a, b) =>
-          new Date(b.fulfillmentDateTime) - new Date(a.fulfillmentDateTime),
-      ) || [];
 
   return (
     <View style={styles.scene}>
       {loading ? (
-        <NormalLoading visible={true} message="Đang tải lịch sử đơn hàng..." />
-      ) : filteredOrders.length > 0 ? (
+        <NormalLoading visible={loading} />
+      ) : orders.length > 0 ? (
         <FlatList
-          data={filteredOrders}
-          keyExtractor={item => item.orderId || item._id}
-          renderItem={({item}) => (
+          showsVerticalScrollIndicator={false}
+          data={orders}
+          keyExtractor={item => item._id}
+          renderItem={({ item }) => (
             <OrderItem
               order={item}
               onPress={onItemPress}
-              handleRepeatOrder={handleRepeatOrder}
             />
           )}
+          contentContainerStyle={{ gap: 5 }}
         />
       ) : (
         <EmptyView message={getEmptyMessage(status)} />
@@ -147,6 +138,8 @@ const getEmptyMessage = status => {
       return 'Chưa có đơn hàng chờ xử lý';
     case 'processing':
       return 'Chưa có đơn hàng đang thực hiện';
+    case 'shippingOrder':
+      return 'Chưa có đơn hàng đang được giao';
     case 'completed':
       return 'Chưa có đơn hàng hoàn thành';
     case 'cancelled':
@@ -154,13 +147,12 @@ const getEmptyMessage = status => {
   }
 };
 
-const OrderItem = ({order, onPress, handleRepeatOrder}) => {
+const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
     if (items.length > 2) {
-      return `${items[0].product.name} - ${items[1].product.name} và ${
-        items.length - 2
-      } sản phẩm khác`;
+      return `${items[0].product.name} - ${items[1].product.name} và ${items.length - 2
+        } sản phẩm khác`;
     }
     return (
       items.map(item => item.product.name).join(' - ') || 'Chưa có sản phẩm'
@@ -180,10 +172,14 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
         <Text style={styles.orderTime}>
           {order?.fulfillmentDateTime
             ? moment(order.fulfillmentDateTime)
-                .utcOffset(7)
-                .format('HH:mm - DD/MM/YYYY')
+              .utcOffset(7)
+              .format('HH:mm - DD/MM/YYYY')
             : 'Chưa có thời gian'}
         </Text>
+
+        <NormalText
+          style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.green500 }}
+          text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
       </Column>
       <Column style={styles.orderColumnEnd}>
         <Text style={styles.orderTotal}>
@@ -191,45 +187,39 @@ const OrderItem = ({order, onPress, handleRepeatOrder}) => {
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
         </Text>
-        {order.status !== 'cancelled' &&
-          order.status !== 'pendingConfirmation' && (
+        {
+          order.status === 'completed' && (
             <TouchableOpacity
               onPress={handleRepeatOrder}
               style={styles.buttonContainer}>
               <Text style={styles.buttonText}>Đặt lại</Text>
             </TouchableOpacity>
-          )}
+          )
+        }
       </Column>
     </TouchableOpacity>
   );
 };
 
-const ItemOrderType = ({deliveryMethod}) => {
+const ItemOrderType = ({ deliveryMethod }) => {
   const imageMap = {
     pickup: require('../../assets/serving-method/takeaway.png'),
     delivery: require('../../assets/serving-method/delivery.png'),
   };
 
   return (
-    <Image
-      style={styles.orderTypeIcon}
-      source={imageMap[deliveryMethod] || imageMap['pickup']} // Mặc định là takeaway nếu không xác định
-    />
+    <Column style={{ alignItems: 'center' }}>
+      <Image
+        style={styles.orderTypeIcon}
+        source={imageMap[deliveryMethod] || imageMap['pickup']}
+      />
+    </Column>
+
   );
 };
 
-const ItemOrderText = ({deliveryMethod}) => {
-  const textMap = {
-    pickup: 'Mang đi',
-    delivery: 'Giao tận nơi',
-  };
 
-  return (
-    <Text style={styles.orderTime}>{textMap[deliveryMethod] || 'Mang đi'}</Text>
-  );
-};
-
-const EmptyView = ({message}) => (
+const EmptyView = ({ message }) => (
   <View style={styles.emptyContainer}>
     <Image
       style={styles.emptyImage}
@@ -241,51 +231,85 @@ const EmptyView = ({message}) => (
 );
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: colors.white},
+  container: { flex: 1, backgroundColor: colors.white },
   scene: {
     width: '100%',
+    flex: 1,
     paddingTop: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.fbBg
   },
-  emptyContainer: {justifyContent: 'center', alignItems: 'center'},
-  emptyImage: {width: width / 2, height: width / 2},
+  emptyContainer: { justifyContent: 'center', alignItems: 'center' },
+  emptyImage: { width: width / 2, height: width / 2 },
   orderItem: {
-    margin: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomColor: colors.gray200,
-    borderBottomWidth: 1,
+    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingHorizontal: 16,
     flexDirection: 'row',
-    gap: GLOBAL_KEYS.GAP_SMALL,
+    gap: GLOBAL_KEYS.GAP_DEFAULT,
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    justifyContent: 'space-between',
   },
   orderColumn: {
-    width: '70%',
+    flex: 1
   },
-  orderColumnEnd: {justifyContent: 'center', alignItems: 'center'},
-  orderName: {fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500'},
-  orderTime: {fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL, color: colors.gray850},
+  orderColumnEnd: { justifyContent: 'center' },
+  orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500' },
+  orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray700 },
   orderTotal: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     color: colors.pink500,
+    textAlign: 'right'
   },
-  buttonContainer: {alignItems: 'center', justifyContent: 'center'},
-  buttonText: {
-    padding: 6,
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
     backgroundColor: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingVertical: 4,
+    // paddingHorizontal: 10
+  },
+  buttonText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.white,
-    fontWeight: 'bold',
-    alignSelf: 'flex-start',
+    // fontWeight: '500',
   },
   orderTypeIcon: {
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     resizeMode: 'cover',
+  },
+
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
+    marginHorizontal: 16,
+  },
+  tabItem: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'transparent',
+  },
+  activeTab: {
+    borderBottomColor: colors.primary,
+  },
+  tabText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  activeText: {
+    color: colors.primary,
+    fontWeight: 'bold',
+  },
+  inactiveText: {
+    color: '#666',
   },
 });
 
