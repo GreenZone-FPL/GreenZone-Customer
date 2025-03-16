@@ -1,14 +1,10 @@
 import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import PagerView from 'react-native-pager-view';
 import { getOrdersByStatus } from '../../axios';
-import { ButtonGroup, Column, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { OrderStatus } from '../../constants';
-
-
 
 const width = Dimensions.get('window').width;
 
@@ -46,21 +42,21 @@ const OrderHistoryScreen = ({ navigation }) => {
     if (updateOrderMessage?.status) {
       const { status, oldStatus } = updateOrderMessage;
       console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
-  
+
       // Nếu trạng thái mới là "Hoàn thành" hoặc "Đã hủy" thì không cần reload
       if (["completed", "cancelled"].includes(status)) return;
-  
+
       const isOldStatusProcessing = !["completed", "cancelled"].includes(oldStatus);
       const isNewStatusProcessing = !["completed", "cancelled"].includes(status);
-  
+
       // Nếu trạng thái cũ thuộc tab "Đang thực hiện" nhưng trạng thái mới KHÔNG còn trong đó => Reload
       if (isOldStatusProcessing && !isNewStatusProcessing) {
         fetchOrders(""); // Tab "Đang thực hiện" luôn là ""
       }
     }
   }, [updateOrderMessage.status]);
-  
-  
+
+
 
 
   return (
@@ -71,21 +67,15 @@ const OrderHistoryScreen = ({ navigation }) => {
         onLeftPress={() => navigation.goBack()}
       />
 
-
-      <ButtonGroup
-        titles={titles}
+      <CustomTabView
         tabIndex={tabIndex}
-        onTabChange={setTabIndex}
-      />
-
-
-      <PagerView
-        style={{ flex: 1 }}
-        initialPage={tabIndex}
-        onPageSelected={(e) => setTabIndex(e.nativeEvent.position)}
+        setTabIndex={setTabIndex}
+        tabBarConfig={{
+          titles: titles,
+        }}
       >
         {orderStatuses.map((status, index) => (
-          <View key={index} style={{}}>
+          <View key={index} style={{flex: 1}}>
             <OrderListView
               orders={orders}
               loading={loading}
@@ -95,7 +85,8 @@ const OrderHistoryScreen = ({ navigation }) => {
             />
           </View>
         ))}
-      </PagerView>
+
+      </CustomTabView>
     </View>
   );
 };
@@ -235,7 +226,7 @@ const styles = StyleSheet.create({
   scene: {
     width: '100%',
     flex: 1,
-    paddingTop: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingTop: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.fbBg
   },
   emptyContainer: { justifyContent: 'center', alignItems: 'center' },
@@ -279,38 +270,7 @@ const styles = StyleSheet.create({
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     resizeMode: 'cover',
-  },
-
-  tabContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray200,
-    marginHorizontal: 16,
-  },
-  tabItem: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'transparent',
-  },
-  activeTab: {
-    borderBottomColor: colors.primary,
-  },
-  tabText: {
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  activeText: {
-    color: colors.primary,
-    fontWeight: 'bold',
-  },
-  inactiveText: {
-    color: '#666',
-  },
+  }
 });
 
 export default OrderHistoryScreen;
