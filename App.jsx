@@ -50,6 +50,7 @@ import { OrderStatus } from './src/constants';
 import socketService from './src/services/socketService';
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import LoginScreenFake from './src/screens/auth/LoginScreenFake';
 import { AppAsyncStorage } from './src/utils';
 const BaseStack = createNativeStackNavigator();
@@ -158,6 +159,15 @@ function AppNavigator({ navigation }) {
               headerShown: false,
             }}
             component={ProductDetailSheet} />
+
+          <BaseStack.Screen
+            name={ShoppingGraph.ProductDetailShort}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
+            component={ProductDetailShort} />
           <BaseStack.Screen
             name={ShoppingGraph.RecipientInfoSheet}
             options={{

@@ -5,6 +5,8 @@ import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
 import { QuantitySelector } from '../buttons/QuantitySelector';
 import { TextFormatter } from '../../utils';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
 
 const CheckoutFooterPropTypes = {
     quantity: PropTypes.number.isRequired,
@@ -46,22 +48,22 @@ export const CheckoutFooter = ({
     backgroundColor = colors.green100
 }) => {
     return (
-        <View style={[styles.footer, { backgroundColor: backgroundColor }]}>
-            <View style={[styles.row, { justifyContent: 'space-between' }]}>
-                <View style={[styles.column, { paddingHorizontal: 0 }]}>
+        <Column style={[styles.footer, { backgroundColor: backgroundColor }]}>
+            <Row style={[styles.row, { justifyContent: 'space-between' }]}>
+                <Column style={[styles.column, { paddingHorizontal: 0 }]}>
                     <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
                     <Text style={styles.totalText}>{TextFormatter.formatCurrency(totalPrice)}</Text>
-                </View>
+                </Column>
 
                 <QuantitySelector
                     quantity={quantity}
                     handlePlus={handlePlus}
                     handleMinus={handleMinus}
                 />
-            </View>
+            </Row>
 
             <PrimaryButton title={buttonTitle} onPress={onButtonPress} />
-        </View>
+        </Column>
     );
 };
 
@@ -74,10 +76,7 @@ const styles = StyleSheet.create({
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         elevation: 4,
         backgroundColor: colors.green100,
-    },
-    infoContainer: {
-        flexDirection: 'column',
-        marginBottom: GLOBAL_KEYS.PADDING_SMALL,
+        gap: 8
     },
     quantityInfoText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
+        // marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
     },
     quantityText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

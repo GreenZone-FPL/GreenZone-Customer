@@ -73,53 +73,43 @@ const FavoriteProductList = ({ navigateProductDetail }) => {
   };
 
   return (
-    <View style={styles.flatListContent}>
+   
       <FlatList
         data={favorites}
         keyExtractor={item => item._id.toString()} // Đảm bảo key hợp lệ
         renderItem={renderItem}
+        contentContainerStyle={{gap: 8}}
       />
-    </View>
+    
   );
 };
 
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
-    flex: 1,
-  },
-  flatListContent: {
-    backgroundColor: colors.grayBg,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.fbBg,
     flex: 1,
   },
   itemContainer: {
     flexDirection: 'row',
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    backgroundColor: 'white',
-    marginBottom: 10,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingVertical: 8,
+    backgroundColor: colors.white,
+    gap: 20
   },
   productImage: {
-    borderRadius: 8,
-    marginRight: 10,
-    flex: 1,
+    borderRadius: 50,
+    width: 100,
     height: 100
   },
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   infoContainer: {
     flex: 2,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    justifyContent: "space-between", // Đẩy icon xuống dưới
-    paddingBottom: 10, // Tạo khoảng cách đẹp hơn
+    justifyContent: "space-between"  
   },
   iconContainer: {
     alignSelf: "flex-end", // Đưa icon về cuối

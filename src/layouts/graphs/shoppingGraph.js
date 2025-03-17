@@ -4,6 +4,7 @@ export const ShoppingGraph = Object.freeze({
   graphName: AppGraph.SHOPPING,
 
   ProductDetailSheet: 'ProductDetailSheet',
+  ProductDetailShort: 'ProductDetailShort',
   EditCartItemScreen: 'EditCartItemScreen',
   CheckoutScreen: 'CheckoutScreen',
   FavoriteScreen: 'FavoriteScreen',
