@@ -13,6 +13,7 @@ import { TextFormatter } from '../../utils';
 
 export const ProductsListHorizontal = ({
   onItemClick,
+  onIconClick,
   products
 }) => {
   return (
@@ -26,7 +27,11 @@ export const ProductsListHorizontal = ({
           data={products}
           keyExtractor={item => item._id.toString()}
           renderItem={({ item }) => (
-            <ItemProduct item={item}  onItemClick={() => onItemClick(item._id)}  />
+            <ItemProduct
+              item={item}
+              onItemClick={() => onItemClick(item._id)}
+              onIconClick={() => onIconClick(item._id)}
+            />
           )}
           horizontal={true}
           contentContainerStyle={{
@@ -39,7 +44,7 @@ export const ProductsListHorizontal = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick }) => {
+const ItemProduct = ({ item, onItemClick, onIconClick }) => {
 
   return (
     <View style={styles.itemProduct}>
@@ -57,8 +62,9 @@ const ItemProduct = ({ item, onItemClick }) => {
         {item.name}
       </Text>
       <TouchableOpacity
+        onPress={onIconClick}
         style={styles.addButtonContainer}
-       >
+      >
         <Icon
           source="plus"
           color={colors.primary}

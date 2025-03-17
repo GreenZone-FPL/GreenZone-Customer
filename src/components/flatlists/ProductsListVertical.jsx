@@ -18,6 +18,7 @@ export const ProductsListVertical = ({
   title = "Món Mới Phải Thử",
   scrollEnabled = false,
   onItemClick,
+  onIconClick,
   products
 }) => {
 
@@ -37,7 +38,11 @@ export const ProductsListVertical = ({
 
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
-          <ItemProduct item={item} onItemClick={() => onItemClick(item._id)} />
+          <ItemProduct
+            item={item}
+            onItemClick={() => onItemClick(item._id)}
+            onIconClick={() => onIconClick(item._id)}
+          />
         )}
         contentContainerStyle={{ gap: 16 }}
         scrollEnabled={scrollEnabled}
@@ -46,8 +51,8 @@ export const ProductsListVertical = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+const ItemProduct = ({ item, onItemClick, onIconClick }) => {
+
 
   return (
     <View style={styles.itemProduct}>
@@ -69,7 +74,7 @@ const ItemProduct = ({ item, onItemClick }) => {
         </Text>
       </View>
       <TouchableOpacity
-
+        onPress={onIconClick}
         style={styles.addButton}>
         <Icon
           source="plus"

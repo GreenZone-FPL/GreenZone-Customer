@@ -1,15 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View , ActivityIndicator} from 'react-native';
-import { Icon, IconButton } from 'react-native-paper';
-
-import { getProductDetail, postFavoriteProduct, deleteFavoriteProduct, getFavoriteProducts } from '../../axios';
+import React, { useEffect, useState } from 'react';
+import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { IconButton } from 'react-native-paper';
+import { deleteFavoriteProduct, getFavoriteProducts, getProductDetail, postFavoriteProduct } from '../../axios';
 import { CheckoutFooter, NotesList, OverlayStatusBar, RadioGroup, SelectableGroup } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { CartManager } from '../../utils';
-import { useAppContext } from '../../context/appContext';
 import ToastDialog from '../../components/dialogs/ToastDialog';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { CartManager } from '../../utils';
 
-import { ToastAndroid } from "react-native";
 
 const ProductDetailSheet = ({ route, navigation }) => {
 
@@ -23,7 +21,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const [totalAmount, setTotalAmount] = useState(0)
     const { productId } = route.params
     const [customNote, setCustomNote] = useState("");
-
     const { cartDispatch } = useAppContext()
 
 
@@ -42,8 +39,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
         return quantity * (basePrice + toppingsAmount);
     };
-
-
 
     useEffect(() => {
 
@@ -69,6 +64,8 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
         fetchProductDetail();
     }, []);
+
+
     return (
         <View style={styles.modalContainer}>
             <OverlayStatusBar />
@@ -77,12 +74,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
                 <>
                     <ScrollView style={styles.modalContent}>
+
                         <ProductImage hideModal={() => navigation.goBack()} product={product} />
 
                         <ProductInfo
                             product={product}
                             showFullDescription={showFullDescription}
-                            toggleDescription={() => { setShowFullDescription(!showFullDescription); }}
+                            toggleDescription={() => { setShowFullDescription(!showFullDescription) }}
                         />
 
                         {
@@ -98,7 +96,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
                                 note="Bắt buộc"
                             />
                         }
-
 
                         {
                             product.topping.length > 0 &&
@@ -132,15 +129,11 @@ const ProductDetailSheet = ({ route, navigation }) => {
                                     style={{ margin: GLOBAL_KEYS.PADDING_DEFAULT }}
                                 />
                             </>
-
                         }
-
-
 
                     </ScrollView>
 
                     <CheckoutFooter
-                       
                         quantity={quantity}
                         handlePlus={() => {
                             if (quantity < 10) {
@@ -162,19 +155,16 @@ const ProductDetailSheet = ({ route, navigation }) => {
                                 price: topping.extraPrice
                             }));
 
-                         
-                            const productPrice = totalAmount/ quantity
+
+                            const productPrice = totalAmount / quantity
                             await CartManager
                                 .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
-
 
                             navigation.goBack()
 
                         }}
                         buttonTitle='Thêm vào giỏ hàng'
                     />
-
-
                 </>
             }
 
@@ -206,9 +196,6 @@ const ProductImage = ({ hideModal, product }) => {
 
                 />
 
-
-
-
             </Pressable>
             <IconButton
                 icon="close"
@@ -230,7 +217,7 @@ const ProductImage = ({ hideModal, product }) => {
     );
 };
 
-const ProductInfo = ({ product, showFullDescription, toggleDescription}) => {
+const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
 
     return (
         <View style={styles.infoContainer}>
@@ -243,10 +230,11 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription}) => {
                 >
                     {product.name}
                 </Text>
+
                 <FavoriteButton productId={product._id} />
+
             </View>
 
-            {/* Product Description */}
             <View style={styles.descriptionContainer}>
                 <Text
                     style={styles.descriptionText}
@@ -260,6 +248,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription}) => {
                     </Text>
                 </Pressable>
             </View>
+
         </View>
     );
 };
@@ -316,9 +305,9 @@ const FavoriteButton = ({ productId }) => {
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                 onPress={toggleFavorite}
             />
-            <ToastDialog 
-                isVisible={isToastVisible} 
-                onHide={() => setIsToastVisible(false)} 
+            <ToastDialog
+                isVisible={isToastVisible}
+                onHide={() => setIsToastVisible(false)}
                 icon={toastIcon}
                 iconColor={toastIconColor}
                 title={toastMessage}
@@ -340,9 +329,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         gap: GLOBAL_KEYS.GAP_SMALL,
         marginTop: StatusBar.currentHeight + 40,
-        flexDirection: 'column',
         flex: 1,
-
     },
     imageContainer: {
         position: 'relative',
@@ -352,7 +339,7 @@ const styles = StyleSheet.create({
     productImage: {
         width: '100%',
         height: '100%',
-        resizeMode: 'stretch'
+        resizeMode: 'cover'
     },
     closeButton: {
         position: 'absolute',
@@ -373,14 +360,6 @@ const styles = StyleSheet.create({
         paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
         paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT
     },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    column: {
-        flexDirection: 'column',
-        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT
-    },
     productName: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -398,66 +377,20 @@ const styles = StyleSheet.create({
         lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
         textAlign: 'justify'
     },
-    title: {
-        fontWeight: 'bold',
-        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT
-    },
+
     textButton: {
         alignSelf: 'flex-start',
         paddingVertical: 4,
     },
-    redText: {
-        color: colors.red800
-    },
+
     textButtonLabel: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.teal900,
     },
 
-    radioGroup: {
-        paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL
-    },
-    toppingList: {
-        paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-        gap: GLOBAL_KEYS.GAP_SMALL,
-        flexDirection: 'column'
-    },
-    toppingItem: {
-        marginBottom: GLOBAL_KEYS.PADDING_SMALL,
-    },
-    footer: {
-        padding: 16,
-        elevation: 5,
-        backgroundColor: colors.white
-    },
     infoContainer: {
         flexDirection: 'column',
         marginBottom: 8,
-    },
-    quantityInfoText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black,
-    },
-    totalText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-        fontWeight: 'bold',
-        color: colors.primary,
-    },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 16,
-    },
-    quantityText: {
-        fontSize: 14,
-        fontWeight: 'bold',
-        color: colors.black,
-        marginHorizontal: 8,
-    },
-    height: {
-        height: '100%',
-        backgroundColor: '#000'
     },
     imageZoomContainer: {
         height: 800,

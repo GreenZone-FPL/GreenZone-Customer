@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -21,7 +21,7 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import {getAllCategories, getAllProducts} from '../../axios';
+import { getAllCategories, getAllProducts } from '../../axios';
 import {
   CategoryMenu,
   DeliveryButton,
@@ -32,13 +32,13 @@ import {
   ProductsListVertical,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {ShoppingGraph} from '../../layouts/graphs';
-import {fetchData, fetchUserLocation} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { ShoppingGraph } from '../../layouts/graphs';
+import { fetchData, fetchUserLocation } from '../../utils';
 
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
   const [currentLocation, setCurrentLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -49,7 +49,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch} = useAppContext();
+  const { cartState, cartDispatch } = useAppContext();
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -77,7 +77,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -108,10 +108,6 @@ const HomeScreen = props => {
     [positions, allProducts],
   );
 
-  const onItemClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
-  };
-
   useEffect(() => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
@@ -122,7 +118,7 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge
         title={currentCategory}
-        onBadgePress={() => {}}
+        onBadgePress={() => { }}
         isHome={false}
       />
 
@@ -143,7 +139,13 @@ const HomeScreen = props => {
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
-          onItemClick={onItemClick}
+          onItemClick={productId => {
+            navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+          }}
+
+          onIconClick={productId => {
+            navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+          }}
         />
 
         <FlatList
@@ -155,12 +157,18 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
                 products={item.products}
-                onItemClick={onItemClick}
+                onItemClick={productId => {
+                  navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+                }}
+
+                onIconClick={productId => {
+                  navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+                }}
               />
             </View>
           )}
@@ -193,7 +201,7 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({IconComponent, title, onPress}) => (
+const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
@@ -206,7 +214,7 @@ const CardCategory = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}>
+        contentContainerStyle={{ gap: 22 }}>
         <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
@@ -262,11 +270,11 @@ const CardCategory = () => {
 
 const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const {navigation} = props;
+  const { navigation } = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', {searchQuery: query});
+      navigation.navigate('', { searchQuery: query });
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
@@ -282,7 +290,7 @@ const Searchbar = props => {
         borderRadius: 4,
         gap: 10,
       }}>
-      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
+      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput

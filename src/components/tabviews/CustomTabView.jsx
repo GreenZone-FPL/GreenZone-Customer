@@ -1,8 +1,8 @@
-import {Tab, TabView} from '@rneui/themed';
+import { Tab, TabView } from '@rneui/themed';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { StyleSheet, View } from 'react-native';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
 const CustomTabViewPropTypes = {
   tabIndex: PropTypes.number,
@@ -35,6 +35,8 @@ const CustomTabViewPropTypes = {
       setTabIndex={setTabIndex}
       tabBarConfig={{
         titles: ['Tab A', 'Tab B', 'Tab C'],
+        titleActiveColor: colors.primary,
+        titleInActiveColor: colors.gray700,
       }}
     >
       <View>
@@ -54,12 +56,11 @@ const CustomTabViewPropTypes = {
 
 export const CustomTabView = ({
   tabIndex = 0,
-  setTabIndex = () => {},
+  setTabIndex = () => { },
   tabBarConfig = {
     titles: ['Tab 1', 'Tab 2', 'Tab 3'],
     titleStyle: {},
     indicatorStyle: {},
-    containerStyle: {},
     tabItemContainerStyle: {},
     titleActiveColor: colors.primary,
     titleInActiveColor: colors.gray700,
@@ -72,16 +73,13 @@ export const CustomTabView = ({
   children,
 }) => {
   return (
-    <>
-      {/* Tab configuration */}
 
+    <>
       <Tab
         value={tabIndex}
         onChange={e => setTabIndex(e)}
         indicatorStyle={[styles.indicatorStyle, tabBarConfig.indicatorStyle]}
-        containerStyle={[styles.tabContainer, tabBarConfig.containerStyle]}
-        variant="primary"
-        tabStyle={{ backgroundColor: 'white' }}
+        variant="secondary"
         scrollable={true}>
         {tabBarConfig.titles.map((title, index) => {
           return (
@@ -96,8 +94,9 @@ export const CustomTabView = ({
                       ? tabBarConfig.titleActiveColor
                       : tabBarConfig.titleInActiveColor,
                 },
-                tabBarConfig.titleStyle,
+                tabBarConfig.titleStyle, 
               ]}
+              
               containerStyle={[
                 styles.tabItemContainer,
                 tabBarConfig.tabItemContainerStyle,
@@ -125,6 +124,7 @@ export const CustomTabView = ({
             </TabView.Item>
           ))}
       </TabView>
+
     </>
   );
 };
@@ -136,14 +136,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     height: 3,
   },
-  tabContainer: {
-    backgroundColor: colors.primary,
-   
-    
-  },
   tabItemContainer: {
     backgroundColor: colors.white,
- 
+
   },
   tabViewContainer: {
     backgroundColor: colors.green100,
@@ -153,8 +148,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   titleStyle: {
-    color: colors.black,
+    color: colors.gray700,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    
+
   },
 });
