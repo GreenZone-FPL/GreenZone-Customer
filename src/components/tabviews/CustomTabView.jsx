@@ -35,6 +35,8 @@ const CustomTabViewPropTypes = {
       setTabIndex={setTabIndex}
       tabBarConfig={{
         titles: ['Tab A', 'Tab B', 'Tab C'],
+        titleActiveColor: colors.primary,
+        titleInActiveColor: colors.gray700,
       }}
     >
       <View>
@@ -92,8 +94,9 @@ export const CustomTabView = ({
                       ? tabBarConfig.titleActiveColor
                       : tabBarConfig.titleInActiveColor,
                 },
-                tabBarConfig.titleStyle,
+                tabBarConfig.titleStyle, 
               ]}
+              
               containerStyle={[
                 styles.tabItemContainer,
                 tabBarConfig.tabItemContainerStyle,
@@ -145,7 +148,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   titleStyle: {
-    color: colors.black,
+    color: colors.gray700,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
 
   },

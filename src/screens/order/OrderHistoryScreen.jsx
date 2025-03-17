@@ -72,10 +72,13 @@ const OrderHistoryScreen = ({ navigation }) => {
         setTabIndex={setTabIndex}
         tabBarConfig={{
           titles: titles,
+          titleActiveColor: colors.primary,
+          titleInActiveColor: colors.gray700,
         }}
+
       >
         {orderStatuses.map((status, index) => (
-          <View key={index} style={{flex: 1}}>
+          <View key={index} style={{ flex: 1 }}>
             <OrderListView
               orders={orders}
               loading={loading}
