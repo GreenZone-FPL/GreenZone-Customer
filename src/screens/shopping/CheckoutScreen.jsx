@@ -417,13 +417,11 @@ const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddres
       {
         deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo ? (
           <>
-            {shippingAddressInfo.description ? (
-              <NormalText text={shippingAddressInfo.description} style={{ lineHeight: 20, color: colors.red }} />
-            ) : (
-              <NormalText text="Không có địa chỉ hợp lệ" style={{ color: colors.red }} />
+            {shippingAddressInfo.description && (
+              <NormalText text={shippingAddressInfo.description} style={{ lineHeight: 20, color: colors.black }} />
             )}
             {shippingAddressInfo.location && (
-              <NormalText text={shippingAddressInfo.location} style={{ lineHeight: 20, color: colors.gray700 }} />
+              <NormalText text={shippingAddressInfo.location} style={{ lineHeight: 20, color: colors.black }} />
             )}
           </>
         ) : (
