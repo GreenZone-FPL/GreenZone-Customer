@@ -25,6 +25,7 @@ const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
 const SEARCH_RADIUS = 2000;
 const RESULT_LIMIT = 10;
+const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
 const SelectAddressScreen = ({navigation, route}) => {
   const [addresses, setAddresses] = useState([]);
@@ -96,33 +97,54 @@ const SelectAddressScreen = ({navigation, route}) => {
       navigation.goBack();
     }
   };
-  const onConfirmSearchAddress = address => {
+  const onConfirmSearchAddress = async address => {
     if (!address) return;
   
-    console.log("Địa chỉ được xác nhận:", address);
-  
-    const terms = [
-      address.specificAddress || '',
-      address.ward || '',
-      address.district || '',
-      address.province || '',
-    ].filter(Boolean).join(', '); // Loại bỏ giá trị undefined hoặc rỗng
-  
-    const updatedAddress = {
-      ...address,
-      terms, // Gán terms sau khi xử lý
-    };
-  
-    setSelectedAddress(updatedAddress);
-  
-    if (isUpdateOrderInfo && cartDispatch) {
-      CartManager.updateOrderInfo(cartDispatch, {
-        shippingAddress: address.place_id,
-        shippingAddressInfo: updatedAddress,
+    try {
+      const response = await axios.get(GOONG_DETAIL_API, {
+        params: {
+          place_id: address.place_id,
+          api_key: GOONG_API_KEY,
+        },
       });
-    }
   
-    navigation.goBack();
+      const { lat, lng } = response.data.result.geometry.location;
+  
+      const terms = [
+        address.specificAddress || '',
+        address.ward || '',
+        address.district || '',
+        address.province || '',
+      ].filter(Boolean).join(', ');
+  
+      const updatedAddress = {
+        ...address,
+        terms,
+        latitude: lat,
+        longitude: lng,
+      };
+      setSelectedAddress(updatedAddress);
+
+      const addressFinish = {
+        id: updatedAddress.place_id,
+        province: updatedAddress.compound.province,
+        district: updatedAddress.compound.district,
+        ward: updatedAddress.compound.commune,
+        latitude: updatedAddress.latitude,
+        longitude: updatedAddress.longitude,
+        location: updatedAddress.description
+      };
+      if (isUpdateOrderInfo && cartDispatch) {
+        CartManager.updateOrderInfo(cartDispatch, {
+          shippingAddress: address.place_id,
+          shippingAddressInfo: addressFinish,
+        });
+      }
+  
+      navigation.goBack();
+    } catch (error) {
+      console.error('❌ Lỗi khi lấy tọa độ:', error);
+    }
   };
   
 
@@ -193,7 +215,7 @@ const SelectAddressScreen = ({navigation, route}) => {
               key={result.place_id}
               address={{
                 place_id: result.place_id,
-                specificAddress: [result.terms[1].value , result.terms[0].value].join(' '),
+                specificAddress: [result.terms[1]?.value , result.terms[0]?.value].join(' '),
                 ward: result.terms[2]?.value || '',
                 district: result.terms[3]?.value || '',
                 province: result.terms[4]?.value || '',
@@ -202,7 +224,6 @@ const SelectAddressScreen = ({navigation, route}) => {
               onPress={() => {
                 setIsSearching(false);
                 setSearchText(result.description);
-                console.log("Địa chỉ đã chọn:", result);
                 onConfirmSearchAddress(result);
               }}
               
