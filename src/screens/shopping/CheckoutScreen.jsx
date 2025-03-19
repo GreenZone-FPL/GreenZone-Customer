@@ -402,6 +402,8 @@ const TimeSection = ({ timeInfo, showDialog }) => {
   );
 };
 const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
+  console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
+
   return (
     <View style={styles.containerItem}>
       <DualTextRow
@@ -413,10 +415,17 @@ const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddres
         onRightPress={chooseUserAddress}
       />
       {
-        deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo?.location ? (
-          <NormalText text={shippingAddressInfo?.location} style={{ lineHeight: 20 }} />
+        deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo ? (
+          <>
+            {shippingAddressInfo.description && (
+              <NormalText text={shippingAddressInfo.description} style={{ lineHeight: 20, color: colors.black }} />
+            )}
+            {shippingAddressInfo.location && (
+              <NormalText text={shippingAddressInfo.location} style={{ lineHeight: 20, color: colors.black }} />
+            )}
+          </>
         ) : (
-          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
+          <NormalText text="Vui lòng chọn địa chỉ giao hàng" style={{ color: colors.orange700 }} />
         )
       }
     </View>
