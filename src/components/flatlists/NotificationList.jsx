@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default NotificationList;
+export default NotificationList

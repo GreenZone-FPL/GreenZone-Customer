@@ -6,11 +6,7 @@ import { CartManager } from '../utils';
 
 export const AppContext = createContext();
 
-
 export let globalAuthDispatch = null;
-
-
-export let appDispatch = null;
 
 export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);

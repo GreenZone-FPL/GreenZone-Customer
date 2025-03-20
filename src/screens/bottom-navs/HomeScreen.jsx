@@ -23,19 +23,22 @@ import {
 } from 'iconsax-react-native';
 import { getAllCategories, getAllProducts } from '../../axios';
 import {
+  BarcodeUser,
   CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NotificationList,
   ProductsListHorizontal,
   ProductsListVertical,
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
+import { AppGraph, ShoppingGraph } from '../../layouts/graphs';
 import { fetchData, fetchUserLocation } from '../../utils';
+
 
 const HomeScreen = props => {
   const { navigation } = props;
@@ -127,14 +130,14 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        {/* 
+         
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
-        <ImageCarousel data={dataBanner} time={2000} />
+        {/* <ImageCarousel data={dataBanner} time={2000} /> */}
 
         <NotificationList onSeeMorePress={() =>
           navigation.navigate(AppGraph.AdvertisingScreen)
-        } /> */}
+        } /> 
         <ProductsListHorizontal
           products={allProducts
             .flatMap(category => category.products)

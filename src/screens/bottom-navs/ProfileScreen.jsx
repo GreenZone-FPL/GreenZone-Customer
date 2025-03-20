@@ -8,7 +8,6 @@ import {
   HeaderWithBadge,
   LightStatusBar,
   NormalLoading,
-  Ani_ModalLoading,
   Row,
   TitleText
 } from '../../components';
@@ -37,16 +36,17 @@ const ProfileScreen = ({ navigation }) => {
   };
 
  
-
   return (
     <SafeAreaView style={styles.container}>
-      <Ani_ModalLoading loading={loading} />
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>
-        <Column style={styles.body}>
-          <TitleText text="Tài khoản" />
+    
 
+        <Column style={styles.body}>
+        
+          <TitleText text="Tài khoản" />
+          <NormalLoading visible={loading} />
           <Column>
             <Row style={styles.accountContainer}>
               <CardAccount
