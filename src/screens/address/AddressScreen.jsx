@@ -117,7 +117,7 @@ const CardLocation = ({ address, onEdit, onDelete }) => {
           <View style={{ flexDirection: 'row', gap: 16, flex: 2, alignItems: 'center' }}>
             <Icon source={'map-marker'} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
             <View>
-              <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{address.specificAddress}</Text>
+              <Text style={{ fontWeight: 'bold', fontSize: 16, width: '60%' }}>{address.specificAddress}</Text>
               <Text style={styles.location}>
                 {address.specificAddress}, {address.ward}, {address.district}, {address.province}
               </Text>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'justify',
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    width: "65%"
+    width: "60%"
   },
   distance: {
     color: colors.gray700,

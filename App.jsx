@@ -20,7 +20,6 @@ import AuthNavigator from './src/layouts/stacks/AuthNavigator';
 import AddressScreen from './src/screens/address/AddressScreen';
 import MapAdressScreen from './src/screens/address/MapAdressScreen';
 import NewAddressScreen from './src/screens/address/NewAddressScreen';
-import SearchAddressScreen from './src/screens/address/SearchAddressScreen';
 import SelectAddressScreen from './src/screens/address/SelectAddressScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
@@ -206,7 +205,6 @@ function AppNavigator({ navigation }) {
           <BaseStack.Screen name={AppGraph.UpdateProfileScreen} component={UpdateProfileScreen} />
           <BaseStack.Screen name={UserGraph.AddressScreen} component={AddressScreen} />
           <BaseStack.Screen name={UserGraph.NewAddressScreen} component={NewAddressScreen} />
-          <BaseStack.Screen name={UserGraph.SearchAddressScreen} component={SearchAddressScreen} />
           <BaseStack.Screen name={UserGraph.MapAdressScreen} component={MapAdressScreen} />
           <BaseStack.Screen name={UserGraph.SelectAddressScreen} component={SelectAddressScreen} />
           <BaseStack.Screen name={UserGraph.SettingScreen} component={SettingScreen} />

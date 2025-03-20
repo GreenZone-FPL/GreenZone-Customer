@@ -65,9 +65,9 @@ export const getAddressById = async (addressId) => {
 };
 
 // gửi lên địa chỉ
-export const postAddress = async ({ specificAddress, ward, district , province, consigneePhone, consigneeName}) => {
+export const postAddress = async ({ specificAddress, ward, district , province, consigneePhone, consigneeName, latitude, longitude}) => {
     try {
-        const body = {specificAddress, ward, district , province, consigneePhone, consigneeName};
+        const body = {specificAddress, ward, district , province, consigneePhone, consigneeName, latitude, longitude};
         const response = await axiosInstance.post("/v1/address/create", body);
         const { data } = response;
         return data;

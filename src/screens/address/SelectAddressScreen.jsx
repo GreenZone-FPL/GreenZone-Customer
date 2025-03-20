@@ -107,32 +107,26 @@ const SelectAddressScreen = ({navigation, route}) => {
           api_key: GOONG_API_KEY,
         },
       });
-  
+      const name = response.data.result.name;
       const { lat, lng } = response.data.result.geometry.location;
-  
-      const terms = [
-        address.specificAddress || '',
-        address.ward || '',
-        address.district || '',
-        address.province || '',
-      ].filter(Boolean).join(', ');
-  
+
       const updatedAddress = {
         ...address,
-        terms,
         latitude: lat,
         longitude: lng,
+        name,
       };
       setSelectedAddress(updatedAddress);
-
       const addressFinish = {
-        id: updatedAddress.place_id,
+        _id: updatedAddress.place_id,
         province: updatedAddress.compound.province,
         district: updatedAddress.compound.district,
         ward: updatedAddress.compound.commune,
-        latitude: updatedAddress.latitude,
-        longitude: updatedAddress.longitude,
-        location: updatedAddress.description
+        latitude: String(updatedAddress.latitude),
+        longitude: String(updatedAddress.longitude),
+        location: updatedAddress.description,
+        specificAddress: updatedAddress.name,
+        isDefault: false,
       };
       if (isUpdateOrderInfo && cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
@@ -169,7 +163,6 @@ const SelectAddressScreen = ({navigation, route}) => {
               sessiontoken: sessionToken,
             },
           });
-          console.log('dia chi: ', JSON.stringify(response.data, null, 2))
           setSearchResults(response.data.predictions || []);
         } catch (error) {
           // console.error('Lỗi tìm kiếm địa chỉ:', error);
