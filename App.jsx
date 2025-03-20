@@ -52,7 +52,7 @@ import socketService from './src/services/socketService';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import LoginScreenFake from './src/screens/auth/LoginScreenFake';
-import { AppAsyncStorage } from './src/utils';
+
 const BaseStack = createNativeStackNavigator();
 
 export default function App() {
@@ -225,10 +225,3 @@ function AppNavigator({ navigation }) {
     </BaseStack.Navigator>
   )
 }
-// export default function AppWrapper() {
-//   return (
-//     <AppContextProvider>
-//       <App />
-//     </AppContextProvider>
-//   );
-// }

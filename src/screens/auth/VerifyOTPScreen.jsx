@@ -29,7 +29,6 @@ const VerifyOTPScreen = ({route, navigation}) => {
       if (userLastName) {
         Toaster.show('Đăng nhập thành công!');
         authDispatch({type: AuthActionTypes.LOGIN});
-        // navigation.navigate(MainGraph.graphName);
       } else {
         authDispatch({type: AuthActionTypes.REGISTER});
         navigation.navigate(AuthGraph.RegisterScreen);
