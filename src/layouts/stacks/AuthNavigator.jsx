@@ -8,7 +8,7 @@ import { AuthGraph } from '../graphs';
 
 const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {
-  const {authState} = useAppContext();
+
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
       {/* <AuthStack.Screen name={'LoginScreenFake'} component={LoginScreenFake} /> */}

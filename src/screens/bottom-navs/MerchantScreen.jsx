@@ -43,7 +43,7 @@ const MerchantScreen = ({ navigation, route }) => {
   const fetchMerchants = async () => {
     try {
       const data = await getAllMerchants();
-      setMerchants(data);
+      setMerchants(data.docs);
     } catch (error) {
       console.log('Error fetching merchants:', error);
     }
