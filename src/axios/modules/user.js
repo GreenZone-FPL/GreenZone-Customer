@@ -34,5 +34,20 @@ export const getFavoriteProducts = async () => {
 };
 
 
+// Cập nhật hồ sơ người dùng
+export const updateUserProfile = async (profileData) => {
+    try {
+        const response = await axiosInstance.put(`/v1/user/profile`, profileData);
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user profile:", error.response?.data || error.message);
+        throw new Error(error.response?.data?.message || "Cập nhật hồ sơ thất bại");
+    }
+};
+
+
+
+
+
 
 

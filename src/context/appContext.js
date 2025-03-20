@@ -12,14 +12,6 @@ export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
   const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState)
 
-  const [selectedAddresses, setSelectedAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [recipientInfo, setRecipientInfo] = useState({
-    home: '',
-    name: '',
-    phone: ''
-  });
-
   const [updateOrderMessage, setUpdateOrderMessage] = useState({ visible: false, order: null });
   const [activeOrders, setActiveOrders] = useState([]);
 
@@ -53,12 +45,6 @@ export const AppContextProvider = ({ children }) => {
 
     return () => { }
   }, [])
-
-
-
-  const addAddress = (address) => {
-    setSelectedAddresses((prev) => [...prev, address]);
-  };
 
 
 

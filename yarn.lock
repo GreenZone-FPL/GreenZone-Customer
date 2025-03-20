@@ -8399,6 +8399,11 @@ react-native-countdown-component@^2.7.1:
     prop-types "^15.5.8"
     sprintf-js "^1.1.1"
 
+react-native-date-picker@^5.0.10:
+  version "5.0.10"
+  resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-5.0.10.tgz"
+  integrity sha512-W4AXcoFXXNFhG2fItRWp5UrgiU6PJM7bW06KDl+NeWPActSzunMQkQWjMuucOsrlyfCudTyV1n3hskHRGzDeow==
+
 react-native-device-info@^14.0.2:
   version "14.0.2"
   resolved "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-14.0.2.tgz"
