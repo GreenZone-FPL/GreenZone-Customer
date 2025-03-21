@@ -7,7 +7,6 @@ export const UserGraph = Object.freeze({
 
   AddressScreen: 'AddressScreen',
   NewAddressScreen: 'NewAddressScreen',
-  SearchAddressScreen: 'SearchAddressScreen',
   SelectAddressScreen: 'SelectAddressScreen',
   SettingScreen: 'SettingScreen',
 

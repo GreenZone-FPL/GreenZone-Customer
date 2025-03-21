@@ -1,22 +1,28 @@
 import axiosInstanceUpload from "../axiosInstanceUpload";
 
-export const uploadFile = async (file) => {
+export const uploadFile = async (fileUri) => {
     try {
-        if (!file) {
+        if (!fileUri) {
             console.error("uploadFile: No file provided");
             return null;
         }
 
+        const fileName = fileUri.split('/').pop();
+        const fileType = fileName.split('.').pop();
+
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", {
+            uri: fileUri,
+            type: `image/${fileType}`,  // Định dạng ảnh (image/png, image/jpeg, ...)
+            name: fileName,
+        });
 
-        // Vì axiosInstance mặc định gửi JSON, nên cần tạo instance mới cho multipart/form-data
-        const response = await axiosInstanceUpload
-            .post("/file/image/upload", formData);
+        const response = await axiosInstanceUpload.post("/file/image/upload", formData);
+        return `https://greenzone.motcaiweb.io.vn${response.data.url}`; // Trả về đường dẫn ảnh từ API
 
-        return response.data
+    
     } catch (error) {
-        console.error("Error", error);
+        console.error("Error uploading file:", error.response?.data || error);
         throw error;
     }
 };

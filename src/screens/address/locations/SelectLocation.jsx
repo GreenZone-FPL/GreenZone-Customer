@@ -1,15 +1,13 @@
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
-import { DialogBasic, PrimaryButton, FlatInput } from '../../../components';
 import { GLOBAL_KEYS, colors } from '../../../constants';
 import { getProvinces, getDistricts, getWards } from '../../../axios';
 
-const SelectLocation = ({ onHide, onSelectAddress, initialAddress = {} }) => {
+const SelectLocation = ({initialAddress = {} , onAddressChange}) => {
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [wards, setWards] = useState([]);
-    const [specificAddress, setSpecificAddress] = useState(initialAddress.specificAddress || '');
     const [selectedProvince, setSelectedProvince] = useState(initialAddress.selectedProvince?.value || null);
     const [selectedDistrict, setSelectedDistrict] = useState(initialAddress.selectedDistrict?.value || null);
     const [selectedWard, setSelectedWard] = useState(initialAddress.selectedWard?.value || null);
@@ -44,6 +42,16 @@ const SelectLocation = ({ onHide, onSelectAddress, initialAddress = {} }) => {
         }
     }, [selectedDistrict]);
 
+
+    useEffect(() => {
+        if (onAddressChange) {
+            onAddressChange({
+                selectedProvince: provinces.find(p => p.value === selectedProvince)?.label || null,
+                selectedDistrict: districts.find(d => d.value === selectedDistrict)?.label || null,
+                selectedWard: wards.find(w => w.value === selectedWard)?.label || null,
+            });
+        }
+    }, [selectedProvince, selectedDistrict, selectedWard]);
     const handleProvinceChange = async (value) => {
         setSelectedProvince(value);
         setSelectedDistrict(null);
@@ -81,30 +89,9 @@ const SelectLocation = ({ onHide, onSelectAddress, initialAddress = {} }) => {
             setIsLoading(false);
         }
     };
-
-    const handleConfirm = () => {
-        if (!selectedProvince || !selectedDistrict || !selectedWard || !specificAddress) return;
-        
-        const province = provinces.find(p => p.value === selectedProvince);
-        const district = districts.find(d => d.value === selectedDistrict);
-        const ward = wards.find(w => w.value === selectedWard);
-    
-        const addressObject = {
-            specificAddress,
-            selectedProvince: province ? { label: province.label, value: province.value } : { label: '---', value: '' },
-            selectedDistrict: district ? { label: district.label, value: district.value } : { label: '---', value: '' },
-            selectedWard: ward ? { label: ward.label, value: ward.value } : { label: '---', value: '' }
-        };
-        onSelectAddress(addressObject);
-        
-        onHide(); 
-    };
-    
-    const isButtonDisabled = !selectedProvince || !selectedDistrict || !selectedWard || !specificAddress;
-
     return (
-        <DialogBasic isVisible={true} onHide={onHide} title="Chọn địa chỉ">
-            <View style={styles.content}>
+        
+            <View>
                 <Dropdown
                     data={provinces}
                     labelField="label"
@@ -140,25 +127,10 @@ const SelectLocation = ({ onHide, onSelectAddress, initialAddress = {} }) => {
                     disable={wards.length === 0}
                     selectedTextStyle={styles.dropdownText}
                 />
-                <FlatInput
-                    label={'Địa chỉ chi tiết'}
-                    setValue={setSpecificAddress}
-                    value={specificAddress}
-                    placeholder='Ngách/Hẻm/...' />
-                <PrimaryButton
-                    title={'Xác nhận'}
-                    onPress={handleConfirm}
-                    disabled={isButtonDisabled}
-                    style={StyleSheet.flatten([styles.button, isButtonDisabled && styles.buttonDisabled])}
-                />
             </View>
-        </DialogBasic>
     );
 };
 const styles = StyleSheet.create({
-    content: {
-        padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    },
     dropdown: {
         marginBottom: 20,
         borderWidth: 1,
