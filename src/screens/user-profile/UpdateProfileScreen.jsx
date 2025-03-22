@@ -72,7 +72,6 @@ const UpdateProfileScreen = ({navigation, route}) => {
       const newImage = response?.assets[0]?.uri;
       if (newImage) {
         setSelectedImages([newImage]);
-        uploadFile(newImage);
       }
     });
     setImagePickerVisible(false);
@@ -85,7 +84,6 @@ const UpdateProfileScreen = ({navigation, route}) => {
       const newImage = response.assets?.[0]?.uri;
       if (newImage) {
         setSelectedImages([newImage]);
-        uploadFile(newImage);
       }
     });
     setImagePickerVisible(false);

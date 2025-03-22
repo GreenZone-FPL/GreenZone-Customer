@@ -22,7 +22,8 @@ const PayOsScreen = () => {
   const navigation = useNavigation();
   const [paymentLinkId, setPaymentLinkId] = useState('');
 
-  const { orderId, totalPrice } = route.params || {};
+  const { orderId, totalPrice} = route.params || {};
+  console.log(orderId)
 
   useEffect(() => {
     if (totalPrice) {

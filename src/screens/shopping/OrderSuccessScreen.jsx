@@ -7,7 +7,7 @@ import { MainGraph, OrderGraph } from "../../layouts/graphs";
 import { useAppContext } from "../../context/appContext";
 
 const OrderSuccessScreen = ({ route, navigation }) => {
-    const { order } = route.params || null
+    const { order, orderId } = route.params || null
     const { updateOrderMessage } = useAppContext();
     const [showButtons, setShowButtons] = useState(false);
 
@@ -15,10 +15,10 @@ const OrderSuccessScreen = ({ route, navigation }) => {
         const timer = setTimeout(() => {
             setShowButtons(true);
         }, 2000);
-
         return () => clearTimeout(timer);
     }, []);
 
+   console.log('id:' , orderId)
     return (
         <Column style={styles.container}>
 
@@ -39,7 +39,7 @@ const OrderSuccessScreen = ({ route, navigation }) => {
 
                         <TouchableOpacity
                             style={[styles.button, styles.orderButton]}
-                            onPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: order?.data?._id })}
+                            onPress={() => navigation.navigate(OrderGraph.OrderDetailScreen, { orderId: order?.data?._id || orderId })}
                         >
                             <Text style={[styles.buttonText, { color: colors.primary }]}>Đơn mua</Text>
                         </TouchableOpacity>
