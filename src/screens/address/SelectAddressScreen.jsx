@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 4,
+    elevation: 1.5,
     marginBottom: 16,
     gap: 12,
   },
