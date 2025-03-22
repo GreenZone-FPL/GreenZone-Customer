@@ -13,6 +13,7 @@ const OrderDetailScreen = props => {
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionDialogVisible, setActionDialogVisible] = useState(false)
+  const [paymentDialogVisible, setPaymentDialogVisible] = useState(false)
 
   const { updateOrderMessage } = useAppContext();
   console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
@@ -117,7 +118,7 @@ const OrderDetailScreen = props => {
               style={{ marginHorizontal: 16, flex: 1 }}
               title='Thanh toán'
               onPress={() => {
-                navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })
+                setPaymentDialogVisible(true)
               }} />
           }
 
@@ -131,7 +132,14 @@ const OrderDetailScreen = props => {
         </Row>
 
       </ScrollView>
-
+      <ActionDialog
+        visible={paymentDialogVisible}
+        title={'Thanh toán'}
+        content={'Thanh toán đơn hàng này'}
+        approveText={'Đồng ý'}
+        cancelText={'Chọn lại phương thức thanh toán'}
+        // onApprove={navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })}
+      />
       <ActionDialog
         visible={actionDialogVisible}
         title="Xác nhận"
@@ -439,6 +447,7 @@ const OrderId = ({ _id }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

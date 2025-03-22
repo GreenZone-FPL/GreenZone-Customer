@@ -53,7 +53,14 @@ const SelectAddressScreen = ({navigation, route}) => {
         setLoading(false);
       }
     };
-    fetchAddress();
+  
+    fetchAddress(); // Gọi ngay khi component mount
+  
+    const interval = setInterval(() => {
+      fetchAddress();
+    }, 2000); // Cập nhật mỗi 2 giây
+  
+    return () => clearInterval(interval); // Xóa interval khi component unmount
   }, []);
 
   // Lấy vị trí người dùng
@@ -234,6 +241,13 @@ const SelectAddressScreen = ({navigation, route}) => {
         ) : (
           <Text style={styles.emptyText}>Không có địa chỉ nào</Text>
         )}
+      {/* Nút Thêm ở góc dưới bên trái */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
+        <Icon source="plus" size={30} color={colors.primary} />
+        <Text style={{textAlign: 'center'}}>Thêm địa chỉ mới</Text>
+      </TouchableOpacity>
       </ScrollView>
 
       {/* Nút Xác nhận */}
@@ -245,12 +259,7 @@ const SelectAddressScreen = ({navigation, route}) => {
         </TouchableOpacity>
       )}
 
-      {/* Nút Thêm ở góc dưới bên trái */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
-        <Icon source="plus" size={30} color={colors.white} />
-      </TouchableOpacity>
+
     </SafeAreaView>
   );
 };
@@ -355,16 +364,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   fab: {
-    position: 'absolute',
-    backgroundColor: colors.primary,
-    width: 30,
-    height: 30,
-    borderRadius: 28,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
-    bottom: 100,
-    right: 16,
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    shadowColor: colors.black,
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+    marginBottom: 16,
+    gap: 12,
   },
   searchInput: {
     height: 40,
