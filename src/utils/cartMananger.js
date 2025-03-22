@@ -34,6 +34,8 @@ export const CartManager = (() => {
             note: cartState.note,
             totalPrice: cartState.totalPrice,
             paymentMethod: cartState.paymentMethod,
+            consigneeName: cartState.shippingAddressInfo.consigneeName,
+            consigneePhone: cartState.shippingAddressInfo.consigneePhone,
             store: cartState.store,
             shippingAddress: cartState.shippingAddress,
             voucher: cartState.voucher,
@@ -46,13 +48,16 @@ export const CartManager = (() => {
                     quantity: t.quantity,
                     price: t.price
                 }))
-            }))
+            })),
+            latitude: cartState.shippingAddressInfo.latitude,
+            longitude: cartState.shippingAddressInfo.longitude,
         };
         if (!cartState.voucher) {
             delete deliveryOrder.voucher
         }
         return deliveryOrder
     }
+
 
 
     const setUpPickupOrder = (cartState) => {
