@@ -47,6 +47,8 @@ export const CartManager = (() => {
                     price: t.price
                 }))
             }))
+            
+
         };
         if (!cartState.voucher) {
             delete deliveryOrder.voucher
