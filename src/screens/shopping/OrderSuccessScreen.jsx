@@ -18,7 +18,7 @@ const OrderSuccessScreen = ({ route, navigation }) => {
         return () => clearTimeout(timer);
     }, []);
 
-   console.log('id:' , orderId)
+//    console.log('id:' , orderId)
     return (
         <Column style={styles.container}>
 

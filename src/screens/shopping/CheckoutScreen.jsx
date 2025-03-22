@@ -402,7 +402,7 @@ const TimeSection = ({ timeInfo, showDialog }) => {
   );
 };
 const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
-  console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
+  // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
 
   return (
     <View style={styles.containerItem}>
@@ -460,6 +460,16 @@ const StoreAddress = ({ storeInfo, chooseMerchant }) => {
 
 
 const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
+  const { shippingAddressInfo } = cartState || {};
+  const { consigneeName, consigneePhone } = shippingAddressInfo || {};
+
+  let recipientText = "Vui lòng chọn địa chỉ giao hàng";
+  if (cartState?.shippingAddress) {
+    recipientText =
+      consigneeName && consigneePhone
+        ? `${consigneeName} | ${consigneePhone}`
+        : "Vui lòng nhập thông tin người nhận";
+  }
 
   return (
     <View style={styles.containerItem}>
@@ -467,17 +477,20 @@ const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
         style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Thông tin người nhận"
         rightText="Thay đổi"
-        leftTextStyle={{ color: colors.black, fontWeight: '600' }}
+        leftTextStyle={{ color: colors.black, fontWeight: "600" }}
         rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
       />
-      {
-        cartState?.shippingAddress ?
-          <NormalText text={`${cartState?.shippingAddressInfo?.consigneeName} | ${cartState.shippingAddressInfo?.consigneePhone}`} style={{ lineHeight: 20 }} /> :
-          <NormalText text='Vui lòng chọn địa chỉ giao hàng' style={{ color: colors.orange700 }} />
-      }
-
-    </View >
+      <NormalText
+        text={recipientText}
+        style={{
+          lineHeight: 20,
+          color: recipientText === "Vui lòng chọn địa chỉ giao hàng" || recipientText === "Vui lòng nhập thông tin người nhận"
+            ? colors.orange700
+            : colors.black,
+        }}
+      />
+    </View>
   );
 };
 
@@ -572,13 +585,6 @@ const paymentMethods = [
     value: 'PayOs',
     paymentMethod: PaymentMethod.ONLINE.value
   },
-
-  {
-    name: 'Momo',
-    image: require('../../assets/images/logo_momo.png'),
-    value: 'momo',
-    paymentMethod: PaymentMethod.ONLINE.value
-  },
   {
     name: 'ZaloPay',
     image: require('../../assets/images/logo_zalopay.png'),
@@ -604,33 +610,6 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
     } else {
       Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
     }
-    const paymentMethods = [
-      {
-        name: 'Thanh toán khi nhận hàng',
-        image: require('../../assets/images/logo_vnd.png'),
-        value: 'cash',
-        paymentMethod: PaymentMethod.COD.value
-      },
-      {
-        name: 'ZaloPay',
-        image: require('../../assets/images/logo_zalopay.png'),
-        value: 'zalopay',
-        paymentMethod: PaymentMethod.ONLINE.value
-      },
-      {
-        name: 'PayOs',
-        image: require('../../assets/images/logo_payos.png'),
-        value: 'PayOs',
-        paymentMethod: PaymentMethod.ONLINE.value
-      },
-      {
-        name: 'Thanh toán bằng thẻ',
-        image: require('../../assets/images/logo_card.png'),
-        value: 'Card',
-        paymentMethod: PaymentMethod.ONLINE.value
-      },
-    ];
-
   };
 
   return (
