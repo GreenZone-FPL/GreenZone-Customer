@@ -490,15 +490,10 @@ const TimeSection = ({timeInfo, showDialog}) => {
     </Column>
   );
 };
-const ShippingAddress = ({
-  deliveryMethod,
-  shippingAddressInfo,
-  chooseUserAddress,
-}) => {
-  console.log(
-    'Dữ liệu shippingAddressInfo:',
-    JSON.stringify(shippingAddressInfo, null, 2),
-  );
+
+const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
+  // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
+
 
   return (
     <View style={styles.containerItem}>
@@ -565,6 +560,7 @@ const StoreAddress = ({storeInfo, chooseMerchant}) => {
   );
 };
 
+<<<<<<< HEAD
 const RecipientInfo = ({cartState, cartDispatch, onChangeRecipientInfo}) => {
   const [user, setUser] = useState(null);
 
@@ -601,20 +597,43 @@ const RecipientInfo = ({cartState, cartDispatch, onChangeRecipientInfo}) => {
     `${user.lastName} ${user.firstName}`;
   const consigneePhone =
     cartState?.shippingAddressInfo?.consigneePhone || user.phoneNumber;
+=======
+const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
+  const { shippingAddressInfo } = cartState || {};
+  const { consigneeName, consigneePhone } = shippingAddressInfo || {};
+
+  let recipientText = "Vui lòng chọn địa chỉ giao hàng";
+  if (cartState?.shippingAddress) {
+    recipientText =
+      consigneeName && consigneePhone
+        ? `${consigneeName} | ${consigneePhone}`
+        : "Vui lòng nhập thông tin người nhận";
+  }
+>>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
 
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{marginVertical: 0, marginBottom: 8}}
+        style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Thông tin người nhận"
         rightText="Thay đổi"
-        leftTextStyle={{color: colors.black, fontWeight: '600'}}
-        rightTextStyle={{color: colors.primary}}
+        leftTextStyle={{ color: colors.black, fontWeight: "600" }}
+        rightTextStyle={{ color: colors.primary }}
         onRightPress={onChangeRecipientInfo}
       />
       <NormalText
+<<<<<<< HEAD
         text={`${consigneeName} | ${consigneePhone}`}
         style={{lineHeight: 20}}
+=======
+        text={recipientText}
+        style={{
+          lineHeight: 20,
+          color: recipientText === "Vui lòng chọn địa chỉ giao hàng" || recipientText === "Vui lòng nhập thông tin người nhận"
+            ? colors.orange700
+            : colors.black,
+        }}
+>>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
       />
     </View>
   );
@@ -758,13 +777,6 @@ const paymentMethods = [
     value: 'PayOs',
     paymentMethod: PaymentMethod.ONLINE.value,
   },
-
-  {
-    name: 'Momo',
-    image: require('../../assets/images/logo_momo.png'),
-    value: 'momo',
-    paymentMethod: PaymentMethod.ONLINE.value,
-  },
   {
     name: 'ZaloPay',
     image: require('../../assets/images/logo_zalopay.png'),
@@ -794,32 +806,6 @@ const PaymentMethodView = ({cartDispatch, cartState}) => {
         'Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng',
       );
     }
-    const paymentMethods = [
-      {
-        name: 'Thanh toán khi nhận hàng',
-        image: require('../../assets/images/logo_vnd.png'),
-        value: 'cash',
-        paymentMethod: PaymentMethod.COD.value,
-      },
-      {
-        name: 'ZaloPay',
-        image: require('../../assets/images/logo_zalopay.png'),
-        value: 'zalopay',
-        paymentMethod: PaymentMethod.ONLINE.value,
-      },
-      {
-        name: 'PayOs',
-        image: require('../../assets/images/logo_payos.png'),
-        value: 'PayOs',
-        paymentMethod: PaymentMethod.ONLINE.value,
-      },
-      {
-        name: 'Thanh toán bằng thẻ',
-        image: require('../../assets/images/logo_card.png'),
-        value: 'Card',
-        paymentMethod: PaymentMethod.ONLINE.value,
-      },
-    ];
   };
 
   return (
