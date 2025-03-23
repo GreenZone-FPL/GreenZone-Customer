@@ -30,7 +30,7 @@ const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 const SelectAddressScreen = ({navigation, route}) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const {isUpdateOrderInfo} = route.params || false;
@@ -53,13 +53,13 @@ const SelectAddressScreen = ({navigation, route}) => {
         setLoading(false);
       }
     };
-  
+
     fetchAddress(); // Gọi ngay khi component mount
-  
+
     const interval = setInterval(() => {
       fetchAddress();
     }, 2000); // Cập nhật mỗi 2 giây
-  
+
     return () => clearInterval(interval); // Xóa interval khi component unmount
   }, []);
 
@@ -106,7 +106,7 @@ const SelectAddressScreen = ({navigation, route}) => {
   };
   const onConfirmSearchAddress = async address => {
     if (!address) return;
-  
+
     try {
       const response = await axios.get(GOONG_DETAIL_API, {
         params: {
@@ -115,7 +115,7 @@ const SelectAddressScreen = ({navigation, route}) => {
         },
       });
       const name = response.data.result.name;
-      const { lat, lng } = response.data.result.geometry.location;
+      const {lat, lng} = response.data.result.geometry.location;
 
       const updatedAddress = {
         ...address,
@@ -141,14 +141,12 @@ const SelectAddressScreen = ({navigation, route}) => {
           shippingAddressInfo: addressFinish,
         });
       }
-  
+
       navigation.goBack();
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
   };
-  
-
 
   // Tìm kiếm
   const handleSearch = text => {
@@ -209,45 +207,50 @@ const SelectAddressScreen = ({navigation, route}) => {
       )}
 
       <ScrollView style={styles.content}>
-        {isSearching && searchResults.length > 0 ? (
-          searchResults.map(result => (
-            <CardSearch
-              key={result.place_id}
-              address={{
-                place_id: result.place_id,
-                specificAddress: [result.terms[1]?.value , result.terms[0]?.value].join(' '),
-                ward: result.terms[2]?.value || '',
-                district: result.terms[3]?.value || '',
-                province: result.terms[4]?.value || '',
-              }}
-              isSelected={selectedAddress?.place_id === result.place_id}
-              onPress={() => {
-                setIsSearching(false);
-                setSearchText(result.description);
-                onConfirmSearchAddress(result);
-              }}
-              
-            />
-          ))
-        ) : addresses.length > 0 ? (
-          addresses.map(address => (
-            <Card
-              address={address}
-              key={address._id}
-              isSelected={selectedAddress === address}
-              onPress={() => setSelectedAddress(address)}
-            />
-          ))
-        ) : (
-          <Text style={styles.emptyText}>Không có địa chỉ nào</Text>
-        )}
-      {/* Nút Thêm ở góc dưới bên trái */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
-        <Icon source="plus" size={30} color={colors.primary} />
-        <Text style={{textAlign: 'center'}}>Thêm địa chỉ mới</Text>
-      </TouchableOpacity>
+        {
+          isSearching &&
+            searchResults.length > 0 &&
+            searchResults.map(result => (
+              <CardSearch
+                key={result.place_id}
+                address={{
+                  place_id: result.place_id,
+                  specificAddress: [
+                    result.terms[1]?.value,
+                    result.terms[0]?.value,
+                  ].join(' '),
+                  ward: result.terms[2]?.value || '',
+                  district: result.terms[3]?.value || '',
+                  province: result.terms[4]?.value || '',
+                }}
+                isSelected={selectedAddress?.place_id === result.place_id}
+                onPress={() => {
+                  setIsSearching(false);
+                  setSearchText(result.description);
+                  onConfirmSearchAddress(result);
+                }}
+              />
+            ))
+          // ) : addresses.length > 0 ? (
+          //   addresses.map(address => (
+          //     <Card
+          //       address={address}
+          //       key={address._id}
+          //       isSelected={selectedAddress === address}
+          //       onPress={() => setSelectedAddress(address)}
+          //     />
+          //   ))
+          // ) : (
+          //   <Text style={styles.emptyText}>Không có địa chỉ nào</Text>
+          // )
+        }
+        {/* Nút Thêm ở góc dưới bên trái */}
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
+          <Icon source="plus" size={30} color={colors.primary} />
+          <Text style={{textAlign: 'center'}}>Thêm địa chỉ mới</Text>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Nút Xác nhận */}
@@ -258,8 +261,6 @@ const SelectAddressScreen = ({navigation, route}) => {
           <Text style={styles.confirmText}>Xác nhận</Text>
         </TouchableOpacity>
       )}
-
-
     </SafeAreaView>
   );
 };
@@ -286,7 +287,7 @@ const Card = ({address, isSelected, onPress}) => (
 const CardSearch = ({address, isSelected, onPress}) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
-    onPress={() =>  onPress(address)}>
+    onPress={() => onPress(address)}>
     <Icon
       source="google-maps"
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}

@@ -29,8 +29,10 @@ export const CartManager = (() => {
       note: cartState.note,
       totalPrice: cartState.totalPrice,
       paymentMethod: cartState.paymentMethod,
+      consigneeName: cartState.consigneeName,
+      consigneePhone: cartState.consigneePhone,
       store: cartState.store,
-      shippingAddress: cartState.shippingAddress,
+      shippingAddress: cartState.shippingAddressInfo.location,
       voucher: cartState.voucher,
       orderItems: cartState.orderItems.map(item => ({
         variant: item.variant,
@@ -42,6 +44,8 @@ export const CartManager = (() => {
           price: t.price,
         })),
       })),
+      latitude: cartState.shippingAddressInfo.latitude.toString(),
+      longitude: cartState.shippingAddressInfo.longitude.toString(),
     };
     if (!cartState.voucher) {
       delete deliveryOrder.voucher;
@@ -116,7 +120,6 @@ export const CartManager = (() => {
       });
 
       const newCart = {...cart, ...orderDetails};
-
       await AppAsyncStorage.storeData('CART', newCart);
       return newCart;
     } catch (error) {
@@ -265,26 +268,6 @@ export const CartManager = (() => {
     }
   };
 
-  const addMerchantLocation = async cartState => {
-    // Kiểm tra nếu phương thức giao hàng là 'delivery'
-    if (cartState?.deliveryMethod === 'delivery') {
-      try {
-        let cart = await AppAsyncStorage.readData('CART', {});
-
-        const updatedCart = {
-          ...cart,
-          storeInfo: cartState?.storeInfo || cart?.storeInfo,
-          store: cartState?.store || cart?.store,
-        };
-
-        await AppAsyncStorage.storeData('CART', updatedCart);
-
-        console.log('Thông tin cửa hàng đã được cập nhật thành công');
-      } catch (error) {
-        console.log('Cập nhật thông tin cửa hàng thất bại', error);
-      }
-    }
-  };
   return {
     setupDeliveryOrder,
     setUpPickupOrder,
@@ -297,6 +280,5 @@ export const CartManager = (() => {
     removeFromCart,
     updateCartItem,
     clearCart,
-    // addMerchantLocation,
   };
 })();

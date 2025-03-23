@@ -56,6 +56,7 @@ import {
   fetchUserLocation,
   LocationManager,
 } from '../../utils';
+import {CartActionTypes} from '../../reducers';
 
 const {width} = Dimensions.get('window');
 const CheckoutScreen = ({navigation}) => {
@@ -157,7 +158,6 @@ const CheckoutScreen = ({navigation}) => {
               ) : (
                 <StoreAddress
                   storeInfo={cartState?.storeInfo}
-                  s
                   chooseMerchant={() => {
                     navigation.navigate(BottomGraph.MerchantScreen, {
                       isUpdateOrderInfo: true,
@@ -179,6 +179,7 @@ const CheckoutScreen = ({navigation}) => {
                   />
                   {cartState?.shippingAddressInfo && (
                     <RecipientInfo
+                      cartDispatch={cartDispatch}
                       cartState={cartState}
                       onChangeRecipientInfo={() =>
                         setDialogRecipientInfoVisible(true)
@@ -564,7 +565,43 @@ const StoreAddress = ({storeInfo, chooseMerchant}) => {
   );
 };
 
-const RecipientInfo = ({cartState, onChangeRecipientInfo}) => {
+const RecipientInfo = ({cartState, cartDispatch, onChangeRecipientInfo}) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userData = await AppAsyncStorage.readData('user');
+        if (userData) {
+          setUser(userData);
+
+          if (!cartState?.shippingAddressInfo?.consigneeName) {
+            cartDispatch({
+              type: CartActionTypes.UPDATE_ORDER_INFO,
+              payload: {
+                consigneeName: `${userData.lastName} ${userData.firstName}`,
+                consigneePhone: userData.phoneNumber,
+              },
+            });
+          }
+        }
+      } catch (error) {
+        console.error(
+          'Lỗi khi lấy thông tin người dùng từ AsyncStorage:',
+          error,
+        );
+      }
+    })();
+  }, []);
+
+  if (!user) return null; // 🔥 Không render gì nếu chưa có user
+
+  const consigneeName =
+    cartState?.shippingAddressInfo?.consigneeName ||
+    `${user.lastName} ${user.firstName}`;
+  const consigneePhone =
+    cartState?.shippingAddressInfo?.consigneePhone || user.phoneNumber;
+
   return (
     <View style={styles.containerItem}>
       <DualTextRow
@@ -575,17 +612,10 @@ const RecipientInfo = ({cartState, onChangeRecipientInfo}) => {
         rightTextStyle={{color: colors.primary}}
         onRightPress={onChangeRecipientInfo}
       />
-      {cartState?.shippingAddress ? (
-        <NormalText
-          text={`${cartState?.shippingAddressInfo?.consigneeName} | ${cartState.shippingAddressInfo?.consigneePhone}`}
-          style={{lineHeight: 20}}
-        />
-      ) : (
-        <NormalText
-          text="Vui lòng chọn địa chỉ giao hàng"
-          style={{color: colors.orange700}}
-        />
-      )}
+      <NormalText
+        text={`${consigneeName} | ${consigneePhone}`}
+        style={{lineHeight: 20}}
+      />
     </View>
   );
 };

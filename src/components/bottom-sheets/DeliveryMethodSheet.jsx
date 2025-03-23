@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
-import { Column } from '../containers/Column';
-import { Row } from '../containers/Row';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import {Image, Modal, Pressable, StyleSheet, Text, View} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {DeliveryMethod, GLOBAL_KEYS, colors} from '../../constants';
+import {Column} from '../containers/Column';
+import {Row} from '../containers/Row';
+import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
 
 const DeliveryMethodSheetPropTypes = {
   visible: PropTypes.bool.isRequired,
@@ -20,7 +20,6 @@ export const DeliveryMethodSheet = ({
   onClose,
   onSelect,
 }) => {
-
   return (
     <Modal
       visible={visible}
@@ -47,27 +46,40 @@ export const DeliveryMethodSheet = ({
             <Pressable
               style={[
                 styles.optionItem,
-                selectedOption.label === DeliveryMethod.PICK_UP.label && styles.selectedOption,
+                selectedOption.label === DeliveryMethod.PICK_UP.label &&
+                  styles.selectedOption,
               ]}
               onPress={() => onSelect(DeliveryMethod.PICK_UP)}>
-              <Image source={require('../../assets/images/ic_take_away.png')} style={styles.icon} />
-              <Text style={styles.optionText}>{DeliveryMethod.PICK_UP.label}</Text>
-            </Pressable>
+              <View style={styles.containerImage}>
+                <Image
+                  source={require('../../assets/images/ic_take_away.png')}
+                  style={styles.icon}
+                />
+              </View>
 
+              <Text style={styles.optionText}>
+                {DeliveryMethod.PICK_UP.label}
+              </Text>
+            </Pressable>
 
             <Pressable
               style={[
                 styles.optionItem,
-                selectedOption.label === DeliveryMethod.DELIVERY.label && styles.selectedOption,
+                selectedOption.label === DeliveryMethod.DELIVERY.label &&
+                  styles.selectedOption,
               ]}
               onPress={() => onSelect(DeliveryMethod.DELIVERY)}>
-              <Image source={require('../../assets/images/ic_delivery.png')} style={styles.icon} />
-              <Text style={styles.optionText}>{DeliveryMethod.DELIVERY.label}</Text>
+              <View style={styles.containerImage}>
+                <Image
+                  source={require('../../assets/images/ic_delivery.png')}
+                  style={styles.icon1}
+                />
+              </View>
+              <Text style={styles.optionText}>
+                {DeliveryMethod.DELIVERY.label}
+              </Text>
             </Pressable>
-
-
           </Column>
-
         </Column>
       </Column>
     </Modal>
@@ -87,7 +99,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,
@@ -132,6 +144,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green100,
   },
   icon: {
+    width: 45,
+    height: 45,
+    resizeMode: 'cover',
+  },
+  icon1: {
     width: 36,
     height: 36,
     resizeMode: 'cover',
@@ -140,7 +157,11 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
     color: colors.black,
-  }
+    flex: 1,
+  },
+  containerImage: {
+    width: '15%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
-
-
