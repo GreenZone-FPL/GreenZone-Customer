@@ -32,7 +32,7 @@ const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 const SelectAddressScreen = ({navigation, route}) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
+  const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const {isUpdateOrderInfo} = route.params || false;
@@ -91,7 +91,7 @@ const SelectAddressScreen = ({navigation, route}) => {
 
   const onConfirmSearchAddress = async address => {
     if (!address) return;
-  
+
     try {
       const response = await axios.get(GOONG_DETAIL_API, {
         params: {
@@ -100,7 +100,7 @@ const SelectAddressScreen = ({navigation, route}) => {
         },
       });
       const name = response.data.result.name;
-      const { lat, lng } = response.data.result.geometry.location;
+      const {lat, lng} = response.data.result.geometry.location;
 
       const updatedAddress = {
         ...address,
@@ -127,7 +127,7 @@ const SelectAddressScreen = ({navigation, route}) => {
           shippingAddressInfo: addressFinish,
         });
       }
-  
+
       navigation.goBack();
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
@@ -248,8 +248,6 @@ const SelectAddressScreen = ({navigation, route}) => {
           <Text style={styles.confirmText}>Xác nhận</Text>
         </TouchableOpacity>
       )}
-
-
     </SafeAreaView>
   );
 };

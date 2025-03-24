@@ -56,6 +56,7 @@ import {
   fetchUserLocation,
   LocationManager,
 } from '../../utils';
+import {CartActionTypes} from '../../reducers';
 
 const {width} = Dimensions.get('window');
 const CheckoutScreen = ({navigation}) => {
@@ -165,7 +166,6 @@ const CheckoutScreen = ({navigation}) => {
               ) : (
                 <StoreAddress
                   storeInfo={cartState?.storeInfo}
-                  s
                   chooseMerchant={() => {
                     navigation.navigate(BottomGraph.MerchantScreen, {
                       isUpdateOrderInfo: true,
@@ -187,6 +187,7 @@ const CheckoutScreen = ({navigation}) => {
                   />
                   {cartState?.shippingAddressInfo && (
                     <RecipientInfo
+                      cartDispatch={cartDispatch}
                       cartState={cartState}
                       onChangeRecipientInfo={() =>
                         setDialogRecipientInfoVisible(true)
@@ -259,10 +260,15 @@ const CheckoutScreen = ({navigation}) => {
 
                 <Button
                   title="Clear cartState"
-                  onPress={() => CartManager.clearCart(cartDispatch)}
+                  onPress={() => CartManager.clearCartState(cartDispatch)}
                 />
 
                 <Button
+                  title="Xóa hết sản phẩm"
+                  onPress={() => CartManager.clearOrderItems(cartDispatch)}
+                />
+
+                {/* <Button
                   title="Clear activeOrder"
                   onPress={async () =>
                     await AppAsyncStorage.storeData(
@@ -275,7 +281,7 @@ const CheckoutScreen = ({navigation}) => {
                 <Button
                   title="Read activeOrder"
                   onPress={async () => await AppAsyncStorage.getActiveOrders()}
-                />
+                /> */}
               </Column>
             </ScrollView>
 
@@ -509,9 +515,12 @@ const TimeSection = ({timeInfo, showDialog}) => {
   );
 };
 
-const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
+const ShippingAddress = ({
+  deliveryMethod,
+  shippingAddressInfo,
+  chooseUserAddress,
+}) => {
   // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
-
 
   return (
     <View style={styles.containerItem}>
@@ -578,36 +587,56 @@ const StoreAddress = ({storeInfo, chooseMerchant}) => {
   );
 };
 
-const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
-  const { shippingAddressInfo } = cartState || {};
-  const { consigneeName, consigneePhone } = shippingAddressInfo || {};
+const RecipientInfo = ({cartState, cartDispatch, onChangeRecipientInfo}) => {
+  const [user, setUser] = useState(null);
 
-  let recipientText = "Vui lòng chọn địa chỉ giao hàng";
-  if (cartState?.shippingAddress) {
-    recipientText =
-      consigneeName && consigneePhone
-        ? `${consigneeName} | ${consigneePhone}`
-        : "Vui lòng nhập thông tin người nhận";
-  }
+  useEffect(() => {
+    (async () => {
+      try {
+        const userData = await AppAsyncStorage.readData('user');
+        if (userData) {
+          setUser(userData);
+
+          if (!cartState?.shippingAddressInfo?.consigneeName) {
+            cartDispatch({
+              type: CartActionTypes.UPDATE_ORDER_INFO,
+              payload: {
+                consigneeName: `${userData.lastName} ${userData.firstName}`,
+                consigneePhone: userData.phoneNumber,
+              },
+            });
+          }
+        }
+      } catch (error) {
+        console.error(
+          'Lỗi khi lấy thông tin người dùng từ AsyncStorage:',
+          error,
+        );
+      }
+    })();
+  }, []);
+
+  if (!user) return null; // 🔥 Không render gì nếu chưa có user
+
+  const consigneeName =
+    cartState?.shippingAddressInfo?.consigneeName ||
+    `${user.lastName} ${user.firstName}`;
+  const consigneePhone =
+    cartState?.shippingAddressInfo?.consigneePhone || user.phoneNumber;
 
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
+        style={{marginVertical: 0, marginBottom: 8}}
         leftText="Thông tin người nhận"
         rightText="Thay đổi"
-        leftTextStyle={{ color: colors.black, fontWeight: "600" }}
-        rightTextStyle={{ color: colors.primary }}
+        leftTextStyle={{color: colors.black, fontWeight: '600'}}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={onChangeRecipientInfo}
       />
       <NormalText
-        text={recipientText}
-        style={{
-          lineHeight: 20,
-          color: recipientText === "Vui lòng chọn địa chỉ giao hàng" || recipientText === "Vui lòng nhập thông tin người nhận"
-            ? colors.orange700
-            : colors.black,
-        }}
+        text={`${consigneeName} | ${consigneePhone}`}
+        style={{lineHeight: 20}}
       />
     </View>
   );
