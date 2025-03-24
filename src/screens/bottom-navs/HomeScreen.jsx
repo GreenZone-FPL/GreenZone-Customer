@@ -199,7 +199,6 @@ const HomeScreen = props => {
         <ProductsListHorizontal
           products={allProducts
             .flatMap(category => category.products)
-            .filter(item => item._id !== '67e0bf0884526a4a39d65c48')
             .slice(0, 10)}
           onItemClick={productId => {
             navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -222,7 +221,7 @@ const HomeScreen = props => {
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
-                products={item.products.filter(item => item._id !== '67e0bf0884526a4a39d65c48')}
+                products={item.products}
                 onItemClick={productId => {
                   navigation.navigate(ShoppingGraph.ProductDetailSheet, {
                     productId,

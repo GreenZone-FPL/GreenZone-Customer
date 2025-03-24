@@ -135,85 +135,87 @@ const CheckoutScreen = ({ navigation }) => {
         ) : (
           <>
             <ScrollView style={styles.containerContent}>
-              <DualTextRow
-                style={{
-                  paddingVertical: 8,
-                  paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-                  marginVertical: 8,
-                  backgroundColor: colors.white,
-                }}
-                leftText={
-                  cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
-                    ? DeliveryMethod.PICK_UP.label.toLocaleUpperCase()
-                    : DeliveryMethod.DELIVERY.label.toLocaleUpperCase()
-                }
-                rightText={'Thay đổi'}
-                leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
-                rightTextStyle={{ color: colors.primary }}
-                onRightPress={() => setDialogShippingMethodVisible(true)}
-              />
-
-              {cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? (
-                <LocationManager cartState={cartState} />
-              ) : (
-                <StoreAddress
-                  storeInfo={cartState?.storeInfo}
-                  chooseMerchant={() => {
-                    navigation.navigate(BottomGraph.MerchantScreen, {
-                      isUpdateOrderInfo: true,
-                    });
+              <Column style={{gap: 8, paddingVertical: 16, backgroundColor: colors.white, marginVertical: 8}}>
+                <DualTextRow
+                  style={{
+                    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+                    marginTop: 8,
+                    marginBottom: 0,
+                    backgroundColor: colors.white,
                   }}
+                  leftText={
+                    cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
+                      ? DeliveryMethod.PICK_UP.label
+                      : DeliveryMethod.DELIVERY.label
+                  }
+                  rightText={'Thay đổi'}
+                  leftTextStyle={{ color: colors.primary, fontWeight: '700', fontSize: 16 }}
+                  rightTextStyle={{ color: colors.primary }}
+                  onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
-              )}
 
-              {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
-                <>
-                  <ShippingAddress
-                    deliveryMethod={cartState?.deliveryMethod}
-                    shippingAddressInfo={cartState?.shippingAddressInfo}
-                    chooseUserAddress={() => {
-                      navigation.navigate(UserGraph.SelectAddressScreen, {
+                {cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? (
+                  <LocationManager cartState={cartState} />
+                ) : (
+                  <StoreAddress
+                    storeInfo={cartState?.storeInfo}
+                    chooseMerchant={() => {
+                      navigation.navigate(BottomGraph.MerchantScreen, {
                         isUpdateOrderInfo: true,
                       });
                     }}
                   />
-                  {cartState?.shippingAddressInfo && (
-                    <RecipientInfo
-                      cartDispatch={cartDispatch}
-                      cartState={cartState}
-                      onChangeRecipientInfo={() =>
-                        setDialogRecipientInfoVisible(true)
-                      }
+                )}
+
+                {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
+                  <>
+                    <ShippingAddress
+                      deliveryMethod={cartState?.deliveryMethod}
+                      shippingAddressInfo={cartState?.shippingAddressInfo}
+                      chooseUserAddress={() => {
+                        navigation.navigate(UserGraph.SelectAddressScreen, {
+                          isUpdateOrderInfo: true,
+                        });
+                      }}
                     />
-                  )}
-                </>
-              )}
-              <TimeSection
-                timeInfo={timeInfo}
-                showDialog={() => setDialogSelectTimeVisible(true)}
-                cartState={cartState}
+                    <Row style={{ gap: 0 }}>
+
+                      {cartState?.shippingAddressInfo && (
+                        <RecipientInfo
+                          cartDispatch={cartDispatch}
+                          cartState={cartState}
+                          onChangeRecipientInfo={() =>
+                            setDialogRecipientInfoVisible(true)
+                          }
+                          style={{ flex: 1 }}
+                        />
+                      )}
+
+
+                      <TimeSection
+                        timeInfo={timeInfo}
+                        showDialog={() => setDialogSelectTimeVisible(true)}
+                        cartState={cartState}
+                        style={{ flex: 1 }}
+                      />
+                    </Row>
+
+
+                  </>
+                )}
+              </Column>
+
+
+
+
+
+
+
+              <TitleText
+                text="Sản phẩm"
+                style={{ color: colors.primary, padding: 16, backgroundColor: colors.white }}
               />
 
-              <Column style={styles.containerItem}>
-                <Row>
-                  <NormalText
-                    text="Thêm ghi chú cho cửa hàng bạn nhé"
-                    style={{ color: colors.primary, fontStyle: 'italic' }}
-                  />
-                  <Icon source="pencil" size={20} color={colors.primary} />
-                </Row>
-
-                <TextInput
-                  style={styles.input}
-                  placeholder="Nhập ghi chú khác..."
-                  placeholderTextColor={colors.gray500}
-                  value={note}
-                  onChangeText={setNote}
-                  multiline={true}
-                  textAlignVertical="top"
-                  returnKeyType="done"
-                />
-              </Column>
 
               {cartState.orderItems.length > 0 ? (
                 <ProductsInfo
@@ -415,6 +417,8 @@ const CheckoutScreen = ({ navigation }) => {
 };
 export default CheckoutScreen;
 
+
+
 const EmptyView = ({ goBack }) => {
   return (
     <View style={[styles.container, { alignItems: 'center', gap: 50 }]}>
@@ -463,29 +467,20 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
   );
 };
 
-const TimeSection = ({ timeInfo, showDialog }) => {
+const TimeSection = ({ timeInfo, showDialog, style }) => {
   const isToday = timeInfo?.selectedDay === 'Hôm nay';
   const isEarliest = timeInfo?.selectedTime === 'Sớm nhất có thể';
 
   return (
-    <Column style={styles.containerItem}>
-      <DualTextRow
-        style={{ marginVertical: 0 }}
-        leftText="Thời gian nhận"
-        rightText="Thay đổi"
-        leftTextStyle={{ fontWeight: '600' }}
-        rightTextStyle={{ color: colors.primary }}
-        onRightPress={showDialog}
-      />
-
+    <Pressable
+      onPress={showDialog}
+      style={[{ gap: 8, backgroundColor: colors.white, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 8 }, style]}>
       {timeInfo && timeInfo.fulfillmentDateTime ? (
         <>
           {isToday && isEarliest && (
             <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
           )}
-          <NormalText
-            text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`}
-          />
+          <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`} />
         </>
       ) : (
         <>
@@ -493,16 +488,22 @@ const TimeSection = ({ timeInfo, showDialog }) => {
           <NormalText text="Sớm nhất có thể" />
         </>
       )}
-    </Column>
+    </Pressable>
   );
 };
+
+
+
+
+
+
 
 const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
   // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
 
 
   return (
-    <View style={styles.containerItem}>
+    <View style={[styles.containerItem, { marginBottom: 0 }]}>
       <DualTextRow
         style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Địa chỉ nhận hàng"
@@ -566,38 +567,41 @@ const StoreAddress = ({ storeInfo, chooseMerchant }) => {
   );
 };
 
-const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
-  const { shippingAddressInfo } = cartState || {};
-  const { consigneeName, consigneePhone } = shippingAddressInfo || {};
+const RecipientInfo = ({ cartState, cartDispatch, onChangeRecipientInfo, style }) => {
+  const [user, setUser] = useState(null);
 
-  let recipientText = "Vui lòng chọn địa chỉ giao hàng";
-  if (cartState?.shippingAddress) {
-    recipientText =
-      consigneeName && consigneePhone
-        ? `${consigneeName} | ${consigneePhone}`
-        : "Vui lòng nhập thông tin người nhận";
-  }
+  useEffect(() => {
+    (async () => {
+      try {
+        const userData = await AppAsyncStorage.readData("user");
+        if (userData) {
+          setUser(userData);
+          if (!cartState?.consigneeName) {
+            CartManager.updateOrderInfo(cartDispatch, {
+              consigneeName: `${userData.lastName} ${userData.firstName}`,
+              consigneePhone: userData.phoneNumber,
+            })
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin người dùng từ AsyncStorage:", error);
+      }
+    })();
+  }, []);
+
+  if (!user) return null; // 🔥 Không render gì nếu chưa có user
+
+  const consigneeName = cartState?.consigneeName || `${user.lastName} ${user.firstName}`;
+  const consigneePhone = cartState?.consigneePhone || user.phoneNumber;
 
   return (
-    <View style={styles.containerItem}>
-      <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
-        leftText="Thông tin người nhận"
-        rightText="Thay đổi"
-        leftTextStyle={{ color: colors.black, fontWeight: "600" }}
-        rightTextStyle={{ color: colors.primary }}
-        onRightPress={onChangeRecipientInfo}
-      />
-      <NormalText
-        text={recipientText}
-        style={{
-          lineHeight: 20,
-          color: recipientText === "Vui lòng chọn địa chỉ giao hàng" || recipientText === "Vui lòng nhập thông tin người nhận"
-            ? colors.orange700
-            : colors.black,
-        }}
-      />
-    </View>
+    <Pressable
+      onPress={onChangeRecipientInfo}
+      style={[{ gap: 8, backgroundColor: colors.white, paddingVertical: 8, paddingHorizontal: 16, marginBottom: 8, borderRightColor: colors.gray200, borderRightWidth: 1 }, style]}>
+
+      <NormalText text={`${consigneeName}`} style={{}} />
+      <NormalText text={`${consigneePhone}`} style={{ color: colors.gray700 }} />
+    </Pressable>
   );
 };
 
@@ -611,7 +615,6 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
           confirmDelete={() => confirmDelete(item)}
           onDelete={async () => {
             await CartManager.removeFromCart(item.itemId, cartDispatch);
-            // cartDispatch({ type: CartActionTypes.UPDATE_ORDER_ITEMS, payload: newCart });
           }}
           containerStyle={{ paddingHorizontal: 16 }}
           item={item}
@@ -647,8 +650,8 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
           paddingHorizontal: 16,
           backgroundColor: colors.white,
         }}
-        leftText="CHI TIẾT THANH TOÁN"
-        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
+        leftText="Chi tiết thanh toán"
+        leftTextStyle={{ color: colors.primary, fontWeight: 'bold', fontSize: 16 }}
       />
 
       <DualTextRow
