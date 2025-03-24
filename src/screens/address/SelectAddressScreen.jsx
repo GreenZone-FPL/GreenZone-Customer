@@ -11,7 +11,12 @@ import {
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import {getAddresses} from '../../axios';
-import {LightStatusBar, NormalHeader, NormalLoading, CustomSearchBar} from '../../components';
+import {
+  LightStatusBar,
+  NormalHeader,
+  NormalLoading,
+  CustomSearchBar,
+} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {UserGraph} from '../../layouts/graphs';
@@ -43,7 +48,6 @@ const SelectAddressScreen = ({navigation, route}) => {
   const [locationAvailable, setLocationAvailable] = useState(false);
   const [currentLocation, setCurrenLocation] = useState('');
 
-<<<<<<< HEAD
   useEffect(() => {
     const fetchAddress = async () => {
       try {
@@ -65,26 +69,6 @@ const SelectAddressScreen = ({navigation, route}) => {
 
     return () => clearInterval(interval); // Xóa interval khi component unmount
   }, []);
-=======
-  useFocusEffect(
-    useCallback(() => {
-      const fetchAddress = async () => {
-        try {
-          setLoading(true);
-          const response = await getAddresses();
-          setAddresses(response || []);
-        } catch (error) {
-          console.log('Lỗi lấy địa chỉ:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      fetchAddress(); // Gọi API khi màn hình được focus
-  
-    }, [])
-  );
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
 
   // Lấy vị trí người dùng
   useEffect(() => {
@@ -157,11 +141,6 @@ const SelectAddressScreen = ({navigation, route}) => {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
   };
-<<<<<<< HEAD
-
-=======
-  
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
   // Tìm kiếm
   const handleSearch = async text => {
     setSearchText(text);
@@ -192,59 +171,47 @@ const SelectAddressScreen = ({navigation, route}) => {
       setSearchResults([]);
     }
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <NormalLoading visible={loading} />
 
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()}>
-          <Icon source='chevron-left' size={36} color={colors.black} />
+          <Icon source="chevron-left" size={36} color={colors.black} />
         </Pressable>
         <View style={{flex: 1}}>
-          <CustomSearchBar 
-          placeholder="Tìm kiếm cửa hàng ..."
-          searchQuery={searchText}
-          setSearchQuery={handleSearch}
-          leftIconColor={colors.black}
-          onClearIconPress={() => {
-            setSearchText('');
-            setSearchResults([]);
-            setIsSearching(false);
-          }}
-          leftIcon="magnify"
-          rightIcon="close"
-          style={{ elevation: 3, backgroundColor: colors.fbBg }}
-          onFocus={() => setIsSearching(true)}/>
+          <CustomSearchBar
+            placeholder="Tìm kiếm cửa hàng ..."
+            searchQuery={searchText}
+            setSearchQuery={handleSearch}
+            leftIconColor={colors.black}
+            onClearIconPress={() => {
+              setSearchText('');
+              setSearchResults([]);
+              setIsSearching(false);
+            }}
+            leftIcon="magnify"
+            rightIcon="close"
+            style={{elevation: 3, backgroundColor: colors.fbBg}}
+            onFocus={() => setIsSearching(true)}
+          />
         </View>
-
       </View>
-      
 
       <ScrollView style={styles.content}>
-<<<<<<< HEAD
         {
           isSearching &&
             searchResults.length > 0 &&
             searchResults.map(result => (
-=======
-      {isSearching && searchResults.length > 0 ? (
-          <>
-            <Text style={styles.sectionTitle}>Địa chỉ tìm kiếm</Text>
-            {searchResults.map(result => (
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
               <CardSearch
                 key={result.place_id}
                 address={{
                   place_id: result.place_id,
-<<<<<<< HEAD
                   specificAddress: [
                     result.terms[1]?.value,
                     result.terms[0]?.value,
                   ].join(' '),
-=======
-                  specificAddress: [result.terms[1]?.value , result.terms[0]?.value].join(' '),
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
                   ward: result.terms[2]?.value || '',
                   district: result.terms[3]?.value || '',
                   province: result.terms[4]?.value || '',
@@ -256,7 +223,6 @@ const SelectAddressScreen = ({navigation, route}) => {
                   onConfirmSearchAddress(result);
                 }}
               />
-<<<<<<< HEAD
             ))
           // ) : addresses.length > 0 ? (
           //   addresses.map(address => (
@@ -278,32 +244,6 @@ const SelectAddressScreen = ({navigation, route}) => {
           <Icon source="plus" size={30} color={colors.primary} />
           <Text style={{textAlign: 'center'}}>Thêm địa chỉ mới</Text>
         </TouchableOpacity>
-=======
-            ))}
-          </>
-        ) : addresses.length > 0 ? (
-          <>
-            <Text style={styles.sectionTitle}>Địa chỉ đã lưu</Text>
-            {addresses.map(address => (
-              <Card
-                address={address}
-                key={address._id}
-                isSelected={selectedAddress === address}
-                onPress={() => setSelectedAddress(address)}
-              />
-            ))}
-          </>
-        ) : (
-          <Text style={styles.emptyText}>Không có địa chỉ nào</Text>
-        )}
-      {/* Nút Thêm ở góc dưới bên trái */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
-        <Icon source="plus" size={24} color={colors.primary} />
-        <Text style={{}}>Thêm địa chỉ mới</Text>
-      </TouchableOpacity>
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
       </ScrollView>
 
       {/* Nút Xác nhận */}
@@ -322,14 +262,21 @@ const Card = ({address, isSelected, onPress}) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
     onPress={() => onPress(address)}>
-    <View style={{marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: GLOBAL_KEYS.GAP_DEFAULT}}>
+    <View
+      style={{
+        marginHorizontal: 16,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: GLOBAL_KEYS.GAP_DEFAULT,
+      }}>
       <Icon
         source="google-maps"
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         color={colors.primary}
       />
       <View style={styles.textContainer}>
-        <Text style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: '500'}}>
+        <Text
+          style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: '500'}}>
           {''}
           {`${address.specificAddress}`}
         </Text>
@@ -337,17 +284,16 @@ const Card = ({address, isSelected, onPress}) => (
           {''}
           {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
         </Text>
-        <Text style={styles.location}>{address.consigneePhone}, {address.consigneeName}</Text>
-        
+        <Text style={styles.location}>
+          {address.consigneePhone}, {address.consigneeName}
+        </Text>
       </View>
     </View>
-   
   </Pressable>
 );
 const CardSearch = ({address, isSelected, onPress}) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
-<<<<<<< HEAD
     onPress={() => onPress(address)}>
     <Icon
       source="google-maps"
@@ -359,27 +305,7 @@ const CardSearch = ({address, isSelected, onPress}) => (
         Địa chỉ:{' '}
         {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
       </Text>
-=======
-    onPress={() =>  onPress(address)}>
-    <View style={{marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: GLOBAL_KEYS.GAP_DEFAULT}}>
-      <Icon
-        source="google-maps"
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.primary}
-      />
-      <View style={styles.textContainer}>
-      <Text style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: '500'}}>
-          {''}
-          {`${address.specificAddress}`}
-        </Text>
-        <Text style={styles.location}>
-          {''}
-          {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
-        </Text>
-      </View>
->>>>>>> 1d4279cca14e4a0753ca684432f3845ef54ebd9c
     </View>
-    
   </Pressable>
 );
 
@@ -390,7 +316,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.grayBg,
   },
-  header:{
+  header: {
     flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
@@ -398,10 +324,8 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-between',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-
   },
-  content: {
-  },
+  content: {},
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -409,7 +333,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderBottomWidth: 1,
     borderColor: colors.gray200,
-    marginBottom: 5
+    marginBottom: 5,
   },
   selectedCard: {
     borderWidth: 1,
@@ -462,10 +386,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 12,
   },
-  sectionTitle:{
+  sectionTitle: {
     margin: 16,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
   },
-
 });
