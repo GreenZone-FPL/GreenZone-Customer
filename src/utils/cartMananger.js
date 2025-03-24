@@ -109,11 +109,6 @@ export const CartManager = (() => {
         try {
             const cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
-            if (cart.orderItems.length === 0) {
-                Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
-                return;
-            }
-
             cartDispatch({
                 type: CartActionTypes.UPDATE_ORDER_INFO,
                 payload: orderDetails
