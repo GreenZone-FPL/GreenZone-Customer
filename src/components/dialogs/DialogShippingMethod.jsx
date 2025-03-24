@@ -14,8 +14,8 @@ import {
 import {Icon} from 'react-native-paper';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
-import {fetchUserLocation} from '../../utils';
-
+import {AppAsyncStorage} from '../../utils';
+import {useAppContext} from '../../context/appContext';
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   selectedOption: PropTypes.string.isRequired,
@@ -33,6 +33,9 @@ export const DialogShippingMethod = ({
 }) => {
   const [currentLocation, setCurrenLocation] = useState('');
   const [locationAvailable, setLocationAvailable] = useState(false);
+  const [user, setUser] = useState([]);
+
+  const {cartState} = useAppContext();
 
   // Lấy vị trí người dùng
   useEffect(() => {
@@ -69,15 +72,29 @@ export const DialogShippingMethod = ({
       address: locationAvailable
         ? currentLocation.address.label
         : 'Đang lấy vị trí...',
-      phone: 'Ngọc Đại | 012345678',
     },
     {
       label: 'Mang đi',
       image: require('../../assets/images/ic_take_away.png'),
-      address: 'HCM Đường D1 BTH',
-      phone: '',
+      address: 'Đến lấy tại cửa hàng ở địa chỉ',
     },
   ];
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const storedUser = await AppAsyncStorage.readData(
+          AppAsyncStorage.STORAGE_KEYS.user,
+        );
+        setUser(storedUser);
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    fetchUser();
+    return () => {};
+  }, []);
 
   return (
     <Modal
@@ -132,9 +149,23 @@ export const DialogShippingMethod = ({
                     />
                   </Pressable>
                 </View>
-                <Text style={styles.normalText}>{option.address}</Text>
-                {option.phone && (
-                  <Text style={styles.phoneText}>{option.phone}</Text>
+                <Text numberOfLines={1} style={styles.normalText}>
+                  {option.address}
+                </Text>
+                {option.label === 'Giao hàng' ? (
+                  <Text style={styles.phoneText}>
+                    {user?._id
+                      ? user?.firstName +
+                        ' ' +
+                        user?.lastName +
+                        ' - ' +
+                        user?.phoneNumber
+                      : null}
+                  </Text>
+                ) : (
+                  <Text style={styles.phoneText}>
+                    {cartState?.storeInfo?.storeAddress}
+                  </Text>
                 )}
               </Pressable>
             ))}

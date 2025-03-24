@@ -51,6 +51,9 @@ import socketService from './src/services/socketService';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import LoginScreenFake from './src/screens/auth/LoginScreenFake';
+import {LogBox} from 'react-native';
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 
