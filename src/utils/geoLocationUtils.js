@@ -52,6 +52,7 @@ const fetchUserLocation = async (setCurrentLocation, setLoading) => {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
     const location = await getCurrentLocation();
     if (location) setCurrentLocation(location);
+    return location
   } catch (error) {
     console.log('Lỗi khi lấy vị trí:', error);
   } finally {
