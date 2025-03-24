@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-paper';
-import { getProfile } from '../../axios';
+import React, {useState} from 'react';
+import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Icon} from 'react-native-paper';
+import {getProfile} from '../../axios';
 import {
   Column,
   HeaderWithBadge,
   LightStatusBar,
   NormalLoading,
   Row,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
-import { AuthActionTypes } from '../../reducers';
-import { AppAsyncStorage } from '../../utils';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {MainGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
+import {AuthActionTypes, cartInitialState} from '../../reducers';
+import {AppAsyncStorage} from '../../utils';
+import {CartManager} from '../../utils';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch } = useAppContext()
+  const {authState, authDispatch, cartDispatch} = useAppContext();
 
   const handleProfile = async () => {
     setLoading(true);
     try {
       const reponse = await getProfile();
       console.log('profile', reponse);
-      navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
-
+      navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -35,16 +35,12 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
- 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>
-    
-
         <Column style={styles.body}>
-        
           <TitleText text="Tài khoản" />
           <NormalLoading visible={loading} />
           <Column>
@@ -108,16 +104,15 @@ const ProfileScreen = ({ navigation }) => {
                 title="Đăng xuất"
                 onPress={async () => {
                   // Xóa token khỏi AsyncStorage
-                  await AppAsyncStorage.removeData(
-                    AppAsyncStorage.STORAGE_KEYS.accessToken,
+                  await AppAsyncStorage.clearAll();
+                  await CartManager.updateOrderInfo(
+                    cartDispatch,
+                    cartInitialState,
                   );
-                  await AppAsyncStorage.removeData(
-                    AppAsyncStorage.STORAGE_KEYS.refreshToken,
-                  );
-                  authDispatch({ type: AuthActionTypes.LOGOUT });
+                  authDispatch({type: AuthActionTypes.LOGOUT});
                   navigation.reset({
                     index: 0,
-                    routes: [{ name: MainGraph.graphName }],
+                    routes: [{name: MainGraph.graphName}],
                   });
                 }}
               />
@@ -125,21 +120,20 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </Column>
       </ScrollView>
-
     </SafeAreaView>
   );
 };
 
 export default ProfileScreen;
 
-const CardAccount = ({ icon, color, title, onPress }) => (
+const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({ icon, title, onPress }) => (
+const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

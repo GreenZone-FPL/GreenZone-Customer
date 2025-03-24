@@ -124,7 +124,11 @@ export const LocationManager = ({cartState}) => {
 
   // Sắp xếp lại merchants khi merchants hoặc userLocation thay đổi
   useEffect(() => {
-    if (merchants.length > 0) {
+    if (
+      merchants.length > 0 &&
+      userLocation[0] !== null &&
+      userLocation[1] !== null
+    ) {
       sortMerchant();
     }
   }, [merchants, userLocation]);
@@ -136,12 +140,17 @@ export const LocationManager = ({cartState}) => {
 
   // Gọi hàm updateStore nếu phương thức giao hàng là delivery
   useEffect(() => {
-    if (
-      cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value &&
-      sortedMerchants.length > 0
-    ) {
-      updateStore(); // Gọi updateStore khi merchants đã được sắp xếp
-    }
+    const updateCart = async () => {
+      if (
+        cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+        sortedMerchants.length > 0
+      ) {
+        await updateStore(); // Gọi updateStore khi merchants đã được sắp xếp
+      }
+    };
+
+    // Wait for sorting before updating store
+    updateCart();
   }, [cartState?.deliveryMethod, sortedMerchants]);
 
   return null;
