@@ -71,20 +71,13 @@ const HomeScreen = props => {
   };
 
   // Hàm xử lý khi chọn phương thức giao hàng
-  const handleOptionSelect = option => {
-    if (option === 'Mang đi') {
-      cartDispatch({
-        type: CartActionTypes.UPDATE_ORDER_INFO,
-        payload: {deliveryMethod: DeliveryMethod.PICK_UP.value},
-      });
-      console.log('nhan mang di');
-    } else if (option === 'Giao hàng') {
-      cartDispatch({
-        type: CartActionTypes.UPDATE_ORDER_INFO,
-        payload: {deliveryMethod: DeliveryMethod.DELIVERY.value},
-      });
-      console.log('nhan giao hang');
-    }
+  const handleOptionSelect = async option => {
+    let deliveryMethod =
+      option === 'Mang đi'
+        ? DeliveryMethod.PICK_UP.value
+        : DeliveryMethod.DELIVERY.value;
+
+    await CartManager.updateOrderInfo(cartDispatch, {deliveryMethod});
 
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
@@ -255,7 +248,7 @@ const HomeScreen = props => {
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
         address={
-          selectedOption === 'Mang đi' && cartState?.storeInfo
+          selectedOption === 'Mang đi'
             ? cartState?.storeInfo?.storeAddress
             : cartState?.shippingAddressInfo?.location
             ? cartState?.shippingAddressInfo?.location
