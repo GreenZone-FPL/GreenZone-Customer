@@ -48,7 +48,10 @@ import {
   fetchUserLocation,
   CartManager,
   AppAsyncStorage,
+  LocationManager2,
 } from '../../utils';
+import {getAllMerchants} from '../../axios/modules/merchant';
+
 import {CartActionTypes, cartInitialState} from '../../reducers';
 
 const HomeScreen = props => {
@@ -63,7 +66,9 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch} = useAppContext();
+  const {cartState, cartDispatch, merchantLocation, setMerchantLocation} =
+    useAppContext();
+  const [merchants, setMerchants] = useState([]);
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -82,6 +87,29 @@ const HomeScreen = props => {
     setSelectedOption(option);
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
+
+  // // Hàm xử lý khi chọn phương thức giao hàng
+  // const handleOptionSelect = async option => {
+  //   let deliveryMethod =
+  //     option === 'Mang đi'
+  //       ? DeliveryMethod.PICK_UP.value
+  //       : DeliveryMethod.DELIVERY.value;
+  //   if (option === 'Mang đi') {
+  //     const nearestMerchant = await fetchLocation();
+  //     await CartManager.updateOrderInfo(cartDispatch, {
+  //       storeInfo: {
+  //         lat: nearestMerchant.lat,
+  //         lng: nearestMerchant.lng,
+  //       },
+  //       deliveryMethod,
+  //     });
+  //   } else {
+  //   }
+  //   await CartManager.updateOrderInfo(cartDispatch, {deliveryMethod});
+
+  //   setSelectedOption(option);
+  //   setIsModalVisible(false); // Đóng dialog sau khi chọn
+  // };
 
   const handleEditOption = option => {
     if (option === 'Giao hàng') {
@@ -173,6 +201,47 @@ const HomeScreen = props => {
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
   }, []);
 
+  // hàm gọi api merchants
+  const fetchMerchants = async () => {
+    try {
+      const data = await getAllMerchants();
+      setMerchants(data.docs);
+    } catch (error) {
+      console.log('Error fetching merchants:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMerchants();
+  }, []);
+
+  // useEffect(() => {
+  //   const getNearestStore = async () => {
+  //     try {
+  //       const userLocation = await fetchUserLocation(
+  //         setCurrentLocation,
+  //         setLoading,
+  //       );
+  //       const nearest = LocationManager2.getNearestMerchant(
+  //         merchants,
+  //         userLocation,
+  //       );
+
+  //       if (nearest) {
+  //         console.log('Cửa hàng gần nhất:', nearest);
+
+  //         nearest;
+  //       } else {
+  //         console.log('Không tìm thấy cửa hàng phù hợp.');
+  //       }
+  //     } catch (error) {
+  //       console.log('Lỗi khi lấy vị trí:', error);
+  //     }
+  //   };
+
+  //   getNearestStore();
+  // }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -187,12 +256,12 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        <Button
+        {/* <Button
           title="Tao cart"
           onPress={async () => {
             await AppAsyncStorage.storeData('CART', cartInitialState);
           }}
-        />
+        /> */}
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         {/* <ImageCarousel data={dataBanner} time={2000} /> */}

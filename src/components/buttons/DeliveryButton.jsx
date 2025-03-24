@@ -6,6 +6,7 @@ import {Row} from '../containers/Row';
 import {NormalText} from '../texts/NormalText';
 import {Icon} from 'react-native-paper';
 import {CartManager, TextFormatter} from '../../utils';
+import {LocationManager} from '../../utils';
 
 export const DeliveryButton = ({
   title,
@@ -51,6 +52,7 @@ export const DeliveryButton = ({
           <Text style={styles.quantity}>{cartState.orderItems.length}</Text>
         </TouchableOpacity>
       )}
+      <LocationManager cartState={cartState} />
     </TouchableOpacity>
   );
 };
