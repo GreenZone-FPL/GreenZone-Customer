@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import React, { useState } from 'react';
 import { WebView } from 'react-native-webview';
 import CryptoJS from 'crypto-js';
+import { PaperProvider } from 'react-native-paper';
 
 // Hàm tạo MAC (chữ ký)
 const generateMac = (appid, apptransid, appuser, amount, apptime, embeddata, item, key1) => {
@@ -102,6 +103,7 @@ const ZalopayScreen = () => {
   
 
   return (
+    <PaperProvider>
     <View style={{ flex: 1 }}>
       {orderUrl ? (
         <WebView source={{ uri: orderUrl }} style={{ flex: 1 }} />
@@ -111,6 +113,7 @@ const ZalopayScreen = () => {
         </View>
       )}
     </View>
+    </PaperProvider>
   );
 };
 
