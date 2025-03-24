@@ -1,74 +1,126 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Button, Dimensions, FlatList, Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { Icon, RadioButton } from 'react-native-paper';
-import { createOrder } from '../../axios/';
-import { ActionDialog, Column, DeliveryMethodSheet, DialogBasic, DialogSelectTime, DualTextRow, FlatInput, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, TitleText } from '../../components';
-import { DeliveryMethod, GLOBAL_KEYS, OrderStatus, PaymentMethod, colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { BottomGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  Button,
+  Dimensions,
+  FlatList,
+  Image,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {Icon, RadioButton} from 'react-native-paper';
+import {createOrder} from '../../axios/';
+import {
+  ActionDialog,
+  Column,
+  DeliveryMethodSheet,
+  DialogBasic,
+  DialogSelectTime,
+  DualTextRow,
+  FlatInput,
+  HorizontalProductItem,
+  LightStatusBar,
+  NormalHeader,
+  NormalLoading,
+  NormalText,
+  PrimaryButton,
+  Row,
+  TitleText,
+} from '../../components';
+import {
+  DeliveryMethod,
+  GLOBAL_KEYS,
+  OrderStatus,
+  PaymentMethod,
+  colors,
+} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {
+  BottomGraph,
+  ShoppingGraph,
+  UserGraph,
+  VoucherGraph,
+} from '../../layouts/graphs';
 import socketService from '../../services/socketService';
-import { AppAsyncStorage, CartManager, TextFormatter, Toaster, fetchUserLocation } from '../../utils';
+import {
+  AppAsyncStorage,
+  CartManager,
+  TextFormatter,
+  Toaster,
+  fetchUserLocation,
+  LocationManager,
+} from '../../utils';
 
+const {width} = Dimensions.get('window');
+const CheckoutScreen = ({navigation}) => {
+  const [dialogCreateOrderVisible, setDialogCreateOrderVisible] =
+    useState(false);
 
-const { width } = Dimensions.get('window');
-const CheckoutScreen = ({ navigation }) => {
-  const [dialogCreateOrderVisible, setDialogCreateOrderVisible] = useState(false);
-
-  const [dialogRecipientInforVisible, setDialogRecipientInfoVisible] = useState(false);
-  const [dialogShippingMethodVisible, setDialogShippingMethodVisible] = useState(false);
+  const [dialogRecipientInforVisible, setDialogRecipientInfoVisible] =
+    useState(false);
+  const [dialogShippingMethodVisible, setDialogShippingMethodVisible] =
+    useState(false);
   const [dialogSelecTimeVisible, setDialogSelectTimeVisible] = useState(false);
-  const [actionDialogVisible, setActionDialogVisible] = useState(false)
+  const [actionDialogVisible, setActionDialogVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext()
-  const [timeInfo, setTimeInfo] = React.useState({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
+  const {cartState, cartDispatch, setUpdateOrderMessage} = useAppContext();
+  const [timeInfo, setTimeInfo] = React.useState({
+    selectedDay: 'Hôm nay',
+    selectedTime: 'Sớm nhất có thể',
+  });
 
-  const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
+  const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
 
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
-    const initSocket = async () => { await socketService.initialize() }
-    initSocket()
-
-    return () => {
-
+    const initSocket = async () => {
+      await socketService.initialize();
     };
+    initSocket();
+
+    return () => {};
   }, []);
   useEffect(() => {
     if (timeInfo?.fulfillmentDateTime) {
-      const fulfillmentTimeISO = new Date(timeInfo.fulfillmentDateTime).toISOString();
+      const fulfillmentTimeISO = new Date(
+        timeInfo.fulfillmentDateTime,
+      ).toISOString();
       const nowISO = new Date().toISOString();
 
       if (fulfillmentTimeISO < nowISO) {
-        setTimeInfo({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
+        setTimeInfo({selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể'});
       }
     }
   }, [timeInfo?.fulfillmentDateTime]);
 
   // Mở dialog với sản phẩm cần xóa
-  const confirmDelete = (product) => {
+  const confirmDelete = product => {
     setSelectedProduct(product);
     setActionDialogVisible(true);
   };
 
   // Xóa sản phẩm sau khi xác nhận
-  const deleteProduct = async (id) => {
+  const deleteProduct = async id => {
     await CartManager.removeFromCart(id, cartDispatch);
     setActionDialogVisible(false);
-  }
+  };
 
   useEffect(() => {
     fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
-
   if (cartState.orderItems.length === 0) {
-    return (
-      <EmptyView goBack={() => navigation.goBack()} />
-    )
+    return <EmptyView goBack={() => navigation.goBack()} />;
   }
 
 
@@ -108,14 +160,19 @@ const CheckoutScreen = ({ navigation }) => {
                 onRightPress={() => setDialogShippingMethodVisible(true)}
               />
 
-              <StoreAddress
-                storeInfo={cartState?.storeInfo}
-                chooseMerchant={() => {
-                  navigation.navigate(BottomGraph.MerchantScreen, {
-                    isUpdateOrderInfo: true,
-                  });
-                }}
-              />
+              {cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? (
+                <LocationManager cartState={cartState} />
+              ) : (
+                <StoreAddress
+                  storeInfo={cartState?.storeInfo}
+                  s
+                  chooseMerchant={() => {
+                    navigation.navigate(BottomGraph.MerchantScreen, {
+                      isUpdateOrderInfo: true,
+                    });
+                  }}
+                />
+              )}
 
               {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
                 <>
@@ -183,6 +240,11 @@ const CheckoutScreen = ({ navigation }) => {
                 cartState={cartState}
                 selectedPaymentMethod={selectedPaymentMethod}
                 handlePaymentSelection={handleSelectPaymentMethod}
+                onSelectVoucher={() =>
+                  navigation.navigate(VoucherGraph.MyVouchersScreen, {
+                    isUpdateOrderInfo: true,
+                  })
+                }
               />
               <Column style={{gap: 16, marginHorizontal: 16}}>
                 <Button
@@ -362,29 +424,26 @@ const CheckoutScreen = ({ navigation }) => {
       />
     </SafeAreaView>
   );
-
 };
 export default CheckoutScreen;
 
-
-const EmptyView = ({ goBack }) => {
+const EmptyView = ({goBack}) => {
   return (
-    <View style={[styles.container, { alignItems: 'center', gap: 50 }]}>
+    <View style={[styles.container, {alignItems: 'center', gap: 50}]}>
       <LightStatusBar />
       <NormalHeader title="Xác nhận đơn hàng" onLeftPress={goBack} />
       <Image
         resizeMode="contain"
         source={require('../../assets/images/empty_cart.png')}
-        style={{ width: '80%', height: 300, alignSelf: 'center' }}
+        style={{width: '80%', height: 300, alignSelf: 'center'}}
       />
 
-      <NormalText text='Giỏ hàng của bạn đang trống' />
-    </View >
-  )
-}
+      <NormalText text="Giỏ hàng của bạn đang trống" />
+    </View>
+  );
+};
 
-
-const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
+const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
   const [name, setName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
 
@@ -393,118 +452,131 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
       title={'Thay đổi thông tin người nhận '}
       isVisible={visible}
       onHide={onHide}
-      style={{ backgroundColor: colors.fbBg }}
-    >
+      style={{backgroundColor: colors.fbBg}}>
       <Column style={styles.content}>
-
         <FlatInput label={'Tên người nhận'} value={name} setValue={setName} />
 
-        <FlatInput label={'Số điện thoại'} value={phoneNumber} setValue={setPhoneNumber} />
+        <FlatInput
+          label={'Số điện thoại'}
+          value={phoneNumber}
+          setValue={setPhoneNumber}
+        />
 
         <PrimaryButton
-
           title={'Cập nhật'}
           onPress={() => {
-            onConfirm({ name, phoneNumber })
-            setName('')
-            setPhoneNumber('')
-          }} />
-
-
+            onConfirm({name, phoneNumber});
+            setName('');
+            setPhoneNumber('');
+          }}
+        />
       </Column>
-
     </DialogBasic>
-  )
-}
+  );
+};
 
-
-const TimeSection = ({ timeInfo, showDialog }) => {
-  const isToday = timeInfo?.selectedDay === "Hôm nay";
-  const isEarliest = timeInfo?.selectedTime === "Sớm nhất có thể";
+const TimeSection = ({timeInfo, showDialog}) => {
+  const isToday = timeInfo?.selectedDay === 'Hôm nay';
+  const isEarliest = timeInfo?.selectedTime === 'Sớm nhất có thể';
 
   return (
     <Column style={styles.containerItem}>
       <DualTextRow
-        style={{ marginVertical: 0 }}
+        style={{marginVertical: 0}}
         leftText="Thời gian nhận"
         rightText="Thay đổi"
-        leftTextStyle={{ fontWeight: '600' }}
-        rightTextStyle={{ color: colors.primary }}
+        leftTextStyle={{fontWeight: '600'}}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={showDialog}
       />
 
       {timeInfo && timeInfo.fulfillmentDateTime ? (
         <>
-          {isToday && isEarliest && <TitleText text="15-30 phút" style={{ color: colors.green500 }} />}
-          <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`} />
-
+          {isToday && isEarliest && (
+            <TitleText text="15-30 phút" style={{color: colors.green500}} />
+          )}
+          <NormalText
+            text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`}
+          />
         </>
       ) : (
         <>
-          <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+          <TitleText text="15-30 phút" style={{color: colors.green500}} />
           <NormalText text="Sớm nhất có thể" />
         </>
       )}
     </Column>
   );
 };
+
 const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
   // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
 
+
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
+        style={{marginVertical: 0, marginBottom: 8}}
         leftText="Địa chỉ nhận hàng"
-        leftTextStyle={{ fontWeight: '600' }}
+        leftTextStyle={{fontWeight: '600'}}
         rightText="Thay đổi"
-        rightTextStyle={{ color: colors.primary }}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={chooseUserAddress}
       />
-      {
-        deliveryMethod !== DeliveryMethod.PICK_UP.value && shippingAddressInfo ? (
-          <>
-            {shippingAddressInfo.description && (
-              <NormalText text={shippingAddressInfo.description} style={{ lineHeight: 20, color: colors.black }} />
-            )}
-            {shippingAddressInfo.location && (
-              <NormalText text={shippingAddressInfo.location} style={{ lineHeight: 20, color: colors.black }} />
-            )}
-          </>
-        ) : (
-          <NormalText text="Vui lòng chọn địa chỉ giao hàng" style={{ color: colors.orange700 }} />
-        )
-      }
+      {deliveryMethod !== DeliveryMethod.PICK_UP.value &&
+      shippingAddressInfo ? (
+        <>
+          {shippingAddressInfo.description && (
+            <NormalText
+              text={shippingAddressInfo.description}
+              style={{lineHeight: 20, color: colors.black}}
+            />
+          )}
+          {shippingAddressInfo.location && (
+            <NormalText
+              text={shippingAddressInfo.location}
+              style={{lineHeight: 20, color: colors.black}}
+            />
+          )}
+        </>
+      ) : (
+        <NormalText
+          text="Vui lòng chọn địa chỉ giao hàng"
+          style={{color: colors.orange700}}
+        />
+      )}
     </View>
   );
 };
 
-
-const StoreAddress = ({ storeInfo, chooseMerchant }) => {
+const StoreAddress = ({storeInfo, chooseMerchant}) => {
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
+        style={{marginVertical: 0, marginBottom: 8}}
         leftText="Địa chỉ cửa hàng"
-        leftTextStyle={{ fontWeight: '600' }}
+        leftTextStyle={{fontWeight: '600'}}
         rightText="Thay đổi"
-        rightTextStyle={{ color: colors.primary }}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={chooseMerchant}
       />
-      {
-        storeInfo?.storeName && storeInfo?.storeAddress ? (
-          <>
-            <TitleText text={storeInfo?.storeName} style={{ marginBottom: 8, color: colors.green500 }} />
-            <NormalText text={storeInfo?.storeAddress} />
-          </>
-        ) : (
-          <NormalText text='Vui lòng chọn địa chỉ cửa hàng' style={{ color: colors.orange700 }} />
-        )
-      }
+      {storeInfo?.storeName && storeInfo?.storeAddress ? (
+        <>
+          <TitleText
+            text={storeInfo?.storeName}
+            style={{marginBottom: 8, color: colors.green500}}
+          />
+          <NormalText text={storeInfo?.storeAddress} />
+        </>
+      ) : (
+        <NormalText
+          text="Vui lòng chọn địa chỉ cửa hàng"
+          style={{color: colors.orange700}}
+        />
+      )}
     </View>
   );
 };
-
 
 const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
   const { shippingAddressInfo } = cartState || {};
@@ -541,12 +613,11 @@ const RecipientInfo = ({ cartState, onChangeRecipientInfo }) => {
   );
 };
 
-const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
-
+const ProductsInfo = ({onEditItem, cart, cartDispatch, confirmDelete}) => (
   <FlatList
     data={cart}
-    keyExtractor={(item) => item.itemId.toString()}
-    renderItem={({ item }) => (
+    keyExtractor={item => item.itemId.toString()}
+    renderItem={({item}) => (
       <Pressable onPress={() => onEditItem(item)}>
         <HorizontalProductItem
           confirmDelete={() => confirmDelete(item)}
@@ -554,20 +625,17 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
             await CartManager.removeFromCart(item.itemId, cartDispatch);
             // cartDispatch({ type: CartActionTypes.UPDATE_ORDER_ITEMS, payload: newCart });
           }}
-          containerStyle={{ paddingHorizontal: 16 }}
+          containerStyle={{paddingHorizontal: 16}}
           item={item}
           enableAction={false}
           enableDelete={true}
         />
       </Pressable>
     )}
-    contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
+    contentContainerStyle={{gap: 0, marginHorizontal: 0}}
     nestedScrollEnabled={true}
     scrollEnabled={false}
   />
-
-
-
 );
 
 
@@ -575,42 +643,95 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch ,handlePa
   const paymentDetails = CartManager.getPaymentDetails(cartState);
 
   return (
-    <View style={[styles.containerItem, { backgroundColor: colors.gray200, paddingHorizontal: 0, gap: 1, paddingVertical: 0 }]}>
+    <View
+      style={[
+        styles.containerItem,
+        {
+          backgroundColor: colors.gray200,
+          paddingHorizontal: 0,
+          gap: 1,
+          paddingVertical: 0,
+        },
+      ]}>
       <DualTextRow
-        style={{ paddingVertical: 8, marginVertical: 0, paddingHorizontal: 16, backgroundColor: colors.white }}
+        style={{
+          paddingVertical: 8,
+          marginVertical: 0,
+          paddingHorizontal: 16,
+          backgroundColor: colors.white,
+        }}
         leftText="CHI TIẾT THANH TOÁN"
-        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
+        leftTextStyle={{color: colors.primary, fontWeight: 'bold'}}
       />
 
       <DualTextRow
-        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+        style={{
+          paddingVertical: 12,
+          marginVertical: 0,
+          backgroundColor: colors.white,
+          paddingHorizontal: 16,
+        }}
         leftText={`Tạm tính (${cartState.orderItems.length} sản phẩm)`}
         rightText={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`}
       />
 
       {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
         <DualTextRow
-          style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+          style={{
+            paddingVertical: 12,
+            marginVertical: 0,
+            backgroundColor: colors.white,
+            paddingHorizontal: 16,
+          }}
           leftText="Phí giao hàng"
-          rightText={`${TextFormatter.formatCurrency(paymentDetails.deliveryAmount)}`}
+          rightText={`${TextFormatter.formatCurrency(
+            paymentDetails.deliveryAmount,
+          )}`}
         />
       )}
 
       <DualTextRow
-        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
-        leftText={cartState.voucher ? `${cartState?.voucherInfo?.code}` : 'Chọn khuyến mãi'}
-        leftTextStyle={{ color: cartState.voucher ? colors.primary : colors.orange700, fontWeight: '500' }}
-        rightText={paymentDetails.voucherAmount === 0 ? '' : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}
-        rightTextStyle={{ color: colors.primary }}
+        style={{
+          paddingVertical: 12,
+          marginVertical: 0,
+          backgroundColor: colors.white,
+          paddingHorizontal: 16,
+        }}
+        leftText={
+          cartState.voucher
+            ? `${cartState?.voucherInfo?.code}`
+            : 'Chọn khuyến mãi'
+        }
+        leftTextStyle={{
+          color: cartState.voucher ? colors.primary : colors.orange700,
+          fontWeight: '500',
+        }}
+        rightText={
+          paymentDetails.voucherAmount === 0
+            ? ''
+            : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`
+        }
+        rightTextStyle={{color: colors.primary}}
         onLeftPress={() => onSelectVoucher()}
       />
 
       <DualTextRow
-        style={{ paddingVertical: 12, marginVertical: 0, backgroundColor: colors.white, paddingHorizontal: 16 }}
+        style={{
+          paddingVertical: 12,
+          marginVertical: 0,
+          backgroundColor: colors.white,
+          paddingHorizontal: 16,
+        }}
         leftText="Tổng tiền"
-        rightText={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`}
-        leftTextStyle={{ color: colors.black, fontWeight: '500', fontSize: 14 }}
-        rightTextStyle={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}
+        rightText={`${TextFormatter.formatCurrency(
+          paymentDetails.paymentTotal,
+        )}`}
+        leftTextStyle={{color: colors.black, fontWeight: '500', fontSize: 14}}
+        rightTextStyle={{
+          fontWeight: '700',
+          color: colors.primary,
+          fontSize: 14,
+        }}
       />
 
       <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} onSelect={handlePaymentSelection}/>
@@ -618,31 +739,30 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch ,handlePa
   );
 };
 
-
 const paymentMethods = [
   {
     name: 'Thanh toán khi nhận hàng',
     image: require('../../assets/images/logo_vnd.png'),
     value: 'cash',
-    paymentMethod: PaymentMethod.COD.value
+    paymentMethod: PaymentMethod.COD.value,
   },
   {
     name: 'PayOs',
     image: require('../../assets/images/logo_payos.png'),
     value: 'PayOs',
-    paymentMethod: PaymentMethod.ONLINE.value
+    paymentMethod: PaymentMethod.ONLINE.value,
   },
   {
     name: 'ZaloPay',
     image: require('../../assets/images/logo_zalopay.png'),
     value: 'zalopay',
-    paymentMethod: PaymentMethod.ONLINE.value
+    paymentMethod: PaymentMethod.ONLINE.value,
   },
   {
     name: 'Thanh toán bằng thẻ',
     image: require('../../assets/images/logo_card.png'),
     value: 'Card',
-    paymentMethod: PaymentMethod.ONLINE.value
+    paymentMethod: PaymentMethod.ONLINE.value,
   },
 ];
 const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
@@ -669,9 +789,8 @@ const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
       <NormalText text="Phương thức thanh toán" />
 
       <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-        onPress={() => setIsVisible(true)}
-      >
+        style={{flexDirection: 'row', alignItems: 'center', gap: 6}}
+        onPress={() => setIsVisible(true)}>
         <Image source={selectedMethod.image} style={styles.image} />
         <NormalText text={selectedMethod.name} />
         <Icon source="chevron-down" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.gray700} />
@@ -686,17 +805,26 @@ const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
               <TouchableOpacity
                 key={method.value}
                 onPress={() => handleSelectMethod(method, disabled)}
-                style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-              >
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 8,
+                }}>
                 <RadioButton
                   disabled={disabled}
                   value={method.value}
-                  status={selectedMethod.name === method.name ? 'checked' : 'unchecked'}
+                  status={
+                    selectedMethod.name === method.name
+                      ? 'checked'
+                      : 'unchecked'
+                  }
                   color={colors.primary}
                   onPress={() => handleSelectMethod(method, disabled)}
                 />
                 <Image source={method.image} style={styles.image} />
-                <Text style={{ color: colors.gray700, marginLeft: 8 }}>{method.name}</Text>
+                <Text style={{color: colors.gray700, marginLeft: 8}}>
+                  {method.name}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -712,46 +840,59 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState)
 
   return (
-    <View style={{ backgroundColor: colors.fbBg, padding: GLOBAL_KEYS.PADDING_DEFAULT, justifyContent: 'flex-end' }}>
-      <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
+    <View
+      style={{
+        backgroundColor: colors.fbBg,
+        padding: GLOBAL_KEYS.PADDING_DEFAULT,
+        justifyContent: 'flex-end',
+      }}>
+      <Row style={{justifyContent: 'space-between', marginBottom: 6}}>
         <Column>
-          <TitleText text='Tổng cộng' />
+          <TitleText text="Tổng cộng" />
           <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
-          {
-            cartState?.voucher &&
+          {cartState?.voucher && (
             <NormalText
-              text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}
-              style={{ color: colors.primary, fontWeight: '500' }} />
-          }
-
+              text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(
+                paymentDetails.voucherAmount,
+              )}`}
+              style={{color: colors.primary, fontWeight: '500'}}
+            />
+          )}
         </Column>
 
         <Column>
           <TitleText
-            text={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`}
-            style={{ color: colors.red900, textAlign: 'right', fontSize: 16 }}
+            text={`${TextFormatter.formatCurrency(
+              paymentDetails.paymentTotal,
+            )}`}
+            style={{color: colors.red900, textAlign: 'right', fontSize: 16}}
           />
           {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
       </Row>
 
-      <PrimaryButton title='Đặt hàng' onPress={async () => {
-        const orderInfo = {
-          fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
-          totalPrice: paymentDetails.paymentTotal,
-          note,
-        }
-        const newCart = await CartManager.updateOrderInfo(cartDispatch, orderInfo)
+      <PrimaryButton
+        title="Đặt hàng"
+        onPress={async () => {
+          const orderInfo = {
+            fulfillmentDateTime:
+              timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+            totalPrice: paymentDetails.paymentTotal,
+            note,
+          };
+          const newCart = await CartManager.updateOrderInfo(
+            cartDispatch,
+            orderInfo,
+          );
 
-        const missingFields = CartManager.checkValid(newCart)
-        console.log('missingFields', missingFields)
-        if (missingFields) {
-          Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`)
-          return
-        }
-        showDialog()
-
-      }}
+          const missingFields = CartManager.checkValid(newCart);
+          console.log('missingFields', missingFields);
+          if (missingFields) {
+            Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`);
+            return;
+          }
+          showDialog();
+        }}
       />
 
       {/* <DialogNotification
@@ -781,7 +922,7 @@ const styles = StyleSheet.create({
     marginBottom: GLOBAL_KEYS.PADDING_SMALL,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
 
   image: {
@@ -791,7 +932,7 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-    backgroundColor: colors.transparent
+    backgroundColor: colors.transparent,
   },
 
   input: {
@@ -805,4 +946,4 @@ const styles = StyleSheet.create({
     color: colors.black,
     minHeight: 80,
   },
-})
+});
