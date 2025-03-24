@@ -49,6 +49,7 @@ import { OrderStatus } from './src/constants';
 import socketService from './src/services/socketService';
 
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import LoginScreenFake from './src/screens/auth/LoginScreenFake';
 
@@ -214,6 +215,7 @@ function AppNavigator({ navigation }) {
           <BaseStack.Screen name={OrderGraph.RatingOrderScreen} component={RatingOrderScreen} />
           <BaseStack.Screen name={ShoppingGraph.ConfirmDeliveryTimeScreen} component={ConfirmDeliveryTimeScreen} />
           <BaseStack.Screen name={ShoppingGraph.PayOsScreen} component={PayOsScreen} />
+          <BaseStack.Screen name={ShoppingGraph.Zalopayscreen} component={Zalopayscreen} />
         </>
       ) : (
         <BaseStack.Screen name={AuthGraph.graphName} component={AuthNavigator} />

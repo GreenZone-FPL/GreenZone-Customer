@@ -26,6 +26,9 @@ const CheckoutScreen = ({ navigation }) => {
 
   const [selectedProduct, setSelectedProduct] = useState(null);// Sản phẩm cần xóa
 
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+
   useEffect(() => {
     const initSocket = async () => { await socketService.initialize() }
     initSocket()
@@ -69,64 +72,83 @@ const CheckoutScreen = ({ navigation }) => {
   }
 
 
+  const handleSelectPaymentMethod = (method) => {
+    setSelectedPaymentMethod(method);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-
       <LightStatusBar />
-      <NormalHeader title="Xác nhận đơn hàng" onLeftPress={() => navigation.goBack()} />
+      <NormalHeader
+        title="Xác nhận đơn hàng"
+        onLeftPress={() => navigation.goBack()}
+      />
 
       <>
-
         {loading ? (
-          <NormalLoading visible={loading} message='Đang tải Giỏ hàng...' />
+          <NormalLoading visible={loading} message="Đang tải Giỏ hàng..." />
         ) : (
           <>
-
             <ScrollView style={styles.containerContent}>
               <DualTextRow
-                style={{ paddingVertical: 8, paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT, marginVertical: 8, backgroundColor: colors.white }}
-                leftText={cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ? DeliveryMethod.PICK_UP.label.toLocaleUpperCase() : DeliveryMethod.DELIVERY.label.toLocaleUpperCase()}
+                style={{
+                  paddingVertical: 8,
+                  paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+                  marginVertical: 8,
+                  backgroundColor: colors.white,
+                }}
+                leftText={
+                  cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
+                    ? DeliveryMethod.PICK_UP.label.toLocaleUpperCase()
+                    : DeliveryMethod.DELIVERY.label.toLocaleUpperCase()
+                }
                 rightText={'Thay đổi'}
-                leftTextStyle={{ color: colors.primary, fontWeight: '700' }}
-                rightTextStyle={{ color: colors.primary }}
+                leftTextStyle={{color: colors.primary, fontWeight: '700'}}
+                rightTextStyle={{color: colors.primary}}
                 onRightPress={() => setDialogShippingMethodVisible(true)}
               />
 
               <StoreAddress
                 storeInfo={cartState?.storeInfo}
-                chooseMerchant={() => { navigation.navigate(BottomGraph.MerchantScreen, { isUpdateOrderInfo: true }) }}
+                chooseMerchant={() => {
+                  navigation.navigate(BottomGraph.MerchantScreen, {
+                    isUpdateOrderInfo: true,
+                  });
+                }}
               />
 
-
-
-
-              {
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+              {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
                 <>
                   <ShippingAddress
                     deliveryMethod={cartState?.deliveryMethod}
                     shippingAddressInfo={cartState?.shippingAddressInfo}
-                    chooseUserAddress={() => { navigation.navigate(UserGraph.SelectAddressScreen, { isUpdateOrderInfo: true }) }}
+                    chooseUserAddress={() => {
+                      navigation.navigate(UserGraph.SelectAddressScreen, {
+                        isUpdateOrderInfo: true,
+                      });
+                    }}
                   />
-                  {
-                    cartState?.shippingAddressInfo &&
+                  {cartState?.shippingAddressInfo && (
                     <RecipientInfo
                       cartState={cartState}
-                      onChangeRecipientInfo={() => setDialogRecipientInfoVisible(true)}
+                      onChangeRecipientInfo={() =>
+                        setDialogRecipientInfoVisible(true)
+                      }
                     />
-                  }
-
+                  )}
                 </>
-
-              }
-              <TimeSection timeInfo={timeInfo} showDialog={() => setDialogSelectTimeVisible(true)} cartState={cartState} />
-
+              )}
+              <TimeSection
+                timeInfo={timeInfo}
+                showDialog={() => setDialogSelectTimeVisible(true)}
+                cartState={cartState}
+              />
 
               <Column style={styles.containerItem}>
                 <Row>
                   <NormalText
-                    text='Thêm ghi chú cho cửa hàng bạn nhé'
-                    style={{ color: colors.primary, fontStyle: "italic" }}
+                    text="Thêm ghi chú cho cửa hàng bạn nhé"
+                    style={{color: colors.primary, fontStyle: 'italic'}}
                   />
                   <Icon source="pencil" size={20} color={colors.primary} />
                 </Row>
@@ -140,46 +162,59 @@ const CheckoutScreen = ({ navigation }) => {
                   multiline={true}
                   textAlignVertical="top"
                   returnKeyType="done"
-
                 />
               </Column>
 
-              {cartState.orderItems.length > 0 ?
+              {cartState.orderItems.length > 0 ? (
                 <ProductsInfo
                   confirmDelete={confirmDelete}
                   cartDispatch={cartDispatch}
-                  onEditItem={(item) => navigation.navigate(ShoppingGraph.EditCartItemScreen, { updateItem: item })}
+                  onEditItem={item =>
+                    navigation.navigate(ShoppingGraph.EditCartItemScreen, {
+                      updateItem: item,
+                    })
+                  }
                   cart={cartState.orderItems}
-                /> : null
-              }
+                />
+              ) : null}
 
               <PaymentDetailsView
                 cartDispatch={cartDispatch}
                 cartState={cartState}
-                onSelectVoucher={() => navigation.navigate(VoucherGraph.MyVouchersScreen, { isUpdateOrderInfo: true })}
-
+                selectedPaymentMethod={selectedPaymentMethod}
+                handlePaymentSelection={handleSelectPaymentMethod}
               />
-              <Column style={{ gap: 16, marginHorizontal: 16 }}>
-
+              <Column style={{gap: 16, marginHorizontal: 16}}>
                 <Button
-                  title='Log cartState'
-                  onPress={() => console.log('cartState =', JSON.stringify(cartState, null, 2))}
+                  title="Log cartState"
+                  onPress={() =>
+                    console.log(
+                      'cartState =',
+                      JSON.stringify(cartState, null, 2),
+                    )
+                  }
                 />
 
-                <Button title='Clear cartState'
+                <Button
+                  title="Clear cartState"
                   onPress={() => CartManager.clearCart(cartDispatch)}
                 />
 
-                <Button title='Clear activeOrder'
-                  onPress={async () => await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, [])}
+                <Button
+                  title="Clear activeOrder"
+                  onPress={async () =>
+                    await AppAsyncStorage.storeData(
+                      AppAsyncStorage.STORAGE_KEYS.activeOrders,
+                      [],
+                    )
+                  }
                 />
 
-                <Button title='Read activeOrder'
+                <Button
+                  title="Read activeOrder"
                   onPress={async () => await AppAsyncStorage.getActiveOrders()}
                 />
-
               </Column>
-
             </ScrollView>
 
             <Footer
@@ -189,8 +224,6 @@ const CheckoutScreen = ({ navigation }) => {
               cartDispatch={cartDispatch}
               cartState={cartState}
             />
-
-
           </>
         )}
       </>
@@ -198,10 +231,10 @@ const CheckoutScreen = ({ navigation }) => {
       <DialogSelectTime
         visible={dialogSelecTimeVisible}
         onClose={() => setDialogSelectTimeVisible(false)}
-        onConfirm={(data) => {
-          console.log('timeInfo', data)
-          setTimeInfo(data)
-          setDialogSelectTimeVisible(false)
+        onConfirm={data => {
+          console.log('timeInfo', data);
+          setTimeInfo(data);
+          setDialogSelectTimeVisible(false);
         }}
       />
 
@@ -213,67 +246,78 @@ const CheckoutScreen = ({ navigation }) => {
         approveText="Đồng ý"
         onCancel={() => setDialogCreateOrderVisible(false)}
         onApprove={async () => {
-
           try {
-            let response = null
+            let response = null;
             if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-
-              const pickupOrder = CartManager.setUpPickupOrder(cartState)
-              console.log('pickupOrder =', JSON.stringify(pickupOrder, null, 2))
+              const pickupOrder = CartManager.setUpPickupOrder(cartState);
+              console.log(
+                'pickupOrder =',
+                JSON.stringify(pickupOrder, null, 2),
+              );
               response = await createOrder(pickupOrder);
-
-            } else if (cartState.deliveryMethod === DeliveryMethod.DELIVERY.value) {
-
-              const deliveryOrder = CartManager.setupDeliveryOrder(cartState)
-              console.log('deliveryOrder =', JSON.stringify(deliveryOrder, null, 2))
+            } else if (
+              cartState.deliveryMethod === DeliveryMethod.DELIVERY.value
+            ) {
+              const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
+              console.log(
+                'deliveryOrder =',
+                JSON.stringify(deliveryOrder, null, 2),
+              );
 
               response = await createOrder(deliveryOrder);
-
             }
             const newActiveOrder = {
               visible: true,
               orderId: response?.data?._id,
               oldStatus: response?.data?.status,
-              message: "Đặt hàng thành công",
-              status: response?.data?.status
-            }
-            await AppAsyncStorage.addToActiveOrders(newActiveOrder)
-            setUpdateOrderMessage(newActiveOrder)
+              message: 'Đặt hàng thành công',
+              status: response?.data?.status,
+            };
+            await AppAsyncStorage.addToActiveOrders(newActiveOrder);
+            setUpdateOrderMessage(newActiveOrder);
 
-            await socketService.joinOrder2(response?.data?._id, response?.data?.status, (data) => {
-              setUpdateOrderMessage((prev) => ({
-                visible: true,
-                orderId: data.orderId,
-                oldStatus: prev.status,
-                message: data.message,
-                status: data.status
-              }));
-            });
-
+            await socketService.joinOrder2(
+              response?.data?._id,
+              response?.data?.status,
+              data => {
+                setUpdateOrderMessage(prev => ({
+                  visible: true,
+                  orderId: data.orderId,
+                  oldStatus: prev.status,
+                  message: data.message,
+                  status: data.status,
+                }));
+              },
+            );
 
             console.log('order data =', JSON.stringify(response, null, 2));
 
-
-
-
             if (response?.data?.status === 'awaitingPayment') {
-              navigation.navigate(ShoppingGraph.PayOsScreen,
-                {
+               if(selectedPaymentMethod?.value === 'PayOs'){
+                navigation.navigate(ShoppingGraph.PayOsScreen, {
                   orderId: response.data._id,
-                  totalPrice: response.data.totalPrice
-                })
+                  totalPrice: response.data.totalPrice,
+                });
+               } else if (selectedPaymentMethod?.value === 'zalopay') {
+                navigation.navigate(ShoppingGraph.Zalopayscreen, {
+                  orderId: response.data._id,
+                  totalPrice: response.data.totalPrice,
+                });
+               }
+
+              
             } else {
-              navigation.navigate(ShoppingGraph.OrderSuccessScreen, { order: response })
+              navigation.navigate(ShoppingGraph.OrderSuccessScreen, {
+                order: response,
+              });
             }
           } catch (error) {
-            console.log('error', error)
-            Toaster.show('Đã xảy ra lỗi, vui lòng thử lại')
+            console.log('error', error);
+            Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
           } finally {
-            setDialogCreateOrderVisible(false)
+            setDialogCreateOrderVisible(false);
           }
-
         }}
-
       />
       <ActionDialog
         visible={actionDialogVisible}
@@ -288,31 +332,34 @@ const CheckoutScreen = ({ navigation }) => {
       <DialogRecipientInfo
         visible={dialogRecipientInforVisible}
         onHide={() => setDialogRecipientInfoVisible(false)}
-        onConfirm={(data) => {
-          CartManager.updateOrderInfo(cartDispatch,
-            {
-              shippingAddressInfo: {
-                ...cartState?.shippingAddressInfo,
-                consigneeName: data.name,
-                consigneePhone: data.phoneNumber
-              }
-            }
-          )
+        onConfirm={data => {
+          CartManager.updateOrderInfo(cartDispatch, {
+            shippingAddressInfo: {
+              ...cartState?.shippingAddressInfo,
+              consigneeName: data.name,
+              consigneePhone: data.phoneNumber,
+            },
+          });
           setDialogRecipientInfoVisible(false);
         }}
       />
 
       <DeliveryMethodSheet
         visible={dialogShippingMethodVisible}
-        selectedOption={cartState.deliveryMethod === DeliveryMethod.PICK_UP.value ? DeliveryMethod.PICK_UP : DeliveryMethod.DELIVERY}
+        selectedOption={
+          cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
+            ? DeliveryMethod.PICK_UP
+            : DeliveryMethod.DELIVERY
+        }
         onClose={() => setDialogShippingMethodVisible(false)}
         onSelect={async option => {
-          console.log('option', option)
-          await CartManager.updateOrderInfo(cartDispatch, { deliveryMethod: option.value })
+          console.log('option', option);
+          await CartManager.updateOrderInfo(cartDispatch, {
+            deliveryMethod: option.value,
+          });
           setDialogShippingMethodVisible(false);
         }}
       />
-
     </SafeAreaView>
   );
 
@@ -524,7 +571,7 @@ const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
 );
 
 
-const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
+const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch ,handlePaymentSelection}) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState);
 
   return (
@@ -566,7 +613,7 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
         rightTextStyle={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}
       />
 
-      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} />
+      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} onSelect={handlePaymentSelection}/>
     </View>
   );
 };
@@ -598,44 +645,39 @@ const paymentMethods = [
     paymentMethod: PaymentMethod.ONLINE.value
   },
 ];
-const PaymentMethodView = ({ cartDispatch, cartState }) => {
+const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
 
   const handleSelectMethod = (method, disabled) => {
     if (!disabled) {
       setSelectedMethod(method);
-      CartManager.updateOrderInfo(cartDispatch, { paymentMethod: method.paymentMethod })
+      CartManager.updateOrderInfo(cartDispatch, { paymentMethod: method.paymentMethod });
       setIsVisible(false);
+      
+      // Gửi giá trị ra ngoài component
+      if (onSelect) {
+        onSelect(method);
+      }
     } else {
-      Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng')
+      Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng');
     }
   };
 
   return (
     <Row style={{ justifyContent: 'space-between', paddingHorizontal: 16, backgroundColor: colors.white, paddingVertical: 8 }}>
-      <NormalText text='Phương thức thanh toán' />
+      <NormalText text="Phương thức thanh toán" />
 
       <TouchableOpacity
         style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
         onPress={() => setIsVisible(true)}
       >
         <Image source={selectedMethod.image} style={styles.image} />
-
         <NormalText text={selectedMethod.name} />
-        <Icon
-          source="chevron-down"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.gray700}
-        />
+        <Icon source="chevron-down" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.gray700} />
       </TouchableOpacity>
 
-      {/* Dialog chọn phương thức thanh toán */}
-      <DialogBasic
-        isVisible={isVisible}
-        onHide={() => setIsVisible(false)}
-        title="Chọn phương thức thanh toán"
-      >
+      <DialogBasic isVisible={isVisible} onHide={() => setIsVisible(false)} title="Chọn phương thức thanh toán">
         <Column style={{ marginHorizontal: 16 }}>
           {paymentMethods.map((method) => {
             const disabled = cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && method.paymentMethod === PaymentMethod.COD.value;
@@ -658,12 +700,12 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
               </TouchableOpacity>
             );
           })}
-
         </Column>
       </DialogBasic>
     </Row>
   );
 };
+
 
 
 const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
