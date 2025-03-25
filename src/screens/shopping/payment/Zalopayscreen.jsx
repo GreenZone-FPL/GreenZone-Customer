@@ -1,27 +1,22 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
-import React, { useState } from 'react';
-import { WebView } from 'react-native-webview';
+import React, { useState, useEffect } from 'react';
+import { View, Button, Linking, AppState , Text, TouchableOpacity} from 'react-native';
 import CryptoJS from 'crypto-js';
-import { PaperProvider } from 'react-native-paper';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { updatePaymentStatus, updateOrderStatus } from '../../../axios';
+import { PrimaryButton } from '../../../components';
+
+
 
 // Hàm tạo MAC (chữ ký)
 const generateMac = (appid, apptransid, appuser, amount, apptime, embeddata, item, key1) => {
   const hmacInput = `${appid}|${apptransid}|${appuser}|${amount}|${apptime}|${embeddata}|${item}`;
-  
-  console.log('🔹 Chuỗi cần ký:', hmacInput);
-
-  // Tạo MAC với HmacSHA256
-  const macHex = CryptoJS.HmacSHA256(hmacInput, key1).toString(CryptoJS.enc.Hex);
-  
-  console.log('✅ MAC đã tạo:', macHex);
-  return macHex;
+  return CryptoJS.HmacSHA256(hmacInput, key1).toString(CryptoJS.enc.Hex);
 };
 
-
-// Hàm tạo mã đơn hàng đúng format yymmdd_random (GMT+7)
+// Hàm tạo mã đơn hàng đúng format yymmdd_random
 const getAppTransId = () => {
   const date = new Date();
-  date.setHours(date.getHours() + 7); // Đảm bảo đúng múi giờ GMT+7
+  date.setHours(date.getHours() + 7);
   const yymmdd = date.toISOString().slice(2, 10).replace(/-/g, ''); // yymmdd
   const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
   return `${yymmdd}_${randomNum}`;
@@ -29,67 +24,74 @@ const getAppTransId = () => {
 
 const ZalopayScreen = () => {
   const [orderUrl, setOrderUrl] = useState(null);
+  const [appState, setAppState] = useState(AppState.currentState);
+  const route = useRoute();
+  const navigation = useNavigation();
 
-  const itemArray = [
-    {
-      itemid: 'spA',
-      itename: 'Sản phẩm A',
-      itemprice: 10000,
-      itemquantity: 1,
-    },
-  ];
-  const jsonArrayString = JSON.stringify(itemArray);
+  const { orderId, totalPrice} = route.params || {};
+  console.log('tong tien: ', totalPrice)
+  useEffect(() => {
+    // Theo dõi trạng thái ứng dụng
+    const handleAppStateChange = (nextAppState) => {
+      console.log('📢 AppState:', nextAppState);
+      if (appState.match(/inactive|background/) && nextAppState === 'active') {
+        checkPaymentStatus();
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      subscription.remove();
+    };
+  }, [appState]);
+
+
+  const APP_ID = '2554'; 
+  const KEY1 = 'sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn'; 
+  const ENDPOINT = 'https://sb-openapi.zalopay.vn/v2/create';
+
+  const appTransId = getAppTransId();
+  const appTime = Date.now();
+  const amount = totalPrice;
+
+  const embedData = JSON.stringify({ promo: 'none' });
+  const item = JSON.stringify([{ itemid: orderId, itename: 'Tổng Tiền', itemprice: totalPrice, itemquantity: 1 }]);
+
+  
+  const order = {
+    app_id: parseInt(APP_ID),
+    app_user: 'user123',
+    app_trans_id: appTransId,
+    app_time: appTime,
+    amount: amount,
+    description: 'Thanh toán đơn hàng test',
+    embed_data: embedData,
+    item: item,
+    callback_url: 'https://yourserver.com/callback',
+  };
+  
+  // Tạo MAC
+  order.mac = generateMac(order.app_id, order.app_trans_id, order.app_user, order.amount, order.app_time, order.embed_data, order.item, KEY1);
+
 
   const handlePayment = async () => {
-    const APP_ID = '2554'; 
-    const KEY1 = 'sdngKKJmqEMzvh5QQcdD2A9XBSKUNaYn'; 
-    const ENDPOINT = 'https://sb-openapi.zalopay.vn/v2/create';
-  
-    const appTransId = getAppTransId();
-    const appTime = Date.now();
-    const amount = 10000;
-  
-    const embedData = JSON.stringify({ promo: 'none' });
-    const item = jsonArrayString; // Danh sách sản phẩm dạng JSON
-  
-    const order = {
-      app_id: parseInt(APP_ID),
-      app_user: 'user123',
-      app_trans_id: appTransId,
-      app_time: appTime,
-      amount: amount,
-      description: 'Thanh toán đơn hàng test',
-      embed_data: embedData,
-      item: item,
-      callback_url: 'https://yourserver.com/callback',
-    };
-  
-    // Tạo MAC chuẩn theo định dạng ZaloPay
-    order.mac = generateMac(
-      order.app_id,
-      order.app_trans_id,
-      order.app_user,
-      order.amount,
-      order.app_time,
-      order.embed_data,
-      order.item,
-      KEY1
-    );
-  
-    console.log('🔹 Dữ liệu gửi lên:', JSON.stringify(order, null, 2));
-  
     try {
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order),
       });
-  
+
       const data = await response.json();
-      console.log('🔹 API Response:', data);
-  
+
       if (data.order_url) {
         setOrderUrl(data.order_url);
+        await updatePaymentStatus(orderId, 'success', data.order_token);
+        // Mở ZaloPay để thanh toán
+        Linking.openURL(data.order_url)
+          .then(() => console.log('🔹 Mở ZaloPay:', data.order_url))
+          .catch(err => console.error('❌ Lỗi mở URL:', err));
       } else {
         alert(`Lỗi: ${data.return_message || 'Không thể tạo đơn hàng.'}`);
       }
@@ -97,26 +99,39 @@ const ZalopayScreen = () => {
       alert('Lỗi: ' + error.message);
     }
   };
-  
-  
-  
-  
+  const handleExit = async () => {
 
+
+    try {
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order),
+      });
+
+      const data = await response.json();
+      await updatePaymentStatus(orderId, 'canceled', data.order_token);
+      await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
+    } catch (error) {
+      // alert('Lỗi: ' + error.message);
+    }
+    navigation.goBack();
+  }
   return (
-    <PaperProvider>
-    <View style={{ flex: 1 }}>
-      {orderUrl ? (
-        <WebView source={{ uri: orderUrl }} style={{ flex: 1 }} />
-      ) : (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Button title="THANH TOÁN QUA ZALOPAY" onPress={handlePayment} />
+      <View style={{ flex: 1 , justifyContent: 'center'}}>
+        <View style={{margin: 16, alignItems: 'center', gap: 25}}>
+          <Text style={{textAlign: 'center', width: 350}}>Bạn cần tải ứng dụng ZaloPay để thực hiện thanh toán này. Đã có ứng dụng hãy xác nhận</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', width: "350", justifyContent: 'space-between'}}>
+            <TouchableOpacity onPress={handleExit} style={{borderWidth: 1, padding: 16, borderRadius: 8}}><Text>Hủy thanh toán</Text></TouchableOpacity>
+            <PrimaryButton onPress={handlePayment} title={'Xác nhận'}/>
+          </View>
+          
         </View>
-      )}
-    </View>
-    </PaperProvider>
+
+      </View>
+
   );
 };
 
 export default ZalopayScreen;
 
-const styles = StyleSheet.create({});

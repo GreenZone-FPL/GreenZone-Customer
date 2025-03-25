@@ -106,9 +106,9 @@ const OrderDetailScreen = props => {
               {getOrderStatusLabel(orderDetail.status)}
             </Text>
           </Row>
-          {/* <Text style={{paddingHorizontal: 16, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.pink500}}>
-              {orderDetail?.deliveryMethod === 'pickup' ? 'Đơn đến lấy tại cửa hàng' : 'Đơn hàng giao đi'}
-          </Text> */}
+          <Text style={{paddingHorizontal: 16, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.pink500}}>
+              {orderDetail?.deliveryMethod === 'pickup' ? 'Đơn đến lấy' : 'Đơn giao đến'}
+          </Text>
           {[
             'shippingOrder',
             'failedDelivery',

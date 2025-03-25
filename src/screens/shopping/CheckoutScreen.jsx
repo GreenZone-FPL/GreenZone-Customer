@@ -619,10 +619,10 @@ const RecipientInfo = ({cartState, cartDispatch, onChangeRecipientInfo}) => {
   if (!user) return null; // 🔥 Không render gì nếu chưa có user
 
   const consigneeName =
-    cartState?.shippingAddressInfo?.consigneeName ||
+    cartState?.consigneeName ||
     `${user.lastName} ${user.firstName}`;
   const consigneePhone =
-    cartState?.shippingAddressInfo?.consigneePhone || user.phoneNumber;
+    cartState?.consigneePhone || user.phoneNumber;
 
   return (
     <View style={styles.containerItem}>
