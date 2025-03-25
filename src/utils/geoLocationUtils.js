@@ -52,7 +52,6 @@ const fetchUserLocation = async (setCurrentLocation, setLoading) => {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
 
     const location = await getCurrentLocation();
-    console.log('địa chỉ cửa hàng gần nhất>>>>', location);
 
     if (location) setCurrentLocation(location);
 

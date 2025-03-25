@@ -163,9 +163,8 @@ const CheckoutScreen = ({navigation}) => {
                   onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
 
-                {cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? (
-                  <LocationManager cartState={cartState} />
-                ) : (
+                {cartState?.deliveryMethod ===
+                DeliveryMethod.DELIVERY.value ? null : ( // <LocationManager cartState={cartState} />
                   <StoreAddress
                     storeInfo={cartState?.storeInfo}
                     chooseMerchant={() => {

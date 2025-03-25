@@ -5,16 +5,50 @@ import {AppAsyncStorage} from './appAsyncStorage';
 import {CartManager} from './cartMananger';
 
 export const LocationManager2 = {
-  // Hàm tính khoảng cách giữa hai tọa độ bằng công thức Haversine
-  haversineDistance: (userLocation, storeLocation) => {
-    if (!userLocation || !storeLocation) {
-      return null; // Vị trí không hợp lệ
+  // Hàm cập nhật cửa hàng vào giỏ hàng
+  updateStore: async (cartState, cartDispatch, sortedMerchants, callback) => {
+    if (
+      cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value &&
+      sortedMerchants.length > 0
+    ) {
+      const merchant = sortedMerchants[0];
+      let cart = await AppAsyncStorage.readData('CART', cartInitialState);
+
+      // Cập nhật thông tin cửa hàng vào giỏ hàng
+      cart = {
+        ...cart,
+        store: merchant._id,
+        storeInfo: {
+          storeName: merchant.name,
+          storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+        },
+      };
+
+      if (callback) callback(cart);
+      return cart;
     }
+    return null; // Nếu không có cửa hàng phù hợp, trả về null
+  },
 
-    const [lon1, lat1] = userLocation;
-    const [lon2, lat2] = storeLocation;
+  //   LocationManager.updateStore(async (cart) => {
+  //     if (cartDispatch) {
+  //       await CartManager.updateOrderInfo(cartDispatch, {
+  //        cart
+  //       });
+  //     }
+  //   });
 
-    const R = 6371; // Bán kính Trái Đất (km)
+  //   const myUpdateCart = async (cart) => {
+  //     if (cartDispatch) {
+  //       await CartManager.updateOrderInfo(cartDispatch, {
+  //        cart
+  //       });
+  //     }
+
+  // Hàm tính khoảng cách giữa hai tọa độ bằng công thức Haversine
+  // hàm tính khoảng cách giữa người dùng và cửa hàng
+  haversineDistance: (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Earth radius in km
     const toRad = angle => (angle * Math.PI) / 180;
 
     const dLat = toRad(lat2 - lat1);
@@ -28,79 +62,46 @@ export const LocationManager2 = {
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return Number((R * c).toFixed(2)); // Trả về khoảng cách (km)
-  },
-
-  // Hàm cập nhật cửa hàng vào giỏ hàng
-  updateStore: async (cartState, cartDispatch, sortedMerchants, callback) => {
-    if (
-      cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value &&
-      sortedMerchants.length > 0
-    ) {
-      const merchant = sortedMerchants[0];
-
-      let cart = await AppAsyncStorage.readData('CART', cartInitialState);
-
-      // cập nhật
-      cart = {
-        ...cart,
-        store: merchant._id,
-        storeInfo: {
-          storeName: merchant.name,
-          storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
-        },
-      };
-
-      if (callback) callback(cart);
-      return cart;
-    }
+    return (R * c).toFixed(2);
   },
 
   // Hàm sắp xếp merchants theo khoảng cách
   getNearestMerchant: (merchants, userLocation) => {
     if (!merchants || merchants.length === 0 || !userLocation) return null;
 
+    const [userLongitude, userLatitude] = userLocation;
+
     const sortedList = merchants
       .map(item => ({
         ...item,
-        distance: LocationManager2.haversineDistance(userLocation, [
-          item.longitude,
+        distance: LocationManager2.haversineDistance(
+          userLatitude,
+          userLongitude,
           item.latitude,
-        ]),
+          item.longitude,
+        ),
       }))
       .sort((a, b) => a.distance - b.distance);
 
-    return sortedList[0]; // Trả về cửa hàng gần nhất
+    return sortedList.length > 0 ? sortedList[0] : null;
   },
 
-  // Lấy vị trí người dùng
-  getLocationUse: async () => {
-    return new Promise((resolve, reject) => {
+  // Hàm lấy vị trí người dùng
+  getUserLocation: setUserLocation => {
+    const timeoutId = setTimeout(() => {
       Geolocation.getCurrentPosition(
         position => {
           const {latitude, longitude} = position.coords;
-          resolve([longitude, latitude]); // Trả về vị trí dưới dạng mảng [longitude, latitude]
+          setUserLocation([longitude, latitude]);
         },
-        error => reject(error),
-        {timeout: 5000, enableHighAccuracy: true},
+        error => console.log(error),
+        {timeout: 5000},
       );
-    });
+    }, 1000);
+
+    // Clear the timeout if the component unmounts
+    return () => clearTimeout(timeoutId);
   },
 };
 
-//   LocationManager.updateStore(async (cart) => {
-//     if (cartDispatch) {
-//       await CartManager.updateOrderInfo(cartDispatch, {
-//        cart
-//       });
-//     }
-//   });
-
-//   const myUpdateCart = async (cart) => {
-//     if (cartDispatch) {
-//       await CartManager.updateOrderInfo(cartDispatch, {
-//        cart
-//       });
-//     }
-
-/// lay  list cua hang va sort, tra ve cua hang gan nhat {}.
+export default LocationManager2;

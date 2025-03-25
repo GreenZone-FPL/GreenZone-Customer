@@ -49,6 +49,7 @@ import {
   CartManager,
   AppAsyncStorage,
   LocationManager2,
+  getCurrentLocation,
 } from '../../utils';
 import {getAllMerchants} from '../../axios/modules/merchant';
 
@@ -58,6 +59,7 @@ const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
   const [currentLocation, setCurrentLocation] = useState('');
+  const [userLocation, setUserLocation] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
@@ -125,15 +127,16 @@ const HomeScreen = props => {
     setIsModalVisible(false);
   };
 
+  // hàm tự động lưu địa chỉ nhận hàng của người dùng
   useEffect(() => {
-    const load2 = async () => {
+    const saveLocationByPickup = async () => {
       try {
         const userLocation = await fetchUserLocation(
           setCurrentLocation,
           setLoading,
         );
-        console.log('userLocation', JSON.stringify(userLocation, null, 2));
-        // if (selectedOption !== 'Mang đi') return;
+        // console.log('userLocation', JSON.stringify(userLocation, null, 2));
+        // if (selectedOption !== 'Giao hàng') return;
         const newCart = await CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: {
             location: userLocation.address.label,
@@ -146,32 +149,14 @@ const HomeScreen = props => {
         console.log(error);
       }
     };
-    load2();
-  }, []);
+    saveLocationByPickup();
+  }, [selectedOption]);
 
-  const load = async () => {
-    if (selectedOption !== 'Mang đi') return;
-    try {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        shippingAddressInfo: {
-          location: currentLocation.address.label,
-          latitude: currentLocation.position.lat,
-          longitude: currentLocation.position.lng,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
       setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
-
-  // useEffect(() => {
-  //   console.log('Header title updated:', currentCategory);
-  // }, [currentCategory]);
 
   const handleScroll = useCallback(
     event => {
@@ -213,34 +198,37 @@ const HomeScreen = props => {
 
   useEffect(() => {
     fetchMerchants();
+    LocationManager2.getUserLocation(setUserLocation);
   }, []);
 
-  // useEffect(() => {
-  //   const getNearestStore = async () => {
-  //     try {
-  //       const userLocation = await fetchUserLocation(
-  //         setCurrentLocation,
-  //         setLoading,
-  //       );
-  //       const nearest = LocationManager2.getNearestMerchant(
-  //         merchants,
-  //         userLocation,
-  //       );
+  // hàm tự động lưu địa chỉ cửa hàng gần nhất để ship đến
+  useEffect(() => {
+    const getNearestStore = async () => {
+      try {
+        const nearest = await LocationManager2.getNearestMerchant(
+          merchants,
+          userLocation,
+        );
 
-  //       if (nearest) {
-  //         console.log('Cửa hàng gần nhất:', nearest);
+        console.log('User Location:', userLocation);
+        console.log('Nearest Store:', nearest);
 
-  //         nearest;
-  //       } else {
-  //         console.log('Không tìm thấy cửa hàng phù hợp.');
-  //       }
-  //     } catch (error) {
-  //       console.log('Lỗi khi lấy vị trí:', error);
-  //     }
-  //   };
+        if (nearest) {
+          const newCart = await CartManager.updateOrderInfo(cartDispatch, {
+            shippingAddressInfo: {
+              location: nearest.address.label,
+              latitude: nearest.position.lat,
+              longitude: nearest.position.lng,
+            },
+          });
+        }
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
 
-  //   getNearestStore();
-  // }, []);
+    getNearestStore();
+  }, [merchants, userLocation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -256,12 +244,12 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        {/* <Button
+        <Button
           title="Tao cart"
           onPress={async () => {
             await AppAsyncStorage.storeData('CART', cartInitialState);
           }}
-        /> */}
+        />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
         <CardCategory />
         {/* <ImageCarousel data={dataBanner} time={2000} /> */}
