@@ -4,7 +4,7 @@ import {cartInitialState} from '../reducers';
 import {AppAsyncStorage} from './appAsyncStorage';
 import {CartManager} from './cartMananger';
 
-export const LocationManager2 = {
+export const LocationManager = {
   // Hàm cập nhật cửa hàng vào giỏ hàng
   updateStore: async (cartState, cartDispatch, sortedMerchants, callback) => {
     if (
@@ -47,6 +47,7 @@ export const LocationManager2 = {
 
   // Hàm tính khoảng cách giữa hai tọa độ bằng công thức Haversine
   // hàm tính khoảng cách giữa người dùng và cửa hàng
+
   haversineDistance: (lat1, lon1, lat2, lon2) => {
     const R = 6371; // Earth radius in km
     const toRad = angle => (angle * Math.PI) / 180;
@@ -74,7 +75,7 @@ export const LocationManager2 = {
     const sortedList = merchants
       .map(item => ({
         ...item,
-        distance: LocationManager2.haversineDistance(
+        distance: LocationManager.haversineDistance(
           userLatitude,
           userLongitude,
           item.latitude,
@@ -104,4 +105,4 @@ export const LocationManager2 = {
   },
 };
 
-export default LocationManager2;
+export default LocationManager;

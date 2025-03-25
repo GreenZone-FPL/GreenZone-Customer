@@ -31,7 +31,7 @@ export const DialogShippingMethod = ({
   onEditOption,
   onOptionSelect,
 }) => {
-  const [currentLocation, setCurrenLocation] = useState('');
+  const [currentLocation, setCurrenLocation] = useState(null);
   const [locationAvailable, setLocationAvailable] = useState(false);
   const [user, setUser] = useState([]);
 
@@ -39,38 +39,30 @@ export const DialogShippingMethod = ({
 
   // Lấy vị trí người dùng
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
+    const getUserAndCurrentLocation = async () => {
+      try {
+        setCurrenLocation(
+          await AppAsyncStorage.readData(
+            AppAsyncStorage.STORAGE_KEYS.currentLocation,
+          ),
+        );
+        setUser(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
+        );
+      } catch (error) {
+        console.log('error', error);
       }
-    });
+    };
+    getUserAndCurrentLocation();
   }, []);
-
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
-
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-        setLocationAvailable(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // Dữ liệu mẫu
   const options = [
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: locationAvailable
-        ? currentLocation.address.label
+      address: currentLocation
+        ? currentLocation?.location
         : 'Đang lấy vị trí...',
     },
     {
@@ -79,22 +71,6 @@ export const DialogShippingMethod = ({
       address: 'Đến lấy tại cửa hàng ở địa chỉ',
     },
   ];
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const storedUser = await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.user,
-        );
-        setUser(storedUser);
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    fetchUser();
-    return () => {};
-  }, []);
 
   return (
     <Modal
@@ -116,7 +92,6 @@ export const DialogShippingMethod = ({
               />
             </TouchableOpacity>
           </View>
-          <LocationManager cartState={cartState} />
           <View style={styles.optionsContainer}>
             {options.map((option, index) => (
               <Pressable

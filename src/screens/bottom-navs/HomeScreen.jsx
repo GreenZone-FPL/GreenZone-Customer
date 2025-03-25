@@ -45,32 +45,46 @@ import {
 } from '../../layouts/graphs';
 import {
   fetchData,
-  fetchUserLocation,
   CartManager,
   AppAsyncStorage,
-  LocationManager2,
-  getCurrentLocation,
+  LocationManager,
 } from '../../utils';
-import {getAllMerchants} from '../../axios/modules/merchant';
 
-import {CartActionTypes, cartInitialState} from '../../reducers';
+import {cartInitialState} from '../../reducers';
+import CallSaveLocation from '../../utils/CallSaveLocation';
 
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState('');
-  const [userLocation, setUserLocation] = useState('');
+
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [merchantLocal, setMerchantLocal] = useState(null);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const [editOption, setEditOption] = useState('');
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch, merchantLocation, setMerchantLocation} =
-    useAppContext();
-  const [merchants, setMerchants] = useState([]);
+  const {cartState, cartDispatch} = useAppContext();
+
+  //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
+  useEffect(() => {
+    const getCurrentLocationAndMerchantLocation = async () => {
+      setCurrentLocation(
+        await AppAsyncStorage.readData(
+          AppAsyncStorage.STORAGE_KEYS.currentLocation,
+        ),
+      );
+      setMerchantLocal(
+        await AppAsyncStorage.readData(
+          AppAsyncStorage.STORAGE_KEYS.merchantLocation,
+        ),
+      );
+    };
+    getCurrentLocationAndMerchantLocation();
+  }, []);
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -79,39 +93,24 @@ const HomeScreen = props => {
 
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = async option => {
-    let deliveryMethod =
-      option === 'Mang đi'
-        ? DeliveryMethod.PICK_UP.value
-        : DeliveryMethod.DELIVERY.value;
-
-    await CartManager.updateOrderInfo(cartDispatch, {deliveryMethod});
+    if (option === 'Mang đi') {
+      await CartManager.updateOrderInfo(cartDispatch, {
+        deliveryMethod: DeliveryMethod.PICK_UP.value,
+      });
+    } else if (option === 'Giao hàng') {
+      await CartManager.updateOrderInfo(cartDispatch, {
+        deliveryMethod: DeliveryMethod.DELIVERY.value,
+        store: merchantLocal.store,
+        storeInfo: {
+          storeName: merchantLocal.storeName,
+          storeAddress: merchantLocal.storeAddress,
+        },
+      });
+    }
 
     setSelectedOption(option);
-    setIsModalVisible(false); // Đóng dialog sau khi chọn
+    setIsModalVisible(false);
   };
-
-  // // Hàm xử lý khi chọn phương thức giao hàng
-  // const handleOptionSelect = async option => {
-  //   let deliveryMethod =
-  //     option === 'Mang đi'
-  //       ? DeliveryMethod.PICK_UP.value
-  //       : DeliveryMethod.DELIVERY.value;
-  //   if (option === 'Mang đi') {
-  //     const nearestMerchant = await fetchLocation();
-  //     await CartManager.updateOrderInfo(cartDispatch, {
-  //       storeInfo: {
-  //         lat: nearestMerchant.lat,
-  //         lng: nearestMerchant.lng,
-  //       },
-  //       deliveryMethod,
-  //     });
-  //   } else {
-  //   }
-  //   await CartManager.updateOrderInfo(cartDispatch, {deliveryMethod});
-
-  //   setSelectedOption(option);
-  //   setIsModalVisible(false); // Đóng dialog sau khi chọn
-  // };
 
   const handleEditOption = option => {
     if (option === 'Giao hàng') {
@@ -126,31 +125,6 @@ const HomeScreen = props => {
     setEditOption(option);
     setIsModalVisible(false);
   };
-
-  // hàm tự động lưu địa chỉ nhận hàng của người dùng
-  useEffect(() => {
-    const saveLocationByPickup = async () => {
-      try {
-        const userLocation = await fetchUserLocation(
-          setCurrentLocation,
-          setLoading,
-        );
-        // console.log('userLocation', JSON.stringify(userLocation, null, 2));
-        // if (selectedOption !== 'Giao hàng') return;
-        const newCart = await CartManager.updateOrderInfo(cartDispatch, {
-          shippingAddressInfo: {
-            location: userLocation.address.label,
-            latitude: userLocation.position.lat,
-            longitude: userLocation.position.lng,
-          },
-        });
-        console.log('newCart', newCart);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    saveLocationByPickup();
-  }, [selectedOption]);
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
@@ -186,50 +160,6 @@ const HomeScreen = props => {
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
   }, []);
 
-  // hàm gọi api merchants
-  const fetchMerchants = async () => {
-    try {
-      const data = await getAllMerchants();
-      setMerchants(data.docs);
-    } catch (error) {
-      console.log('Error fetching merchants:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchMerchants();
-    LocationManager2.getUserLocation(setUserLocation);
-  }, []);
-
-  // hàm tự động lưu địa chỉ cửa hàng gần nhất để ship đến
-  useEffect(() => {
-    const getNearestStore = async () => {
-      try {
-        const nearest = await LocationManager2.getNearestMerchant(
-          merchants,
-          userLocation,
-        );
-
-        console.log('User Location:', userLocation);
-        console.log('Nearest Store:', nearest);
-
-        if (nearest) {
-          const newCart = await CartManager.updateOrderInfo(cartDispatch, {
-            shippingAddressInfo: {
-              location: nearest.address.label,
-              latitude: nearest.position.lat,
-              longitude: nearest.position.lng,
-            },
-          });
-        }
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    getNearestStore();
-  }, [merchants, userLocation]);
-
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -238,7 +168,8 @@ const HomeScreen = props => {
         onBadgePress={() => {}}
         isHome={false}
       />
-
+      {/* // hàm gọi và save location cửa hàng gần nhất - user */}
+      <CallSaveLocation />
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -300,7 +231,6 @@ const HomeScreen = props => {
 
         {/* <Searchbar /> */}
       </ScrollView>
-
       <DeliveryButton
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
@@ -309,19 +239,28 @@ const HomeScreen = props => {
             ? cartState?.storeInfo?.storeAddress
             : cartState?.shippingAddressInfo?.location
             ? cartState?.shippingAddressInfo?.location
-            : currentLocation
-            ? currentLocation.address.label
+            : cartState
+            ? cartState?.address.label
             : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={() => {
-          // await load();
-          navigation.navigate(ShoppingGraph.CheckoutScreen);
+        onPressCart={async () => {
+          // if (selectedOption === 'Giao đến') {
+          //   const newCart = await CartManager.updateOrderInfo(cartDispatch, {
+          //     deliveryMethod: DeliveryMethod.DELIVERY.value,
+          //     store: merchantLocal.store,
+          //     storeInfo: {
+          //       storeName: merchantLocal.storeName,
+          //       storeAddress: merchantLocal.storeAddress,
+          //     },
+          //   });
+          // }
+          // console.log(newCart);
+          await navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
-
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}

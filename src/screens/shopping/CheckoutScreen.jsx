@@ -261,6 +261,19 @@ const CheckoutScreen = ({navigation}) => {
                     )
                   }
                 />
+                <Button
+                  title="Log Order"
+                  onPress={() =>
+                    console.log(
+                      'cartState =',
+                      JSON.stringify(
+                        CartManager.setupDeliveryOrder(cartState),
+                        null,
+                        2,
+                      ),
+                    )
+                  }
+                />
 
                 <Button
                   title="Clear cartState"
