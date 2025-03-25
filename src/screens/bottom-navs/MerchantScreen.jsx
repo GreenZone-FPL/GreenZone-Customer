@@ -50,7 +50,6 @@ const MerchantScreen = ({navigation, route}) => {
 
   // hàm tính khoảng cách giữa người dùng và cửa hàng
   const haversineDistance = (lat2, lon2) => {
-    console.log('userLocation', userLocation);
     if (!userLocation || userLocation[0] === null || userLocation[1] === null) {
       return null; // Invalid user location
     }
