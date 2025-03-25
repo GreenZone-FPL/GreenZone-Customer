@@ -14,7 +14,7 @@ import {
 import {Icon} from 'react-native-paper';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
-import {AppAsyncStorage, LocationManager} from '../../utils';
+import {AppAsyncStorage} from '../../utils';
 import {useAppContext} from '../../context/appContext';
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -31,21 +31,13 @@ export const DialogShippingMethod = ({
   onEditOption,
   onOptionSelect,
 }) => {
-  const [currentLocation, setCurrenLocation] = useState(null);
-  const [locationAvailable, setLocationAvailable] = useState(false);
   const [user, setUser] = useState([]);
-
   const {cartState} = useAppContext();
 
   // Lấy vị trí người dùng
   useEffect(() => {
     const getUserAndCurrentLocation = async () => {
       try {
-        setCurrenLocation(
-          await AppAsyncStorage.readData(
-            AppAsyncStorage.STORAGE_KEYS.currentLocation,
-          ),
-        );
         setUser(
           await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
         );
@@ -61,9 +53,7 @@ export const DialogShippingMethod = ({
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: currentLocation
-        ? currentLocation?.location
-        : 'Đang lấy vị trí...',
+      address: cartState ? cartState?.shippingAddress : 'Đang lấy vị trí...',
     },
     {
       label: 'Mang đi',
@@ -139,7 +129,7 @@ export const DialogShippingMethod = ({
                   </Text>
                 ) : (
                   <Text style={styles.phoneText}>
-                    {cartState?.storeInfo?.storeAddress}
+                    {cartState?.storeInfoSelect?.storeAddress}
                   </Text>
                 )}
               </Pressable>

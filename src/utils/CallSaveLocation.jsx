@@ -1,4 +1,4 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {fetchUserLocation} from './geoLocationUtils';
 import {AppAsyncStorage} from './appAsyncStorage';
@@ -13,75 +13,85 @@ const CallSaveLocation = () => {
   const [merchants, setMerchants] = useState([]);
   const {cartDispatch} = useAppContext();
 
-  // hàm gọi api merchants
-  const fetchMerchants = async () => {
-    try {
-      const data = await getAllMerchants();
-      setMerchants(data.docs);
-    } catch (error) {
-      console.log('Error fetching merchants:', error);
-    }
-  };
+  // Lấy danh sách merchants
+  useEffect(() => {
+    const fetchMerchants = async () => {
+      try {
+        const data = await getAllMerchants();
+        setMerchants(data.docs);
+      } catch (error) {
+        console.log('Error fetching merchants:', error);
+      }
+    };
+    fetchMerchants();
+  }, []);
 
-  // Lấy vị trí hiện tại của customer và lưu vào AsyncStorage - lưu vào cartStable
+  // Lấy vị trí user
   useEffect(() => {
     const getLocationAndSave = async () => {
-      setLoading(true); // Bắt đầu quá trình lấy vị trí
-      const location = await fetchUserLocation(setCurrentLocation, setLoading);
-      if (location) {
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.currentLocation,
-          {
-            location: location.title,
-            latitude: location.position.lat.toString(),
-            longitude: location.position.lng.toString(),
-          },
+      try {
+        setLoading(true);
+        const location = await fetchUserLocation(
+          setCurrentLocation,
+          setLoading,
         );
-        if (cartDispatch) {
-          await CartManager.updateOrderInfo(cartDispatch, {
-            shippingAddressInfo: {
+
+        if (location) {
+          await AppAsyncStorage.storeData(
+            AppAsyncStorage.STORAGE_KEYS.currentLocation,
+            {
               location: location.title,
               latitude: location.position.lat.toString(),
               longitude: location.position.lng.toString(),
             },
-          });
-        }
-      }
+          );
 
-      setLoading(false);
+          if (cartDispatch) {
+            await CartManager.updateOrderInfo(cartDispatch, {
+              shippingAddressInfo: {
+                location: location.title,
+                latitude: location.position.lat.toString(),
+                longitude: location.position.lng.toString(),
+              },
+            });
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log('Error fetching location:', error);
+      }
     };
-    fetchMerchants();
+
     getLocationAndSave();
   }, []);
 
-  // hàm tự động lưu địa chỉ cửa hàng gần nhất vào AsynStorage và cập nhập vào cartStable
+  // Lưu địa chỉ cửa hàng gần nhất
   useEffect(() => {
     const getNearestStore = async () => {
-      try {
-        if (!currentLocation || !merchants || merchants.length === 0) {
-          return;
-        }
+      if (!currentLocation?.position || merchants.length === 0) return;
 
+      try {
         const userLocation = [
           currentLocation.position.lng,
           currentLocation.position.lat,
         ];
-
         const nearest = await LocationManager.getNearestMerchant(
           merchants,
           userLocation,
         );
+
         if (nearest) {
           await AppAsyncStorage.storeData(
             AppAsyncStorage.STORAGE_KEYS.merchantLocation,
             {
               _id: nearest._id,
               name: nearest.name,
-              storeAddress: `${nearest.specificAddress},${nearest.ward}, ${nearest.district}, ${nearest.province}`,
+              storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
               latitude: nearest.latitude.toString(),
               longitude: nearest.longitude.toString(),
             },
           );
+
           await CartManager.updateOrderInfo(cartDispatch, {
             store: nearest._id,
             storeInfo: {
@@ -91,14 +101,16 @@ const CallSaveLocation = () => {
           });
         }
       } catch (error) {
-        console.log('error', error);
+        console.log('Error finding nearest store:', error);
       }
     };
 
-    getNearestStore();
+    if (currentLocation && merchants.length > 0) {
+      getNearestStore();
+    }
   }, [merchants, currentLocation]);
 
-  return;
+  return null;
 };
 
 export default CallSaveLocation;

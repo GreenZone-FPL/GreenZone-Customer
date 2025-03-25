@@ -37,6 +37,9 @@ const MerchantScreen = ({navigation, route}) => {
   const [selectedMerchant, setSelectedMerchant] = useState([]);
   const [queryMerchants, setQueryMerchants] = useState([]);
   const {isUpdateOrderInfo} = route.params || false;
+  const {fromCheckout} = route.params || false;
+  const {fromHome} = route.params || false;
+
   const {cartDispatch} = useAppContext();
   // hàm gọi api merchants
   const fetchMerchants = async () => {
@@ -81,14 +84,31 @@ const MerchantScreen = ({navigation, route}) => {
   // hàm tới cửa hàng chi tiết
   const handleMerchant = merchant => {
     if (isUpdateOrderInfo) {
-      if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch, {
-          store: merchant._id,
-          storeInfo: {
-            storeName: merchant.name,
-            storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
-          },
-        });
+      if (isUpdateOrderInfo && fromHome) {
+        if (cartDispatch) {
+          CartManager.updateOrderInfo(cartDispatch, {
+            storeSelect: merchant._id,
+            storeInfoSelect: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+          });
+        }
+      } else if (isUpdateOrderInfo && fromCheckout) {
+        if (cartDispatch) {
+          CartManager.updateOrderInfo(cartDispatch, {
+            store: merchant._id,
+            storeInfo: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+            storeSelect: merchant._id,
+            storeInfoSelect: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+          });
+        }
       }
       navigation.goBack();
     } else {

@@ -57,7 +57,6 @@ const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
 
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [merchantLocal, setMerchantLocal] = useState(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -71,19 +70,19 @@ const HomeScreen = props => {
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
-    const getCurrentLocationAndMerchantLocation = async () => {
-      setCurrentLocation(
-        await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.currentLocation,
-        ),
-      );
-      setMerchantLocal(
-        await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.merchantLocation,
-        ),
-      );
+    const getMerchantLocation = async () => {
+      try {
+        setMerchantLocal(
+          await AppAsyncStorage.readData(
+            AppAsyncStorage.STORAGE_KEYS.merchantLocation,
+          ),
+        );
+      } catch (error) {
+        console.log('error', error);
+      }
     };
-    getCurrentLocationAndMerchantLocation();
+
+    getMerchantLocation();
   }, []);
 
   // Hàm xử lý khi đóng dialog
@@ -96,18 +95,23 @@ const HomeScreen = props => {
     if (option === 'Mang đi') {
       await CartManager.updateOrderInfo(cartDispatch, {
         deliveryMethod: DeliveryMethod.PICK_UP.value,
+        store: cartState?.storeSelect,
+        storeInfo: {
+          storeName: cartState?.storeInfoSelect?.storeName,
+          storeAddress: cartState?.storeInfoSelect?.storeAddress,
+        },
       });
     } else if (option === 'Giao hàng') {
+      if (!merchantLocal) return;
       await CartManager.updateOrderInfo(cartDispatch, {
         deliveryMethod: DeliveryMethod.DELIVERY.value,
         store: merchantLocal.store,
         storeInfo: {
-          storeName: merchantLocal.storeName,
+          storeName: merchantLocal.name,
           storeAddress: merchantLocal.storeAddress,
         },
       });
     }
-
     setSelectedOption(option);
     setIsModalVisible(false);
   };
@@ -120,6 +124,7 @@ const HomeScreen = props => {
     } else if (option === 'Mang đi') {
       navigation.navigate(BottomGraph.MerchantScreen, {
         isUpdateOrderInfo: true,
+        fromHome: true,
       });
     }
     setEditOption(option);
@@ -236,28 +241,17 @@ const HomeScreen = props => {
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
         address={
           selectedOption === 'Mang đi'
-            ? cartState?.storeInfo?.storeAddress
+            ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
             ? cartState?.shippingAddressInfo?.location
             : cartState
-            ? cartState?.address.label
+            ? cartState?.address?.label
             : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
         onPressCart={async () => {
-          // if (selectedOption === 'Giao đến') {
-          //   const newCart = await CartManager.updateOrderInfo(cartDispatch, {
-          //     deliveryMethod: DeliveryMethod.DELIVERY.value,
-          //     store: merchantLocal.store,
-          //     storeInfo: {
-          //       storeName: merchantLocal.storeName,
-          //       storeAddress: merchantLocal.storeAddress,
-          //     },
-          //   });
-          // }
-          // console.log(newCart);
           await navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
