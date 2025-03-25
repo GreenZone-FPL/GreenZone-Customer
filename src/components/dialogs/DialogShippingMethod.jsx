@@ -14,7 +14,7 @@ import {
 import {Icon} from 'react-native-paper';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
-import {AppAsyncStorage, LocationManager} from '../../utils';
+import {AppAsyncStorage} from '../../utils';
 import {useAppContext} from '../../context/appContext';
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -116,7 +116,6 @@ export const DialogShippingMethod = ({
               />
             </TouchableOpacity>
           </View>
-          <LocationManager cartState={cartState} />
           <View style={styles.optionsContainer}>
             {options.map((option, index) => (
               <Pressable
@@ -150,7 +149,9 @@ export const DialogShippingMethod = ({
                   </Pressable>
                 </View>
                 <Text numberOfLines={1} style={styles.normalText}>
-                  {option.address}
+                  {option.label === 'Giao hàng'
+                    ? cartState?.shippingAddressInfo?.location
+                    : option.address}
                 </Text>
                 {option.label === 'Giao hàng' ? (
                   <Text style={styles.phoneText}>

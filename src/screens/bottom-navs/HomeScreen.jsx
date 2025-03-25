@@ -88,7 +88,7 @@ const HomeScreen = props => {
     setIsModalVisible(false); // Đóng dialog sau khi chọn
   };
 
-  // // Hàm xử lý khi chọn phương thức giao hàng
+  // Hàm xử lý khi chọn phương thức giao hàng
   // const handleOptionSelect = async option => {
   //   let deliveryMethod =
   //     option === 'Mang đi'
@@ -125,8 +125,9 @@ const HomeScreen = props => {
     setIsModalVisible(false);
   };
 
+  // hàm thêm địa chỉ người dùng, dựa vào vị trí hiện tại, đi giao đến mặc định
   useEffect(() => {
-    const load2 = async () => {
+    const getMyLocationNow = async () => {
       try {
         const userLocation = await fetchUserLocation(
           setCurrentLocation,
@@ -146,23 +147,9 @@ const HomeScreen = props => {
         console.log(error);
       }
     };
-    load2();
+    getMyLocationNow();
   }, []);
 
-  const load = async () => {
-    if (selectedOption !== 'Mang đi') return;
-    try {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        shippingAddressInfo: {
-          location: currentLocation.address.label,
-          latitude: currentLocation.position.lat,
-          longitude: currentLocation.position.lng,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
       setPositions(prev => ({...prev, [categoryId]: y}));
@@ -200,47 +187,6 @@ const HomeScreen = props => {
     if (categories.length === 0) fetchData(getAllCategories, setCategories);
     if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
   }, []);
-
-  // hàm gọi api merchants
-  const fetchMerchants = async () => {
-    try {
-      const data = await getAllMerchants();
-      setMerchants(data.docs);
-    } catch (error) {
-      console.log('Error fetching merchants:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchMerchants();
-  }, []);
-
-  // useEffect(() => {
-  //   const getNearestStore = async () => {
-  //     try {
-  //       const userLocation = await fetchUserLocation(
-  //         setCurrentLocation,
-  //         setLoading,
-  //       );
-  //       const nearest = LocationManager2.getNearestMerchant(
-  //         merchants,
-  //         userLocation,
-  //       );
-
-  //       if (nearest) {
-  //         console.log('Cửa hàng gần nhất:', nearest);
-
-  //         nearest;
-  //       } else {
-  //         console.log('Không tìm thấy cửa hàng phù hợp.');
-  //       }
-  //     } catch (error) {
-  //       console.log('Lỗi khi lấy vị trí:', error);
-  //     }
-  //   };
-
-  //   getNearestStore();
-  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
