@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getOrdersByStatus } from '../../axios';
 import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 
 const width = Dimensions.get('window').width;
@@ -164,8 +164,8 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
         </Text>
 
         <Text style={styles.orderTime}>
-          {order?.fulfillmentDateTime
-            ? moment(order.fulfillmentDateTime)
+          {order?.createdAt
+            ? moment(order.createdAt)
               .utcOffset(7)
               .format('HH:mm - DD/MM/YYYY')
             : 'Chưa có thời gian'}
@@ -180,6 +180,9 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
           {order?.totalPrice
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
+        </Text>
+        <Text style={{color: colors.black, fontSize: 12, fontWeight: '400'}}>
+          {OrderStatus.getLabelByValue(order?.status)}
         </Text>
         {
           order.status === 'completed' && (
