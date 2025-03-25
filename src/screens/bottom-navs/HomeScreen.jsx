@@ -42,6 +42,9 @@ import {
   BottomGraph,
   ShoppingGraph,
   UserGraph,
+  AuthGraph,
+  OrderGraph,
+  VoucherGraph,
 } from '../../layouts/graphs';
 import {
   fetchData,
@@ -201,7 +204,7 @@ const HomeScreen = props => {
           }}
         />
         <BarcodeUser nameUser="User name" codeId="M1678263323" />
-        <CardCategory />
+        <CardCategory navigation={navigation} />
         {/* <ImageCarousel data={dataBanner} time={2000} /> */}
 
         <NotificationList
@@ -293,7 +296,7 @@ const Item = ({IconComponent, title, onPress}) => (
   </TouchableOpacity>
 );
 
-const CardCategory = () => {
+const CardCategory = ({navigation}) => {
   return (
     <View style={styles.card}>
       <ScrollView
@@ -319,6 +322,7 @@ const CardCategory = () => {
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
+          onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
         />
 
         <Item
@@ -333,6 +337,7 @@ const CardCategory = () => {
             <TaskSquare size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Đơn Hàng"
+          onPress={() => navigation.navigate(OrderGraph.OrderHistoryScreen)}
         />
 
         <Item
@@ -340,6 +345,9 @@ const CardCategory = () => {
             <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Góp ý"
+          onPress={() => {
+            navigation.navigate(UserGraph.ContactScreen);
+          }}
         />
 
         <Item
@@ -347,6 +355,9 @@ const CardCategory = () => {
             <Rank size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Hạng thành viên"
+          onPress={() => {
+                        navigation.navigate(AppGraph.MembershipScreen);
+                      }}
         />
       </ScrollView>
     </View>

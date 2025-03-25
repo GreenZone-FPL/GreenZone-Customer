@@ -138,6 +138,7 @@ const OrderDetailScreen = props => {
             orderItems={orderDetail.orderItems}
             totalPrice={orderDetail.totalPrice}
             status={orderDetail.status}
+            createdAt={orderDetail.createdAt}
           />
 
           <Row style={{flex: 1}}>
@@ -348,6 +349,7 @@ const PaymentDetails = ({
   orderItems,
   totalPrice,
   status,
+  createdAt,
 }) => {
   // Tính tổng tiền sản phẩm (chưa bao gồm phí giao hàng và giảm giá)
   const subTotal = orderItems.reduce(
@@ -448,8 +450,13 @@ const PaymentDetails = ({
 
         {
           leftText: 'Thời gian đặt hàng',
+          rightText: new Date(createdAt).toLocaleString('vi-VN'),
+        },
+        {
+          leftText: 'Thời gian nhận hàng',
           rightText: new Date(fulfillmentDateTime).toLocaleString('vi-VN'),
         },
+        
       ].map((item, index) => (
         <DualTextRow key={index} {...item} />
       ))}
@@ -471,7 +478,7 @@ const PaymentDetails = ({
           }}>
           {getPaymentIcon(paymentMethod)}
           <Text style={{fontSize: 12, color: '#000', marginLeft: 8}}>
-            {paymentMethod.toUpperCase()}
+            {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
           </Text>
         </View>
       </View>
