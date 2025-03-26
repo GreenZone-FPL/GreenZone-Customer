@@ -203,7 +203,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription, authStat
 
 
 
-                <FavoriteButton productId={product._id} authState={authState} />
+                {/* <FavoriteButton productId={product._id} authState={authState} /> */}
 
             </Row>
             <Text style={{ fontSize: 22, color: colors.orange700, fontWeight: 'bold', paddingHorizontal: 16 }}>{TextFormatter.formatCurrency(product.sellingPrice)}</Text>

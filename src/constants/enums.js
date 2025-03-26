@@ -40,7 +40,7 @@ export const OrderStatus = Object.freeze({
     getMessageInfoByStatus(status) {
         switch (status) {
             case this.AWAITING_PAYMENT.value:
-                return { type: "warning", icon: status === this.AWAITING_PAYMENT.value ? "warning" : "info" };
+                return { type: "success", icon: status === this.AWAITING_PAYMENT.value ? "warning" : "info" };
             case this.PENDING_CONFIRMATION.value:
                 return { type: "success", icon: "success" };
 
