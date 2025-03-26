@@ -68,7 +68,7 @@ export const LocationManager = {
 
   // Hàm sắp xếp merchants theo khoảng cách
   getNearestMerchant: (merchants, userLocation) => {
-    if (!merchants || merchants.length === 0 || !userLocation) return null;
+    if (!merchants || merchants.length === 0 || !userLocation) return {};
 
     const [userLongitude, userLatitude] = userLocation;
 
@@ -84,7 +84,7 @@ export const LocationManager = {
       }))
       .sort((a, b) => a.distance - b.distance);
 
-    return sortedList.length > 0 ? sortedList[0] : null;
+    return sortedList.length > 0 ? sortedList[0] : {};
   },
 
   // Hàm lấy vị trí người dùng

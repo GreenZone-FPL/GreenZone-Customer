@@ -11,7 +11,7 @@ const CallSaveLocation = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [merchants, setMerchants] = useState([]);
-  const {cartDispatch} = useAppContext();
+  const {cartDispatch, cartState} = useAppContext();
 
   // Lấy danh sách merchants
   useEffect(() => {
@@ -81,6 +81,8 @@ const CallSaveLocation = () => {
         );
 
         if (nearest) {
+          console.log('nearest:', JSON.stringify(nearest, null, 2));
+
           await AppAsyncStorage.storeData(
             AppAsyncStorage.STORAGE_KEYS.merchantLocation,
             {
@@ -98,8 +100,15 @@ const CallSaveLocation = () => {
               storeName: nearest.name,
               storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
             },
+            storeSelect: nearest._id,
+            storeInfoSelect: {
+              storeName: nearest.name,
+              storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
+            },
           });
         }
+
+        console.log(JSON.stringify(cartState, null, 2));
       } catch (error) {
         console.log('Error finding nearest store:', error);
       }

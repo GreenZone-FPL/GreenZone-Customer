@@ -53,7 +53,9 @@ export const DialogShippingMethod = ({
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: cartState ? cartState?.shippingAddress : 'Đang lấy vị trí...',
+      address: cartState
+        ? cartState?.shippingAddressInfo?.location
+        : 'Đang lấy vị trí...',
     },
     {
       label: 'Mang đi',

@@ -84,6 +84,7 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
+  console.log('error cartd', cartState);
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -102,13 +103,12 @@ const HomeScreen = props => {
         },
       });
     } else if (option === 'Giao hàng') {
-      if (!merchantLocal) return;
       await CartManager.updateOrderInfo(cartDispatch, {
         deliveryMethod: DeliveryMethod.DELIVERY.value,
-        store: merchantLocal.store,
+        store: merchantLocal?._id,
         storeInfo: {
-          storeName: merchantLocal.name,
-          storeAddress: merchantLocal.storeAddress,
+          storeName: merchantLocal?.name,
+          storeAddress: merchantLocal?.storeAddress,
         },
       });
     }
