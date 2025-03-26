@@ -111,11 +111,10 @@ HorizontalProductItem.propTypes = HorizontalProductItemPropTypes
 const styles = StyleSheet.create({
   itemProduct: {
     flexDirection: 'row',
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    borderRadius: 4,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     backgroundColor: colors.white,
-    borderBottomColor: colors.gray200,
+    borderBottomColor: colors.fbBg,
     borderBottomWidth: 1,
     marginBottom: 8,
   },

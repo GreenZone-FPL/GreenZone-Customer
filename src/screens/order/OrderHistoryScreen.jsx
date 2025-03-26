@@ -2,9 +2,10 @@ import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+
 
 const width = Dimensions.get('window').width;
 
@@ -80,6 +81,7 @@ const OrderHistoryScreen = ({ navigation }) => {
         {orderStatuses.map((status, index) => (
           <View key={index} style={{ flex: 1 }}>
             <OrderListView
+              status={status}
               orders={orders}
               loading={loading}
               onItemPress={(order) =>
@@ -101,7 +103,7 @@ const OrderListView = ({
   loading,
   onItemPress,
 }) => {
-
+  console.log('status', status)
   return (
     <View style={styles.scene}>
       {loading ? (
@@ -120,28 +122,14 @@ const OrderListView = ({
           contentContainerStyle={{ gap: 5 }}
         />
       ) : (
-        <EmptyView message={getEmptyMessage(status)} />
+        <EmptyView />
       )}
     </View>
   );
 };
 
-const getEmptyMessage = status => {
-  switch (status) {
-    case 'pendingConfirmation':
-      return 'Chưa có đơn hàng chờ xử lý';
-    case 'processing':
-      return 'Chưa có đơn hàng đang thực hiện';
-    case 'shippingOrder':
-      return 'Chưa có đơn hàng đang được giao';
-    case 'completed':
-      return 'Chưa có đơn hàng hoàn thành';
-    case 'cancelled':
-      return 'Chưa có đơn hàng đã hủy';
-  }
-};
-
 const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
+  // console.log('order', JSON.stringify(order, null, 2))
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
     if (items.length > 2) {
@@ -152,6 +140,7 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
       items.map(item => item.product.name).join(' - ') || 'Chưa có sản phẩm'
     );
   };
+  if (!order) return null
 
   return (
     <TouchableOpacity
@@ -181,18 +170,12 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
         </Text>
-        <Text style={{color: colors.black, fontSize: 12, fontWeight: '400'}}>
-          {OrderStatus.getLabelByValue(order?.status)}
-        </Text>
         {
-          order.status === 'completed' && (
-            <TouchableOpacity
-              onPress={handleRepeatOrder}
-              style={styles.buttonContainer}>
-              <Text style={styles.buttonText}>Đặt lại</Text>
-            </TouchableOpacity>
-          )
+          ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
+          <StatusText status={order?.status} />
         }
+
+
       </Column>
     </TouchableOpacity>
   );
@@ -216,14 +199,14 @@ const ItemOrderType = ({ deliveryMethod }) => {
 };
 
 
-const EmptyView = ({ message }) => (
+const EmptyView = () => (
   <View style={styles.emptyContainer}>
     <Image
       style={styles.emptyImage}
       resizeMode="cover"
       source={require('../../assets/images/logo.png')}
     />
-    <Text>{message}</Text>
+
   </View>
 );
 
@@ -254,8 +237,8 @@ const styles = StyleSheet.create({
   orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray700 },
   orderTotal: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: 'bold',
-    color: colors.pink500,
+    fontWeight: '400',
+    color: colors.black,
     textAlign: 'right'
   },
   buttonContainer: {

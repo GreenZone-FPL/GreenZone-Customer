@@ -99,8 +99,10 @@ const SelectAddressScreen = ({navigation, route}) => {
           api_key: GOONG_API_KEY,
         },
       });
+      console.log('request')
       const name = response.data.result.name;
       const {lat, lng} = response.data.result.geometry.location;
+
 
       const updatedAddress = {
         ...address,
@@ -155,6 +157,9 @@ const SelectAddressScreen = ({navigation, route}) => {
               sessiontoken: sessionToken,
             },
           });
+
+
+          console.log('response.data.predictions', JSON.stringify(response.data.predictions, null, 2))
           setSearchResults(response.data.predictions || []);
         } catch (error) {
           console.error('Lỗi tìm kiếm địa chỉ:', error);
@@ -186,7 +191,7 @@ const SelectAddressScreen = ({navigation, route}) => {
           }}
           leftIcon="magnify"
           rightIcon="close"
-          style={{ elevation: 3, backgroundColor: colors.fbBg }}
+          style={{ backgroundColor: colors.fbBg }}
           onFocus={() => setIsSearching(true)}/>
         </View>
 
