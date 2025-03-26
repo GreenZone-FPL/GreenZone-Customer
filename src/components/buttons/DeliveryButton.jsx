@@ -48,7 +48,6 @@ export const DeliveryButton = ({
             style={{ color: colors.white, fontWeight: '500' }}
           />
 
-
         </TouchableOpacity>
       )}
     </TouchableOpacity>
@@ -78,8 +77,8 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray700,
-    fontWeight: 'bold',
+    color: colors.black,
+    fontWeight: '700',
   },
   address: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
   quantity: {
     borderRadius: 10,
     backgroundColor: colors.white,
-    paddingHorizontal: 6,
+    paddingHorizontal: 5,
     color: colors.primary,
     fontWeight: '700',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,

@@ -170,7 +170,6 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
             ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
             : '0₫'}
         </Text>
-
         {
           ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
           <StatusText status={order?.status} />

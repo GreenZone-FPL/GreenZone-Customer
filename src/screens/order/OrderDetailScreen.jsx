@@ -200,11 +200,11 @@ const ShipperInfo = ({ messageClick, shipper }) => {
   return (
     <Row style={{ gap: 16, padding: 16, backgroundColor: colors.white, marginBottom: 8 }}>
       <Image
-        style={{ width: 40, height: 40 }}
+        style={{width: 40, height: 40}}
         source={require('../../assets/images/helmet.png')}
       />
-      <Column style={{ flex: 1 }}>
-        <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
+      <Column style={{flex: 1}}>
+        <NormalText text="Nhân viên giao hàng" style={{fontWeight: '500'}} />
         <Text
           style={{
             fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -227,7 +227,7 @@ const ShipperInfo = ({ messageClick, shipper }) => {
   );
 };
 
-const ProductsInfo = ({ orderItems }) => {
+const ProductsInfo = ({orderItems}) => {
   return (
     <View style={[styles.areaContainer, { borderBottomWidth: 0, backgroundColor: colors.white}]}>
       <View style={{ marginHorizontal: 16 }}>
@@ -237,7 +237,7 @@ const ProductsInfo = ({ orderItems }) => {
       <FlatList
         data={orderItems}
         keyExtractor={item => item.product._id}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           const formattedItem = {
             productName: item.product.name,
             image: item.product.image,
@@ -267,11 +267,11 @@ const ProductsInfo = ({ orderItems }) => {
   );
 };
 
-const MerchantInfo = ({ store }) => {
+const MerchantInfo = ({store}) => {
   return (
     <View style={[styles.areaContainer, { padding: 16 }]}>
       <Title title="Cửa hàng" icon="store" />
-      <Title title={store.name} titleStyle={{ color: colors.black }} />
+      <Title title={store.name} titleStyle={{color: colors.black}} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
@@ -377,21 +377,21 @@ const PaymentDetails = ({
       case 'cod':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_vnd.png')}
           />
         );
       case 'payOs':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_payos.png')}
           />
         );
       case 'zalopay':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_zalopay.png')}
           />
         );
@@ -403,13 +403,13 @@ const PaymentDetails = ({
   // Xác định trạng thái thanh toán
   const getPaymentStatus = () => {
     if (status === 'completed') {
-      return { text: 'Đã thanh toán', color: colors.primary };
+      return {text: 'Đã thanh toán', color: colors.primary};
     }
     if (paymentMethod === 'cod') {
-      return { text: 'Chưa thanh toán', color: colors.orange700 };
+      return {text: 'Chưa thanh toán', color: colors.orange700};
     }
     if (status === 'awaitingPayment') {
-      return { text: 'Chờ thanh toán', color: colors.pink500 };
+      return {text: 'Chờ thanh toán', color: colors.pink500};
     }
     if (status === 'cancelled') {
       return { text: 'Chưa thanh toán', color: colors.orange700 };
@@ -540,10 +540,10 @@ const PaymentDetails = ({
 
 const OrderId = ({ _id }) => {
   return (
-    <View style={[styles.row, { marginBottom: 6 }]}>
+    <View style={[styles.row, {marginBottom: 6}]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => { }}>
-        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
+      <Pressable style={styles.row} onPress={() => {}}>
+        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
