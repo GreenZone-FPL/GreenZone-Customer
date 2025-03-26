@@ -31,46 +31,30 @@ export const DialogShippingMethod = ({
   onEditOption,
   onOptionSelect,
 }) => {
-  const [currentLocation, setCurrenLocation] = useState('');
-  const [locationAvailable, setLocationAvailable] = useState(false);
   const [user, setUser] = useState([]);
-
   const {cartState} = useAppContext();
 
   // Lấy vị trí người dùng
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
+    const getUserAndCurrentLocation = async () => {
+      try {
+        setUser(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
+        );
+      } catch (error) {
+        console.log('error', error);
       }
-    });
+    };
+    getUserAndCurrentLocation();
   }, []);
-
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
-
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-        setLocationAvailable(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // Dữ liệu mẫu
   const options = [
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: locationAvailable
-        ? currentLocation.address.label
+      address: cartState
+        ? cartState?.shippingAddressInfo?.location
         : 'Đang lấy vị trí...',
     },
     {
@@ -79,22 +63,6 @@ export const DialogShippingMethod = ({
       address: cartState?.storeInfo?.storeAddress,
     },
   ];
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const storedUser = await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.user,
-        );
-        setUser(storedUser);
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    fetchUser();
-    return () => {};
-  }, []);
 
   return (
     <Modal
@@ -116,7 +84,6 @@ export const DialogShippingMethod = ({
               />
             </TouchableOpacity>
           </View>
-
           <View style={styles.optionsContainer}>
             {options.map((option, index) => (
               <Pressable
@@ -161,7 +128,7 @@ export const DialogShippingMethod = ({
                   </Text>
                 ) : (
                   <Text style={styles.phoneText}>
-                    Địa chỉ cửa hàng
+                    {cartState?.storeInfoSelect?.storeAddress}
                   </Text>
                 )}
                 <Text numberOfLines={1} style={styles.normalText}>

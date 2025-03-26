@@ -32,7 +32,7 @@ export const CartManager = (() => {
       consigneeName: cartState.consigneeName,
       consigneePhone: cartState.consigneePhone,
       store: cartState.store,
-      shippingAddress: cartState.shippingAddress,
+      shippingAddress: cartState.shippingAddressInfo.location,
       voucher: cartState.voucher,
       orderItems: cartState.orderItems.map(item => ({
         variant: item.variant,
@@ -109,10 +109,10 @@ export const CartManager = (() => {
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
-      if (cart.orderItems.length === 0) {
-        Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
-        return;
-      }
+      //   if (cart.orderItems.length === 0) {
+      //     Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
+      //     return;
+      //   }
 
       cartDispatch({
         type: CartActionTypes.UPDATE_ORDER_INFO,

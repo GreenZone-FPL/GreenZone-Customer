@@ -8,6 +8,8 @@ export class AppAsyncStorage {
     userId: 'userId',
     user: 'user',
     activeOrders: 'activeOrders',
+    currentLocation: 'currentLocation',
+    merchantLocation: 'merchantLocation',
   };
 
   static async readData(key, defaultValue = null) {

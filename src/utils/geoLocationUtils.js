@@ -1,7 +1,5 @@
 import axios from 'axios';
 import Geolocation from '@react-native-community/geolocation';
-import {CartManager} from './cartMananger';
-
 const API_KEY = 'Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo';
 const REVERSE_GEOCODE_URL =
   'https://revgeocode.search.hereapi.com/v1/revgeocode';
@@ -50,9 +48,12 @@ const fetchUserLocation = async (setCurrentLocation, setLoading) => {
 
   try {
     await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
+
     const location = await getCurrentLocation();
+
     if (location) setCurrentLocation(location);
-    return location
+
+    return location;
   } catch (error) {
     console.log('Lỗi khi lấy vị trí:', error);
   } finally {
