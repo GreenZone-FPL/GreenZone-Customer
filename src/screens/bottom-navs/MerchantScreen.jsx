@@ -1,8 +1,8 @@
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
-import React, { useEffect, useRef, useState } from 'react';
-import { CartManager } from '../../utils';
-import { useAppContext } from '../../context/appContext';
+import React, {useEffect, useRef, useState} from 'react';
+import {CartManager} from '../../utils';
+import {useAppContext} from '../../context/appContext';
 import {
   Animated,
   FlatList,
@@ -13,19 +13,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { getAllMerchants } from '../../axios/modules/merchant';
-import { CustomSearchBar, HeaderWithBadge, Indicator } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { AppGraph } from '../../layouts/graphs'
-
+import {Icon} from 'react-native-paper';
+import {getAllMerchants} from '../../axios/modules/merchant';
+import {CustomSearchBar, HeaderWithBadge, Indicator} from '../../components';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {AppGraph} from '../../layouts/graphs';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
 
 MapboxGL.setAccessToken(GOONG_API_KEY);
 
-const MerchantScreen = ({ navigation, route }) => {
+const MerchantScreen = ({navigation, route}) => {
   // State Variables
   const [isMapView, setIsMapView] = useState(false);
   const [merchants, setMerchants] = useState([]);
@@ -37,14 +36,11 @@ const MerchantScreen = ({ navigation, route }) => {
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
   const [selectedMerchant, setSelectedMerchant] = useState([]);
   const [queryMerchants, setQueryMerchants] = useState([]);
+  const {isUpdateOrderInfo} = route.params || false;
+  const {fromCheckout} = route.params || false;
+  const {fromHome} = route.params || false;
 
-
-  const { isUpdateOrderInfo } = route.params || false
-  const { fromHome } = route.params || false
-  const { fromCheckout } = route.params || false
-
-
-  const { cartDispatch } = useAppContext()
+  const {cartDispatch} = useAppContext();
   // hàm gọi api merchants
   const fetchMerchants = async () => {
     try {
@@ -56,7 +52,7 @@ const MerchantScreen = ({ navigation, route }) => {
   };
 
   // hàm tính khoảng cách giữa người dùng và cửa hàng
-  const haversineDistance = (lat, lon) => {
+  const haversineDistance = (lat2, lon2) => {
     if (!userLocation || userLocation[0] === null || userLocation[1] === null) {
       return null; // Invalid user location
     }
@@ -66,15 +62,15 @@ const MerchantScreen = ({ navigation, route }) => {
 
     const lat1 = userLocation[1];
     const lon1 = userLocation[0];
-    const dLat = toRad(lat - lat1);
-    const dLon = toRad(lon - lon1);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
 
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return (R * c).toFixed(2);
@@ -88,24 +84,38 @@ const MerchantScreen = ({ navigation, route }) => {
   // hàm tới cửa hàng chi tiết
   const handleMerchant = merchant => {
     if (isUpdateOrderInfo) {
-      if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch,
-          {
+      if (isUpdateOrderInfo && fromHome) {
+        if (cartDispatch) {
+          CartManager.updateOrderInfo(cartDispatch, {
+            storeSelect: merchant._id,
+            storeInfoSelect: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+          });
+        }
+      } else if (isUpdateOrderInfo && fromCheckout) {
+        if (cartDispatch) {
+          CartManager.updateOrderInfo(cartDispatch, {
             store: merchant._id,
             storeInfo: {
               storeName: merchant.name,
-              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`
-            }
-          }
-        )
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+            storeSelect: merchant._id,
+            storeInfoSelect: {
+              storeName: merchant.name,
+              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
+            },
+          });
+        }
       }
-      navigation.goBack()
+      navigation.goBack();
     } else {
       navigation.navigate(AppGraph.MerchantDetailSheet, {
-        item: merchant
-      })
+        item: merchant,
+      });
     }
-
   };
 
 
@@ -121,7 +131,7 @@ const MerchantScreen = ({ navigation, route }) => {
     const timeoutId = setTimeout(() => {
       Geolocation.getCurrentPosition(
         position => {
-          const { latitude, longitude } = position.coords;
+          const {latitude, longitude} = position.coords;
           setUserLocation([longitude, latitude]);
           if (cameraRef.current) {
             cameraRef.current.setCamera({
@@ -132,7 +142,7 @@ const MerchantScreen = ({ navigation, route }) => {
           }
         },
         error => console.log(error),
-        { timeout: 5000 },
+        {timeout: 5000},
       );
     }, 1000);
 
@@ -206,7 +216,7 @@ const MerchantScreen = ({ navigation, route }) => {
 
       <View style={styles.content}>
         <View style={styles.tool}>
-          <View style={{ position: 'relative', flex: 1 }}>
+          <View style={{position: 'relative', flex: 1}}>
             <CustomSearchBar
               placeholder="Tìm kiếm cửa hàng ..."
               searchQuery={searchQuery}
@@ -214,7 +224,7 @@ const MerchantScreen = ({ navigation, route }) => {
               onClearIconPress={() => setSearchQuery('')}
               leftIcon="magnify"
               rightIcon="close"
-              style={{ elevation: 3 }}
+              style={{elevation: 3}}
               onFocus={handleSearchPress}
             />
 
@@ -223,7 +233,7 @@ const MerchantScreen = ({ navigation, route }) => {
                 <FlatList
                   data={suggestions}
                   keyExtractor={item => item.place_id}
-                  renderItem={({ item }) => (
+                  renderItem={({item}) => (
                     <TouchableOpacity
                       onPress={() => handleSelectLocation(item.place_id)}
                       style={styles.suggestionItem}>
@@ -252,7 +262,7 @@ const MerchantScreen = ({ navigation, route }) => {
         {isMapView ? (
           <View style={styles.mapView}>
             <MapboxGL.MapView
-              style={{ flex: 1 }}
+              style={{flex: 1}}
               styleURL={`https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAPTILES_KEY}`}>
               <MapboxGL.Camera
                 ref={cameraRef}
@@ -284,17 +294,14 @@ const MerchantScreen = ({ navigation, route }) => {
                 id="storeLocations"
                 shape={shapeData}
                 onPress={event => {
-                  const { properties } = event.features[0];
+                  const {properties} = event.features[0];
                   const merchant = merchants.find(m => m._id === properties.id);
                   if (merchant) {
                     setSelectedMerchant(merchant);
 
-
                     navigation.navigate(AppGraph.MerchantDetailSheet, {
                       item: merchant,
-                    })
-
-
+                    });
                   }
                 }}>
                 <MapboxGL.SymbolLayer
@@ -325,8 +332,8 @@ const MerchantScreen = ({ navigation, route }) => {
                       ? queryMerchants
                       : sortedMerchants.slice(0, 1)
                   }
-                  renderItem={({ item }) =>
-                    renderItem({ handleMerchant, item, haversineDistance })
+                  renderItem={({item}) =>
+                    renderItem({handleMerchant, item, haversineDistance})
                   }
                   keyExtractor={item => item._id.toString()}
                   showsVerticalScrollIndicator={false}
@@ -346,8 +353,8 @@ const MerchantScreen = ({ navigation, route }) => {
                     ? queryMerchants
                     : sortedMerchants.slice(1)
                 }
-                renderItem={({ item }) =>
-                  renderItem({ handleMerchant, item, haversineDistance })
+                renderItem={({item}) =>
+                  renderItem({handleMerchant, item, haversineDistance})
                 }
                 keyExtractor={item => item._id}
                 scrollEnabled={true}
@@ -360,9 +367,9 @@ const MerchantScreen = ({ navigation, route }) => {
   );
 };
 
-const renderItem = ({ item, handleMerchant, haversineDistance }) => (
+const renderItem = ({item, handleMerchant, haversineDistance}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{ uri: item.images[0] }} style={styles.imageItem} />
+    <Image source={{uri: item.images[0]}} style={styles.imageItem} />
     <View style={styles.infoItem}>
       <Text style={styles.textNamelocation}>{item.name}</Text>
       <Text style={styles.location}>
@@ -446,7 +453,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 4,
@@ -454,7 +461,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
   },
-  infoItem: { flex: 1, gap: 4 },
+  infoItem: {flex: 1, gap: 4},
   imageItem: {
     width: 80,
     height: 80,

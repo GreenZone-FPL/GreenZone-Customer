@@ -7,8 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View,
-  Button,
+  View
 } from 'react-native';
 
 import {
@@ -24,7 +23,6 @@ import {
 } from 'iconsax-react-native';
 import { getAllCategories, getAllProducts } from '../../axios';
 import {
-  BarcodeUser,
   CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
@@ -33,8 +31,7 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  ProductsListVertical,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, DeliveryMethod, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
@@ -45,19 +42,20 @@ import {
   UserGraph,
 } from '../../layouts/graphs';
 import {
-  fetchData,
-  fetchUserLocation,
-  CartManager,
   AppAsyncStorage,
+  CartManager,
+  fetchData
 } from '../../utils';
-import { CartActionTypes, cartInitialState } from '../../reducers';
+
+import CallSaveLocation from '../../utils/CallSaveLocation';
 
 const HomeScreen = props => {
   const { navigation } = props;
   const [categories, setCategories] = useState([]);
-  const [currentLocation, setCurrentLocation] = useState('');
+
+  const [merchantLocal, setMerchantLocal] = useState(null);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const [editOption, setEditOption] = useState('');
   const [allProducts, setAllProducts] = useState([]);
@@ -67,6 +65,24 @@ const HomeScreen = props => {
   const { cartState, cartDispatch } = useAppContext() || {}
 
 
+  //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
+  useEffect(() => {
+    const getMerchantLocation = async () => {
+      try {
+        setMerchantLocal(
+          await AppAsyncStorage.readData(
+            AppAsyncStorage.STORAGE_KEYS.merchantLocation,
+          ),
+        );
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    getMerchantLocation();
+  }, []);
+  console.log('error cartd', cartState);
+
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -74,15 +90,27 @@ const HomeScreen = props => {
 
   // Hàm xử lý khi chọn phương thức giao hàng
   const handleOptionSelect = async option => {
-    let deliveryMethod =
-      option === 'Mang đi'
-        ? DeliveryMethod.PICK_UP.value
-        : DeliveryMethod.DELIVERY.value;
-
-    await CartManager.updateOrderInfo(cartDispatch, { deliveryMethod });
-
+    if (option === 'Mang đi') {
+      await CartManager.updateOrderInfo(cartDispatch, {
+        deliveryMethod: DeliveryMethod.PICK_UP.value,
+        store: cartState?.storeSelect,
+        storeInfo: {
+          storeName: cartState?.storeInfoSelect?.storeName,
+          storeAddress: cartState?.storeInfoSelect?.storeAddress,
+        },
+      });
+    } else if (option === 'Giao hàng') {
+      await CartManager.updateOrderInfo(cartDispatch, {
+        deliveryMethod: DeliveryMethod.DELIVERY.value,
+        store: merchantLocal?._id,
+        storeInfo: {
+          storeName: merchantLocal?.name,
+          storeAddress: merchantLocal?.storeAddress,
+        },
+      });
+    }
     setSelectedOption(option);
-    setIsModalVisible(false); // Đóng dialog sau khi chọn
+    setIsModalVisible(false);
   };
 
   const handleEditOption = option => {
@@ -93,44 +121,18 @@ const HomeScreen = props => {
     } else if (option === 'Mang đi') {
       navigation.navigate(BottomGraph.MerchantScreen, {
         isUpdateOrderInfo: true,
+        fromHome: true,
       });
     }
     setEditOption(option);
     setIsModalVisible(false);
   };
 
-  useEffect(() => {
-    const load2 = async () => {
-      try {
-        const userLocation = await fetchUserLocation(
-          setCurrentLocation,
-          setLoading,
-        );
-        console.log('userLocation', JSON.stringify(userLocation, null, 2));
-        // if (selectedOption !== 'Mang đi') return;
-        const newCart = await CartManager.updateOrderInfo(cartDispatch, {
-          shippingAddressInfo: {
-            location: userLocation.address.label,
-            latitude: userLocation.position.lat,
-            longitude: userLocation.position.lng,
-          },
-        });
-        console.log('newCart', newCart);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    load2();
-  }, []);
-
-
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
       setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
-
-
 
   const handleScroll = useCallback(
     event => {
@@ -168,7 +170,8 @@ const HomeScreen = props => {
         onBadgePress={() => { }}
         isHome={false}
       />
-
+      {/* // hàm gọi và save location cửa hàng gần nhất - user */}
+      <CallSaveLocation />
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -231,28 +234,25 @@ const HomeScreen = props => {
 
         {/* <Searchbar /> */}
       </ScrollView>
-
       <DeliveryButton
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
         address={
           selectedOption === 'Mang đi'
-            ? cartState?.storeInfo?.storeAddress
+            ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
               ? cartState?.shippingAddressInfo?.location
-              : currentLocation
-                ? currentLocation.address.label
+              : cartState
+                ? cartState?.address?.label
                 : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={() => {
-          // await load();
-          navigation.navigate(ShoppingGraph.CheckoutScreen);
+        onPressCart={async () => {
+          await navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
-
       <DialogShippingMethod
         isVisible={isModalVisible}
         selectedOption={selectedOption}

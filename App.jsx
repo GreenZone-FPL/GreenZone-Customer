@@ -84,8 +84,12 @@ export default function App() {
 }
 
 function AppNavigator({navigation}) {
-  const {authState, updateOrderMessage, setUpdateOrderMessage} =
-    useAppContext();
+  const {
+    authState,
+    updateOrderMessage,
+    setUpdateOrderMessage,
+    setMerchantLocation,
+  } = useAppContext();
 
   useEffect(() => {
     const initializeSocket = async () => {
