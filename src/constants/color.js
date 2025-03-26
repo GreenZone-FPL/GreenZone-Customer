@@ -19,7 +19,7 @@ export const colors = Object.freeze({
   red900: '#DC3545',
   red800: '#FF343B',
   milk: '#FDE0BE',
-  milk200: '#FDF7E5',
+  milk200: '#FEFBEA',
   orange700: '#FF6924',
   yellow700: '#FFA418',
   yellow600: '#FEB602',
@@ -33,5 +33,7 @@ export const colors = Object.freeze({
   transparent: 'transparent',
   overlay: 'rgba(0, 0, 0, 0.5)',
   grayBg: '#F5F5F5',
-  fbBg: '#F2F4F7'
+  fbBg: '#F2F4F7',
+  lightRed: '#FDF3F2',  // Đỏ nhạt
+  lightBlue: '#F1F9FC', // Xanh nhạt
 });

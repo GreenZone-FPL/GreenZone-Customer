@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -14,8 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon, RadioButton } from 'react-native-paper';
-import { createOrder } from '../../axios/';
+import {Icon, RadioButton} from 'react-native-paper';
+import {createOrder} from '../../axios/';
 import {
   ActionDialog,
   Column,
@@ -40,7 +40,7 @@ import {
   PaymentMethod,
   colors,
 } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import {useAppContext} from '../../context/appContext';
 import {
   BottomGraph,
   ShoppingGraph,
@@ -56,11 +56,9 @@ import {
   fetchUserLocation,
   LocationManager,
 } from '../../utils';
-import { CartActionTypes } from '../../reducers';
-import { color } from '@rneui/base';
 
-const { width } = Dimensions.get('window');
-const CheckoutScreen = ({ navigation }) => {
+const {width} = Dimensions.get('window');
+const CheckoutScreen = ({navigation}) => {
   const [dialogCreateOrderVisible, setDialogCreateOrderVisible] =
     useState(false);
 
@@ -73,7 +71,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext();
+  const {cartState, cartDispatch, setUpdateOrderMessage} = useAppContext();
   const [timeInfo, setTimeInfo] = React.useState({
     selectedDay: 'Hôm nay',
     selectedTime: 'Sớm nhất có thể',
@@ -81,13 +79,16 @@ const CheckoutScreen = ({ navigation }) => {
 
   const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
 
+
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+
   useEffect(() => {
     const initSocket = async () => {
       await socketService.initialize();
     };
     initSocket();
 
-    return () => { };
+    return () => {};
   }, []);
   useEffect(() => {
     if (timeInfo?.fulfillmentDateTime) {
@@ -97,7 +98,7 @@ const CheckoutScreen = ({ navigation }) => {
       const nowISO = new Date().toISOString();
 
       if (fulfillmentTimeISO < nowISO) {
-        setTimeInfo({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
+        setTimeInfo({selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể'});
       }
     }
   }, [timeInfo?.fulfillmentDateTime]);
@@ -115,12 +116,17 @@ const CheckoutScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // fetchUserLocation(setCurrentLocation, setLoading);
+    fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
   if (cartState.orderItems.length === 0) {
     return <EmptyView goBack={() => navigation.goBack()} />;
   }
+
+
+  const handleSelectPaymentMethod = (method) => {
+    setSelectedPaymentMethod(method);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,7 +142,13 @@ const CheckoutScreen = ({ navigation }) => {
         ) : (
           <>
             <ScrollView style={styles.containerContent}>
-              <Column style={{ gap: 8, paddingVertical: 16, backgroundColor: colors.white, marginVertical: 8 }}>
+              <Column
+                style={{
+                  gap: 8,
+                  paddingVertical: 16,
+                  backgroundColor: colors.white,
+                  marginVertical: 8,
+                }}>
                 <DualTextRow
                   style={{
                     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
@@ -150,19 +162,22 @@ const CheckoutScreen = ({ navigation }) => {
                       : DeliveryMethod.DELIVERY.label
                   }
                   rightText={'Thay đổi'}
-                  leftTextStyle={{ color: colors.primary, fontWeight: '700', fontSize: 16 }}
-                  rightTextStyle={{ color: colors.primary }}
+                  leftTextStyle={{
+                    color: colors.primary,
+                    fontWeight: '700',
+                    fontSize: 16,
+                  }}
+                  rightTextStyle={{color: colors.primary}}
                   onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
 
-                {cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value ? (
-                  <LocationManager cartState={cartState} />
-                ) : (
+                {cartState?.deliveryMethod === DeliveryMethod.PICK_UP.value && (
                   <StoreAddress
                     storeInfo={cartState?.storeInfo}
                     chooseMerchant={() => {
                       navigation.navigate(BottomGraph.MerchantScreen, {
-                        isUpdateOrderInfo: true, fromCheckout: true
+                        isUpdateOrderInfo: true,
+                        fromCheckout: true,
                       });
                     }}
                   />
@@ -179,8 +194,7 @@ const CheckoutScreen = ({ navigation }) => {
                         });
                       }}
                     />
-                    <Row style={{ gap: 0 }}>
-
+                    <Row style={{gap: 0}}>
                       {cartState?.shippingAddressInfo && (
                         <RecipientInfo
                           cartDispatch={cartDispatch}
@@ -188,29 +202,40 @@ const CheckoutScreen = ({ navigation }) => {
                           onChangeRecipientInfo={() =>
                             setDialogRecipientInfoVisible(true)
                           }
-                          style={{ flex: 1 }}
+                          style={{flex: 1}}
                         />
                       )}
-
 
                       <TimeSection
                         timeInfo={timeInfo}
                         showDialog={() => setDialogSelectTimeVisible(true)}
                         cartState={cartState}
-                        style={{ flex: 1 }}
+                        style={{flex: 1}}
                       />
                     </Row>
+                  </>
+                )}
 
-
+                {cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
+                  <>
+                    <TimeSection
+                      timeInfo={timeInfo}
+                      showDialog={() => setDialogSelectTimeVisible(true)}
+                      cartState={cartState}
+                      style={{flex: 1}}
+                    />
                   </>
                 )}
               </Column>
 
               <TitleText
                 text="Sản phẩm"
-                style={{ color: colors.primary, padding: 16, backgroundColor: colors.white }}
+                style={{
+                  color: colors.primary,
+                  padding: 16,
+                  backgroundColor: colors.white,
+                }}
               />
-
 
               {cartState.orderItems.length > 0 ? (
                 <ProductsInfo
@@ -228,19 +253,34 @@ const CheckoutScreen = ({ navigation }) => {
               <PaymentDetailsView
                 cartDispatch={cartDispatch}
                 cartState={cartState}
+                selectedPaymentMethod={selectedPaymentMethod}
+                handlePaymentSelection={handleSelectPaymentMethod}
                 onSelectVoucher={() =>
                   navigation.navigate(VoucherGraph.MyVouchersScreen, {
                     isUpdateOrderInfo: true,
                   })
                 }
               />
-              <Column style={{ gap: 16, marginHorizontal: 16 }}>
+              <Column style={{gap: 16, marginHorizontal: 16}}>
                 <Button
                   title="Log cartState"
                   onPress={() =>
                     console.log(
                       'cartState =',
                       JSON.stringify(cartState, null, 2),
+                    )
+                  }
+                />
+                <Button
+                  title="Log Order"
+                  onPress={() =>
+                    console.log(
+                      'cartState =',
+                      JSON.stringify(
+                        CartManager.setupDeliveryOrder(cartState),
+                        null,
+                        2,
+                      ),
                     )
                   }
                 />
@@ -348,10 +388,19 @@ const CheckoutScreen = ({ navigation }) => {
             console.log('order data =', JSON.stringify(response, null, 2));
 
             if (response?.data?.status === 'awaitingPayment') {
-              navigation.navigate(ShoppingGraph.PayOsScreen, {
-                orderId: response.data._id,
-                totalPrice: response.data.totalPrice,
-              });
+               if(selectedPaymentMethod?.value === 'PayOs'){
+                navigation.navigate(ShoppingGraph.PayOsScreen, {
+                  orderId: response.data._id,
+                  totalPrice: response.data.totalPrice,
+                });
+               } else if (selectedPaymentMethod?.value === 'zalopay') {
+                navigation.navigate(ShoppingGraph.Zalopayscreen, {
+                  orderId: response.data._id,
+                  totalPrice: response.data.totalPrice,
+                });
+               }
+
+              
             } else {
               navigation.navigate(ShoppingGraph.OrderSuccessScreen, {
                 order: response,
@@ -411,17 +460,15 @@ const CheckoutScreen = ({ navigation }) => {
 };
 export default CheckoutScreen;
 
-
-
-const EmptyView = ({ goBack }) => {
+const EmptyView = ({goBack}) => {
   return (
-    <View style={[styles.container, { alignItems: 'center', gap: 50 }]}>
+    <View style={[styles.container, {alignItems: 'center', gap: 50}]}>
       <LightStatusBar />
       <NormalHeader title="Xác nhận đơn hàng" onLeftPress={goBack} />
       <Image
         resizeMode="contain"
         source={require('../../assets/images/empty_cart.png')}
-        style={{ width: '80%', height: 300, alignSelf: 'center' }}
+        style={{width: '80%', height: 300, alignSelf: 'center'}}
       />
 
       <NormalText text="Giỏ hàng của bạn đang trống" />
@@ -429,7 +476,7 @@ const EmptyView = ({ goBack }) => {
   );
 };
 
-const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
+const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
   const [name, setName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
 
@@ -438,7 +485,7 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
       title={'Thay đổi thông tin người nhận '}
       isVisible={visible}
       onHide={onHide}
-      style={{ backgroundColor: colors.fbBg }}>
+      style={{backgroundColor: colors.fbBg}}>
       <Column style={styles.content}>
         <FlatInput label={'Tên người nhận'} value={name} setValue={setName} />
 
@@ -451,7 +498,7 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
         <PrimaryButton
           title={'Cập nhật'}
           onPress={() => {
-            onConfirm({ name, phoneNumber });
+            onConfirm({name, phoneNumber});
             setName('');
             setPhoneNumber('');
           }}
@@ -461,24 +508,36 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
   );
 };
 
-const TimeSection = ({ timeInfo, showDialog, style }) => {
+const TimeSection = ({timeInfo, showDialog, style}) => {
   const isToday = timeInfo?.selectedDay === 'Hôm nay';
   const isEarliest = timeInfo?.selectedTime === 'Sớm nhất có thể';
 
   return (
     <Pressable
       onPress={showDialog}
-      style={[{ gap: 8, backgroundColor: colors.white, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 8 }, style]}>
+      style={[
+        {
+          gap: 8,
+          backgroundColor: colors.white,
+          paddingHorizontal: 16,
+          marginBottom: 8,
+        },
+        style,
+      ]}>
       {timeInfo && timeInfo.fulfillmentDateTime ? (
         <>
+          <TitleText
+            style={{color: colors.green500}}
+            text={`${timeInfo.selectedTime}`}
+          />
+          <NormalText text={`${timeInfo.selectedDay}`} />
           {isToday && isEarliest && (
-            <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+            <TitleText text="15-30 phút" style={{color: colors.green500}} />
           )}
-          <NormalText text={`${timeInfo.selectedDay} - ${timeInfo.selectedTime}`} />
         </>
       ) : (
         <>
-          <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
+          <TitleText text="15-30 phút" style={{color: colors.green500}} />
           <NormalText text="Sớm nhất có thể" />
         </>
       )}
@@ -486,143 +545,160 @@ const TimeSection = ({ timeInfo, showDialog, style }) => {
   );
 };
 
-
-
-
-
-
-
-const ShippingAddress = ({ deliveryMethod, shippingAddressInfo, chooseUserAddress }) => {
+const ShippingAddress = ({
+  deliveryMethod,
+  shippingAddressInfo,
+  chooseUserAddress,
+}) => {
   // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
 
   return (
-    <View style={[styles.containerItem, { marginBottom: 0 }]}>
+    <View style={[styles.containerItem, {marginBottom: 0}]}>
       <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
+        style={{marginVertical: 0, marginBottom: 8}}
         leftText="Địa chỉ nhận hàng"
-        leftTextStyle={{ fontWeight: '600' }}
+        leftTextStyle={{fontWeight: '600'}}
         rightText="Thay đổi"
-        rightTextStyle={{ color: colors.primary }}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={chooseUserAddress}
       />
       {deliveryMethod !== DeliveryMethod.PICK_UP.value &&
-        shippingAddressInfo ? (
+      shippingAddressInfo ? (
         <>
           {shippingAddressInfo.description && (
             <NormalText
               text={shippingAddressInfo.description}
-              style={{ lineHeight: 20, color: colors.black }}
+              style={{lineHeight: 20, color: colors.black}}
             />
           )}
           {shippingAddressInfo.location && (
             <NormalText
               text={shippingAddressInfo.location}
-              style={{ lineHeight: 20, color: colors.black }}
+              style={{lineHeight: 20, color: colors.black}}
             />
           )}
         </>
       ) : (
         <NormalText
           text="Vui lòng chọn địa chỉ giao hàng"
-          style={{ color: colors.orange700 }}
+          style={{color: colors.orange700}}
         />
       )}
     </View>
   );
 };
 
-const StoreAddress = ({ storeInfo, chooseMerchant }) => {
+const StoreAddress = ({storeInfo, chooseMerchant}) => {
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{ marginVertical: 0, marginBottom: 8 }}
+        style={{marginVertical: 0, marginBottom: 8}}
         leftText="Địa chỉ cửa hàng"
-        leftTextStyle={{ fontWeight: '600' }}
+        leftTextStyle={{fontWeight: '600'}}
         rightText="Thay đổi"
-        rightTextStyle={{ color: colors.primary }}
+        rightTextStyle={{color: colors.primary}}
         onRightPress={chooseMerchant}
       />
       {storeInfo?.storeName && storeInfo?.storeAddress ? (
         <>
           <TitleText
             text={storeInfo?.storeName}
-            style={{ marginBottom: 8, color: colors.green500 }}
+            style={{marginBottom: 8, color: colors.green500}}
           />
           <NormalText text={storeInfo?.storeAddress} />
         </>
       ) : (
         <NormalText
           text="Vui lòng chọn địa chỉ cửa hàng"
-          style={{ color: colors.orange700 }}
+          style={{color: colors.orange700}}
         />
       )}
     </View>
   );
 };
 
-const RecipientInfo = ({ cartState, cartDispatch, onChangeRecipientInfo, style }) => {
+const RecipientInfo = ({
+  cartState,
+  cartDispatch,
+  onChangeRecipientInfo,
+  style,
+}) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const userData = await AppAsyncStorage.readData("user");
+        const userData = await AppAsyncStorage.readData('user');
         if (userData) {
           setUser(userData);
           if (!cartState?.consigneeName) {
             CartManager.updateOrderInfo(cartDispatch, {
               consigneeName: `${userData.lastName} ${userData.firstName}`,
               consigneePhone: userData.phoneNumber,
-            })
+            });
           }
         }
       } catch (error) {
-        console.error("Lỗi khi lấy thông tin người dùng từ AsyncStorage:", error);
+        console.error(
+          'Lỗi khi lấy thông tin người dùng từ AsyncStorage:',
+          error,
+        );
       }
     })();
   }, []);
 
   if (!user) return null; // 🔥 Không render gì nếu chưa có user
 
-  const consigneeName = cartState?.consigneeName || `${user.lastName} ${user.firstName}`;
+  const consigneeName =
+    cartState?.consigneeName || `${user.lastName} ${user.firstName}`;
   const consigneePhone = cartState?.consigneePhone || user.phoneNumber;
 
   return (
     <Pressable
       onPress={onChangeRecipientInfo}
-      style={[{ gap: 8, backgroundColor: colors.white, paddingVertical: 8, paddingHorizontal: 16, marginBottom: 8, borderRightColor: colors.gray200, borderRightWidth: 1 }, style]}>
-
+      style={[
+        {
+          gap: 8,
+          backgroundColor: colors.white,
+          paddingHorizontal: 16,
+          marginBottom: 8,
+          borderRightColor: colors.gray200,
+          borderRightWidth: 1,
+        },
+        style,
+      ]}>
       <NormalText text={`${consigneeName}`} style={{}} />
-      <NormalText text={`${consigneePhone}`} style={{ color: colors.gray700 }} />
+      <NormalText text={`${consigneePhone}`} style={{color: colors.gray700}} />
     </Pressable>
   );
 };
 
-const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
+const ProductsInfo = ({onEditItem, cart, cartDispatch, confirmDelete}) => (
   <FlatList
     data={cart}
     keyExtractor={item => item.itemId.toString()}
-    renderItem={({ item }) => (
+    renderItem={({item}) => (
       <Pressable onPress={() => onEditItem(item)}>
         <HorizontalProductItem
           confirmDelete={() => confirmDelete(item)}
           onDelete={async () => {
             await CartManager.removeFromCart(item.itemId, cartDispatch);
           }}
-          containerStyle={{ paddingHorizontal: 16 }}
+          containerStyle={{paddingHorizontal: 16}}
           item={item}
           enableAction={false}
           enableDelete={true}
         />
       </Pressable>
     )}
-    contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
+    contentContainerStyle={{gap: 0, marginHorizontal: 0}}
     nestedScrollEnabled={true}
     scrollEnabled={false}
   />
 );
 
-const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
+
+const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch ,handlePaymentSelection}) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState);
 
   return (
@@ -644,7 +720,12 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
           backgroundColor: colors.white,
         }}
         leftText="Chi tiết thanh toán"
-        leftTextStyle={{ color: colors.primary, fontWeight: 'bold', fontSize: 16 }}
+        leftTextStyle={{
+          color: colors.primary,
+          fontWeight: 'bold',
+          fontSize: 16,
+          paddingVertical: 8,
+        }}
       />
 
       <DualTextRow
@@ -694,7 +775,7 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
             ? ''
             : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`
         }
-        rightTextStyle={{ color: colors.primary }}
+        rightTextStyle={{color: colors.primary}}
         onLeftPress={() => onSelectVoucher()}
       />
 
@@ -709,15 +790,15 @@ const PaymentDetailsView = ({ onSelectVoucher, cartState, cartDispatch }) => {
         rightText={`${TextFormatter.formatCurrency(
           paymentDetails.paymentTotal,
         )}`}
-        leftTextStyle={{ color: colors.black, fontWeight: '500', fontSize: 14 }}
+        leftTextStyle={{color: colors.black, fontWeight: '500', fontSize: 14}}
         rightTextStyle={{
           fontWeight: '700',
           color: colors.primary,
-          fontSize: 20,
+          fontSize: 14,
         }}
       />
 
-      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} />
+      <PaymentMethodView cartDispatch={cartDispatch} cartState={cartState} onSelect={handlePaymentSelection}/>
     </View>
   );
 };
@@ -741,64 +822,70 @@ const paymentMethods = [
     value: 'zalopay',
     paymentMethod: PaymentMethod.ONLINE.value,
   },
-  {
-    name: 'Thanh toán bằng thẻ',
-    image: require('../../assets/images/logo_card.png'),
-    value: 'Card',
-    paymentMethod: PaymentMethod.ONLINE.value,
-  },
 ];
-const PaymentMethodView = ({ cartDispatch, cartState }) => {
+const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState(paymentMethods[0]);
+  const [selectedMethod, setSelectedMethod] = useState(null);
 
-  const handleSelectMethod = (method, disabled) => {
+  // Xác định phương thức thanh toán mặc định dựa trên phương thức giao hàng
+  useEffect(() => {
+    const updatePaymentMethod = async () => {
+      let selectedPayment;
+
+      if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
+        selectedPayment = paymentMethods.find(m => m.value === 'PayOs');
+      } else {
+        selectedPayment = paymentMethods.find(m => m.value === 'cash');
+      }
+
+      setSelectedMethod(selectedPayment);
+
+      // Cập nhật thông tin đơn hàng
+      await CartManager.updateOrderInfo(cartDispatch, {
+        paymentMethod: selectedPayment.paymentMethod,
+      });
+    };
+
+    updatePaymentMethod();
+  }, [cartState.deliveryMethod]);
+
+  const handleSelectMethod = async (method, disabled) => {
     if (!disabled) {
       setSelectedMethod(method);
-      CartManager.updateOrderInfo(cartDispatch, {
+      await CartManager.updateOrderInfo(cartDispatch, {
         paymentMethod: method.paymentMethod,
       });
       setIsVisible(false);
+      
+      // Gửi giá trị ra ngoài component
+      if (onSelect) {
+        onSelect(method);
+      }
     } else {
-      Toaster.show(
-        'Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng',
-      );
+      Toaster.show('Phương thức thanh toán không khả dụng với đơn Tự đến lấy tại cửa hàng');
     }
   };
 
   return (
-    <Row
-      style={{
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        backgroundColor: colors.white,
-        paddingVertical: 8,
-      }}>
+    <Row style={{ justifyContent: 'space-between', paddingHorizontal: 16, backgroundColor: colors.white, paddingVertical: 8 }}>
       <NormalText text="Phương thức thanh toán" />
 
       <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+        style={{flexDirection: 'row', alignItems: 'center', gap: 6}}
         onPress={() => setIsVisible(true)}>
-        <Image source={selectedMethod.image} style={styles.image} />
-
-        <NormalText text={selectedMethod.name} />
-        <Icon
-          source="chevron-down"
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          color={colors.gray700}
-        />
+        {selectedMethod && (
+          <>
+            <Image source={selectedMethod.image} style={styles.image} />
+            <NormalText text={selectedMethod.name} />
+          </>
+        )}
+        <Icon source="chevron-down" size={24} color={colors.gray700} />
       </TouchableOpacity>
 
-      {/* Dialog chọn phương thức thanh toán */}
-      <DialogBasic
-        isVisible={isVisible}
-        onHide={() => setIsVisible(false)}
-        title="Chọn phương thức thanh toán">
+      <DialogBasic isVisible={isVisible} onHide={() => setIsVisible(false)} title="Chọn phương thức thanh toán">
         <Column style={{ marginHorizontal: 16 }}>
-          {paymentMethods.map(method => {
-            const disabled =
-              cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
-              method.paymentMethod === PaymentMethod.COD.value;
+          {paymentMethods.map((method) => {
+            const disabled = cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && method.paymentMethod === PaymentMethod.COD.value;
 
             return (
               <TouchableOpacity
@@ -813,7 +900,7 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
                   disabled={disabled}
                   value={method.value}
                   status={
-                    selectedMethod.name === method.name
+                    selectedMethod?.value === method.value
                       ? 'checked'
                       : 'unchecked'
                   }
@@ -821,7 +908,7 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
                   onPress={() => handleSelectMethod(method, disabled)}
                 />
                 <Image source={method.image} style={styles.image} />
-                <Text style={{ color: colors.gray700, marginLeft: 8 }}>
+                <Text style={{color: colors.gray700, marginLeft: 8}}>
                   {method.name}
                 </Text>
               </TouchableOpacity>
@@ -833,56 +920,45 @@ const PaymentMethodView = ({ cartDispatch, cartState }) => {
   );
 };
 
+
+
 const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
-  const paymentDetails = CartManager.getPaymentDetails(cartState);
+  const paymentDetails = CartManager.getPaymentDetails(cartState)
 
   return (
-    <Row
+    <View
       style={{
-        backgroundColor: colors.primary,
+        backgroundColor: colors.fbBg,
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        justifyContent: 'space-between',
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
+        justifyContent: 'flex-end',
       }}>
-      <Column style={{ justifyContent: 'space-between', marginBottom: 6 }}>
-
+      <Row style={{justifyContent: 'space-between', marginBottom: 6}}>
+        <Column>
+          <TitleText text="Tổng cộng" />
+          <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
+          {cartState?.voucher && (
+            <NormalText
+              text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(
+                paymentDetails.voucherAmount,
+              )}`}
+              style={{color: colors.primary, fontWeight: '500'}}
+            />
+          )}
+        </Column>
 
         <Column>
-          <Row>
-            <NormalText
-              text={DeliveryMethod.getShortLabelByValue(cartState.deliveryMethod)}
-              style={{ color: colors.white, textAlign: 'right', fontSize: 18 }}
-            />
-            <NormalText text={`-- ${cartState.orderItems.length} sản phẩm`} style={{ color: colors.white, fontSize: 16 }} />
-
-
-
-          </Row>
           <TitleText
             text={`${TextFormatter.formatCurrency(
               paymentDetails.paymentTotal,
             )}`}
-            style={{ color: colors.white, fontSize: 20, fontWeight: '700' }}
+            style={{color: colors.red900, textAlign: 'right', fontSize: 16}}
           />
           {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>
-
-        {cartState?.voucher && (
-          <NormalText
-            text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(
-              paymentDetails.voucherAmount,
-            )}`}
-            style={{ color: colors.white, fontWeight: '500' }}
-          />
-        )}
-
-      </Column>
+      </Row>
 
       <PrimaryButton
-        style={{ backgroundColor: colors.white, paddingHorizontal: 20, paddingVertical: 6, borderRadius: 16 }}
-        titleStyle={{ color: colors.primary }}
-        title={"Đặt hàng"}
+        title="Đặt hàng"
         onPress={async () => {
           const orderInfo = {
             fulfillmentDateTime:
@@ -905,8 +981,14 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
         }}
       />
 
-
-    </Row>
+      {/* <DialogNotification
+        isVisible={isVisible}
+        onHide={() => setIsVisible(false)}
+        title='Xác nhận thông tin đơn hàng'
+        onConfirm={() => setIsVisible(false)}
+        address={address} // Truyền địa chỉ vào DialogNotification
+      /> */}
+    </View>
   );
 };
 

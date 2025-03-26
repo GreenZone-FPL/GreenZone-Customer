@@ -23,6 +23,7 @@ import {
 } from 'iconsax-react-native';
 import { getAllCategories, getAllProducts } from '../../axios';
 import {
+  BarcodeUser,
   CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
@@ -81,7 +82,7 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
-  console.log('error cartd', cartState);
+  // console.log('error cartd', cartState);
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -180,13 +181,13 @@ const HomeScreen = props => {
 
 
 
-        {/* {
+        {
           !cartState.needLogin &&
-          <BarcodeUser nameUser="User name" codeId="M1678263323" />
-        } */}
+          <BarcodeUser codeId="M1678263323" />
+        }
 
         <CardCategory />
-        {/* <ImageCarousel data={dataBanner} time={2000} /> */}
+
 
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
@@ -249,8 +250,8 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={async () => {
-          await navigation.navigate(ShoppingGraph.CheckoutScreen);
+        onPressCart={() => {
+          navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
       <DialogShippingMethod
