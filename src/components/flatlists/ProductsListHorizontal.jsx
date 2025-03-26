@@ -10,6 +10,7 @@ import {
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
+import { Row } from '../containers/Row';
 
 export const ProductsListHorizontal = ({
   onItemClick,
@@ -45,31 +46,24 @@ export const ProductsListHorizontal = ({
 };
 
 const ItemProduct = ({ item, onItemClick, onIconClick }) => {
-
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image
-          source={{ uri: String(item.image) }}
-          style={styles.itemImage} />
+        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
       </TouchableOpacity>
-      <View style={styles.priceContainer}>
+
+      <Text numberOfLines={1} style={styles.productNameText}>
+        {item.name}
+      </Text>
+      <Row style={styles.priceContainer}>
+
         <Text style={styles.priceText}>
           {TextFormatter.formatCurrency(item.sellingPrice)}
         </Text>
-      </View>
-      <Text numberOfLines={4} style={styles.productNameText}>
-        {item.name}
-      </Text>
-      <TouchableOpacity
-        onPress={onIconClick}
-        style={styles.addButtonContainer}
-      >
-        <Icon
-          source="plus"
-          color={colors.primary}
-          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        />
+      </Row>
+
+      <TouchableOpacity onPress={onIconClick} style={styles.addButtonContainer}>
+        <Icon source="plus" color={colors.primary} size={22} />
       </TouchableOpacity>
     </View>
   );
@@ -107,10 +101,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemImage: {
-    width: 157,
-    height: 235,
+    width: 200,
+    height: 285,
     resizeMode: 'cover',
-    opacity: 0.6,
+    opacity: 0.7,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   priceContainer: {
@@ -119,17 +113,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     end: 0,
     padding: 4,
+    flexDirection: 'row',
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   priceText: {
     color: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '700',
+    paddingHorizontal: 4,
+    paddingVertical: 2
   },
   productNameText: {
+    position: 'absolute',
+    marginVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     color: colors.white,
     padding: GLOBAL_KEYS.PADDING_SMALL,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: 'bold',
     position: 'absolute',
     bottom: '20%',
@@ -139,7 +138,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     end: 0,
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: 20,
     backgroundColor: colors.white,
+    padding: 4
   },
 });

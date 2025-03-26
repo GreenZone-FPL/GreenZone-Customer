@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: GLOBAL_KEYS.PADDING_SMALL,
   },

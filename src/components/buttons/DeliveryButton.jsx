@@ -1,11 +1,11 @@
 import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {Column} from '../containers/Column';
-import {Row} from '../containers/Row';
-import {NormalText} from '../texts/NormalText';
-import {Icon} from 'react-native-paper';
-import {CartManager, TextFormatter} from '../../utils';
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
+import { NormalText } from '../texts/NormalText';
+import { Icon } from 'react-native-paper';
+import { CartManager, TextFormatter } from '../../utils';
 
 export const DeliveryButton = ({
   title,
@@ -18,12 +18,12 @@ export const DeliveryButton = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
-      <Column style={{flex: 1}}>
+      <Column style={{ flex: 1, gap: 8}}>
         <Row>
           {deliveryMethod === 'Mang đi' ? (
             <Image
               source={require('../../assets/images/ic_take_away.png')}
-              style={{width: 28, height: 28}}
+              style={{ width: 28, height: 28 }}
             />
           ) : (
             <Image
@@ -40,16 +40,14 @@ export const DeliveryButton = ({
 
       {cartState?.orderItems?.length > 0 && (
         <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
-          {/* <Icon source="food-outline" color={colors.white} size={20} /> */}
           <Text style={styles.quantity}>{cartState.orderItems.length}</Text>
           <NormalText
             text={TextFormatter.formatCurrency(
               CartManager.getCartTotal(cartState),
             )}
-            style={{color: colors.white, fontWeight: '500'}}
+            style={{ color: colors.white, fontWeight: '500' }}
           />
 
-          
         </TouchableOpacity>
       )}
     </TouchableOpacity>
@@ -58,18 +56,18 @@ export const DeliveryButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    paddingHorizontal: 24,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.green100,
-    borderRadius: 16,
+    borderRadius: 30,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     flexDirection: 'row',
-
+    gap: 8,
   },
 
   icon: {
@@ -84,14 +82,14 @@ const styles = StyleSheet.create({
   },
   address: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.black,
-    // marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+    color: colors.gray700,
   },
   btnCart: {
     flexDirection: 'row',
-    borderRadius: 14,
+    borderRadius: 20,
     backgroundColor: colors.primary,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
     gap: GLOBAL_KEYS.GAP_SMALL,

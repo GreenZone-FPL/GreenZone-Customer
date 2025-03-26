@@ -27,26 +27,25 @@ export const QuantityButton = ({
     onPress,
     iconColor,
     iconSize = 18,
-    style
+    style,
+    backgroundColor = colors.fbBg
 }) => (
-    <Pressable onPress={onPress}>
-        <View style={[styles.circleWrapper, { borderColor: iconColor }, style]}>
-            <Feather name={iconName} color={iconColor} size={iconSize} />
-        </View>
+
+    <Pressable onPress={onPress} style={[styles.circleWrapper, { backgroundColor: backgroundColor }, style]}>
+        <Feather name={iconName} color={iconColor} size={iconSize} />
     </Pressable>
+
 );
 
 QuantityButton.propTypes = QuantityButtonPropTypes
 
 const styles = StyleSheet.create({
     circleWrapper: {
-        width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-        height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-        borderRadius: GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2,
-        backgroundColor: colors.white,
+        borderRadius: 20,
+        backgroundColor: colors.fbBg,
         justifyContent: 'center',
+        padding: 10,
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: colors.gray400,
+
     }
 });

@@ -65,10 +65,10 @@ RadioGroup.propTypes = RadioGroupPropTypes
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: GLOBAL_KEYS.PADDING_SMALL,
   },

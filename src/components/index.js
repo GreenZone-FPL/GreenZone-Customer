@@ -45,6 +45,7 @@ export * from './flatlists/ProductsListHorizontal';
 export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
 export * from './flatlists/NotificationList';
+export * from './flatlists/ProductsGrid';
 
 // footer
 export * from './footer/CheckoutFooter';
@@ -86,6 +87,7 @@ export * from './texts/NormalPrimaryText';
 export * from './texts/PaymentMethodRow';
 export * from './texts/NormalText';
 export * from './texts/TitleText';
+export * from './texts/StatusText';
 
 
 // modals

@@ -118,6 +118,9 @@ const MerchantScreen = ({navigation, route}) => {
     }
   };
 
+
+
+
   // Handle Search Focus
   const handleSearchPress = () => {
     setIsMapView(false);

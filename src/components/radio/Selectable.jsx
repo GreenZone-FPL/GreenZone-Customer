@@ -28,7 +28,7 @@ export const Selectable = ({
 
 }) => {
 
-  const activeColor = selected ? activeIconColor : colors.gray400;
+  const activeColor = selected ? activeIconColor : colors.primary;
   const textColor = selected ? activeTextColor : colors.black;
 
 

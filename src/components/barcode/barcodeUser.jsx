@@ -9,21 +9,37 @@ import {
     Pressable,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { TitleText } from '../texts/TitleText'; 
-import { colors, GLOBAL_KEYS } from '../../constants'; 
+import { TitleText } from '../texts/TitleText';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
+import { AppAsyncStorage } from '../../utils';
 
 const BarcodeUserCardPropTypes = {
     imageBg: PropTypes.string, // Link hình nền
     nameUser: PropTypes.string, // Tên người dùng
     code: PropTypes.string, // Thông điệp mã
     codeId: PropTypes.string, // Mã vạch
-    onPress: PropTypes.func, 
+    onPress: PropTypes.func,
 };
 
 export const BarcodeUser = ({ imageBg, nameUser, code, codeId, onPress }) => {
+    const [userName, setUserName] = React.useState('')
+    React.useEffect(() => {
+        const getUser = async () => {
+            try {
+                const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
+                console.log('user', user)
+                if (user) {
+                    setUserName(`${user.firstName} ${user.lastName}`)
+                }
+            } catch (error) {
+                console.log('error', error)
+            }
+        }
+        getUser()
+    }, [])
     return (
         <View style={styles.container}>
             {/* View để bo góc */}
@@ -33,16 +49,16 @@ export const BarcodeUser = ({ imageBg, nameUser, code, codeId, onPress }) => {
                     resizeMode="cover"
                     style={styles.imageBackground}
                 >
-                    <Column style={{padding: 16}}>
+                    <Column style={{ padding: 16 }}>
                         {/* Nội dung thông báo */}
-                        <Row style={{justifyContent: 'space-between'}}>
-                        <Column>
-                            <TitleText text={nameUser} color={colors.white}/>
-                            <TitleText text='Mới' color={colors.white}/>
+                        <Row style={{ justifyContent: 'space-between' }}>
+                            <Column>
+                                <TitleText text={userName} color={colors.white} />
+                                {/* <TitleText text='Mới' color={colors.white} /> */}
                             </Column>
-                            <Pressable style={styles.btnBEAN} onPress={onPress}>
-                                <TitleText text='Đổi 0 Xu' color={colors.white}/>
-                            </Pressable>
+                            {/* <Pressable style={styles.btnBEAN} onPress={onPress}>
+                                <TitleText text='Đổi 0 Xu' color={colors.white} />
+                            </Pressable> */}
                         </Row>
                         {/* Mã vạch */}
                         <View style={styles.barCode}>
@@ -50,7 +66,7 @@ export const BarcodeUser = ({ imageBg, nameUser, code, codeId, onPress }) => {
                                 source={require('../../assets/images/barcode.png')} // Thay bằng đường dẫn ảnh mã vạch
                                 style={styles.imgcode}
                             />
-                            <NormalText text={codeId}/>
+                            <NormalText text={codeId} />
                         </View>
 
                     </Column>
@@ -95,6 +111,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
         borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
         alignItems: 'center',
+        paddingVertical: 16
     },
     imgcode: {
         width: '100%',
