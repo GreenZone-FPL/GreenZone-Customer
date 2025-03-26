@@ -37,7 +37,13 @@ const MerchantScreen = ({ navigation, route }) => {
   const opacityAnim = useRef(new Animated.Value(0.3)).current;
   const [selectedMerchant, setSelectedMerchant] = useState([]);
   const [queryMerchants, setQueryMerchants] = useState([]);
+
+
   const { isUpdateOrderInfo } = route.params || false
+  const { fromHome } = route.params || false
+  const { fromCheckout } = route.params || false
+
+
   const { cartDispatch } = useAppContext()
   // hàm gọi api merchants
   const fetchMerchants = async () => {
@@ -101,6 +107,9 @@ const MerchantScreen = ({ navigation, route }) => {
     }
 
   };
+
+
+
 
   // Handle Search Focus
   const handleSearchPress = () => {

@@ -81,28 +81,30 @@ const ProductDetailShort = ({ route, navigation }) => {
                         hideModal={() => navigation.goBack()}
                     />
 
-                    <ScrollView 
-                    showsVerticalScrollIndicator={false}
-                    style={styles.modalContent}>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={styles.modalContent}>
 
                         {
                             product.variant.length > 1 && selectedVariant &&
-                            <RadioGroup
-                                items={product.variant}
-                                selectedValue={selectedVariant}
-                                onValueChange={(item) => {
-                                    setSelectedVariant(item)
-                                }}
-                                title="Size"
-                                required={true}
-                                note="Bắt buộc"
-                            />
+                            <View style={styles.infoContainer}>
+                                <RadioGroup
+                                    items={product.variant}
+                                    selectedValue={selectedVariant}
+                                    onValueChange={(item) => {
+                                        setSelectedVariant(item)
+                                    }}
+                                    title="Size"
+                                    required={true}
+                                    note="Bắt buộc"
+                                />
+                            </View>
                         }
 
 
                         {
                             product.topping.length > 0 &&
-                            <>
+                            <View style={styles.infoContainer}>
                                 <SelectableGroup
                                     items={product.topping}
                                     title='Chọn topping'
@@ -113,25 +115,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                                     activeTextColor={colors.primary}
                                 />
 
-                                <NotesList
-                                    onToggleNote={(item) => {
-                                        if (selectedNotes.includes(item)) {
-                                            setSelectedNotes(selectedNotes.filter(note => note !== item));
-                                        } else {
-                                            setSelectedNotes([...selectedNotes, item]);
-                                            if (!customNote.includes(item)) {
-                                                setCustomNote(prev => prev ? `${prev}, ${item}` : item);
-                                            }
-                                        }
-                                    }}
-
-                                    customNote={customNote}
-                                    setCustomNote={setCustomNote}
-                                    selectedNotes={selectedNotes}
-                                    items={notes}
-                                    style={{ margin: GLOBAL_KEYS.PADDING_DEFAULT }}
-                                />
-                            </>
+                            </View>
 
                         }
 
@@ -140,6 +124,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                     </ScrollView>
 
                     <CheckoutFooter
+                        backgroundColor={colors.white}
                         quantity={quantity}
                         handlePlus={() => {
                             if (quantity < 10) {
@@ -183,7 +168,7 @@ const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít s�
 
 const ProductInfo = ({ product, hideModal }) => {
     return (
-        <Row style={{ backgroundColor: colors.white, paddingHorizontal: 16, paddingVertical: 8 }}>
+        <Row style={{ backgroundColor: colors.white, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 8 }}>
             <Text
                 style={styles.productName}
                 numberOfLines={2}
@@ -216,10 +201,10 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         gap: 0,
-        backgroundColor: colors.white,
+        backgroundColor: colors.fbBg,
     },
     modalContent: {
-        backgroundColor: colors.white,
+        backgroundColor: colors.fbBg,
         flexDirection: 'column',
         minHeight: 150,
         maxHeight: height * 0.6
@@ -232,13 +217,19 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green100,
     },
     productName: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: colors.black,
+        color: colors.green500,
         flex: 1,
-        marginRight: 8,
-        lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    }
+        paddingVertical: 8
+    },
+    infoContainer: {
+        flexDirection: 'column',
+        marginBottom: 10,
+        backgroundColor: colors.white,
+        paddingVertical: 8,
+        gap: 8
+    },
 });
 
 export default ProductDetailShort

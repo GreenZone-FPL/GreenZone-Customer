@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Pressable } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
 import { QuantitySelector } from '../buttons/QuantitySelector';
 import { TextFormatter } from '../../utils';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
+import { QuantityButton } from '../buttons/QuantityButton';
+import Feather from 'react-native-vector-icons/Feather';
+import { TitleText } from '../texts/TitleText';
 
 const CheckoutFooterPropTypes = {
     quantity: PropTypes.number.isRequired,
@@ -38,7 +41,7 @@ const CheckoutFooterPropTypes = {
     />
  */
 export const CheckoutFooter = ({
-    
+
     quantity,
     handlePlus,
     handleMinus,
@@ -48,22 +51,33 @@ export const CheckoutFooter = ({
     backgroundColor = colors.green100
 }) => {
     return (
-        <Column style={[styles.footer, { backgroundColor: backgroundColor }]}>
-            <Row style={[styles.row, { justifyContent: 'space-between' }]}>
-                <Column style={[styles.column, { paddingHorizontal: 0 }]}>
-                    <Text style={styles.quantityInfoText}>{quantity} sản phẩm</Text>
-                    <Text style={styles.totalText}>{TextFormatter.formatCurrency(totalPrice)}</Text>
-                </Column>
+        <Row style={[styles.footer, { backgroundColor: backgroundColor }]}>
 
-                <QuantitySelector
-                    quantity={quantity}
-                    handlePlus={handlePlus}
-                    handleMinus={handleMinus}
+            <Row style={{gap: 20}}>
+
+                <Pressable style={styles.circleWrapper} onPress={handleMinus}>
+                    <Feather name={"minus"} color={colors.primary} size={22} />
+                </Pressable>
+
+
+                <TitleText
+                    style={{fontSize: 18}}
+                    text={quantity}
                 />
+
+
+                <Pressable style={styles.circleWrapper} onPress={handlePlus}>
+                    <Feather name={"plus"} color={colors.primary} size={22} />
+                </Pressable>
+
             </Row>
 
-            <PrimaryButton title={buttonTitle} onPress={onButtonPress} />
-        </Column>
+            <PrimaryButton
+                style={{ flex: 1, borderRadius: 12 }}
+                titleStyle={{ fontSize: 22 }}
+                title={TextFormatter.formatCurrency(totalPrice)}
+                onPress={onButtonPress} />
+        </Row>
     );
 };
 
@@ -74,31 +88,35 @@ CheckoutFooter.propTypes = CheckoutFooterPropTypes;
 const styles = StyleSheet.create({
     footer: {
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
-        elevation: 4,
         backgroundColor: colors.green100,
-        gap: 8
+        gap: 16,
+        flexDirection: 'row',
+        borderColor: colors.gray200,
+        borderWidth: 1
     },
     quantityInfoText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
     },
     totalText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+        fontSize: 22,
         fontWeight: 'bold',
         color: colors.primary,
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        // marginBottom: GLOBAL_KEYS.PADDING_DEFAULT,
-    },
+
     quantityText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         fontWeight: 'bold',
         color: colors.black,
         marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     },
+    circleWrapper: {
+        borderRadius: 20,
+        backgroundColor: colors.gray200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10
+    }
 });
 
 

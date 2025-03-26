@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+        marginVertical: 12,
+        
     },
     outerCircle: {
         width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,

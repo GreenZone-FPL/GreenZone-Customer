@@ -5,23 +5,26 @@ import { QuantityButton } from './QuantityButton';
 import PropTypes from 'prop-types';
 
 
+
 const QuantitySelectorPropTypes = {
   quantity: PropTypes.number.isRequired,
   iconColor: PropTypes.string,
   textColor: PropTypes.string,
   handlePlus: PropTypes.func,
   handleMinus: PropTypes.func,
+  style: PropTypes.object
 }
 
 export const QuantitySelector = ({
   quantity,
   iconColor = colors.primary,
-  textColor = colors.black,
+  textColor = colors.gray700,
   handlePlus,
   handleMinus,
+  style
 }) => {
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, style]}>
       <QuantityButton
         iconName="minus"
         onPress={handleMinus}

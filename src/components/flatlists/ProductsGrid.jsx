@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dimensions,
   FlatList,
@@ -11,31 +11,24 @@ import FastImage from 'react-native-fast-image';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
 
 const width = Dimensions.get('window').width;
 
-export const ProductsListVertical = ({
+export const ProductsGrid = ({
   title = "Món Mới Phải Thử",
   scrollEnabled = false,
   onItemClick,
   onIconClick,
   products
 }) => {
-
-
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
-        showsVerticalScrollIndicator={false}
         data={products}
-
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        nestedScrollEnabled
-        initialNumToRender={10}
-
+        numColumns={2} // Chuyển thành grid 2 cột
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
           <ItemProduct
@@ -44,7 +37,8 @@ export const ProductsListVertical = ({
             onIconClick={() => onIconClick(item._id)}
           />
         )}
-        contentContainerStyle={{ gap: 16 }}
+        contentContainerStyle={styles.flatListContentContainer}
+        columnWrapperStyle={styles.columnWrapper} // Thêm style để tạo khoảng cách giữa các cột
         scrollEnabled={scrollEnabled}
       />
     </View>
@@ -52,36 +46,32 @@ export const ProductsListVertical = ({
 };
 
 const ItemProduct = ({ item, onItemClick, onIconClick }) => {
-
-
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-
         <FastImage
           source={{ uri: item.image, priority: FastImage.priority.high }}
           style={styles.itemImage}
           resizeMode={FastImage.resizeMode.cover}
         />
-
-
       </TouchableOpacity>
-      <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>
-          {TextFormatter.formatCurrency(item.originalPrice)}
-          {/* {item.originalPrice.toLocaleString('vi-VN')}đ */}
-        </Text>
-      </View>
-      <TouchableOpacity
-        onPress={onIconClick}
-        style={styles.addButton}>
-        <Icon
-          source="plus"
-          size={22}
-          color={colors.white}
-        />
-      </TouchableOpacity>
+
+      <Row style={{backgroundColor: 'white', width: '100%', justifyContent: 'space-between'}}>
+        <Column style={styles.productInfo}>
+          <Text style={styles.productName}>{item.name}</Text>
+          <Text style={styles.productPrice}>
+            {TextFormatter.formatCurrency(item.originalPrice)}
+          </Text>
+        </Column>
+
+        <TouchableOpacity
+          onPress={onIconClick}
+          style={styles.addButton}>
+          <Icon source="plus" size={22} color={colors.white} />
+        </TouchableOpacity>
+
+      </Row>
+
     </View>
   );
 };
@@ -91,51 +81,51 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: 18,
     fontWeight: '500',
     color: colors.black,
   },
-
   flatListContentContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    paddingBottom: 16,
+    gap: 12
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
+    marginBottom: 16,
+    gap: 16
   },
   itemProduct: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flex: 1,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+    width: (width - GLOBAL_KEYS.PADDING_DEFAULT * 3) / 2, // Chia đều 2 cột
+    backgroundColor: colors.white,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingVertical: 10,
+    alignItems: 'center',
   },
   itemImage: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 2.2,
+    height: width / 1.8,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
   },
   productInfo: {
-    flexDirection: 'column',
-    flex: 1,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginTop: 8,
+    alignItems: 'flex-start',
   },
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
+    textAlign: 'center',
   },
   productPrice: {
-    marginTop: GLOBAL_KEYS.PADDING_SMALL,
+    marginTop: 4,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.red900,
   },
   addButton: {
     borderRadius: 20,
     backgroundColor: colors.primary,
-    position: 'absolute',
-    end: 0,
-    bottom: 0,
-    padding: 4
-  }
-
+    padding: 6,
+    marginTop: 8,
+  },
 });
-
-

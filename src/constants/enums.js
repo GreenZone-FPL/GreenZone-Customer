@@ -1,6 +1,10 @@
 export const DeliveryMethod = Object.freeze({
-    PICK_UP: { label: "Nhận tại cửa hàng", value: "pickup" },
-    DELIVERY: { label: "Giao hàng tận nơi", value: "delivery" }
+    PICK_UP: { label: "Nhận tại cửa hàng", value: "pickup", shortLabel: 'Mang đi' },
+    DELIVERY: { label: "Giao hàng tận nơi", value: "delivery", shortLabel: 'Giao hàng' },
+    getShortLabelByValue(value) {
+        const status = Object.values(this).find(status => status.value === value);
+        return status ? status.shortLabel : "Không xác định";
+    },
 });
 
 
@@ -29,7 +33,7 @@ export const OrderStatus = Object.freeze({
         return status ? status.label : "Không xác định";
     },
 
-    
+
     getValues() {
         return Object.values(this).map(status => status.value);
     },
@@ -43,20 +47,20 @@ export const OrderStatus = Object.freeze({
             case this.PROCESSING.value:
             case this.SHIPPING_ORDER.value:
                 return { type: "info", icon: "info" };
-    
+
             case this.READY_FOR_PICKUP.value:
             case this.COMPLETED.value:
                 return { type: "success", icon: "success" };
-    
+
             case this.CANCELLED.value:
             case this.FAILED_DELIVERY.value:
                 return { type: "danger", icon: "danger" };
-    
+
             default:
                 return { type: "default", icon: "info" };
         }
     }
-    
+
 });
 
 
