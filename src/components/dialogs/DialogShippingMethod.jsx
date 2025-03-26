@@ -12,10 +12,10 @@ import {
   View,
 } from 'react-native';
 import {Icon} from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
-import { fetchUserLocation } from '../../utils';
-
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
+import {AppAsyncStorage} from '../../utils';
+import {useAppContext} from '../../context/appContext';
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
   selectedOption: PropTypes.string.isRequired,
@@ -24,60 +24,43 @@ const DialogShippingMethodPropTypes = {
   onOptionSelect: PropTypes.func,
 };
 
-export const  DialogShippingMethod = ({
+export const DialogShippingMethod = ({
   isVisible,
   selectedOption,
   onHide,
   onEditOption,
   onOptionSelect,
 }) => {
-  const [currentLocation, setCurrenLocation] = useState('');
-  const [locationAvailable, setLocationAvailable] = useState(false);
+  const [user, setUser] = useState([]);
+  const {cartState} = useAppContext();
 
   // Lấy vị trí người dùng
   useEffect(() => {
-    Geolocation.getCurrentPosition(position => {
-      if (position.coords) {
-        reverseGeocode({
-          lat: position.coords.latitude,
-          long: position.coords.longitude,
-        });
+    const getUserAndCurrentLocation = async () => {
+      try {
+        setUser(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
+        );
+      } catch (error) {
+        console.log('error', error);
       }
-    });
+    };
+    getUserAndCurrentLocation();
   }, []);
-
-  
-
-  const reverseGeocode = async ({lat, long}) => {
-    const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
-
-    try {
-      const res = await axios(api);
-      if (res && res.status === 200 && res.data) {
-        const items = res.data.items;
-        setCurrenLocation(items[0]);
-        setLocationAvailable(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // Dữ liệu mẫu
   const options = [
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: locationAvailable
-        ? currentLocation.address.label
+      address: cartState
+        ? cartState?.shippingAddressInfo?.location
         : 'Đang lấy vị trí...',
-      phone: 'Ngọc Đại | 012345678',
     },
     {
-      label: 'Tự đến lấy hàng',
+      label: 'Mang đi',
       image: require('../../assets/images/ic_take_away.png'),
-      address: 'HCM Đường D1 BTH',
-      phone: '',
+      address: cartState?.storeInfo?.storeAddress,
     },
   ];
 
@@ -101,7 +84,6 @@ export const  DialogShippingMethod = ({
               />
             </TouchableOpacity>
           </View>
-
           <View style={styles.optionsContainer}>
             {options.map((option, index) => (
               <Pressable
@@ -114,10 +96,18 @@ export const  DialogShippingMethod = ({
                 <View style={styles.row}>
                   <View style={styles.row}>
                     <View style={styles.iconContainer}>
-                      <Image source={option.image} style={styles.icon} />
+                      <Image
+                        source={option.image}
+                        style={[
+                          option.label == 'Mang đi'
+                            ? {width: 40, height: 40}
+                            : styles.icon,
+                        ]}
+                      />
                     </View>
                     <Text style={styles.optionText}>{option.label}</Text>
                   </View>
+
                   <Pressable onPress={() => onEditOption(option.label)}>
                     <Icon
                       source="square-edit-outline"
@@ -126,10 +116,25 @@ export const  DialogShippingMethod = ({
                     />
                   </Pressable>
                 </View>
-                <Text style={styles.normalText}>{option.address}</Text>
-                {option.phone && (
-                  <Text style={styles.phoneText}>{option.phone}</Text>
+                {option.label === 'Giao hàng' ? (
+                  <Text style={styles.phoneText}>
+                    {user?._id
+                      ? user?.firstName +
+                        ' ' +
+                        user?.lastName +
+                        ' - ' +
+                        user?.phoneNumber
+                      : null}
+                  </Text>
+                ) : (
+                  <Text style={styles.phoneText}>
+                    {cartState?.storeInfoSelect?.storeAddress}
+                  </Text>
                 )}
+                <Text numberOfLines={1} style={styles.normalText}>
+                  {option.address}
+                </Text>
+                
               </Pressable>
             ))}
           </View>
@@ -230,5 +235,3 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-
-

@@ -19,7 +19,7 @@ import {Icon} from 'react-native-paper';
 import SelectLocation from './locations/SelectLocation';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import axios from 'axios';
-import { postAddress } from '../../axios';
+import {postAddress} from '../../axios';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
@@ -28,176 +28,178 @@ const RESULT_LIMIT = 10;
 const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
 const NewAddressScreen = props => {
-    const {navigation} = props;
-    const [consigneeName, setConsigneeName] = useState('');
-    const [consigneePhone, setConsigneePhone] = useState('');
-    const [specificAddress, setSpecificAddress] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
-    const [searchText, setSearchText] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState(null);
-    const searchTimeout = useRef(null);
-  
-    const [selectedAddress, setSelectedAddress] = useState({
-      selectedProvince: null,
-      selectedDistrict: null,
-      selectedWard: null,
-    });
-  
-    const handleAddressChange = address => {
-      setSelectedAddress(prev => ({
-        ...prev,
-        ...address,
-      }));
-    };
-  
-    const handleConfirmAddress = () => {
-      const { selectedProvince, selectedDistrict, selectedWard } = selectedAddress;
-      const fullAddressText = [
-        specificAddress,
-        selectedWard || '',
-        selectedDistrict || '',
-        selectedProvince || ''
-      ].filter(Boolean).join(', ');
-  
-      setSearchText(fullAddressText);
-      setIsSearching(true);
-      handleSearch(fullAddressText);
-      console.log('Địa chỉ đầy đủ:', fullAddressText);
-    };
-  
-    const fetchPlaceDetails = async placeId => {
-      try {
-        const response = await axios.get(GOONG_DETAIL_API, {
-          params: {
-            place_id: placeId,
-            api_key: GOONG_API_KEY,
-          },
-        });
-        const location = response.data.result.geometry.location;
-        setLatitude(String(location.lat));
-        setLongitude(String(location.lng));
-        console.log('Toạ độ đã chọn:', location.lat, location.lng);
-      } catch (error) {
-        console.error('Lỗi lấy tọa độ:', error);
-      }
-    };
-  
-    const handleSearch = text => {
-      setSearchText(text);
-      if (searchTimeout.current) {
-        clearTimeout(searchTimeout.current);
-      }
-      if (text.length > 2) {
-        searchTimeout.current = setTimeout(async () => {
-          try {
-            const response = await axios.get(GOONG_PLACE_API, {
-              params: {
-                input: text,
-                api_key: GOONG_API_KEY,
-                radius: SEARCH_RADIUS,
-                limit: RESULT_LIMIT,
-              },
-            });
-            setSearchResults(response.data.predictions || []);
-          } catch (error) {
-            console.error('Lỗi tìm kiếm địa chỉ:', error);
-          }
-        }, 500);
-      } else {
-        setSearchResults([]);
-      }
-    };
+  const {navigation} = props;
+  const [consigneeName, setConsigneeName] = useState('');
+  const [consigneePhone, setConsigneePhone] = useState('');
+  const [specificAddress, setSpecificAddress] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const searchTimeout = useRef(null);
 
+  const [selectedAddress, setSelectedAddress] = useState({
+    selectedProvince: null,
+    selectedDistrict: null,
+    selectedWard: null,
+  });
 
-    const handleSaveAddress = async () => {
+  const handleAddressChange = address => {
+    setSelectedAddress(prev => ({
+      ...prev,
+      ...address,
+    }));
+  };
+
+  const handleConfirmAddress = () => {
+    const {selectedProvince, selectedDistrict, selectedWard} = selectedAddress;
+    const fullAddressText = [
+      specificAddress,
+      selectedWard || '',
+      selectedDistrict || '',
+      selectedProvince || '',
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    setSearchText(fullAddressText);
+    setIsSearching(true);
+    handleSearch(fullAddressText);
+    console.log('Địa chỉ đầy đủ:', fullAddressText);
+  };
+
+  const fetchPlaceDetails = async placeId => {
+    try {
+      const response = await axios.get(GOONG_DETAIL_API, {
+        params: {
+          place_id: placeId,
+          api_key: GOONG_API_KEY,
+        },
+      });
+      const location = response.data.result.geometry.location;
+      setLatitude(String(location.lat));
+      setLongitude(String(location.lng));
+      // console.log('Toạ độ đã chọn:', location.lat, location.lng);
+    } catch (error) {
+      console.error('Lỗi lấy tọa độ:', error);
+    }
+  };
+
+  const handleSearch = text => {
+    setSearchText(text);
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+    if (text.length > 2) {
+      searchTimeout.current = setTimeout(async () => {
         try {
-          const { selectedProvince, selectedDistrict, selectedWard } = selectedAddress;
-      
-          const payload = {
-            specificAddress,
-            ward: selectedWard,
-            district: selectedDistrict,
-            province: selectedProvince,
-            consigneePhone,
-            consigneeName,
-            latitude: String(latitude),
-            longitude: String(longitude),
-          };
-      
-          const response = await postAddress(payload);
-          console.log('Tạo địa chỉ thành công:', response);
-      
-          // Có thể điều hướng người dùng quay lại hoặc hiển thị thông báo
-          navigation.goBack(); // hoặc showToast('Lưu thành công');
+          const response = await axios.get(GOONG_PLACE_API, {
+            params: {
+              input: text,
+              api_key: GOONG_API_KEY,
+              radius: SEARCH_RADIUS,
+              limit: RESULT_LIMIT,
+            },
+          });
+          setSearchResults(response.data.predictions || []);
         } catch (error) {
-          console.error('Lỗi khi tạo địa chỉ:', error);
-          // showToast('Lưu thất bại, vui lòng thử lại');
+          console.error('Lỗi tìm kiếm địa chỉ:', error);
         }
+      }, 500);
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleSaveAddress = async () => {
+    try {
+      const {selectedProvince, selectedDistrict, selectedWard} =
+        selectedAddress;
+
+      const payload = {
+        specificAddress,
+        ward: selectedWard,
+        district: selectedDistrict,
+        province: selectedProvince,
+        consigneePhone,
+        consigneeName,
+        latitude: String(latitude),
+        longitude: String(longitude),
       };
-    return (
-      <SafeAreaView style={styles.container}>
-        <LightStatusBar />
-        <NormalHeader
-          title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
-          onLeftPress={() => {
-            if (isSearching) {
-              setIsSearching(false);
-              setSearchText('');
-              setSearchResults([]);
-            } else {
-              navigation.goBack();
-            }
-          }}
-          rightIcon={isSearching ? 'close' : 'magnify'}
-          enableRightIcon={true}
-          onRightPress={() => setIsSearching(!isSearching)}
+
+      const response = await postAddress(payload);
+      // console.log('Tạo địa chỉ thành công:', response);
+
+      // Có thể điều hướng người dùng quay lại hoặc hiển thị thông báo
+      navigation.goBack(); // hoặc showToast('Lưu thành công');
+    } catch (error) {
+      console.error('Lỗi khi tạo địa chỉ:', error);
+      // showToast('Lưu thất bại, vui lòng thử lại');
+    }
+  };
+  return (
+    <SafeAreaView style={styles.container}>
+      <LightStatusBar />
+      <NormalHeader
+        title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
+        onLeftPress={() => {
+          if (isSearching) {
+            setIsSearching(false);
+            setSearchText('');
+            setSearchResults([]);
+          } else {
+            navigation.goBack();
+          }
+        }}
+        rightIcon={isSearching ? 'close' : 'magnify'}
+        enableRightIcon={true}
+        onRightPress={() => setIsSearching(!isSearching)}
+      />
+
+      {isSearching && (
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Nhập địa chỉ..."
+          value={searchText}
+          onChangeText={handleSearch}
         />
-  
-        {isSearching && (
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Nhập địa chỉ..."
-            value={searchText}
-            onChangeText={handleSearch}
-          />
-        )}
-  
-        {isSearching && searchText.length > 2 && searchResults.length > 0 && (
-          <ScrollView style={styles.content}>
-            {searchResults.map(result => (
-              <CardSearch
-                key={result.place_id}
-                address={{
-                  place_id: result.place_id,
-                  specificAddress: [
-                    result.terms[1]?.value,
-                    result.terms[0]?.value,
-                  ].join(' '),
-                  ward: result.terms[2]?.value || '',
-                  district: result.terms[3]?.value || '',
-                  province: result.terms[4]?.value || '',
-                }}
-                isSelected={searchText === result.description}
-                onPress={() => {
-                  setIsSearching(false);
-                  setSearchText(result.description);
-                  setSelectedAddress({
-                    selectedProvince: result.terms[4]?.value || '',
-                    selectedDistrict: result.terms[3]?.value || '',
-                    selectedWard: result.terms[2]?.value || '',
-                  });
-                  setSpecificAddress(
-                    [result.terms[1]?.value, result.terms[0]?.value].join(' ')
-                  );
-                  console.log('Địa chỉ đã chọn:', result.description);
-                  fetchPlaceDetails(result.place_id);
-                }}
-              />
-            ))}
-          </ScrollView>
-        )}
+      )}
+
+      {isSearching && searchText.length > 2 && searchResults.length > 0 && (
+        <ScrollView style={styles.content}>
+          {searchResults.map(result => (
+            <CardSearch
+              key={result.place_id}
+              address={{
+                place_id: result.place_id,
+                specificAddress: [
+                  result.terms[1]?.value,
+                  result.terms[0]?.value,
+                ].join(' '),
+                ward: result.terms[2]?.value || '',
+                district: result.terms[3]?.value || '',
+                province: result.terms[4]?.value || '',
+              }}
+              isSelected={searchText === result.description}
+              onPress={() => {
+                setIsSearching(false);
+                setSearchText(result.description);
+                setSelectedAddress({
+                  selectedProvince: result.terms[4]?.value || '',
+                  selectedDistrict: result.terms[3]?.value || '',
+                  selectedWard: result.terms[2]?.value || '',
+                });
+                setSpecificAddress(
+                  [result.terms[1]?.value, result.terms[0]?.value].join(' '),
+                );
+                console.log('Địa chỉ đã chọn:', result.description);
+                fetchPlaceDetails(result.place_id);
+              }}
+            />
+          ))}
+        </ScrollView>
+      )}
 
       <View style={styles.formContainer}>
         <SelectLocation onAddressChange={handleAddressChange} />
