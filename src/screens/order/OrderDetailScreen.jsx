@@ -1,23 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, View, } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { ActionDialog, PrimaryButton } from '../../components';
-import { getOrderDetail, updateOrderStatus } from '../../axios';
-import { Column, DualTextRow, HorizontalProductItem, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
-import { GLOBAL_KEYS, OrderStatus, colors } from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {Icon, PaperProvider} from 'react-native-paper';
+import {ActionDialog, PrimaryButton} from '../../components';
+import {getOrderDetail, updateOrderStatus} from '../../axios';
+import {
+  Column,
+  DualTextRow,
+  HorizontalProductItem,
+  LightStatusBar,
+  NormalHeader,
+  NormalLoading,
+  NormalText,
+  Row,
+} from '../../components';
+import {GLOBAL_KEYS, OrderStatus, colors} from '../../constants';
+import {ShoppingGraph} from '../../layouts/graphs';
 import { useAppContext } from '../../context/appContext';
 const OrderDetailScreen = props => {
   const { navigation, route } = props;
   const { orderId } = route.params;
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [actionDialogVisible, setActionDialogVisible] = useState(false)
-  const [paymentDialogVisible, setPaymentDialogVisible] = useState(false)
+  const [actionDialogVisible, setActionDialogVisible] = useState(false);
+  const [paymentDialogVisible, setPaymentDialogVisible] = useState(false);
 
   const { updateOrderMessage } = useAppContext();
   console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
-
 
   const getOrderStatusLabel = value => {
     const statusEntry = Object.values(OrderStatus).find(
@@ -25,6 +41,8 @@ const OrderDetailScreen = props => {
     );
     return statusEntry ? statusEntry.label : 'Trạng thái không xác định';
   };
+
+  console.log('detail', JSON.stringify(orderDetail, null, 3));
 
   useEffect(() => {
     const fetchOrderDetail = async () => {
@@ -42,7 +60,6 @@ const OrderDetailScreen = props => {
     fetchOrderDetail();
   }, [orderId, updateOrderMessage]);
 
-
   if (loading) {
     return (
       <View style={styles.container}>
@@ -57,128 +74,150 @@ const OrderDetailScreen = props => {
   }
 
   return (
-    <View style={styles.container}>
-      <LightStatusBar />
-      <NormalHeader
-        title="Chi tiết đơn hàng"
-        onLeftPress={() => navigation.goBack()}
-      />
+    <PaperProvider>
+      <View style={styles.container}>
+        <LightStatusBar />
+        <NormalHeader
+          title="Chi tiết đơn hàng"
+          onLeftPress={() => navigation.goBack()}
+        />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.containerContent}>
-
-        <Row
-          style={{
-            marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-            marginBottom: GLOBAL_KEYS.GAP_SMALL,
-            justifyContent: 'space-between',
-            flex: 1
-          }}>
-          <Title title="Trạng thái đơn hàng" color={colors.green500} />
-          <Text style={[styles.status, { color: orderDetail.status === 'cancelled' ? colors.black : colors.green500 }]}>
-            {getOrderStatusLabel(orderDetail.status)}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.containerContent}>
+          <Row
+            style={{
+              marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+              marginBottom: GLOBAL_KEYS.GAP_SMALL,
+              justifyContent: 'space-between',
+              flex: 1,
+            }}>
+            <Title title="Trạng thái đơn hàng" titleStyle={{color: colors.black}} />
+            <Text
+              style={[
+                styles.status,
+                {
+                  color:
+                    orderDetail.status === 'cancelled'
+                      ? colors.black
+                      : colors.green500,
+                },
+              ]}>
+              {getOrderStatusLabel(orderDetail.status)}
+            </Text>
+          </Row>
+          <Text style={{paddingHorizontal: 16, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.pink500}}>
+              {orderDetail?.deliveryMethod === 'pickup' ? 'Tự đến lấy hàng' : 'Giao hàng tận nơi'}
           </Text>
-        </Row>
+          {[
+            'shippingOrder',
+            'failedDelivery',
+            'readyForPickup',
+            'completed',
+          ].includes(orderDetail.status) && (
+            <ShipperInfo
+              messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
+              shipper={orderDetail.shipper}
+            />
+          )}
 
+          {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
 
-        {["shippingOrder", "failedDelivery", "readyForPickup", "completed"].includes(orderDetail.status) && (
-          <ShipperInfo
-            messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
-            shipper={orderDetail.shipper}
+          <RecipientInfo detail={orderDetail} />
+
+          {orderDetail.orderItems && (
+            <ProductsInfo orderItems={orderDetail.orderItems} />
+          )}
+
+          <PaymentDetails
+            _id={orderDetail._id}
+            shippingFee={orderDetail.shippingFee}
+            voucher={orderDetail.voucher}
+            paymentMethod={orderDetail.paymentMethod}
+            fulfillmentDateTime={orderDetail.fulfillmentDateTime}
+            orderItems={orderDetail.orderItems}
+            totalPrice={orderDetail.totalPrice}
+            status={orderDetail.status}
+            createdAt={orderDetail.createdAt}
           />
-        )}
 
-        {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
+          <Row style={{flex: 1}}>
+            {orderDetail.status === OrderStatus.AWAITING_PAYMENT.value && (
+              <PrimaryButton
+                titleStyle={{fontSize: 12}}
+                style={{marginHorizontal: 16, flex: 1}}
+                title="Thanh toán"
+                onPress={() => {
+                  setPaymentDialogVisible(true);
+                }}
+              />
+            )}
 
-        <RecipientInfo
-          deliveryMethod={orderDetail.deliveryMethod}
-          owner={orderDetail.owner}
-          shippingAddress={orderDetail.shippingAddress}
+            {(orderDetail.status === OrderStatus.PENDING_CONFIRMATION.value ||
+              orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
+              <Pressable
+                style={[styles.button, {flex: 1}]}
+                onPress={() => setActionDialogVisible(true)}>
+                <Text style={styles.normalText}>Hủy đơn hàng</Text>
+              </Pressable>
+            )}
+          </Row>
+        </ScrollView>
+        <ActionDialog
+          visible={paymentDialogVisible}
+          title={'Thanh toán'}
+          content={'Thanh toán đơn hàng này'}
+          approveText={'Đồng ý'}
+          cancelText={'Chọn lại phương thức thanh toán'}
+          // onApprove={navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })}
         />
-
-        {orderDetail.orderItems && <ProductsInfo orderItems={orderDetail.orderItems} />}
-
-        <PaymentDetails
-          _id={orderDetail._id}
-          shippingFee={orderDetail.shippingFee}
-          voucher={orderDetail.voucher}
-          paymentMethod={orderDetail.paymentMethod}
-          fulfillmentDateTime={orderDetail.fulfillmentDateTime}
-          orderItems={orderDetail.orderItems}
-          totalPrice={orderDetail.totalPrice}
-          status={orderDetail.status}
+        <ActionDialog
+          visible={actionDialogVisible}
+          title="Xác nhận"
+          content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
+          cancelText="Đóng"
+          approveText="Đồng ý"
+          onCancel={() => setActionDialogVisible(false)}
+          onApprove={async () => {
+            try {
+              await updateOrderStatus(
+                orderDetail._id,
+                OrderStatus.CANCELLED.value,
+              );
+              await fetchOrderDetail();
+            } catch (error) {
+              console.log('error', error);
+            } finally {
+              setActionDialogVisible(false);
+            }
+          }}
         />
-
-        <Row style={{ flex: 1 }}>
-          {
-            orderDetail.status === OrderStatus.AWAITING_PAYMENT.value &&
-            <PrimaryButton
-              titleStyle={{ fontSize: 12 }}
-              style={{ marginHorizontal: 16, flex: 1 }}
-              title='Thanh toán'
-              onPress={() => {
-                setPaymentDialogVisible(true)
-              }} />
-          }
-
-          {
-            (orderDetail.status === OrderStatus.PENDING_CONFIRMATION.value ||
-              orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) &&
-            <Pressable style={[styles.button, { flex: 1 }]} onPress={() => setActionDialogVisible(true)}>
-              <Text style={styles.normalText}>Hủy đơn hàng</Text>
-            </Pressable>
-          }
-        </Row>
-
-      </ScrollView>
-      <ActionDialog
-        visible={paymentDialogVisible}
-        title={'Thanh toán'}
-        content={'Thanh toán đơn hàng này'}
-        approveText={'Đồng ý'}
-        cancelText={'Chọn lại phương thức thanh toán'}
-        // onApprove={navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })}
-      />
-      <ActionDialog
-        visible={actionDialogVisible}
-        title="Xác nhận"
-        content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
-        cancelText="Đóng"
-        approveText="Đồng ý"
-        onCancel={() => setActionDialogVisible(false)}
-        onApprove={async () => {
-          try {
-            await updateOrderStatus(orderDetail._id, OrderStatus.CANCELLED.value)
-            await fetchOrderDetail()
-          } catch (error) {
-            console.log('error', error)
-          } finally {
-            setActionDialogVisible(false)
-          }
-        }}
-      />
-    </View>
+      </View>
+    </PaperProvider>
   );
 };
 
-
-const ShipperInfo = ({ messageClick, shipper }) => {
-  console.log('shipper', shipper)
+const ShipperInfo = ({messageClick, shipper}) => {
+  console.log('shipper', shipper);
   return (
-    <Row style={{ gap: 16, margin: 16 }}>
+    <Row style={{gap: 16, margin: 16}}>
       <Image
-        style={{ width: 40, height: 40 }}
+        style={{width: 40, height: 40}}
         source={require('../../assets/images/helmet.png')}
       />
-      <Column style={{ flex: 1 }}>
-        <NormalText text="Nhân viên giao hàng" style={{ fontWeight: '500' }} />
+      <Column style={{flex: 1}}>
+        <NormalText text="Nhân viên giao hàng" style={{fontWeight: '500'}} />
         <Text
-          style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.yellow700, fontWeight: '500' }}>
-          {shipper?.firstName ? `${shipper.firstName} ${shipper.lastName} ` : 'Đang chuẩn bị ...'}
+          style={{
+            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+            color: colors.yellow700,
+            fontWeight: '500',
+          }}>
+          {shipper?.firstName
+            ? `${shipper.firstName} ${shipper.lastName} `
+            : 'Đang chuẩn bị ...'}
         </Text>
       </Column>
-
 
       {/* <Row style={{ gap: 24 }}>
         <Icon source="phone-outline" color={colors.black} size={20} />
@@ -186,25 +225,22 @@ const ShipperInfo = ({ messageClick, shipper }) => {
           <Icon source="message-outline" color={colors.black} size={20} />
         </Pressable>
       </Row> */}
-
-
     </Row>
   );
 };
 
-const ProductsInfo = ({ orderItems }) => {
+const ProductsInfo = ({orderItems}) => {
   return (
-    <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
-      <View style={{ marginHorizontal: 16 }}>
+    <View style={[styles.areaContainer, {borderBottomWidth: 0}]}>
+      <View style={{marginHorizontal: 16}}>
         <Title title={'Danh sách sản phẩm'} icon="clipboard-list" />
       </View>
 
       <FlatList
         data={orderItems}
         keyExtractor={item => item.product._id}
-        renderItem={({ item }) => {
+        renderItem={({item}) => {
           const formattedItem = {
-
             productName: item.product.name,
             image: item.product.image,
             variantName: item.product.size,
@@ -232,11 +268,11 @@ const ProductsInfo = ({ orderItems }) => {
   );
 };
 
-const MerchantInfo = ({ store }) => {
+const MerchantInfo = ({store}) => {
   return (
-    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
+    <View style={[styles.areaContainer, {marginHorizontal: 16}]}>
       <Title title="Cửa hàng" icon="store" />
-      <Title title={store.name} titleStyle={{ color: colors.black }} />
+      <Title title={store.name} titleStyle={{color: colors.black}} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
@@ -249,34 +285,44 @@ const MerchantInfo = ({ store }) => {
   );
 };
 
-const RecipientInfo = ({ deliveryMethod, owner, shippingAddress }) => {
-  // Chọn nguồn dữ liệu phù hợp
+const RecipientInfo = ({ detail }) => {
+  const {
+    deliveryMethod,
+    owner,
+    consigneeName,
+    consigneePhone,
+    shippingAddress,
+  } = detail;
+
+  // Nếu là pickup hoặc các thông tin giao hàng bị null, thì lấy thông tin owner
   const recipientName =
-    deliveryMethod === 'pickup'
+    deliveryMethod === "pickup" || !consigneeName
       ? `${owner.lastName} ${owner.firstName}`
-      : shippingAddress.consigneeName;
+      : consigneeName;
 
   const recipientPhone =
-    deliveryMethod === 'pickup'
+    deliveryMethod === "pickup" || !consigneePhone
       ? owner.phoneNumber
-      : shippingAddress.consigneePhone;
+      : consigneePhone;
+
+  const recipientAddress =
+    deliveryMethod !== "pickup" && shippingAddress ? shippingAddress : "Không có địa chỉ giao hàng";
 
   return (
-    <View style={[styles.areaContainer, { marginHorizontal: 16 }]}>
+    <View style={[styles.areaContainer, { marginHorizontal: 16, gap: 8 }]}>
       <Title title="Người nhận" icon="map-marker" />
       <NormalText
-        text={[recipientName, '||', recipientPhone].join(' ')}
-        style={{ color: colors.black }}
+        text={[recipientName, recipientPhone].join(" - ")}
+        style={{ color: colors.black, fontWeight: "500" }}
       />
-      {/* Chỉ hiển thị địa chỉ nếu không phải là "pickup" */}
-      {deliveryMethod !== 'pickup' && (
-        <Text style={styles.normalText}>
-          {`${shippingAddress.specificAddress}, ${shippingAddress.ward}, ${shippingAddress.district}, ${shippingAddress.province}`}
-        </Text>
+      {/* Hiển thị địa chỉ nếu có */}
+      {deliveryMethod !== "pickup" && (
+        <Text style={styles.normalText}>{recipientAddress}</Text>
       )}
     </View>
   );
 };
+
 
 const Title = ({
   title,
@@ -303,9 +349,13 @@ const PaymentDetails = ({
   orderItems,
   totalPrice,
   status,
+  createdAt,
 }) => {
   // Tính tổng tiền sản phẩm (chưa bao gồm phí giao hàng và giảm giá)
-  const subTotal = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subTotal = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
 
   // Số tiền giảm giá từ voucher (nếu có)
   const discount = voucher
@@ -314,56 +364,53 @@ const PaymentDetails = ({
       : voucher.discountValue
     : 0;
 
-
   // Chọn icon phù hợp với phương thức thanh toán
   const getPaymentIcon = method => {
     switch (method) {
       case 'cod':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_vnd.png')}
           />
         );
       case 'payOs':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_payos.png')}
           />
         );
       case 'zalopay':
         return (
           <Image
-            style={{ width: 24, height: 24 }}
+            style={{width: 24, height: 24}}
             source={require('../../assets/images/logo_zalopay.png')}
           />
         );
-
     }
   };
   // Xác định trạng thái thanh toán
   const getPaymentStatus = () => {
     if (status === 'completed') {
-      return { text: 'Đã thanh toán', color: colors.primary };
+      return {text: 'Đã thanh toán', color: colors.primary};
     }
     if (paymentMethod === 'cod') {
-      return { text: 'Chưa thanh toán', color: colors.orange700 };
+      return {text: 'Chưa thanh toán', color: colors.orange700};
     }
     if (status === 'awaitingPayment') {
-      return { text: 'Chờ thanh toán', color: colors.pink500 };
+      return {text: 'Chờ thanh toán', color: colors.pink500};
     }
-    return { text: 'Đã thanh toán', color: colors.primary };
+    return {text: 'Đã thanh toán', color: colors.primary};
   };
-
 
   const paymentStatus = getPaymentStatus();
 
   return (
-    <View style={{ marginBottom: 8, marginHorizontal: 16 }}>
+    <View style={{marginBottom: 8, marginHorizontal: 16}}>
       <DualTextRow
         leftText="CHI TIẾT THANH TOÁN"
-        leftTextStyle={{ color: colors.primary, fontWeight: 'bold' }}
+        leftTextStyle={{color: colors.primary, fontWeight: 'bold'}}
       />
       <OrderId _id={_id} />
       {[
@@ -378,14 +425,14 @@ const PaymentDetails = ({
         {
           leftText: 'Giảm giá',
           rightText: `-${(discount || 0).toLocaleString('vi-VN')}đ`,
-          rightTextStyle: { color: colors.primary },
+          rightTextStyle: {color: colors.primary},
         },
 
         {
           leftText: 'Tổng tiền',
-          rightText: `${(totalPrice).toLocaleString('vi-VN')}đ`,
-          rightTextStyle: { color: colors.primary, fontWeight: '700' },
-          leftTextStyle: { color: colors.primary, fontWeight: '700' },
+          rightText: `${totalPrice.toLocaleString('vi-VN')}đ`,
+          rightTextStyle: {color: colors.primary, fontWeight: '700'},
+          leftTextStyle: {color: colors.primary, fontWeight: '700'},
         },
         {
           leftText: 'Trạng thái thanh toán',
@@ -398,13 +445,18 @@ const PaymentDetails = ({
             borderColor: paymentStatus.color,
             color: paymentStatus.color,
           },
-          rightTextStyle: { color: paymentStatus.color },
+          rightTextStyle: {color: paymentStatus.color},
         },
 
         {
           leftText: 'Thời gian đặt hàng',
+          rightText: new Date(createdAt).toLocaleString('vi-VN'),
+        },
+        {
+          leftText: 'Thời gian nhận hàng',
           rightText: new Date(fulfillmentDateTime).toLocaleString('vi-VN'),
         },
+        
       ].map((item, index) => (
         <DualTextRow key={index} {...item} />
       ))}
@@ -416,7 +468,7 @@ const PaymentDetails = ({
           marginVertical: 8,
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 12, color: '#000', marginRight: 8 }}>
+        <Text style={{fontSize: 12, color: '#000', marginRight: 8}}>
           Phương thức thanh toán:
         </Text>
         <View
@@ -425,8 +477,8 @@ const PaymentDetails = ({
             alignItems: 'center',
           }}>
           {getPaymentIcon(paymentMethod)}
-          <Text style={{ fontSize: 12, color: '#000', marginLeft: 8 }}>
-            {paymentMethod.toUpperCase()}
+          <Text style={{fontSize: 12, color: '#000', marginLeft: 8}}>
+            {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
           </Text>
         </View>
       </View>
@@ -434,12 +486,12 @@ const PaymentDetails = ({
   );
 };
 
-const OrderId = ({ _id }) => {
+const OrderId = ({_id}) => {
   return (
-    <View style={[styles.row, { marginBottom: 6 }]}>
+    <View style={[styles.row, {marginBottom: 6}]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => { }}>
-        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
+      <Pressable style={styles.row} onPress={() => {}}>
+        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
@@ -447,7 +499,6 @@ const OrderId = ({ _id }) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -487,9 +538,9 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
   },
   areaContainer: {
-    borderBottomWidth: 3,
+    borderBottomWidth: 1,
     borderColor: colors.gray200,
-    paddingVertical: 12
+    paddingVertical: 12,
   },
   button: {
     backgroundColor: colors.white,
@@ -501,7 +552,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     margin: 16,
   },
-  status: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.green500, fontWeight: '500' },
+  status: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.green500,
+    fontWeight: '500',
+  },
 });
 
 export default OrderDetailScreen;

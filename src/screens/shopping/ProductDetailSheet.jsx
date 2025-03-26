@@ -231,7 +231,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
                     {product.name}
                 </Text>
 
-                <FavoriteButton productId={product._id} />
+                {/* <FavoriteButton productId={product._id} /> */}
 
             </View>
 
