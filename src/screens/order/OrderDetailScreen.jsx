@@ -92,7 +92,7 @@ const OrderDetailScreen = props => {
               justifyContent: 'space-between',
               flex: 1,
             }}>
-            <Title title="Trạng thái đơn hàng" color={colors.green500} />
+            <Title title="Trạng thái đơn hàng" titleStyle={{color: colors.black}} />
             <Text
               style={[
                 styles.status,
