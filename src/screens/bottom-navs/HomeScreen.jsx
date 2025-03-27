@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -7,7 +7,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import {
@@ -21,7 +21,7 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -32,10 +32,10 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -45,16 +45,12 @@ import {
   OrderGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import {
-  AppAsyncStorage,
-  CartManager,
-  fetchData
-} from '../../utils';
+import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 
 import CallSaveLocation from '../../utils/CallSaveLocation';
 
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -66,8 +62,7 @@ const HomeScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
   const lastCategoryRef = useRef(currentCategory);
-  const { cartState, cartDispatch } = useAppContext() || {}
-
+  const {cartState, cartDispatch} = useAppContext() || {};
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -134,7 +129,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
@@ -171,7 +166,7 @@ const HomeScreen = props => {
       <LightStatusBar />
       <HeaderWithBadge
         title={currentCategory}
-        onBadgePress={() => { }}
+        onBadgePress={() => {}}
         isHome={false}
       />
       {/* // hàm gọi và save location cửa hàng gần nhất - user */}
@@ -181,16 +176,9 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-
-
-
-        {
-          !cartState.needLogin &&
-          <BarcodeUser codeId="M1678263323" />
-        }
+        {!cartState.needLogin && <BarcodeUser codeId="M1678263323" />}
 
         <CardCategory />
-
 
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
@@ -200,10 +188,10 @@ const HomeScreen = props => {
             .flatMap(category => category.products)
             .slice(0, 10)}
           onItemClick={productId => {
-            navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+            navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
           }}
           onIconClick={productId => {
-            navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+            navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
           }}
         />
 
@@ -216,7 +204,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -245,16 +233,16 @@ const HomeScreen = props => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
+            : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={() => {
-          navigation.navigate(ShoppingGraph.CheckoutScreen);
+        onPressCart={async () => {
+          await navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
       <DialogShippingMethod
@@ -268,7 +256,7 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({ IconComponent, title, onPress }) => (
+const Item = ({IconComponent, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
@@ -281,7 +269,7 @@ const CardCategory = ({navigation}) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
+        contentContainerStyle={{gap: 22}}>
         <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
@@ -335,8 +323,8 @@ const CardCategory = ({navigation}) => {
           )}
           title="Hạng thành viên"
           onPress={() => {
-                        navigation.navigate(AppGraph.MembershipScreen);
-                      }}
+            navigation.navigate(AppGraph.MembershipScreen);
+          }}
         />
       </ScrollView>
     </View>
@@ -345,11 +333,11 @@ const CardCategory = ({navigation}) => {
 
 const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const { navigation } = props;
+  const {navigation} = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', { searchQuery: query });
+      navigation.navigate('', {searchQuery: query});
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
@@ -365,7 +353,7 @@ const Searchbar = props => {
         borderRadius: 4,
         gap: 10,
       }}>
-      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput
@@ -430,7 +418,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     height: 37,
     fontWeight: '600',
-
   },
   card: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
