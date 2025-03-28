@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
+import {getAllCategories, getAllProducts, getAllToppings} from '../../axios';
 import {
   CategoryMenu,
   DeliveryButton,
@@ -18,14 +18,13 @@ import {
   ProductsListHorizontal,
   ProductsListVertical,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { fetchData, fetchUserLocation } from '../../utils';
-
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
+import {fetchData, fetchUserLocation} from '../../utils';
 
 const OrderScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [categories, setCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -38,7 +37,7 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-  const { cartState, cartDispatch } = useAppContext()
+  const {cartState, cartDispatch} = useAppContext();
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -64,9 +63,7 @@ const OrderScreen = props => {
     fetchUserLocation(setCurrentLocation, setLoading);
   }, []);
 
-
   useEffect(() => {
-
     // Fetch categories
     const fetchCategories = async () => {
       try {
@@ -78,8 +75,8 @@ const OrderScreen = props => {
         setLoading(false);
       }
     };
-    
-    fetchCategories()
+
+    fetchCategories();
 
     // Fetch toppings
     fetchData(getAllToppings, setToppings);
@@ -90,7 +87,7 @@ const OrderScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
@@ -136,9 +133,12 @@ const OrderScreen = props => {
   };
 
   const onItemClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 
+  const onIconClick = productId => {
+    navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
+  };
 
   const openDialogCategoryPress = () => {
     setDialogVisible(true);
@@ -172,6 +172,7 @@ const OrderScreen = props => {
             .flatMap(category => category.products)
             .slice(0, 10)}
           onItemClick={onItemClick}
+          onIconClick={onIconClick}
         />
 
         <FlatList
@@ -179,12 +180,13 @@ const OrderScreen = props => {
           keyExtractor={item => item._id}
           scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
                 products={item.products}
                 onItemClick={onItemClick}
+                onIconClick={onIconClick}
               />
             </View>
           )}
@@ -192,16 +194,23 @@ const OrderScreen = props => {
       </ScrollView>
 
       <DeliveryButton
-        title="Đi giao đến"
+        deliveryMethod={selectedOption}
+        title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
         address={
-          currentLocation
-            ? currentLocation.address.label
+          selectedOption === 'Mang đi'
+            ? cartState?.storeInfoSelect?.storeAddress
+            : cartState?.shippingAddressInfo?.location
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
             : 'Đang xác định vị trí...'
         }
-        cart={cartState.orderItems}
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
-        onPressCart={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}
+        cartState={cartState}
+        onPressCart={async () => {
+          await navigation.navigate(ShoppingGraph.CheckoutScreen);
+        }}
       />
 
       <DialogShippingMethod

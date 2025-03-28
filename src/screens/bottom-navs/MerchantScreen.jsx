@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -118,9 +119,6 @@ const MerchantScreen = ({navigation, route}) => {
     }
   };
 
-
-
-
   // Handle Search Focus
   const handleSearchPress = () => {
     setIsMapView(false);
@@ -169,20 +167,32 @@ const MerchantScreen = ({navigation, route}) => {
   }, [merchants, userLocation]);
 
   // hàm tìm kiếm cửa hàng
-  const filteredMerchants = sortedMerchants.filter(
-    merchant =>
-      merchant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.district.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.phoneNumber.includes(searchQuery) ||
-      merchant.province.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.ward.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      merchant.specificAddress
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()),
-  );
+  const removeVietnameseTones = str => {
+    return str
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D') // Thay đ → d
+      .toLowerCase(); // Chuyển về chữ thường
+  };
 
   useEffect(() => {
     if (searchQuery.length > 0) {
+      const queryNormalized = removeVietnameseTones(searchQuery);
+
+      const filteredMerchants = sortedMerchants.filter(merchant =>
+        [
+          merchant.name,
+          merchant.district,
+          merchant.phoneNumber,
+          merchant.province,
+          merchant.ward,
+          merchant.specificAddress,
+        ]
+          .map(removeVietnameseTones)
+          .some(field => field.includes(queryNormalized)),
+      );
+
       setQueryMerchants(filteredMerchants);
     } else {
       setQueryMerchants([]);
@@ -231,6 +241,7 @@ const MerchantScreen = ({navigation, route}) => {
             {suggestions.length > 0 && (
               <View style={styles.suggestionContainer}>
                 <FlatList
+                  scrollEnabled={false}
                   data={suggestions}
                   keyExtractor={item => item.place_id}
                   renderItem={({item}) => (
@@ -316,7 +327,7 @@ const MerchantScreen = ({navigation, route}) => {
             </MapboxGL.MapView>
           </View>
         ) : (
-          <View>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.mechant1}>
               <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
 
@@ -327,13 +338,14 @@ const MerchantScreen = ({navigation, route}) => {
                 />
               ) : (
                 <FlatList
+                  scrollEnabled={false}
                   data={
                     queryMerchants.length > 0
                       ? queryMerchants
                       : sortedMerchants.slice(0, 1)
                   }
                   renderItem={({item}) =>
-                    renderItem({handleMerchant, item, haversineDistance})
+                    RenderItem({handleMerchant, item, haversineDistance})
                   }
                   keyExtractor={item => item._id.toString()}
                   showsVerticalScrollIndicator={false}
@@ -348,26 +360,26 @@ const MerchantScreen = ({navigation, route}) => {
               />
             ) : (
               <FlatList
+                scrollEnabled={false}
                 data={
                   queryMerchants.length > 0
                     ? queryMerchants
                     : sortedMerchants.slice(1)
                 }
                 renderItem={({item}) =>
-                  renderItem({handleMerchant, item, haversineDistance})
+                  RenderItem({handleMerchant, item, haversineDistance})
                 }
                 keyExtractor={item => item._id}
-                scrollEnabled={true}
               />
             )}
-          </View>
+          </ScrollView>
         )}
       </View>
     </SafeAreaView>
   );
 };
 
-const renderItem = ({item, handleMerchant, haversineDistance}) => (
+const RenderItem = ({item, handleMerchant, haversineDistance}) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
     <Image source={{uri: item.images[0]}} style={styles.imageItem} />
     <View style={styles.infoItem}>

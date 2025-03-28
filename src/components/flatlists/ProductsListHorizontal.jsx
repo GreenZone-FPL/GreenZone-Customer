@@ -5,17 +5,17 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
-import { Row } from '../containers/Row';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {TextFormatter} from '../../utils';
+import {Row} from '../containers/Row';
 
 export const ProductsListHorizontal = ({
   onItemClick,
   onIconClick,
-  products
+  products,
 }) => {
   return (
     <View style={styles.container}>
@@ -25,15 +25,18 @@ export const ProductsListHorizontal = ({
           <Text style={styles.timeText}>08:00:00</Text>
         </View>
         <FlatList
-          data={products}
+          data={products[0]}
           keyExtractor={item => item._id.toString()}
-          renderItem={({ item }) => (
-            <ItemProduct
-              item={item}
-              onItemClick={() => onItemClick(item._id)}
-              onIconClick={() => onIconClick(item._id)}
-            />
-          )}
+          renderItem={({item}) => {
+            console.log(item);
+            return (
+              <ItemProduct
+                item={item}
+                onItemClick={() => onItemClick(item._id)}
+                onIconClick={() => onIconClick(item._id)}
+              />
+            );
+          }}
           horizontal={true}
           contentContainerStyle={{
             gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -45,18 +48,17 @@ export const ProductsListHorizontal = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick, onIconClick }) => {
+const ItemProduct = ({item, onItemClick, onIconClick}) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
+        <Image source={{uri: String(item.image)}} style={styles.itemImage} />
       </TouchableOpacity>
 
       <Text numberOfLines={1} style={styles.productNameText}>
         {item.name}
       </Text>
       <Row style={styles.priceContainer}>
-
         <Text style={styles.priceText}>
           {TextFormatter.formatCurrency(item.sellingPrice)}
         </Text>
@@ -68,8 +70,6 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     paddingHorizontal: 4,
-    paddingVertical: 2
+    paddingVertical: 2,
   },
   productNameText: {
     position: 'absolute',
@@ -140,6 +140,6 @@ const styles = StyleSheet.create({
     margin: GLOBAL_KEYS.PADDING_DEFAULT,
     borderRadius: 20,
     backgroundColor: colors.white,
-    padding: 4
+    padding: 4,
   },
 });
