@@ -65,12 +65,6 @@ export const OrderStatus = Object.freeze({
 
 
 
-// Cách sử dụng:
-// console.log(OrderStatus.getLabels()); // Lấy toàn bộ label
-// console.log(OrderStatus.getValues()); // Lấy toàn bộ value
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlVG9rZW4iOiJhY2Nlc3NUb2tlbiIsInBob25lTnVtYmVyIjoiMDkxMTExMTExMSIsImlhdCI6MTc0MTQyNDc0NSwiZXhwIjoxNzQyMjg4NzQ1fQ.i1Mg2wjTqkkkltoOfADAudiqI0_6X0ZDczacKyQyA4Y
-
 
 
 

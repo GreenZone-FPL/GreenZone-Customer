@@ -170,6 +170,7 @@ export const CartManager = (() => {
     quantity,
     cartDispatch,
   ) => {
+
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
