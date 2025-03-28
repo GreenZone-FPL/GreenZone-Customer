@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { MainGraph } from '../../layouts/graphs';
+import CallSaveLocation from "../../utils/CallSaveLocation";
 const SplashScreen2 = ({ navigation }) => {
   
 
@@ -12,7 +13,7 @@ const SplashScreen2 = ({ navigation }) => {
         routes: [{ name: MainGraph.graphName }],
       });
 
-    }, 1000);
+    }, 2000);
 
 
     return () => clearTimeout(timer);
@@ -20,6 +21,7 @@ const SplashScreen2 = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <CallSaveLocation />
       <Text style={styles.text}>SplashScreen</Text>
     </View>
   );

@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 
 const TitleTextPropTypes = {
-  text: PropTypes.string,
+  text: PropTypes.string || PropTypes.number,
   color: PropTypes.string, 
   style: PropTypes.object,
 };
