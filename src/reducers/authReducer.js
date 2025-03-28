@@ -26,7 +26,7 @@ export const authReducer = (state, action) => {
       };
 
     case AuthActionTypes.REGISTER:
-      return {...state, message: '', needAuthen: false, needFlash: false};
+      return {...state, message: '', needAuthen: false, needFlash: false, ...action.payload};
 
     case AuthActionTypes.LOGOUT:
       return {...state, message: '', needAuthen: false, needFlash: false, ...action.payload};

@@ -41,6 +41,11 @@ export const AppContextProvider = ({children}) => {
           type: AuthActionTypes.LOGIN,
           payload: {needLogin: false, isLoggedIn: true},
         });
+      }else{
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: {needLogin: false, isLoggedIn: false},
+        });
       }
     };
     checkLoginStatus();

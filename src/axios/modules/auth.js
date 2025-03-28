@@ -1,5 +1,5 @@
 import axiosInstance from '../axiosInstance';
-import {AppAsyncStorage} from '../../utils';
+import { AppAsyncStorage } from '../../utils';
 
 export const getProfile = async () => {
   try {
@@ -21,13 +21,13 @@ export const register = async ({
   avatar = null,
 }) => {
   try {
-    const body = {firstName, lastName, email, dateOfBirth, gender, avatar};
+    const body = { firstName, lastName, email, dateOfBirth, gender, avatar };
 
     const response = await axiosInstance.post('/auth/otp/register', body);
 
-    const {data} = response;
+    const { data } = response;
 
-    const {accessToken, refreshToken} = data.token;
+    const { accessToken, refreshToken } = data.token;
 
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
@@ -45,9 +45,9 @@ export const register = async ({
   }
 };
 
-export const sendOTP = async ({phoneNumber}) => {
+export const sendOTP = async ({ phoneNumber }) => {
   try {
-    const body = {phoneNumber};
+    const body = { phoneNumber };
     const response = await axiosInstance.post('/auth/otp/send', body);
 
     return response.data;
@@ -57,30 +57,34 @@ export const sendOTP = async ({phoneNumber}) => {
   }
 };
 
-export const verifyOTP = async ({phoneNumber, code}) => {
+export const verifyOTP = async ({ phoneNumber, code }) => {
   try {
     const response = await axiosInstance.post('/auth/otp/login', {
       phoneNumber,
       code,
     });
-    const {data} = response;
+    const { data } = response;
+    const userLastName = data.user.lastName;
+    if (userLastName) {
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.accessToken,
+        data.token.accessToken.token,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.refreshToken,
+        data.token.refreshToken.token,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.userId,
+        data.user._id,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.user,
+        data.user,
+      );
 
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.accessToken,
-      data.token.accessToken.token,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.refreshToken,
-      data.token.refreshToken.token,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.userId,
-      data.user._id,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.user,
-      data.user,
-    );
+    }
+
 
     return data;
   } catch (error) {
