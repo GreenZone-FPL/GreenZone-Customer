@@ -5,7 +5,7 @@ import socketService from '../services/socketService';
 import { useAppContext } from '../context/appContext';
 import { OrderStatus } from '../constants';
 import { showMessage } from 'react-native-flash-message';
-import { OrderGraph, ShoppingGraph } from '../layouts/graphs';
+import { MainGraph, OrderGraph, ShoppingGraph } from '../layouts/graphs';
 import { useNavigation } from '@react-navigation/native';
 import { AppAsyncStorage, CartManager } from '../utils';
 import { AuthActionTypes, cartInitialState } from '../reducers';
@@ -97,6 +97,11 @@ export const useAppContainer = () => {
       type: AuthActionTypes.LOGOUT,
       payload: { isLoggedIn: false },
     });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: MainGraph.graphName}],
+    });
+    
 
   }
 

@@ -66,9 +66,10 @@ const HomeScreen = props => {
   const lastCategoryRef = useRef(currentCategory);
   const { cartState, cartDispatch, authState, authDispatch } =
     useAppContext() || {};
-
+    console.log('cartState', JSON.stringify(cartState, null, 2))
   const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer()
   const { onNavigateLogin } = useAppContainer()
+
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
