@@ -41,22 +41,24 @@ import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import {PaperProvider} from 'react-native-paper';
-import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage, {showMessage} from 'react-native-flash-message';
 import {OrderStatus} from './src/constants';
 import socketService from './src/services/socketService';
-
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import LoginScreenFake from './src/screens/auth/LoginScreenFake';
-import {LogBox} from 'react-native';
+import {useAppContainer} from './src/containers/useAppContainer';
+import {Alert, BackHandler, LogBox} from 'react-native';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
+
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
+export const navigationRef = React.createRef();
 
 export default function App() {
   return (
@@ -84,63 +86,10 @@ export default function App() {
   );
 }
 
-function AppNavigator({navigation}) {
-  const {
-    authState,
-    updateOrderMessage,
-    setUpdateOrderMessage,
-    setMerchantLocation,
-  } = useAppContext();
+function AppNavigator() {
+  const {authState} = useAppContext();
 
-  useEffect(() => {
-    const initializeSocket = async () => {
-      try {
-        // Khởi tạo socket
-        await socketService.initialize();
-
-        // Gọi lại tất cả các đơn hàng đã có trong activeOrders
-        await socketService.rejoinOrder(data => {
-          // Cập nhật trạng thái đơn hàng khi join thành công
-          setUpdateOrderMessage(prev => ({
-            visible: true,
-            orderId: data.orderId,
-            oldStatus: prev.status,
-            message: data.message,
-            status: data.status,
-          }));
-        });
-      } catch (error) {
-        console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);
-      }
-    };
-
-    // Gọi hàm khởi tạo khi app khởi động
-    initializeSocket();
-
-    return () => {
-      // Ngắt kết nối socket khi component bị unmount
-      socketService.disconnect();
-    };
-  }, [updateOrderMessage]);
-
-  useEffect(() => {
-    if (updateOrderMessage.visible) {
-      const {type, icon} = OrderStatus.getMessageInfoByStatus(
-        updateOrderMessage.status,
-      );
-      showMessage({
-        message: updateOrderMessage.message,
-        type,
-        icon,
-        duration: 4000,
-        onPress: () => {
-          navigation.navigate(OrderGraph.OrderDetailScreen, {
-            orderId: updateOrderMessage.orderId,
-          });
-        },
-      });
-    }
-  }, [updateOrderMessage.status]);
+  useAppContainer();
 
   return (
     <BaseStack.Navigator screenOptions={{headerShown: false}}>
@@ -152,7 +101,7 @@ function AppNavigator({navigation}) {
               component={SplashScreen2}
             />
           )}
-          {/* <BaseStack.Screen name={AuthGraph.SplashScreen2} component={SplashScreen2} /> */}
+
           <BaseStack.Screen
             name={MainGraph.graphName}
             component={MainNavigation}
@@ -293,7 +242,10 @@ function AppNavigator({navigation}) {
             name={ShoppingGraph.PayOsScreen}
             component={PayOsScreen}
           />
-          <BaseStack.Screen name={ShoppingGraph.Zalopayscreen} component={Zalopayscreen} />
+          <BaseStack.Screen
+            name={ShoppingGraph.Zalopayscreen}
+            component={Zalopayscreen}
+          />
         </>
       ) : (
         <BaseStack.Screen

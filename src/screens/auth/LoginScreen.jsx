@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
   Image,
@@ -7,26 +7,46 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { sendOTP } from '../../axios';
+import {Icon} from 'react-native-paper';
+import {sendOTP} from '../../axios';
 import {
   Column,
   FlatInput,
   LightStatusBar,
   NormalLoading,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { AuthGraph } from '../../layouts/graphs';
-import { AuthActionTypes } from '../../reducers';
-import { Toaster } from '../../utils';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {AuthGraph, MainGraph} from '../../layouts/graphs';
+import {AuthActionTypes} from '../../reducers';
+import {Toaster} from '../../utils';
+import {BackHandler} from 'react-native';
+
 const LoginScreen = ({route, navigation}) => {
   const [phoneNumber, setPhoneNumber] = useState('0779188717');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const {authState, authDispatch} = useAppContext();
+
+  console.log('authState', authState)
+  useEffect(() => {
+    const backAction = () => {
+      if (authState.needLogin) {
+        // navigation.navigate(MainGraph.graphName);
+        authDispatch({type: AuthActionTypes.LOGIN, payload: {needLogin: false}});
+      }
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+    return () => backHandler.remove();
+  }, [navigation]);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -55,6 +75,7 @@ const LoginScreen = ({route, navigation}) => {
       const response = await sendOTP({phoneNumber});
       if (response) {
         console.log('otp = ', response.code);
+
         navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
       } else {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
@@ -102,22 +123,6 @@ const LoginScreen = ({route, navigation}) => {
         <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
-
-      {/* <Row style={styles.separatorContainer}>
-        <View style={styles.separator} />
-        <NormalText text="Hoặc" />
-        <View style={styles.separator} />
-      </Row>
-
-      <Pressable style={styles.socialButton}>
-        <AntDesign name="facebook-square" color={colors.white} size={24} />
-        <Text style={styles.socialText}>Tiếp tục bằng Facebook</Text>
-      </Pressable>
-
-      <Pressable style={[styles.socialButton, styles.googleButton]}>
-        <AntDesign name="google" color={colors.primary} size={24} />
-        <Text style={[styles.socialText, styles.googleText]}>Tiếp tục bằng Google</Text>
-      </Pressable> */}
 
       <NormalLoading visible={loading} />
     </Column>

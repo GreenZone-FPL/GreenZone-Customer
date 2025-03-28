@@ -22,6 +22,7 @@ const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const {authState, authDispatch, cartDispatch} = useAppContext();
 
+  console.log('authState', authState);
   const handleProfile = async () => {
     setLoading(true);
     try {
@@ -97,6 +98,7 @@ const ProfileScreen = ({navigation}) => {
                 navigation.navigate(OrderGraph.RatingOrderScreen);
               }}
             />
+
             <View style={styles.separator} />
             {authState.isLoggedIn && (
               <CardUtiliti
@@ -109,11 +111,14 @@ const ProfileScreen = ({navigation}) => {
                     cartDispatch,
                     cartInitialState,
                   );
-                  authDispatch({type: AuthActionTypes.LOGOUT});
-                  navigation.reset({
-                    index: 0,
-                    routes: [{name: MainGraph.graphName}],
+                  authDispatch({
+                    type: AuthActionTypes.LOGOUT,
+                    payload: {isLoggedIn: false},
                   });
+                  // navigation.reset({
+                  //   index: 0,
+                  //   routes: [{name: MainGraph.graphName}],
+                  // });
                 }}
               />
             )}
