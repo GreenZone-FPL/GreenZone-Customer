@@ -47,7 +47,7 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import { useHomeContainer } from '../../containers';
+import { useAppContainer, useHomeContainer } from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
 import { AuthActionTypes } from '../../reducers';
 
@@ -66,8 +66,10 @@ const HomeScreen = props => {
   const lastCategoryRef = useRef(currentCategory);
   const { cartState, cartDispatch, authState, authDispatch } =
     useAppContext() || {};
+    console.log('cartState', JSON.stringify(cartState, null, 2))
+  const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer()
+  const { onNavigateLogin } = useAppContainer()
 
-  const { onNavigateLogin, onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer()
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -231,14 +233,10 @@ const HomeScreen = props => {
                 title={item.name}
                 products={item.products}
                 onItemClick={productId => {
-                  navigation.navigate(ShoppingGraph.ProductDetailSheet, {
-                    productId,
-                  });
+                  onNavigateProductDetailSheet(productId)
                 }}
                 onIconClick={productId => {
-                  navigation.navigate(ShoppingGraph.ProductDetailShort, {
-                    productId,
-                  });
+                  onClickAddToCart(productId)
                 }}
               />
             </View>

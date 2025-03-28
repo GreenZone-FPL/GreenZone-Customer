@@ -3,6 +3,7 @@ import {jwtDecode} from 'jwt-decode';
 
 export class AppAsyncStorage {
   static STORAGE_KEYS = {
+    CART: 'CART',
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
     userId: 'userId',

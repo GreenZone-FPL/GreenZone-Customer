@@ -3,14 +3,16 @@ import { AuthActionTypes } from '../reducers';
 import { useAppContext } from '../context/appContext';
 import { useNavigation } from '@react-navigation/native';
 import { ShoppingGraph } from '../layouts/graphs';
+import { useAppContainer } from './useAppContainer';
 
 export const useHomeContainer = () => {
     const { authDispatch, authState } = useAppContext()
+    const {onNavigateLogin} = useAppContainer()
     const navigation = useNavigation()
 
-    const onNavigateLogin = () => {
-        authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
-    }
+    // const onNavigateLogin = () => {
+    //     authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
+    // }
 
     const onNavigateProductDetailSheet = productId => {
         navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -27,7 +29,7 @@ export const useHomeContainer = () => {
     }
 
     return {
-        onNavigateLogin,
+        // onNavigateLogin,
         onNavigateProductDetailSheet,
         onClickAddToCart
     }

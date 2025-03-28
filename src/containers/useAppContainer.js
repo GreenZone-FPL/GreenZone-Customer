@@ -5,14 +5,14 @@ import socketService from '../services/socketService';
 import { useAppContext } from '../context/appContext';
 import { OrderStatus } from '../constants';
 import { showMessage } from 'react-native-flash-message';
-import { OrderGraph } from '../layouts/graphs';
+import { MainGraph, OrderGraph, ShoppingGraph } from '../layouts/graphs';
 import { useNavigation } from '@react-navigation/native';
 import { AppAsyncStorage, CartManager } from '../utils';
 import { AuthActionTypes, cartInitialState } from '../reducers';
 
 
 export const useAppContainer = () => {
-  const { updateOrderMessage, setUpdateOrderMessage, cartDispatch, authDispatch } = useAppContext();
+  const { updateOrderMessage, setUpdateOrderMessage, cartDispatch, authDispatch, authState } = useAppContext();
 
   const navigation = useNavigation();
 
@@ -97,11 +97,23 @@ export const useAppContainer = () => {
       type: AuthActionTypes.LOGOUT,
       payload: { isLoggedIn: false },
     });
+    navigation.reset({
+      index: 0,
+      routes: [{ name: MainGraph.graphName}],
+    });
+    
 
   }
 
+  const onNavigateLogin = () => {
+    authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
+}
+
+
+
   return {
-    onLogout
+    onLogout,
+    onNavigateLogin
   }
 
 
