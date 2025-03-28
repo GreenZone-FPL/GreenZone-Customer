@@ -21,6 +21,7 @@ PrimaryButton.propTypes = {
   title: PropTypes.string,
   onPress: PropTypes.func,
   style: PropTypes.object,
+  titleStyle: PropTypes.object,
 };
 
 const styles = StyleSheet.create({
