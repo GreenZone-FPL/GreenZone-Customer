@@ -322,7 +322,7 @@ const CardCategory = ({ navigation }) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 22 }}>
-        <Item
+        {/* <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
           )}
@@ -334,11 +334,11 @@ const CardCategory = ({ navigation }) => {
             <BagHappy size="50" color={colors.green500} variant="Bulk" />
           )}
           title="Mang đi"
-        />
+        /> */}
 
         <Item
           IconComponent={() => (
-            <TicketDiscount size="50" color={colors.yellow700} variant="Bulk" />
+            <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
           onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
@@ -346,9 +346,12 @@ const CardCategory = ({ navigation }) => {
 
         <Item
           IconComponent={() => (
-            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
+            <Rank size="50" color={colors.pink500} variant="Bulk" />
           )}
-          title="Đổi xu"
+          title="Hạng thành viên"
+          onPress={() => {
+            navigation.navigate(AppGraph.MembershipScreen);
+          }}
         />
 
         <Item
@@ -361,6 +364,15 @@ const CardCategory = ({ navigation }) => {
 
         <Item
           IconComponent={() => (
+            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
+          )}
+          title="Đổi xu"
+        />
+
+
+
+        <Item
+          IconComponent={() => (
             <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Góp ý"
@@ -369,15 +381,7 @@ const CardCategory = ({ navigation }) => {
           }}
         />
 
-        <Item
-          IconComponent={() => (
-            <Rank size="50" color={colors.pink500} variant="Bulk" />
-          )}
-          title="Hạng thành viên"
-          onPress={() => {
-            navigation.navigate(AppGraph.MembershipScreen);
-          }}
-        />
+
       </ScrollView>
     </View>
   );
