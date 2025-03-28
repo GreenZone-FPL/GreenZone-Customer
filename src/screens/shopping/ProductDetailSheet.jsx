@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon, IconButton} from 'react-native-paper';
+import {IconButton} from 'react-native-paper';
 import {
   deleteFavoriteProduct,
   getFavoriteProducts,
@@ -17,17 +17,15 @@ import {
 } from '../../axios';
 import {
   CheckoutFooter,
-  Column,
-  NormalText,
+  NotesList,
   OverlayStatusBar,
   RadioGroup,
-  Row,
   SelectableGroup,
 } from '../../components';
 import ToastDialog from '../../components/dialogs/ToastDialog';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
-import {CartManager, TextFormatter} from '../../utils';
+import {CartManager} from '../../utils';
 
 const ProductDetailSheet = ({route, navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -39,11 +37,9 @@ const ProductDetailSheet = ({route, navigation}) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const {productId} = route.params;
-  // const productId = '67ad9e9b145c78765a8f89c1'
+  const [customNote, setCustomNote] = useState('');
+  const {cartDispatch} = useAppContext();
 
-  const {cartDispatch, authState} = useAppContext();
-
-  // console.log(productId)
   useEffect(() => {
     if (product) {
       const newTotalAmount = calculateTotal(
@@ -98,16 +94,13 @@ const ProductDetailSheet = ({route, navigation}) => {
       <OverlayStatusBar />
       {product && (
         <>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={styles.modalContent}>
+          <ScrollView style={styles.modalContent}>
             <ProductImage
               hideModal={() => navigation.goBack()}
               product={product}
             />
 
             <ProductInfo
-              authState={authState}
               product={product}
               showFullDescription={showFullDescription}
               toggleDescription={() => {
@@ -116,22 +109,20 @@ const ProductDetailSheet = ({route, navigation}) => {
             />
 
             {product.variant.length > 1 && selectedVariant && (
-              <View style={styles.infoContainer}>
-                <RadioGroup
-                  items={product.variant}
-                  selectedValue={selectedVariant}
-                  onValueChange={item => {
-                    setSelectedVariant(item);
-                  }}
-                  title="Size"
-                  required={true}
-                  note="Bắt buộc"
-                />
-              </View>
+              <RadioGroup
+                items={product.variant}
+                selectedValue={selectedVariant}
+                onValueChange={item => {
+                  setSelectedVariant(item);
+                }}
+                title="Size"
+                required={true}
+                note="Bắt buộc"
+              />
             )}
 
             {product.topping.length > 0 && (
-              <View style={styles.infoContainer}>
+              <>
                 <SelectableGroup
                   items={product.topping}
                   title="Chọn topping"
@@ -141,12 +132,33 @@ const ProductDetailSheet = ({route, navigation}) => {
                   activeIconColor={colors.primary}
                   activeTextColor={colors.primary}
                 />
-              </View>
+
+                <NotesList
+                  onToggleNote={item => {
+                    if (selectedNotes.includes(item)) {
+                      setSelectedNotes(
+                        selectedNotes.filter(note => note !== item),
+                      );
+                    } else {
+                      setSelectedNotes([...selectedNotes, item]);
+                      if (!customNote.includes(item)) {
+                        setCustomNote(prev =>
+                          prev ? `${prev}, ${item}` : item,
+                        );
+                      }
+                    }
+                  }}
+                  customNote={customNote}
+                  setCustomNote={setCustomNote}
+                  selectedNotes={selectedNotes}
+                  items={notes}
+                  style={{margin: GLOBAL_KEYS.PADDING_DEFAULT}}
+                />
+              </>
             )}
           </ScrollView>
 
           <CheckoutFooter
-            backgroundColor={colors.white}
             quantity={quantity}
             handlePlus={() => {
               if (quantity < 10) {
@@ -161,7 +173,7 @@ const ProductDetailSheet = ({route, navigation}) => {
             totalPrice={totalAmount}
             onButtonPress={async () => {
               // console.log('selectedToppings', selectedToppings)
-              const updatedToppings = selectedToppings?.map(topping => ({
+              const updatedToppings = selectedToppings.map(topping => ({
                 ...topping,
                 topping: topping._id,
                 price: topping.extraPrice,
@@ -187,13 +199,34 @@ const ProductDetailSheet = ({route, navigation}) => {
   );
 };
 
+const notes = [
+  'Ít cafe',
+  'Đậm trà',
+  'Không kem',
+  'Nhiều cafe',
+  'Ít sữa',
+  'Nhiều sữa',
+  'Nhiều kem',
+  'Đá để riêng',
+];
+
 const ProductImage = ({hideModal, product}) => {
+  // const [isDialogVisible, setIsDialogVisible] = useState(false);
+  // const images = [
+  //     {
+  //       url: '',
+  //       props: {
+  //         source: require('../../assets/images/product1.png'),
+  //       },
+  //     },
+  //   ];
   return (
     <View style={styles.imageContainer}>
-      <Pressable>
+      <Pressable
+      // onPress={() => setIsDialogVisible(true)}
+      >
         <Image source={{uri: product.image}} style={styles.productImage} />
       </Pressable>
-
       <IconButton
         icon="close"
         size={GLOBAL_KEYS.ICON_SIZE_SMALL}
@@ -201,55 +234,48 @@ const ProductImage = ({hideModal, product}) => {
         style={styles.closeButton}
         onPress={hideModal}
       />
+      {/* <DialogBasic
+          isVisible={isDialogVisible}
+          onHide={() => setIsDialogVisible(false)}
+          style={styles.height}
+        >
+          <View style={styles.imageZoomContainer}>
+            <ImageViewer imageUrls={images} renderIndicator={() => null}/>
+          </View>
+        </DialogBasic> */}
     </View>
   );
 };
 
-const ProductInfo = ({
-  product,
-  showFullDescription,
-  toggleDescription,
-  authState,
-}) => {
+const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
   return (
     <View style={styles.infoContainer}>
-      <Row style={styles.horizontalView}>
+      <View style={styles.horizontalView}>
         <Text style={styles.productName} numberOfLines={2} ellipsizeMode="tail">
           {product.name}
         </Text>
 
-        {/* <FavoriteButton productId={product._id} authState={authState} /> */}
-      </Row>
-      <Text
-        style={{
-          fontSize: 22,
-          color: colors.orange700,
-          fontWeight: 'bold',
-          paddingHorizontal: 16,
-        }}>
-        {TextFormatter.formatCurrency(product.sellingPrice)}
-      </Text>
+        {/* <FavoriteButton productId={product._id} /> */}
+      </View>
 
-      <Column style={{paddingHorizontal: 16, gap: 8}}>
+      <View style={styles.descriptionContainer}>
         <Text
           style={styles.descriptionText}
           numberOfLines={showFullDescription ? undefined : 2}
           ellipsizeMode="tail">
           {product.description}
         </Text>
-
-        <Pressable onPress={toggleDescription}>
-          <NormalText
-            style={{color: colors.teal900}}
-            text={showFullDescription ? 'Thu gọn' : 'Xem thêm'}
-          />
+        <Pressable style={styles.textButton} onPress={toggleDescription}>
+          <Text style={styles.textButtonLabel}>
+            {showFullDescription ? 'Thu gọn' : 'Xem thêm'}
+          </Text>
         </Pressable>
-      </Column>
+      </View>
     </View>
   );
 };
 
-const FavoriteButton = ({productId, authState}) => {
+const FavoriteButton = ({productId}) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastIcon, setToastIcon] = useState('heart-outline');
@@ -266,9 +292,7 @@ const FavoriteButton = ({productId, authState}) => {
       }
     };
 
-    if (!authState.needLogin) {
-      fetchFavorites();
-    }
+    fetchFavorites();
   }, [productId]);
 
   const toggleFavorite = async () => {
@@ -297,14 +321,12 @@ const FavoriteButton = ({productId, authState}) => {
 
   return (
     <>
-      <Pressable onPress={toggleFavorite}>
-        <Icon
-          source={isFavorite ? 'heart' : 'heart-outline'}
-          color={isFavorite ? colors.red800 : colors.gray400}
-          size={28}
-        />
-      </Pressable>
-
+      <IconButton
+        icon={isFavorite ? 'heart' : 'heart-outline'}
+        iconColor={isFavorite ? colors.red800 : colors.gray300}
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        onPress={toggleFavorite}
+      />
       <ToastDialog
         isVisible={isToastVisible}
         onHide={() => setIsToastVisible(false)}
@@ -324,17 +346,16 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '100%',
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     flexDirection: 'column',
     gap: GLOBAL_KEYS.GAP_SMALL,
-    marginTop: StatusBar.currentHeight,
+    marginTop: StatusBar.currentHeight + 40,
     flex: 1,
   },
   imageContainer: {
     position: 'relative',
     width: '100%',
-    height: 460,
-    // marginBottom: 10
+    height: 300,
   },
   productImage: {
     width: '100%',
@@ -347,7 +368,12 @@ const styles = StyleSheet.create({
     right: GLOBAL_KEYS.PADDING_DEFAULT,
     backgroundColor: colors.green100,
   },
-
+  zoomButton: {
+    position: 'absolute',
+    bottom: GLOBAL_KEYS.PADDING_DEFAULT,
+    left: GLOBAL_KEYS.PADDING_DEFAULT,
+    backgroundColor: colors.green100,
+  },
   horizontalView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -356,26 +382,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   productName: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     color: colors.black,
     flex: 1,
     marginRight: 8,
+    lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
   },
-
+  descriptionContainer: {
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+  },
   descriptionText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
+    lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
     textAlign: 'justify',
-    lineHeight: 25,
+  },
+
+  textButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 4,
+  },
+
+  textButtonLabel: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.teal900,
   },
 
   infoContainer: {
     flexDirection: 'column',
-    marginBottom: 10,
-    backgroundColor: colors.white,
-    paddingVertical: 8,
-    gap: 8,
+    marginBottom: 8,
+  },
+  imageZoomContainer: {
+    height: 800,
   },
 });
 
