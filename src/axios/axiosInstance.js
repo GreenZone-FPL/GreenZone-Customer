@@ -1,7 +1,9 @@
 import axios from 'axios';
-import { globalAuthDispatch } from '../context/appContext';
-import { AuthActionTypes } from '../reducers';
-import { AppAsyncStorage } from '../utils';
+import {globalAuthDispatch} from '../context/appContext';
+import {AuthActionTypes} from '../reducers';
+import {AppAsyncStorage} from '../utils';
+import {useNavigation} from '@react-navigation/native';
+import {AuthGraph} from '../layouts/graphs';
 
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
 
@@ -34,8 +36,9 @@ axiosInstance.interceptors.response.use(
       console.log('401 log out');
 
       const token = await AppAsyncStorage.readData('accessToken');
-      console.log('token', token)
-      if (token) { // chưa logout nhưng hết hạn token
+      console.log('token', token);
+      if (token) {
+        // chưa logout nhưng hết hạn token
         // Xóa token khỏi AsyncStorage
         await AppAsyncStorage.removeData(
           AppAsyncStorage.STORAGE_KEYS.accessToken,
@@ -47,13 +50,15 @@ axiosInstance.interceptors.response.use(
         if (globalAuthDispatch) {
           globalAuthDispatch({
             type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
-            payload: 'Phiên đăng nhập hết hạn',
+            payload: {message: 'Phiên đăng nhập hết hạn', needLogin: true},
           });
         }
-      } else { // đã logout và hết hạn token
+      } else {
+        // đã logout và hết hạn token
         if (globalAuthDispatch) {
           globalAuthDispatch({
-            type: AuthActionTypes.LOGIN_SESSION_EXPIRED
+            type: AuthActionTypes.LOGIN_SESSION_EXPIRED,
+            payload: {needLogin: true},
           });
         }
       }

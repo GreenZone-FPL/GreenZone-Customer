@@ -37,7 +37,10 @@ export const AppContextProvider = ({children}) => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
       if (isValid) {
-        authDispatch({type: AuthActionTypes.LOGIN});
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: {needLogin: false, isLoggedIn: true},
+        });
       }
     };
     checkLoginStatus();
