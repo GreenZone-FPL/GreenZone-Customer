@@ -30,6 +30,7 @@ import {
   HeaderWithBadge,
   LightStatusBar,
   NotificationList,
+  PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
@@ -46,8 +47,9 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
-
+import {useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
+import {AuthActionTypes} from '../../reducers';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -60,9 +62,13 @@ const HomeScreen = props => {
   const [editOption, setEditOption] = useState('');
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
-  const [currentCategory, setCurrentCategory] = useState('Chào bạn mới');
+  const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch} = useAppContext() || {};
+  const {cartState, cartDispatch, authState, authDispatch} =
+    useAppContext() || {};
+
+  const {onNavigateLogin, onNavigateProductDetailSheet, onClickAddToCart} =
+    useHomeContainer();
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -164,11 +170,19 @@ const HomeScreen = props => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+
       <HeaderWithBadge
-        title={currentCategory}
+        title={
+          authState.isLoggedIn
+            ? currentCategory
+              ? currentCategory
+              : 'Xin chào'
+            : 'Chào bạn mới'
+        }
         onBadgePress={() => {}}
         isHome={false}
       />
+
       {/* // hàm gọi và save location cửa hàng gần nhất - user */}
       <CallSaveLocation />
       <ScrollView
@@ -176,7 +190,15 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        {!cartState.needLogin && <BarcodeUser codeId="M1678263323" />}
+        {authState.isLoggedIn ? (
+          <BarcodeUser codeId="M1678263323" />
+        ) : (
+          <PrimaryButton
+            style={{marginHorizontal: 16}}
+            title="Đăng nhập"
+            onPress={onNavigateLogin}
+          />
+        )}
 
         <CardCategory />
 
@@ -188,10 +210,10 @@ const HomeScreen = props => {
             .flatMap(category => category.products)
             .slice(0, 10)}
           onItemClick={productId => {
-            navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+            onNavigateProductDetailSheet(productId);
           }}
           onIconClick={productId => {
-            navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
+            onClickAddToCart(productId);
           }}
         />
 
@@ -412,7 +434,6 @@ const styles = StyleSheet.create({
   textTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
-    fontWeight: '400',
     marginTop: 10,
     width: 70,
     fontSize: 14,

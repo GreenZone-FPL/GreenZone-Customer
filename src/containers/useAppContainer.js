@@ -1,15 +1,18 @@
-import {useEffect} from 'react';
-import {navigationRef} from '../../App';
-import {Alert, BackHandler} from 'react-native';
+import { useEffect } from 'react';
+import { navigationRef } from '../../App';
+import { Alert, BackHandler } from 'react-native';
 import socketService from '../services/socketService';
-import {useAppContext} from '../context/appContext';
-import {OrderStatus} from '../constants';
-import {showMessage} from 'react-native-flash-message';
-import {OrderGraph} from '../layouts/graphs';
-import {useNavigation} from '@react-navigation/native';
+import { useAppContext } from '../context/appContext';
+import { OrderStatus } from '../constants';
+import { showMessage } from 'react-native-flash-message';
+import { OrderGraph } from '../layouts/graphs';
+import { useNavigation } from '@react-navigation/native';
+import { AppAsyncStorage, CartManager } from '../utils';
+import { AuthActionTypes, cartInitialState } from '../reducers';
+
 
 export const useAppContainer = () => {
-  const {updateOrderMessage, setUpdateOrderMessage} = useAppContext();
+  const { updateOrderMessage, setUpdateOrderMessage, cartDispatch, authDispatch } = useAppContext();
 
   const navigation = useNavigation();
 
@@ -19,8 +22,8 @@ export const useAppContainer = () => {
         navigationRef.current.goBack();
       } else {
         Alert.alert('Thoát ứng dụng', 'Bạn có chắc chắn muốn thoát không?', [
-          {text: 'Hủy', style: 'cancel'},
-          {text: 'Thoát', onPress: () => BackHandler.exitApp()},
+          { text: 'Hủy', style: 'cancel' },
+          { text: 'Thoát', onPress: () => BackHandler.exitApp() },
         ]);
       }
       return true;
@@ -36,7 +39,7 @@ export const useAppContainer = () => {
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
-      const {type, icon} = OrderStatus.getMessageInfoByStatus(
+      const { type, icon } = OrderStatus.getMessageInfoByStatus(
         updateOrderMessage.status,
       );
       showMessage({
@@ -82,4 +85,24 @@ export const useAppContainer = () => {
       socketService.disconnect();
     };
   }, []);
+
+  const onLogout = async () => {
+    // Xóa token khỏi AsyncStorage
+    await AppAsyncStorage.clearAll();
+    await CartManager.updateOrderInfo(
+      cartDispatch,
+      cartInitialState,
+    );
+    authDispatch({
+      type: AuthActionTypes.LOGOUT,
+      payload: { isLoggedIn: false },
+    });
+
+  }
+
+  return {
+    onLogout
+  }
+
+
 };

@@ -1,6 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React, {useEffect, useReducer} from 'react';
+import React from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppContextProvider, useAppContext} from './src/context/appContext';
@@ -43,16 +43,15 @@ import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import {PaperProvider} from 'react-native-paper';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
-import FlashMessage, {showMessage} from 'react-native-flash-message';
-import {OrderStatus} from './src/constants';
-import socketService from './src/services/socketService';
+import FlashMessage from 'react-native-flash-message';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
-import LoginScreenFake from './src/screens/auth/LoginScreenFake';
 import {useAppContainer} from './src/containers/useAppContainer';
-import {Alert, BackHandler, LogBox} from 'react-native';
+
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
+import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
+import {LogBox} from 'react-native';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -88,9 +87,12 @@ export default function App() {
 
 function AppNavigator() {
   const {authState} = useAppContext();
-
-  useAppContainer();
-
+ useAppContainer();
+  const slideFromBottomOption = {
+    animation: 'slide_from_bottom',
+    presentation: 'transparentModal',
+    headerShown: false,
+  };
   return (
     <BaseStack.Navigator screenOptions={{headerShown: false}}>
       {authState.needAuthen === false ? (
@@ -112,50 +114,36 @@ function AppNavigator() {
           />
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailSheet}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
             component={ProductDetailSheet}
           />
 
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
             component={ProductDetailShort}
           />
           <BaseStack.Screen
             name={ShoppingGraph.RecipientInfoSheet}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
             component={RecipientInfoSheet}
           />
 
           <BaseStack.Screen
             name={VoucherGraph.VoucherDetailSheet}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
             component={VoucherDetailSheet}
           />
 
           <BaseStack.Screen
+            name={'MerchantDetailSheet'}
+            options={slideFromBottomOption}
+            component={MerchantDetailSheet}
+          />
+
+          <BaseStack.Screen
             name={ShoppingGraph.EditCartItemScreen}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false,
-            }}
+            options={slideFromBottomOption}
             component={EditCartItemScreen}
           />
           <BaseStack.Screen
