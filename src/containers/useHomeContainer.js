@@ -8,9 +8,9 @@ export const useHomeContainer = () => {
     const { authDispatch, authState } = useAppContext()
     const navigation = useNavigation()
 
-    const onNavigateLogin = () => {
-        authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
-    }
+    // const onNavigateLogin = () => {
+    //     authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
+    // }
 
     const onNavigateProductDetailSheet = productId => {
         navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -27,7 +27,7 @@ export const useHomeContainer = () => {
     }
 
     return {
-        onNavigateLogin,
+        // onNavigateLogin,
         onNavigateProductDetailSheet,
         onClickAddToCart
     }

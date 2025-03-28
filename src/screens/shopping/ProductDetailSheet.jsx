@@ -7,6 +7,7 @@ import ToastDialog from '../../components/dialogs/ToastDialog';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, TextFormatter } from '../../utils';
+import { useProductDetailContainer } from '../../containers';
 
 
 
@@ -21,9 +22,11 @@ const ProductDetailSheet = ({ route, navigation }) => {
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
     const { productId } = route.params
-    // const productId = '67ad9e9b145c78765a8f89c1'
+
 
     const { cartDispatch, authState } = useAppContext()
+    const { onClickAddToCart } = useProductDetailContainer()
+
 
 
     // console.log(productId)
@@ -137,23 +140,24 @@ const ProductDetailSheet = ({ route, navigation }) => {
                             }
                         }}
                         totalPrice={totalAmount}
-                        onButtonPress={async () => {
+                        onButtonPress={() => {
+                            onClickAddToCart(async () => {
+                                const updatedToppings = selectedToppings.map(topping => ({
+                                    ...topping,
+                                    topping: topping._id,
+                                    price: topping.extraPrice
+                                }));
 
-                            // console.log('selectedToppings', selectedToppings)
-                            const updatedToppings = selectedToppings.map(topping => ({
-                                ...topping,
-                                topping: topping._id,
-                                price: topping.extraPrice
-                            }));
+                                const productPrice = totalAmount / quantity
+                                await CartManager
+                                    .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
 
+                                navigation.goBack()
 
-                            const productPrice = totalAmount / quantity
-                            await CartManager
-                                .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
+                            })
+                        }
 
-                            navigation.goBack()
-
-                        }}
+                        }
                         buttonTitle='Thêm vào giỏ hàng'
                     />
                 </>
