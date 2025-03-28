@@ -38,15 +38,15 @@ const VerifyOTPScreen = ({ route, navigation }) => {
 
 
       } else {
-        // authDispatch({type: AuthActionTypes.REGISTER, payload: {isLoggedIn: true}});
-        navigation.navigate(AuthGraph.RegisterScreen);
-        navigation.reset({
-          index: 1,
-          routes: [
-            { name: MainGraph.graphName },
-            { name: AuthGraph.RegisterScreen}
-          ],
-        });
+        authDispatch({type: AuthActionTypes.REGISTER, payload: {isLoggedIn: false, needLogin: false, needRegister: true}});
+        // navigation.navigate(AuthGraph.RegisterScreen);
+        // navigation.reset({
+        //   index: 1,
+        //   routes: [
+        //     { name: MainGraph.graphName },
+        //     { name: AuthGraph.RegisterScreen}
+        //   ],
+        // });
 
       }
     } catch (error) {

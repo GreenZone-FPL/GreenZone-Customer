@@ -16,10 +16,15 @@ export const useAppContainer = () => {
 
   const navigation = useNavigation();
 
+
   useEffect(() => {
     const backAction = () => {
       if (navigationRef.current?.canGoBack()) {
         navigationRef.current.goBack();
+      } else if (authState.needRegister) {
+        // Nếu đang đăng ký thì điều hướng về Home thay vì thoát ứng dụng
+        authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needRegister: false, isLoggedIn: true } })
+
       } else {
         Alert.alert('Thoát ứng dụng', 'Bạn có chắc chắn muốn thoát không?', [
           { text: 'Hủy', style: 'cancel' },
@@ -35,7 +40,8 @@ export const useAppContainer = () => {
     );
 
     return () => backHandler.remove();
-  }, []);
+  }, [authState.needRegister]);
+
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
@@ -95,25 +101,30 @@ export const useAppContainer = () => {
     );
     authDispatch({
       type: AuthActionTypes.LOGOUT,
-      payload: { isLoggedIn: false },
+      payload: { isLoggedIn: false, lastName: null },
     });
     navigation.reset({
       index: 0,
-      routes: [{ name: MainGraph.graphName}],
+      routes: [{ name: MainGraph.graphName }],
     });
-    
+
 
   }
 
   const onNavigateLogin = () => {
-    authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true } })
-}
+    authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: true, needAuthen: true, needRegister: false } })
+  }
+
+  const onNavigateRegister = () => {
+    authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needAuthen: true, needRegister: true } })
+  }
 
 
 
   return {
     onLogout,
-    onNavigateLogin
+    onNavigateLogin,
+    onNavigateRegister
   }
 
 

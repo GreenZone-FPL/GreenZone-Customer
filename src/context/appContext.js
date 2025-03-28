@@ -36,15 +36,17 @@ export const AppContextProvider = ({children}) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
-      if (isValid) {
+      const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
+
+      if (isValid && user.lastName) {
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: true},
+          payload: {needLogin: false, isLoggedIn: true, lastName: user.lastName},
         });
       }else{
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: false},
+          payload: {needLogin: false, isLoggedIn: false, needRegister: true},
         });
       }
     };

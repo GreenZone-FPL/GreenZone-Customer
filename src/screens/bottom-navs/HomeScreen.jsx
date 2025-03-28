@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -29,6 +30,7 @@ import {
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NormalText,
   NotificationList,
   PrimaryButton,
   ProductsGrid,
@@ -50,6 +52,7 @@ import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 import {useAppContainer, useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
 import {AuthActionTypes} from '../../reducers';
+import {Icon} from 'react-native-paper';
 
 const HomeScreen = props => {
   const {navigation} = props;
@@ -63,13 +66,26 @@ const HomeScreen = props => {
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState(null);
+  const [user, setUser] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
   const {cartState, cartDispatch, authState, authDispatch} =
     useAppContext() || {};
   console.log('authState', JSON.stringify(authState, null, 2));
-
   const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
-  const {onNavigateLogin} = useAppContainer();
+  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
+
+  useEffect(() => {
+    const getUserLastName = async () => {
+      const user = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.user,
+      );
+      if (user) {
+        setUser(user);
+      }
+    };
+
+    getUserLastName();
+  }, [authState]);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -192,13 +208,49 @@ const HomeScreen = props => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.isLoggedIn ? (
-          <BarcodeUser codeId="M1678263323" />
+          <>
+            {!authState.lastName && (
+              <Pressable
+                style={{
+                  marginHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+                onPress={onNavigateRegister}>
+                <NormalText
+                  text="Đăng ký"
+                  style={{
+                    color: colors.primary,
+                    fontWeight: '600',
+                    textAlign: 'right',
+                  }}
+                />
+                <Icon source={'lead-pencil'} color={colors.primary} size={18} />
+              </Pressable>
+            )}
+            <BarcodeUser codeId="M1678263323" />
+          </>
         ) : (
-          <PrimaryButton
-            style={{marginHorizontal: 16}}
-            title="Đăng nhập"
-            onPress={onNavigateLogin}
-          />
+          <Pressable
+            style={{
+              marginHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+              marginBottom: 10,
+            }}
+            onPress={onNavigateLogin}>
+            <NormalText
+              text="Đăng nhập"
+              style={{
+                color: colors.primary,
+                fontWeight: '600',
+                textAlign: 'right',
+              }}
+            />
+            <Icon source={'lead-pencil'} color={colors.primary} size={18} />
+          </Pressable>
         )}
 
         <CardCategory />
@@ -289,7 +341,7 @@ const CardCategory = ({navigation}) => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{gap: 22}}>
-        <Item
+        {/* <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
           )}
@@ -301,11 +353,11 @@ const CardCategory = ({navigation}) => {
             <BagHappy size="50" color={colors.green500} variant="Bulk" />
           )}
           title="Mang đi"
-        />
+        /> */}
 
         <Item
           IconComponent={() => (
-            <TicketDiscount size="50" color={colors.yellow700} variant="Bulk" />
+            <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
           onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
@@ -313,9 +365,12 @@ const CardCategory = ({navigation}) => {
 
         <Item
           IconComponent={() => (
-            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
+            <Rank size="50" color={colors.pink500} variant="Bulk" />
           )}
-          title="Đổi xu"
+          title="Hạng thành viên"
+          onPress={() => {
+            navigation.navigate(AppGraph.MembershipScreen);
+          }}
         />
 
         <Item
@@ -328,21 +383,18 @@ const CardCategory = ({navigation}) => {
 
         <Item
           IconComponent={() => (
+            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
+          )}
+          title="Đổi xu"
+        />
+
+        <Item
+          IconComponent={() => (
             <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Góp ý"
           onPress={() => {
             navigation.navigate(UserGraph.ContactScreen);
-          }}
-        />
-
-        <Item
-          IconComponent={() => (
-            <Rank size="50" color={colors.pink500} variant="Bulk" />
-          )}
-          title="Hạng thành viên"
-          onPress={() => {
-            navigation.navigate(AppGraph.MembershipScreen);
           }}
         />
       </ScrollView>

@@ -8,7 +8,7 @@ import { AppAsyncStorage } from '../utils';
 
 export const useHomeContainer = () => {
     const { authDispatch, authState } = useAppContext()
-    const { onNavigateLogin } = useAppContainer()
+    const { onNavigateLogin, onNavigateRegister} = useAppContainer()
     const navigation = useNavigation()
 
   
@@ -19,15 +19,21 @@ export const useHomeContainer = () => {
 
     const onClickAddToCart = async (productId) => {
         try {
-            const isTokenValid = await AppAsyncStorage.isTokenValid()
-            if (isTokenValid) {
+
+            const isTokenValid = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken)
+
+            if (isTokenValid && authState.lastName) {
                 navigation.navigate(ShoppingGraph.ProductDetailShort, {
                     productId,
                 });
             }
-            else {
+            else if(isTokenValid && !authState.lastName) {
+                onNavigateRegister()
+            }else{
                 onNavigateLogin()
             }
+
+
         } catch (error) {
             console.log('Error', error)
         }

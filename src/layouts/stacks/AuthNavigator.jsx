@@ -14,31 +14,31 @@ const AuthNavigator = () => {
 
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      {(authState.needAuthen && authState.needLogin )? (
+      {authState.needRegister ? (
+        <AuthStack.Screen
+          name={AuthGraph.RegisterScreen}
+          component={RegisterScreen}
+        />
+      ) : authState.needLogin ? (
         <>
           <AuthStack.Screen
             name={AuthGraph.LoginScreen}
             component={LoginScreen}
           />
-
           <AuthStack.Screen
             name={AuthGraph.VerifyOTPScreen}
             component={VerifyOTPScreen}
           />
-          <AuthStack.Screen
-            name={AuthGraph.RegisterScreen}
-            component={RegisterScreen}
-          />
         </>
+      ) : null}
 
-      ) : (
-
-        <AuthStack.Screen
-          name={MainGraph.graphName}
-          component={MainNavigation}
-        />
-      )}
+      {/* Luôn thêm MainNavigation vào AuthStack để reset() hoạt động */}
+      <AuthStack.Screen
+        name={MainGraph.graphName}
+        component={MainNavigation}
+      />
     </AuthStack.Navigator>
+
   );
 };
 
