@@ -47,7 +47,6 @@ export const useAppContainer = () => {
 
     return () => backHandler.remove();
   }, [authState.needRegister]);
-  console.log('authState', authState);
 
   useEffect(() => {
     if (updateOrderMessage.visible) {

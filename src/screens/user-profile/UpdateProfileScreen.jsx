@@ -174,6 +174,8 @@ const UpdateProfileScreen = ({navigation, route}) => {
           },
         });
 
+        console.log('authDispatch', authDispatch);
+
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
         navigation.reset({
           index: 0,
