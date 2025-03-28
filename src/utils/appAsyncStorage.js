@@ -6,7 +6,7 @@ export class AppAsyncStorage {
     CART: 'CART',
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
-    userId: 'userId',
+    userId: 'userI',
     user: 'user',
     activeOrders: 'activeOrders',
     currentLocation: 'currentLocation',
@@ -42,12 +42,35 @@ export class AppAsyncStorage {
 
   static async clearAll() {
     try {
+      const allKeys = await AsyncStorage.getAllKeys();
+      console.log('Trước khi xóa, có các key:', allKeys);
+
       await AsyncStorage.clear();
-      console.log('All data cleared');
+
+      const remainingKeys = await AsyncStorage.getAllKeys();
+      console.log('Sau khi xóa, còn lại key:', remainingKeys);
     } catch (error) {
       console.log('Error clearing all data:', error);
     }
   }
+
+  // xoá data chỉ chừa lại key cần chừa
+  static clearExceptSomeKeys = async keysToKeep => {
+    try {
+      // Lấy tất cả các key đang lưu
+      const allKeys = await AsyncStorage.getAllKeys();
+
+      // Lọc ra những key cần xóa (loại bỏ các key cần giữ lại)
+      const keysToRemove = allKeys.filter(key => !keysToKeep.includes(key));
+
+      // Xóa các key đã lọc
+      await AsyncStorage.multiRemove(keysToRemove);
+
+      console.log('Cleared all except:', keysToKeep);
+    } catch (error) {
+      console.log('Error clearing storage:', error);
+    }
+  };
 
   static async isTokenValid() {
     const accessToken = await AppAsyncStorage.readData(

@@ -1,22 +1,22 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {StyleSheet, Text, View} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
 
 const TitleTextPropTypes = {
-  text: PropTypes.string || PropTypes.number,
-  color: PropTypes.string, 
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  color: PropTypes.string,
   style: PropTypes.object,
 };
 
 export const TitleText = ({
   text = 'Title text',
-  color = colors.black, 
+  color = colors.black,
   style,
 }) => {
   return (
     <View>
-      <Text style={[styles.text, { color }, style]} >{text}</Text>
+      <Text style={[styles.text, {color}, style]}>{text}</Text>
     </View>
   );
 };
