@@ -60,7 +60,7 @@ export const DialogShippingMethod = ({
     {
       label: 'Mang đi',
       image: require('../../assets/images/ic_take_away.png'),
-      address: 'Đến lấy tại cửa hàng ở địa chỉ',
+      address: 'Đến lấy tại chi nhánh GreenZone',
     },
   ];
 
@@ -121,7 +121,7 @@ export const DialogShippingMethod = ({
                 </Text>
                 {option.label === 'Giao hàng' ? (
                   <Text style={styles.phoneText}>
-                    {user?._id
+                    {user?.firstName
                       ? user?.firstName +
                         ' ' +
                         user?.lastName +

@@ -29,12 +29,8 @@ const Barcodebwipjs = () => {
   };
 
   useEffect(() => {
-    if (!authState.isLoggedIn) {
-      setText();
-      return;
-    }
     feathProfile();
-  }, [authState.isLoggedIn]);
+  }, []);
 
   useEffect(() => {
     const generateBarcode = async () => {

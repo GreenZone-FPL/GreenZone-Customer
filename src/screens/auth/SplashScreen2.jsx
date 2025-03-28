@@ -1,28 +1,26 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { MainGraph } from '../../layouts/graphs';
-import CallSaveLocation from "../../utils/CallSaveLocation";
-const SplashScreen2 = ({ navigation }) => {
-  
-
+import React, {useEffect} from 'react';
+import {StyleSheet, Text, View, Image} from 'react-native';
+import {MainGraph} from '../../layouts/graphs';
+import CallSaveLocation from '../../utils/CallSaveLocation';
+const SplashScreen2 = ({navigation}) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-
       navigation.reset({
         index: 0,
-        routes: [{ name: MainGraph.graphName }],
+        routes: [{name: MainGraph.graphName}],
       });
-
     }, 2000);
-
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <View style={styles.container}>
+      <Image
+        style={{alignSelf: 'center', resizeMode: 'contain', marginRight: 20}}
+        source={require('../../assets/images/logo.png')}
+      />
       <CallSaveLocation />
-      <Text style={styles.text}>SplashScreen</Text>
     </View>
   );
 };
