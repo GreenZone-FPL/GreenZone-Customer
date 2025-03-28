@@ -36,6 +36,7 @@ import {
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
+  NormalLoading,
 } from '../../components';
 import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
@@ -53,7 +54,6 @@ import {useAppContainer, useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
 import {AuthActionTypes} from '../../reducers';
 import {Icon} from 'react-native-paper';
-
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
@@ -86,6 +86,8 @@ const HomeScreen = props => {
 
     getUserLastName();
   }, [authState]);
+
+  console.log(user);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -229,7 +231,7 @@ const HomeScreen = props => {
                 <Icon source={'lead-pencil'} color={colors.primary} size={18} />
               </Pressable>
             )}
-            <BarcodeUser codeId="M1678263323" />
+            {authState.lastName && <BarcodeUser />}
           </>
         ) : (
           <Pressable

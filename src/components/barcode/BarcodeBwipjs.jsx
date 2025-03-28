@@ -20,7 +20,7 @@ const Barcodebwipjs = () => {
     // setLoading(true);
     try {
       const reponse = await getProfile();
-      
+
       setText(reponse.code);
     } catch (error) {
       console.log('error', error);
@@ -38,7 +38,7 @@ const Barcodebwipjs = () => {
       try {
         const svg = await bwipjs.toSVG({
           bcid: 'code128',
-          text: text ? text : 'Login or create a new account',
+          text: text ? text : 'New account',
           scale: 1,
           height: 5,
           includetext: true,

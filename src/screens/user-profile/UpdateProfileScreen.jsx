@@ -22,7 +22,7 @@ import {
   NormalText,
 } from '../../components';
 import {GLOBAL_KEYS, colors} from '../../constants';
-import {AppContext} from '../../context/appContext';
+import {AppContext, useAppContext} from '../../context/appContext';
 import {Dropdown} from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
@@ -30,6 +30,7 @@ import {uploadFile} from '../../axios/modules/file';
 import {updateUserProfile} from '../../axios/modules/user';
 import {AppAsyncStorage} from '../../utils';
 import {BottomGraph, MainGraph, UserGraph} from '../../layouts/graphs';
+import {AuthActionTypes} from '../../reducers';
 
 const {width} = Dimensions.get('window');
 
@@ -46,6 +47,14 @@ const UpdateProfileScreen = ({navigation, route}) => {
   const [isImagePickerVisible, setImagePickerVisible] = useState(false);
   const [avatar, setAvatar] = useState('');
   const [hasImageChanged, setHasImageChanged] = useState(false); // biến cờ mới
+
+  const {
+    updateOrderMessage,
+    setUpdateOrderMessage,
+    cartDispatch,
+    authDispatch,
+    authState,
+  } = useAppContext();
 
   const genderOptions = [
     {label: 'Nam', value: 'Nam'},
@@ -155,6 +164,15 @@ const UpdateProfileScreen = ({navigation, route}) => {
           AppAsyncStorage.STORAGE_KEYS.user,
           result,
         );
+        await authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: {
+            needLogin: false,
+            needRegister: false,
+            isLoggedIn: true,
+            lastName: result.lastName,
+          },
+        });
 
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
         navigation.reset({
