@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {IconButton} from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import {
   deleteFavoriteProduct,
   getFavoriteProducts,
@@ -23,11 +23,12 @@ import {
   SelectableGroup,
 } from '../../components';
 import ToastDialog from '../../components/dialogs/ToastDialog';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {CartManager} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { CartManager } from '../../utils';
+import { useProductDetailContainer } from '../../containers';
 
-const ProductDetailSheet = ({route, navigation}) => {
+const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -36,9 +37,11 @@ const ProductDetailSheet = ({route, navigation}) => {
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
-  const {productId} = route.params;
+  const { productId } = route.params;
   const [customNote, setCustomNote] = useState('');
-  const {cartDispatch} = useAppContext();
+  const { cartDispatch } = useAppContext();
+
+  const { onClickAddToCart } = useProductDetailContainer()
 
   useEffect(() => {
     if (product) {
@@ -152,7 +155,7 @@ const ProductDetailSheet = ({route, navigation}) => {
                   setCustomNote={setCustomNote}
                   selectedNotes={selectedNotes}
                   items={notes}
-                  style={{margin: GLOBAL_KEYS.PADDING_DEFAULT}}
+                  style={{ margin: GLOBAL_KEYS.PADDING_DEFAULT }}
                 />
               </>
             )}
@@ -171,26 +174,32 @@ const ProductDetailSheet = ({route, navigation}) => {
               }
             }}
             totalPrice={totalAmount}
-            onButtonPress={async () => {
-              // console.log('selectedToppings', selectedToppings)
-              const updatedToppings = selectedToppings.map(topping => ({
-                ...topping,
-                topping: topping._id,
-                price: topping.extraPrice,
-              }));
+            onButtonPress={() => {
+              onClickAddToCart(async () => {
+                // console.log('selectedToppings', selectedToppings)
+                const updatedToppings = selectedToppings.map(topping => ({
+                  ...topping,
+                  topping: topping._id,
+                  price: topping.extraPrice,
+                }));
 
-              const productPrice = totalAmount / quantity;
-              await CartManager.addToCart(
-                product,
-                selectedVariant,
-                updatedToppings,
-                productPrice,
-                quantity,
-                cartDispatch,
-              );
+                const productPrice = totalAmount / quantity;
+                await CartManager.addToCart(
+                  product,
+                  selectedVariant,
+                  updatedToppings,
+                  productPrice,
+                  quantity,
+                  cartDispatch,
+                );
 
-              navigation.goBack();
-            }}
+                navigation.goBack();
+              })
+            }
+
+
+
+            }
             buttonTitle="Thêm vào giỏ hàng"
           />
         </>
@@ -210,7 +219,7 @@ const notes = [
   'Đá để riêng',
 ];
 
-const ProductImage = ({hideModal, product}) => {
+const ProductImage = ({ hideModal, product }) => {
   // const [isDialogVisible, setIsDialogVisible] = useState(false);
   // const images = [
   //     {
@@ -225,7 +234,7 @@ const ProductImage = ({hideModal, product}) => {
       <Pressable
       // onPress={() => setIsDialogVisible(true)}
       >
-        <Image source={{uri: product.image}} style={styles.productImage} />
+        <Image source={{ uri: product.image }} style={styles.productImage} />
       </Pressable>
       <IconButton
         icon="close"
@@ -247,7 +256,7 @@ const ProductImage = ({hideModal, product}) => {
   );
 };
 
-const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
+const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>
@@ -275,7 +284,7 @@ const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
   );
 };
 
-const FavoriteButton = ({productId}) => {
+const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastIcon, setToastIcon] = useState('heart-outline');
@@ -298,12 +307,12 @@ const FavoriteButton = ({productId}) => {
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
-        await deleteFavoriteProduct({productId});
+        await deleteFavoriteProduct({ productId });
         setToastMessage('Đã xóa khỏi danh sách yêu thích');
         setToastIcon('heart-outline');
         setToastIconColor(colors.gray300);
       } else {
-        await postFavoriteProduct({productId});
+        await postFavoriteProduct({ productId });
         setToastMessage('Đã thêm vào danh sách yêu thích');
         setToastIcon('heart');
         setToastIconColor(colors.red800);

@@ -1,18 +1,18 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {OtpInput} from 'react-native-otp-entry';
-import {verifyOTP} from '../../axios';
-import {NormalLoading} from '../../components';
-import {colors} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {AuthGraph} from '../../layouts/graphs';
-import {AuthActionTypes} from '../../reducers';
-import {Toaster} from '../../utils/toaster';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { OtpInput } from 'react-native-otp-entry';
+import { verifyOTP } from '../../axios';
+import { NormalLoading } from '../../components';
+import { colors } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { AuthGraph, MainGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils/toaster';
 import socketService from '../../services/socketService';
 
-const VerifyOTPScreen = ({route, navigation}) => {
-  const {authDispatch} = useAppContext();
-  const {phoneNumber} = route.params;
+const VerifyOTPScreen = ({ route, navigation }) => {
+  const { authDispatch } = useAppContext();
+  const { phoneNumber } = route.params;
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +24,7 @@ const VerifyOTPScreen = ({route, navigation}) => {
 
     setLoading(true);
     try {
-      const response = await verifyOTP({phoneNumber, code});
+      const response = await verifyOTP({ phoneNumber, code });
 
       const userLastName = response.user.lastName;
       console.log('✅ OTP Verified, userLastName = ', response.user.lastName);
@@ -33,11 +33,21 @@ const VerifyOTPScreen = ({route, navigation}) => {
         await socketService.initialize();
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: true},
+          payload: { needLogin: false, isLoggedIn: true },
         });
+
+
       } else {
-        authDispatch({type: AuthActionTypes.REGISTER});
+        // authDispatch({type: AuthActionTypes.REGISTER, payload: {isLoggedIn: true}});
         navigation.navigate(AuthGraph.RegisterScreen);
+        navigation.reset({
+          index: 1,
+          routes: [
+            { name: MainGraph.graphName },
+            { name: AuthGraph.RegisterScreen}
+          ],
+        });
+
       }
     } catch (error) {
       Toaster.show(`Error: ${error}`);
@@ -77,15 +87,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fbBg,
     gap: 20,
   },
-  title: {fontSize: 28, fontWeight: 'bold', color: colors.black},
-  subtitle: {fontSize: 14, color: colors.gray850},
+  title: { fontSize: 28, fontWeight: 'bold', color: colors.black },
+  subtitle: { fontSize: 14, color: colors.gray850 },
   button: {
     backgroundColor: colors.primary,
     padding: 16,
     borderRadius: 10,
     width: '80%',
   },
-  buttonText: {color: colors.white, fontSize: 16, textAlign: 'center'},
+  buttonText: { color: colors.white, fontSize: 16, textAlign: 'center' },
 });
 
 export default VerifyOTPScreen;

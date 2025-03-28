@@ -12,10 +12,9 @@ const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {
   const { authState } = useAppContext(); // Lấy trạng thái đăng nhập
 
-
   return (
     <AuthStack.Navigator screenOptions={{ headerShown: false }}>
-      {authState.needLogin ? (
+      {(authState.needAuthen && authState.needLogin )? (
         <>
           <AuthStack.Screen
             name={AuthGraph.LoginScreen}
