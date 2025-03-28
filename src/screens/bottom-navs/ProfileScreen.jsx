@@ -17,10 +17,12 @@ import {MainGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
 import {AuthActionTypes, cartInitialState} from '../../reducers';
 import {AppAsyncStorage} from '../../utils';
 import {CartManager} from '../../utils';
+import { useAppContainer } from '../../containers';
 
 const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const {authState, authDispatch, cartDispatch} = useAppContext();
+  const {onLogout} = useAppContainer()
 
   console.log('authState', authState);
   const handleProfile = async () => {
@@ -104,22 +106,7 @@ const ProfileScreen = ({navigation}) => {
               <CardUtiliti
                 icon="logout"
                 title="Đăng xuất"
-                onPress={async () => {
-                  // Xóa token khỏi AsyncStorage
-                  await AppAsyncStorage.clearAll();
-                  await CartManager.updateOrderInfo(
-                    cartDispatch,
-                    cartInitialState,
-                  );
-                  authDispatch({
-                    type: AuthActionTypes.LOGOUT,
-                    payload: {isLoggedIn: false},
-                  });
-                  // navigation.reset({
-                  //   index: 0,
-                  //   routes: [{name: MainGraph.graphName}],
-                  // });
-                }}
+                onPress={onLogout}
               />
             )}
           </View>

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import PropTypes from 'prop-types'
+import {Pressable, Text, StyleSheet} from 'react-native';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import PropTypes from 'prop-types';
 
 export const PrimaryButton = props => {
   const {
     title = 'Default title',
-    onPress = () => { },
+    onPress = () => {},
     style,
     titleStyle,
   } = props;
@@ -20,9 +20,8 @@ export const PrimaryButton = props => {
 PrimaryButton.propTypes = {
   title: PropTypes.string,
   onPress: PropTypes.func,
-  style: PropTypes.object
-}
-
+  style: PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   button: {
@@ -38,5 +37,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-
