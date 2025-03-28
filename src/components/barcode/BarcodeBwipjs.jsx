@@ -20,6 +20,7 @@ const Barcodebwipjs = () => {
     // setLoading(true);
     try {
       const reponse = await getProfile();
+      
       setText(reponse.code);
     } catch (error) {
       console.log('error', error);

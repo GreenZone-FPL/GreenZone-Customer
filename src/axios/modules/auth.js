@@ -65,7 +65,7 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
     });
     const { data } = response;
     const userLastName = data.user.lastName;
-    if (userLastName) {
+  
       await AppAsyncStorage.storeData(
         AppAsyncStorage.STORAGE_KEYS.accessToken,
         data.token.accessToken.token,
@@ -83,7 +83,7 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
         data.user,
       );
 
-    }
+    
 
 
     return data;
