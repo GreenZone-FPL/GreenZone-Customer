@@ -5,6 +5,7 @@ import bwipjs from '@bwip-js/react-native';
 import {GLOBAL_KEYS} from '../../constants';
 import {getProfile} from '../../axios/index';
 import {Ani_ModalLoading} from '../animations/Ani_ModalLoading';
+import {useAppContext} from '../../context/appContext';
 
 const width = Dimensions.get('window').width;
 
@@ -12,17 +13,18 @@ const Barcodebwipjs = () => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
   const [loading, setLoading] = useState(false);
   const [text, setText] = useState();
+  const {authState} = useAppContext();
 
   // Lấy profile
   const feathProfile = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const reponse = await getProfile();
       setText(reponse.code);
     } catch (error) {
       console.log('error', error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -35,7 +37,7 @@ const Barcodebwipjs = () => {
       try {
         const svg = await bwipjs.toSVG({
           bcid: 'code128',
-          text: text ? text : 'Please create a new account',
+          text: text ? text : 'Login or create a new account',
           scale: 1,
           height: 5,
           includetext: true,
