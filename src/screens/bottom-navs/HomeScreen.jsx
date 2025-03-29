@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -16,7 +16,7 @@ import {
   TaskSquare,
   TicketDiscount
 } from 'iconsax-react-native';
-import {getAllCategories, getAllProducts} from '../../axios';
+import { getAllCategories, getAllProducts } from '../../axios';
 import {
   AuthButton,
   BarcodeUser,
@@ -27,11 +27,11 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText,
-  NormalLoading,
+  TitleText
 } from '../../components';
-import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
+import { colors, DeliveryMethod, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -40,11 +40,8 @@ import {
   UserGraph,
   VoucherGraph
 } from '../../layouts/graphs';
-import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
-import {useAppContainer, useHomeContainer} from '../../containers';
+import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
 import CallSaveLocation from '../../utils/CallSaveLocation';
-import {AuthActionTypes} from '../../reducers';
-import {Icon} from 'react-native-paper';
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);

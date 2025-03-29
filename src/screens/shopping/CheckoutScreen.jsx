@@ -379,7 +379,7 @@ const CheckoutScreen = ({ navigation }) => {
               response?.data?.status,
               data => {
                 setUpdateOrderMessage(prev => ({
-                  visible: true,
+                    visible: data.status !== "waitingPayment",
                   orderId: data.orderId,
                   oldStatus: prev.status,
                   message: data.message,

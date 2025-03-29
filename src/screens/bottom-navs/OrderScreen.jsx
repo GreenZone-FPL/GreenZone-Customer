@@ -22,6 +22,8 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
 import {fetchData, fetchUserLocation} from '../../utils';
+import { useAppContainer, useHomeContainer } from '../../containers';
+
 
 const OrderScreen = props => {
   const {navigation} = props;
@@ -37,7 +39,11 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-  const {cartState, cartDispatch} = useAppContext();
+  const {cartState, cartDispatch, authState, authDispatch} =
+  useAppContext() || {};
+
+const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
+const {onNavigateLogin, onNavigateRegister} = useAppContainer();
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -132,13 +138,7 @@ const OrderScreen = props => {
     setDialogVisible(false);
   };
 
-  const onItemClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
-  };
 
-  const onIconClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
-  };
 
   const openDialogCategoryPress = () => {
     setDialogVisible(true);
@@ -171,8 +171,12 @@ const OrderScreen = props => {
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
-          onItemClick={onItemClick}
-          onIconClick={onIconClick}
+            onItemClick={productId => {
+              onNavigateProductDetailSheet(productId);
+            }}
+            onIconClick={productId => {
+              onClickAddToCart(productId);
+            }}
         />
 
         <FlatList
@@ -185,8 +189,12 @@ const OrderScreen = props => {
               <ProductsListVertical
                 title={item.name}
                 products={item.products}
-                onItemClick={onItemClick}
-                onIconClick={onIconClick}
+                onItemClick={productId => {
+                  onNavigateProductDetailSheet(productId);
+                }}
+                onIconClick={productId => {
+                  onClickAddToCart(productId);
+                }}
               />
             </View>
           )}

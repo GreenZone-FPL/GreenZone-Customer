@@ -43,7 +43,7 @@ export const getOrdersByStatus = async (status) => {
     const url = status ? `/v1/order/my-order?status=${status}` : '/v1/order/my-order';
     
     const response = await axiosInstance.get(url);
-    console.log('response', JSON.stringify(response, null, 2))
+
     return response.data;
   } catch (error) {
     console.log('error', error);
