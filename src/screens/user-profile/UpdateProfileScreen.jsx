@@ -111,6 +111,10 @@ const UpdateProfileScreen = ({ navigation, route }) => {
     setImagePickerVisible(false);
   };
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|vn|edu|gov|info|biz)$/;
+    return emailRegex.test(email.trim());
+  };
   const handleUpdateProfile = async () => {
     if (
       !lastName.trim() ||
@@ -122,16 +126,21 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
       return;
     }
-
+  
+    if (!validateEmail(email)) {
+      ToastAndroid.show('Email không hợp lệ! Vui lòng nhập đúng định dạng.', ToastAndroid.SHORT);
+      return; // Ngăn chặn tiếp tục xử lý nếu email không hợp lệ
+    }
+  
+  
     const formattedDob = dob.toISOString().split('T')[0];
     const formattedGender =
       gender === 'Nam' ? 'male' : gender === 'Nữ' ? 'female' : 'other';
-
-    // Kiểm tra nếu dữ liệu (bao gồm cả ảnh) không có thay đổi
+  
     if (
       lastName === profile.lastName &&
       firstName === profile.firstName &&
-      email === profile.email &&
+      email.trim().toLowerCase() === profile.email.toLowerCase() &&
       formattedDob === profile.dateOfBirth &&
       formattedGender === profile.gender &&
       !hasImageChanged
@@ -139,7 +148,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       ToastAndroid.show('Không có thay đổi nào!', ToastAndroid.SHORT);
       return;
     }
-
+  
     try {
       setLoading(true);
       let avatarUrl = avatar || '';
@@ -149,15 +158,20 @@ const UpdateProfileScreen = ({ navigation, route }) => {
           avatarUrl = uploadedUrl;
         }
       }
+  
       const profileData = {
         firstName,
         lastName,
-        email,
+        email: email.trim().toLowerCase(),
         dateOfBirth: formattedDob,
         gender: formattedGender,
         avatar: avatarUrl,
       };
+  
+      console.log('Dữ liệu gửi lên API:', profileData);
+  
       const result = await updateUserProfile(profileData);
+  
       if (result?._id) {
         setHasImageChanged(false);
         await AppAsyncStorage.storeData(
@@ -173,18 +187,18 @@ const UpdateProfileScreen = ({ navigation, route }) => {
             lastName: result.lastName,
           },
         });
-
-        console.log('authDispatch', authDispatch);
-
+  
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
-       
+        navigation.goBack();
       }
     } catch (error) {
-      Alert.alert('Lỗi', error.message);
+      console.error('Lỗi cập nhật hồ sơ:', error.response?.data || error.message);
+      Alert.alert('Lỗi', error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
     }
   };
+  
   return (
     <KeyboardAvoidingView style={styles.container}>
       <NormalLoading visible={loading} />
