@@ -30,7 +30,7 @@ const LoginScreen = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const {authState, authDispatch} = useAppContext();
 
-  console.log('authState', authState)
+
   useEffect(() => {
     const backAction = () => {
       if (authState.needLogin) {

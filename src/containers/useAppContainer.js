@@ -32,8 +32,6 @@ export const useAppContainer = () => {
         });
         return true
       }
-      console.log('navigationRef', JSON.stringify(navigationRef))
-
       if (navigationRef.current?.canGoBack()) {
        
         navigationRef.current.goBack();
