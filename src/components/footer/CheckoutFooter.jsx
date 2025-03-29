@@ -56,7 +56,7 @@ export const CheckoutFooter = ({
             <Row style={{gap: 20}}>
 
                 <Pressable style={styles.circleWrapper} onPress={handleMinus}>
-                    <Feather name={"minus"} color={colors.primary} size={22} />
+                    <Feather name={"minus"} color={colors.primary} size={18} />
                 </Pressable>
 
 
@@ -67,15 +67,15 @@ export const CheckoutFooter = ({
 
 
                 <Pressable style={styles.circleWrapper} onPress={handlePlus}>
-                    <Feather name={"plus"} color={colors.primary} size={22} />
+                    <Feather name={"plus"} color={colors.primary} size={18} />
                 </Pressable>
 
             </Row>
 
             <PrimaryButton
-                style={{ flex: 1, borderRadius: 12 }}
-                titleStyle={{ fontSize: 22 }}
-                title={TextFormatter.formatCurrency(totalPrice)}
+                style={{ flex: 1, borderRadius: 16 }}
+                titleStyle={{ fontSize: 16 }}
+                title={`${buttonTitle} ${TextFormatter.formatCurrency(totalPrice)}`}
                 onPress={onButtonPress} />
         </Row>
     );
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green100,
         gap: 16,
         flexDirection: 'row',
-        borderColor: colors.gray200,
+        borderColor: colors.fbBg,
         borderWidth: 1
     },
     quantityInfoText: {
@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
         marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     },
     circleWrapper: {
-        borderRadius: 20,
-        backgroundColor: colors.gray200,
+        borderRadius: 28,
+        backgroundColor: colors.fbBg,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10
+        padding: 14
     }
 });
 

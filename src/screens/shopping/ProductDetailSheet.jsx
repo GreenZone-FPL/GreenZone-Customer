@@ -95,6 +95,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
   return (
     <View style={styles.modalContainer}>
       <OverlayStatusBar />
+      <IconButton
+        icon="close"
+        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
+        iconColor={colors.primary}
+        style={styles.closeButton}
+        onPress={() => navigation.goBack()}
+      />
       {product && (
         <>
           <ScrollView style={styles.modalContent}>
@@ -102,6 +109,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
               hideModal={() => navigation.goBack()}
               product={product}
             />
+
 
             <ProductInfo
               product={product}
@@ -125,43 +133,24 @@ const ProductDetailSheet = ({ route, navigation }) => {
             )}
 
             {product.topping.length > 0 && (
-              <>
-                <SelectableGroup
-                  items={product.topping}
-                  title="Chọn topping"
-                  selectedGroup={selectedToppings}
-                  setSelectedGroup={setSelectedToppings}
-                  note="Tối đa 3 toppings"
-                  activeIconColor={colors.primary}
-                  activeTextColor={colors.primary}
-                />
 
-                <NotesList
-                  onToggleNote={item => {
-                    if (selectedNotes.includes(item)) {
-                      setSelectedNotes(
-                        selectedNotes.filter(note => note !== item),
-                      );
-                    } else {
-                      setSelectedNotes([...selectedNotes, item]);
-                      if (!customNote.includes(item)) {
-                        setCustomNote(prev =>
-                          prev ? `${prev}, ${item}` : item,
-                        );
-                      }
-                    }
-                  }}
-                  customNote={customNote}
-                  setCustomNote={setCustomNote}
-                  selectedNotes={selectedNotes}
-                  items={notes}
-                  style={{ margin: GLOBAL_KEYS.PADDING_DEFAULT }}
-                />
-              </>
+              <SelectableGroup
+                items={product.topping}
+                title="Chọn topping"
+                selectedGroup={selectedToppings}
+                setSelectedGroup={setSelectedToppings}
+                note="Tối đa 3 toppings"
+                activeIconColor={colors.primary}
+                activeTextColor={colors.primary}
+              />
+
+
+
             )}
           </ScrollView>
 
           <CheckoutFooter
+            backgroundColor={colors.white}
             quantity={quantity}
             handlePlus={() => {
               if (quantity < 10) {
@@ -200,7 +189,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
 
             }
-            buttonTitle="Thêm vào giỏ hàng"
+            buttonTitle="Chọn -"
           />
         </>
       )}
@@ -220,38 +209,13 @@ const notes = [
 ];
 
 const ProductImage = ({ hideModal, product }) => {
-  // const [isDialogVisible, setIsDialogVisible] = useState(false);
-  // const images = [
-  //     {
-  //       url: '',
-  //       props: {
-  //         source: require('../../assets/images/product1.png'),
-  //       },
-  //     },
-  //   ];
+
   return (
     <View style={styles.imageContainer}>
       <Pressable
-      // onPress={() => setIsDialogVisible(true)}
       >
         <Image source={{ uri: product.image }} style={styles.productImage} />
       </Pressable>
-      <IconButton
-        icon="close"
-        size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-        iconColor={colors.primary}
-        style={styles.closeButton}
-        onPress={hideModal}
-      />
-      {/* <DialogBasic
-          isVisible={isDialogVisible}
-          onHide={() => setIsDialogVisible(false)}
-          style={styles.height}
-        >
-          <View style={styles.imageZoomContainer}>
-            <ImageViewer imageUrls={images} renderIndicator={() => null}/>
-          </View>
-        </DialogBasic> */}
     </View>
   );
 };
@@ -352,6 +316,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     flex: 1,
     width: '100%',
+    position: 'relative'
   },
   modalContent: {
     width: '100%',
@@ -373,8 +338,9 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: GLOBAL_KEYS.PADDING_DEFAULT,
+    top: StatusBar.currentHeight + 40,
     right: GLOBAL_KEYS.PADDING_DEFAULT,
+    zIndex: 1,
     backgroundColor: colors.green100,
   },
   zoomButton: {
@@ -391,12 +357,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   productName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: colors.black,
     flex: 1,
     marginRight: 8,
-    lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
+
   },
   descriptionContainer: {
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,

@@ -153,7 +153,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                             navigation.goBack()
 
                         }}
-                        buttonTitle='Thêm vào giỏ hàng'
+                        buttonTitle='Chọn -'
                     />
 
                 </Column>
@@ -164,7 +164,7 @@ const ProductDetailShort = ({ route, navigation }) => {
     );
 };
 
-const notes = ['Ít cafe', 'Đậm trà', 'Không kem', 'Nhiều cafe', 'Ít sữa', 'Nhiều sữa', 'Nhiều kem', 'Đá để riêng']
+
 
 const ProductInfo = ({ product, hideModal }) => {
     return (
@@ -217,9 +217,9 @@ const styles = StyleSheet.create({
         backgroundColor: colors.green100,
     },
     productName: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold',
-        color: colors.green500,
+        color: colors.black,
         flex: 1,
         paddingVertical: 8
     },
