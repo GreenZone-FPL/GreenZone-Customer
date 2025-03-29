@@ -1,70 +1,60 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Dimensions,
   FlatList,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
 
 export const ProductsListVertical = ({
-  title = "Món Mới Phải Thử",
+  title = 'Món Mới Phải Thử',
   scrollEnabled = false,
   onItemClick,
   onIconClick,
-  products
+  products,
 }) => {
-
-
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      {title && <Text style={styles.title}>{title}</Text>}
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
-
         maxToRenderPerBatch={10}
         windowSize={5}
         nestedScrollEnabled
         initialNumToRender={10}
-
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <ItemProduct
             item={item}
             onItemClick={() => onItemClick(item._id)}
             onIconClick={() => onIconClick(item._id)}
           />
         )}
-        contentContainerStyle={{ gap: 16 }}
+        contentContainerStyle={{gap: 16}}
         scrollEnabled={scrollEnabled}
       />
     </View>
   );
 };
 
-const ItemProduct = ({ item, onItemClick, onIconClick }) => {
-
-
+const ItemProduct = ({item, onItemClick, onIconClick}) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-
         <FastImage
-          source={{ uri: item.image, priority: FastImage.priority.high }}
+          source={{uri: item.image, priority: FastImage.priority.high}}
           style={styles.itemImage}
           resizeMode={FastImage.resizeMode.cover}
         />
-
-
       </TouchableOpacity>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -73,14 +63,8 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
           {/* {item.originalPrice.toLocaleString('vi-VN')}đ */}
         </Text>
       </View>
-      <TouchableOpacity
-        onPress={onIconClick}
-        style={styles.addButton}>
-        <Icon
-          source="plus"
-          size={22}
-          color={colors.white}
-        />
+      <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
+        <Icon source="plus" size={22} color={colors.white} />
       </TouchableOpacity>
     </View>
   );
@@ -91,7 +75,6 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-
   },
   title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
@@ -133,9 +116,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     end: 0,
     bottom: 0,
-    padding: 4
-  }
-
+    padding: 4,
+  },
 });
-
-

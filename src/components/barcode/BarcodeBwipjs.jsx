@@ -6,6 +6,7 @@ import {GLOBAL_KEYS} from '../../constants';
 import {getProfile} from '../../axios/index';
 import {Ani_ModalLoading} from '../animations/Ani_ModalLoading';
 import {useAppContext} from '../../context/appContext';
+import NormalLoading from '../animations/NormalLoading';
 
 const width = Dimensions.get('window').width;
 
@@ -17,15 +18,15 @@ const Barcodebwipjs = () => {
 
   // Lấy profile
   const feathProfile = async () => {
-    // setLoading(true);
+    setLoading(true);
     try {
       const reponse = await getProfile();
-      
+
       setText(reponse.code);
     } catch (error) {
       console.log('error', error);
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -38,7 +39,7 @@ const Barcodebwipjs = () => {
       try {
         const svg = await bwipjs.toSVG({
           bcid: 'code128',
-          text: text ? text : 'Login or create a new account',
+          text: text ? text : 'New account',
           scale: 1,
           height: 5,
           includetext: true,
@@ -57,7 +58,7 @@ const Barcodebwipjs = () => {
   return (
     <View style={styles.container}>
       {barcodeSVG && <SvgXml xml={barcodeSVG} width="100%" height="100%" />}
-      <Ani_ModalLoading loading={loading} />
+      <NormalLoading visible={loading} />
     </View>
   );
 };

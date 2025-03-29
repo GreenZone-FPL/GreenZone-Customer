@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Image,
   Pressable,
@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import {IconButton} from 'react-native-paper';
 import {
   deleteFavoriteProduct,
   getFavoriteProducts,
@@ -23,12 +23,12 @@ import {
   SelectableGroup,
 } from '../../components';
 import ToastDialog from '../../components/dialogs/ToastDialog';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { CartManager } from '../../utils';
-import { useProductDetailContainer } from '../../containers';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {CartManager} from '../../utils';
+import {useProductDetailContainer} from '../../containers';
 
-const ProductDetailSheet = ({ route, navigation }) => {
+const ProductDetailSheet = ({route, navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -37,11 +37,11 @@ const ProductDetailSheet = ({ route, navigation }) => {
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
-  const { productId } = route.params;
+  const {productId} = route.params;
   const [customNote, setCustomNote] = useState('');
-  const { cartDispatch } = useAppContext();
+  const {cartDispatch, authState} = useAppContext();
 
-  const { onClickAddToCart } = useProductDetailContainer()
+  const {onClickAddToCart} = useProductDetailContainer();
 
   useEffect(() => {
     if (product) {
@@ -109,6 +109,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
 
             <ProductInfo
+              authState={authState}
               product={product}
               showFullDescription={showFullDescription}
               toggleDescription={() => {
@@ -202,7 +203,12 @@ const ProductImage = ({ product }) => {
   );
 };
 
-const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
+const ProductInfo = ({
+  product,
+  showFullDescription,
+  toggleDescription,
+  authState,
+}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>
@@ -210,7 +216,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
           {product.name}
         </Text>
 
-        {/* <FavoriteButton productId={product._id} /> */}
+        {authState?.isLoggedIn && <FavoriteButton productId={product._id} />}
       </View>
 
       <View style={styles.descriptionContainer}>
@@ -230,7 +236,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
   );
 };
 
-const FavoriteButton = ({ productId }) => {
+const FavoriteButton = ({productId}) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastIcon, setToastIcon] = useState('heart-outline');
@@ -253,12 +259,12 @@ const FavoriteButton = ({ productId }) => {
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
-        await deleteFavoriteProduct({ productId });
+        await deleteFavoriteProduct({productId});
         setToastMessage('Đã xóa khỏi danh sách yêu thích');
         setToastIcon('heart-outline');
         setToastIconColor(colors.gray300);
       } else {
-        await postFavoriteProduct({ productId });
+        await postFavoriteProduct({productId});
         setToastMessage('Đã thêm vào danh sách yêu thích');
         setToastIcon('heart');
         setToastIconColor(colors.red800);
