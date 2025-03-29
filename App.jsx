@@ -65,7 +65,7 @@ export default function App() {
       <PaperProvider>
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
-            <NavigationContainer>
+            <NavigationContainer ref={navigationRef}>
               <BaseStack.Navigator screenOptions={{headerShown: false}}>
                 <BaseStack.Screen
                   name="AppNavigator"
@@ -94,7 +94,7 @@ function AppNavigator() {
     headerShown: false,
   };
   return (
-    <BaseStack.Navigator screenOptions={{headerShown: false}}>
+    <BaseStack.Navigator screenOptions={{headerShown: false}} >
       {authState.needAuthen === false ? (
         <>
           {authState.needFlash && (
