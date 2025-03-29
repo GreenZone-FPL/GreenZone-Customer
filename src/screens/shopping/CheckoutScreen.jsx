@@ -352,7 +352,7 @@ const CheckoutScreen = ({ navigation }) => {
                 'pickupOrder =',
                 JSON.stringify(pickupOrder, null, 2),
               );
-              // response = await createOrder(pickupOrder);
+              response = await createOrder(pickupOrder);
             } else if (
               cartState.deliveryMethod === DeliveryMethod.DELIVERY.value
             ) {
@@ -391,7 +391,7 @@ const CheckoutScreen = ({ navigation }) => {
             console.log('order data =', JSON.stringify(response, null, 2));
             await CartManager.clearOrderItems(cartDispatch)
 
-            // navigation.navigate(OrderGraph.OrderDetailScreen)
+
 
             if (response?.data?.status === 'awaitingPayment') {
               if (selectedPaymentMethod?.value === 'PayOs') {
@@ -412,7 +412,7 @@ const CheckoutScreen = ({ navigation }) => {
                 index: 1,
                 routes: [
                   { name: MainGraph.graphName },
-                  { name: OrderGraph.OrderDetailScreen, params: { orderId: response._id } }
+                  { name: OrderGraph.OrderDetailScreen, params: { orderId: response?.data?._id, } }
                 ],
               });
 

@@ -38,18 +38,27 @@ class SocketService {
 
   async joinOrder2(orderId, status, callback) {
     try {
-      if (!this.socket) throw new Error("Socket chưa được khởi tạo");
-
+      // Nếu socket chưa khởi tạo, khởi tạo ngay
+      if (!this.socket || !this.socket.connected) {
+        console.log("Socket chưa được khởi tạo, đang khởi tạo...");
+        await this.initialize();
+      }
+  
+      if (!this.socket) {
+        console.log("Không thể khởi tạo socket, thoát khỏi joinOrder2");
+        return;
+      }
+  
       this.socket.emit("order.join", orderId, () => {
         console.log(`Đã tham gia order ${orderId}`);
       });
-
+  
       // Lấy danh sách activeOrders từ AsyncStorage
       let activeOrders = await AppAsyncStorage.getActiveOrders();
-
+  
       // Tìm order cũ để lấy trạng thái trước khi update
       const existingOrder = activeOrders.find(order => order.orderId === orderId);
-
+  
       // Nếu chưa có trong danh sách thì thêm vào
       if (!existingOrder) {
         const newOrder = {
@@ -59,20 +68,21 @@ class SocketService {
           message: "",
           status: status
         };
-
+  
         activeOrders.push(newOrder);
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, activeOrders);
       }
-
+  
       // Lắng nghe sự kiện cập nhật trạng thái đơn hàng
+      this.socket.off("order.updateStatus"); // Đảm bảo không bị trùng listener
       this.socket.on("order.updateStatus", async (data) => {
         try {
           console.log("Trạng thái đơn hàng cập nhật:", data);
-
+  
           // Lấy danh sách đơn hàng hiện tại từ AsyncStorage
           let currentActiveOrders = await AppAsyncStorage.getActiveOrders();
-
-          // Nếu đơn hàng đã hoàn thành hoặc bị hủy thì xóa khỏi danh sách
+  
+          // Cập nhật trạng thái đơn hàng
           const newActiveOrders = currentActiveOrders
             .map(order =>
               order.orderId === data.orderId
@@ -80,21 +90,22 @@ class SocketService {
                 : order
             )
             .filter(order => !["completed", "canceled"].includes(order.status)); // Xóa đơn đã hoàn thành hoặc bị hủy
-
+  
           await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, newActiveOrders);
           console.log('Cập nhật newActiveOrders =', JSON.stringify(newActiveOrders, null, 2));
-
+  
           // Gọi callback để cập nhật UI
           if (callback) callback(data);
         } catch (error) {
           console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
         }
       });
-
+  
     } catch (error) {
       console.log("Lỗi trong joinOrder2:", error);
     }
   }
+  
 
 
   async rejoinOrder(callback) {
