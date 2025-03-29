@@ -24,16 +24,40 @@ export const useAppContainer = () => {
   useEffect(() => {
     const backAction = () => {
 
+      if (authState.needLogin) {
+        console.log("Showing alert..."); // Kiểm tra log trước khi gọi Alert.alert
+        Alert.alert(
+          'Xác nhận',
+          'Bạn muốn quay lại?',
+          [
+            { text: 'Đóng', style: 'cancel' },
+            {
+              text: 'Vẫn quay lại',
+              onPress: () =>
+                authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needRegister: false, needAuthen: false } }),
+            },
+          ]
+        );
+        return true;
+      }
       if (authState.needRegister) {
-        // Nếu đang đăng ký thì điều hướng về Home thay vì thoát ứng dụng
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, needRegister: false, isLoggedIn: true },
-        });
-        return true
+        console.log("Showing alert..."); // Kiểm tra log trước khi gọi Alert.alert
+        Alert.alert(
+          'Xác nhận',
+          'Quay lại sẽ hủy bỏ quá trình tạo tài khoản',
+          [
+            { text: 'Đóng', style: 'cancel' },
+            {
+              text: 'Vẫn quay lại',
+              onPress: () =>
+                authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needRegister: false } }),
+            },
+          ]
+        );
+        return true;
       }
       if (navigationRef.current?.canGoBack()) {
-       
+
         navigationRef.current.goBack();
       } else {
         Alert.alert('Thoát ứng dụng', 'Bạn có chắc chắn muốn thoát không?', [

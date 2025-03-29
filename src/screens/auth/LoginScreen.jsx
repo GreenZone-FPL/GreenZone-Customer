@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Image,
@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {sendOTP} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { sendOTP } from '../../axios';
 import {
   Column,
   FlatInput,
@@ -16,26 +16,89 @@ import {
   NormalLoading,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {AuthGraph, MainGraph} from '../../layouts/graphs';
-import {AuthActionTypes} from '../../reducers';
-import {Toaster} from '../../utils';
-import {BackHandler} from 'react-native';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { AuthGraph, MainGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils';
+import { BackHandler } from 'react-native';
 
-const LoginScreen = ({route, navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456799');
+const LoginScreen = ({ route, navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState('0123456749');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch} = useAppContext();
+  const { authState, authDispatch } = useAppContext();
 
+
+  // Hàm gửi SMS OTP
+  const sendSms = async (phoneNumber, otpCode) => {
+    const API_URL =
+      'https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/';
+    const API_KEY = '7F3DD9B9C2A7A5F9466A718170142E';
+    const SECRET_KEY = 'C6F6C14B91E616D1CB60D66DCF6F39';
+    const BRAND_NAME = 'Baotrixemay';
+
+    const smsData = {
+      ApiKey: API_KEY,
+      Content: `${otpCode} là mã xác minh đăng ký Baotrixemay của bạn`,
+      Phone: phoneNumber,
+      SecretKey: SECRET_KEY,
+      Brandname: BRAND_NAME,
+      SmsType: '2',
+    };
+
+    try {
+      const response = await axios.post(API_URL, smsData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log('Kết quả gửi SMS:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error(
+        'Lỗi khi gửi SMS:',
+        error.response ? error.response.data : error.message,
+      );
+      throw error;
+    }
+  };
+
+  // const generateOtp = () => {
+  //   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  //   console.log('Mã OTP:', otp); // Log ra console
+  //   return otp;
+  // };
+
+  // const handleSendOTP = async () => {
+  //   if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
+  //     setPhoneNumberError(true);
+  //     setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   const otp = generateOtp(); // Tạo mã OTP
+
+  //   try {
+  //     const result = await sendSms(phoneNumber, otp);
+  //     if (result.CodeResult === '100') {
+
+  //       navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber, otp}); 
+  //     } else {
+  //       Alert.alert('Thất bại', `Lỗi gửi SMS: ${result.ErrorMessage}`);
+  //     }
+  //   } catch (error) {
+  //     console.log('Gửi SMS thất bại', error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     const backAction = () => {
       if (authState.needLogin) {
         // navigation.navigate(MainGraph.graphName);
-        authDispatch({type: AuthActionTypes.LOGIN, payload: {needLogin: false}});
+        authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false } });
       }
 
       return true;
@@ -58,7 +121,7 @@ const LoginScreen = ({route, navigation}) => {
         delay: 2000,
         useNativeDriver: true,
       }).start(() => {
-        authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
+        authDispatch({ type: AuthActionTypes.CLEAR_MESSAGE });
       });
     }
   }, [authState.message]);
@@ -72,11 +135,11 @@ const LoginScreen = ({route, navigation}) => {
 
     setLoading(true);
     try {
-      const response = await sendOTP({phoneNumber});
+      const response = await sendOTP({ phoneNumber });
       if (response) {
         console.log('otp = ', response.code);
 
-        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
+        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
       } else {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
@@ -90,7 +153,7 @@ const LoginScreen = ({route, navigation}) => {
   return (
     <Column style={styles.container}>
       {authState.message ? (
-        <Animated.View style={[styles.toast, {opacity: fadeAnim}]}>
+        <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
           <Icon source="information" size={20} color={colors.primary} />
           <Text style={styles.toastText}>{authState.message}</Text>
         </Animated.View>
@@ -99,9 +162,9 @@ const LoginScreen = ({route, navigation}) => {
       <LightStatusBar />
       <Image
         source={require('../../assets/images/register_bg.png')}
-        style={{width: '100%', height: 200}}
+        style={{ width: '100%', height: 200 }}
       />
-      <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />
+      <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
       <FlatInput
@@ -119,7 +182,7 @@ const LoginScreen = ({route, navigation}) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <View style={{width: 30, height: 30}}></View>
+        <View style={{ width: 30, height: 30 }}></View>
         <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
@@ -152,7 +215,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },

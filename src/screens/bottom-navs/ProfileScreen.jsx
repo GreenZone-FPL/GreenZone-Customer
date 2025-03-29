@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {Icon} from 'react-native-paper';
-import {getProfile} from '../../axios';
+import React, { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-paper';
+import { getProfile } from '../../axios';
 import {
   Column,
   HeaderWithBadge,
@@ -11,25 +11,31 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {MainGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
-import {AuthActionTypes, cartInitialState} from '../../reducers';
-import {AppAsyncStorage} from '../../utils';
-import {CartManager} from '../../utils';
-import {useAppContainer} from '../../containers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AuthActionTypes, cartInitialState } from '../../reducers';
+import { AppAsyncStorage } from '../../utils';
+import { CartManager } from '../../utils';
+import { useAppContainer, useProfileContainer } from '../../containers';
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch, cartDispatch} = useAppContext();
-  const {onLogout} = useAppContainer();
+  const { authState, authDispatch, cartDispatch } = useAppContext();
+  const { onLogout, onNavigateLogin } = useAppContainer();
+
 
   const handleProfile = async () => {
     setLoading(true);
     try {
-      const reponse = await getProfile();
-      console.log('profile', reponse);
-      navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
+      if (authState.lastName) {
+        const reponse = await getProfile();
+        console.log('profile', reponse);
+        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
+      } else {
+        onNavigateLogin()
+      }
+
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -57,7 +63,14 @@ const ProfileScreen = ({navigation}) => {
                 icon="google-maps"
                 color={colors.pink500}
                 title="Địa chỉ"
-                onPress={() => navigation.navigate(UserGraph.AddressScreen)}
+                onPress={() => {
+                  if (authState.lastName) {
+                    navigation.navigate(UserGraph.AddressScreen)
+                  } else {
+                    onNavigateLogin()
+                  }
+
+                }}
               />
             </Row>
 
@@ -67,7 +80,12 @@ const ProfileScreen = ({navigation}) => {
                 color={colors.orange700}
                 title="Lịch sử đơn hàng"
                 onPress={() => {
-                  navigation.navigate(OrderGraph.OrderHistoryScreen);
+                  if (authState.lastName) {
+                    navigation.navigate(OrderGraph.OrderHistoryScreen);
+                  } else {
+                    onNavigateLogin()
+                  }
+
                 }}
               />
             </Row>
@@ -80,7 +98,12 @@ const ProfileScreen = ({navigation}) => {
               icon="cog"
               title="Cài đặt"
               onPress={() => {
-                navigation.navigate(UserGraph.SettingScreen);
+                if (authState.lastName) {
+                  navigation.navigate(UserGraph.SettingScreen);
+                } else {
+                  onNavigateLogin()
+                }
+
               }}
             />
             <View style={styles.separator} />
@@ -88,7 +111,12 @@ const ProfileScreen = ({navigation}) => {
               icon="chat"
               title="Liên hệ góp ý"
               onPress={() => {
-                navigation.navigate(UserGraph.ContactScreen);
+                if (authState.lastName) {
+                  navigation.navigate(UserGraph.ContactScreen);
+                } else {
+                  onNavigateLogin()
+                }
+
               }}
             />
             <View style={styles.separator} />
@@ -96,12 +124,17 @@ const ProfileScreen = ({navigation}) => {
               icon="star"
               title="Đánh giá đơn hàng"
               onPress={() => {
-                navigation.navigate(OrderGraph.RatingOrderScreen);
+                if (authState.lastName) {
+                  navigation.navigate(OrderGraph.RatingOrderScreen);
+                } else {
+                  onNavigateLogin()
+                }
+
               }}
             />
 
             <View style={styles.separator} />
-            {authState.isLoggedIn && (
+            {authState.lastName && (
               <CardUtiliti icon="logout" title="Đăng xuất" onPress={onLogout} />
             )}
           </View>
@@ -113,14 +146,14 @@ const ProfileScreen = ({navigation}) => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon

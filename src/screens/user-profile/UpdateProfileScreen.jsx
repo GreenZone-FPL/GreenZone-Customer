@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -12,7 +12,7 @@ import {
   ToastAndroid,
   Alert,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   CustomFlatInput,
   FlatInput,
@@ -21,20 +21,20 @@ import {
   PrimaryButton,
   NormalText,
 } from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {AppContext, useAppContext} from '../../context/appContext';
-import {Dropdown} from 'react-native-element-dropdown';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { AppContext, useAppContext } from '../../context/appContext';
+import { Dropdown } from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
-import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
-import {uploadFile} from '../../axios/modules/file';
-import {updateUserProfile} from '../../axios/modules/user';
-import {AppAsyncStorage} from '../../utils';
-import {BottomGraph, MainGraph, UserGraph} from '../../layouts/graphs';
-import {AuthActionTypes} from '../../reducers';
+import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { uploadFile } from '../../axios/modules/file';
+import { updateUserProfile } from '../../axios/modules/user';
+import { AppAsyncStorage } from '../../utils';
+import { BottomGraph, MainGraph, UserGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const UpdateProfileScreen = ({navigation, route}) => {
+const UpdateProfileScreen = ({ navigation, route }) => {
   const [lastName, setLastName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
@@ -57,13 +57,13 @@ const UpdateProfileScreen = ({navigation, route}) => {
   } = useAppContext();
 
   const genderOptions = [
-    {label: 'Nam', value: 'Nam'},
-    {label: 'Nữ', value: 'Nữ'},
-    {label: 'Khác', value: 'Khác'},
+    { label: 'Nam', value: 'Nam' },
+    { label: 'Nữ', value: 'Nữ' },
+    { label: 'Khác', value: 'Khác' },
   ];
 
-  const {isLoggedIn} = useContext(AppContext);
-  const {profile} = route.params;
+  const { isLoggedIn } = useContext(AppContext);
+  const { profile } = route.params;
 
   useEffect(() => {
     setLastName(profile.lastName || '');
@@ -74,10 +74,10 @@ const UpdateProfileScreen = ({navigation, route}) => {
       profile.gender === 'male'
         ? 'Nam'
         : profile.gender === 'female'
-        ? 'Nữ'
-        : profile.gender === 'other'
-        ? 'Khác'
-        : null,
+          ? 'Nữ'
+          : profile.gender === 'other'
+            ? 'Khác'
+            : null,
     );
     setAvatar(profile.avatar || '');
     setSelectedImages([]);
@@ -85,7 +85,7 @@ const UpdateProfileScreen = ({navigation, route}) => {
   }, [isLoggedIn]);
 
   const openCamera = () => {
-    const options = {saveToPhotos: true, mediaType: 'photo'};
+    const options = { saveToPhotos: true, mediaType: 'photo' };
     launchCamera(options, response => {
       if (response.didCancel || response.errorCode) return;
       const newImage = response?.assets[0]?.uri;
@@ -99,7 +99,7 @@ const UpdateProfileScreen = ({navigation, route}) => {
   };
 
   const openImageLibrary = () => {
-    const options = {mediaType: 'photo', selectionLimit: 1};
+    const options = { mediaType: 'photo', selectionLimit: 1 };
     launchImageLibrary(options, response => {
       if (response.didCancel || response.errorCode) return;
       const newImage = response.assets?.[0]?.uri;
@@ -177,10 +177,7 @@ const UpdateProfileScreen = ({navigation, route}) => {
         console.log('authDispatch', authDispatch);
 
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
-        navigation.reset({
-          index: 0,
-          routes: [{name: MainGraph.graphName}],
-        });
+       
       }
     } catch (error) {
       Alert.alert('Lỗi', error.message);
@@ -227,13 +224,13 @@ const UpdateProfileScreen = ({navigation, route}) => {
           <TouchableOpacity
             onPress={() => setOpen(true)}
             style={styles.dropdown}>
-            <Text style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT}}>
+            <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>
               {dob instanceof Date && !isNaN(dob)
                 ? dob.toLocaleDateString('vi-VN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
                 : 'Chọn ngày sinh'}
             </Text>
           </TouchableOpacity>
@@ -273,6 +270,7 @@ const UpdateProfileScreen = ({navigation, route}) => {
           />
 
           <PrimaryButton
+            disabled={loading}
             title="Cập nhật tài khoản"
             onPress={handleUpdateProfile}
           />
@@ -353,7 +351,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     shadowColor: colors.primary,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     borderBottomColor: colors.primary,

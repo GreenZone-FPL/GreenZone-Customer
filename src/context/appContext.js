@@ -45,11 +45,7 @@ export const AppContextProvider = ({children}) => {
           type: AuthActionTypes.LOGIN,
           payload: {needLogin: false, isLoggedIn: true, lastName: user.lastName, needRegister: false},
         });
-      }else if(isValid && !user.lastName){
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: true, needRegister: true},
-        });
+      
       }else{ // Không có accessToken, chưa đăng ký
         authDispatch({
           type: AuthActionTypes.LOGIN,

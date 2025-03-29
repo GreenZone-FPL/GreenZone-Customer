@@ -43,7 +43,7 @@ import {
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
 import CallSaveLocation from '../../utils/CallSaveLocation';
 const HomeScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -56,13 +56,15 @@ const HomeScreen = props => {
   const [currentCategory, setCurrentCategory] = useState(null);
 
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch, authState, authDispatch} =
+  const { cartState, cartDispatch, authState, authDispatch } =
     useAppContext() || {};
 
-  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
-  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
+  const { onNavigateProductDetailSheet, onClickAddToCart, handleLogin } = useHomeContainer();
+  // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
- 
+
+  // console.log('authState', authState)
+
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
     const getMerchantLocation = async () => {
@@ -128,7 +130,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -172,7 +174,7 @@ const HomeScreen = props => {
               : 'Xin chào'
             : 'Chào bạn mới'
         }
-        onBadgePress={() => {}}
+        onBadgePress={() => { }}
         isHome={false}
       />
 
@@ -183,15 +185,10 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        {authState.isLoggedIn ? (
-          <>
-            {!authState.lastName && (
-              <AuthButton title='Đăng ký' onPress={onNavigateRegister} />
-            )}
-            <BarcodeUser codeId="M1678263323" />
-          </>
+        {authState.lastName ? (
+          <BarcodeUser codeId="M1678263323" />
         ) : (
-          <AuthButton title='Đăng nhập' onPress={onNavigateLogin} />
+          <AuthButton title='Đăng nhập' onPress={handleLogin} />
         )}
 
         <CardCategory />
@@ -220,7 +217,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -245,10 +242,10 @@ const HomeScreen = props => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-            ? cartState?.shippingAddressInfo?.location
-            : cartState
-            ? cartState?.address?.label
-            : 'Đang xác định vị trí...'
+              ? cartState?.shippingAddressInfo?.location
+              : cartState
+                ? cartState?.address?.label
+                : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
@@ -268,14 +265,14 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({IconComponent, title, onPress}) => (
+const Item = ({ IconComponent, title, onPress }) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
 
-const CardCategory = ({navigation}) => {
+const CardCategory = ({ navigation }) => {
   return (
     <View style={styles.card}>
       <ScrollView
@@ -361,10 +358,7 @@ const styles = StyleSheet.create({
   textTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
-    marginTop: 10,
-    width: 70,
     fontSize: 14,
-    height: 37,
     fontWeight: '600',
   },
   card: {

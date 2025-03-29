@@ -9,9 +9,10 @@ export const PrimaryButton = props => {
     onPress = () => {},
     style,
     titleStyle,
+    disabled = false
   } = props;
   return (
-    <Pressable style={[styles.button, style]} onPress={onPress}>
+    <Pressable style={[styles.button, style]} onPress={onPress} disabled={disabled}>
       <Text style={[styles.text, titleStyle]}>{title}</Text>
     </Pressable>
   );
@@ -22,6 +23,7 @@ PrimaryButton.propTypes = {
   onPress: PropTypes.func,
   style: PropTypes.object,
   titleStyle: PropTypes.object,
+  disabled: PropTypes.bool,
 };
 
 const styles = StyleSheet.create({

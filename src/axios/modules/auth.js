@@ -27,15 +27,24 @@ export const register = async ({
 
     const { data } = response;
 
-    const { accessToken, refreshToken } = data.token;
+   
 
+   
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
-      accessToken.token,
+      data.token.accessToken.token,
     );
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.refreshToken,
-      refreshToken.token,
+      data.token.refreshToken.token,
+    );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.userId,
+      data.user._id,
+    );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
 
     return data;
