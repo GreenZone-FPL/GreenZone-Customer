@@ -602,8 +602,6 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: colors.gray200,
-    borderWidth: 2,
     margin: 16,
   },
   status: {
