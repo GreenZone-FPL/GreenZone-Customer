@@ -2,37 +2,29 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
-  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
 import {
-  BagHappy,
   Coin1,
-  Heart,
   MessageFavorite,
   Rank,
-  SearchNormal1,
   TaskSquare,
-  TicketDiscount,
-  TruckFast,
+  TicketDiscount
 } from 'iconsax-react-native';
 import {getAllCategories, getAllProducts} from '../../axios';
 import {
+  AuthButton,
   BarcodeUser,
-  CategoryMenu,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
-  NormalText,
   NotificationList,
-  PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
@@ -43,11 +35,10 @@ import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
+  OrderGraph,
   ShoppingGraph,
   UserGraph,
-  AuthGraph,
-  OrderGraph,
-  VoucherGraph,
+  VoucherGraph
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 import {useAppContainer, useHomeContainer} from '../../containers';
@@ -66,7 +57,7 @@ const HomeScreen = props => {
   const [allProducts, setAllProducts] = useState([]);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState(null);
-  const [user, setUser] = useState(null);
+
   const lastCategoryRef = useRef(currentCategory);
   const {cartState, cartDispatch, authState, authDispatch} =
     useAppContext() || {};
@@ -74,21 +65,7 @@ const HomeScreen = props => {
   const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
   const {onNavigateLogin, onNavigateRegister} = useAppContainer();
 
-  useEffect(() => {
-    const getUserLastName = async () => {
-      const user = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.user,
-      );
-      if (user) {
-        setUser(user);
-      }
-    };
-
-    getUserLastName();
-  }, [authState]);
-
-  console.log(user);
-
+ 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
     const getMerchantLocation = async () => {
@@ -212,47 +189,12 @@ const HomeScreen = props => {
         {authState.isLoggedIn ? (
           <>
             {!authState.lastName && (
-              <Pressable
-                style={{
-                  marginHorizontal: 16,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: 5,
-                }}
-                onPress={onNavigateRegister}>
-                <NormalText
-                  text="Đăng ký"
-                  style={{
-                    color: colors.primary,
-                    fontWeight: '600',
-                    textAlign: 'right',
-                  }}
-                />
-                <Icon source={'lead-pencil'} color={colors.primary} size={18} />
-              </Pressable>
+              <AuthButton title='Đăng ký' onPress={onNavigateRegister} />
             )}
-            {authState.lastName && <BarcodeUser />}
+            <BarcodeUser codeId="M1678263323" />
           </>
         ) : (
-          <Pressable
-            style={{
-              marginHorizontal: 16,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-              marginBottom: 10,
-            }}
-            onPress={onNavigateLogin}>
-            <NormalText
-              text="Đăng nhập"
-              style={{
-                color: colors.primary,
-                fontWeight: '600',
-                textAlign: 'right',
-              }}
-            />
-            <Icon source={'lead-pencil'} color={colors.primary} size={18} />
-          </Pressable>
+          <AuthButton title='Đăng nhập' onPress={onNavigateLogin} />
         )}
 
         <CardCategory />
@@ -342,21 +284,7 @@ const CardCategory = ({navigation}) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}>
-        {/* <Item
-          IconComponent={() => (
-            <TruckFast size="50" color={colors.primary} variant="Bulk" />
-          )}
-          title="Giao hàng"
-        />
-
-        <Item
-          IconComponent={() => (
-            <BagHappy size="50" color={colors.green500} variant="Bulk" />
-          )}
-          title="Mang đi"
-        /> */}
-
+        contentContainerStyle={{ gap: 22 }}>
         <Item
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
@@ -400,55 +328,6 @@ const CardCategory = ({navigation}) => {
           }}
         />
       </ScrollView>
-    </View>
-  );
-};
-
-const Searchbar = props => {
-  const [query, setQuery] = useState('');
-  const {navigation} = props;
-
-  const handleSearch = () => {
-    if (query.trim()) {
-      navigation.navigate('', {searchQuery: query});
-    } else {
-      alert('Vui lòng nhập từ khóa tìm kiếm.');
-    }
-  };
-
-  return (
-    <View
-      style={{
-        marginHorizontal: 16,
-        borderWidth: 1,
-        borderColor: colors.gray200,
-        padding: 4,
-        borderRadius: 4,
-        gap: 10,
-      }}>
-      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
-        <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
-          <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Nhập từ khóa tìm kiếm..."
-            value={query}
-            onChangeText={setQuery}
-            onSubmitEditing={handleSearch} // Cho phép nhấn Enter để tìm kiếm
-            returnKeyType="search"
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            borderRadius: 8,
-            backgroundColor: colors.green200,
-            padding: 10,
-            height: 55,
-          }}>
-          <Heart size="32" color={colors.primary} />
-        </TouchableOpacity>
-      </View>
-      <CategoryMenu />
     </View>
   );
 };
@@ -499,38 +378,6 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
   },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.gray200,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingVertical: 8,
-    width: '84%',
-  },
-  icon: {
-    marginRight: 10, // Khoảng cách giữa icon và TextInput
-  },
-  input: {
-    flex: 1, // Đảm bảo TextInput chiếm hết phần còn lại
-    fontSize: 16, // Kích thước chữ trong TextInput
-  },
 });
 
-const dataBanner = [
-  {
-    id: 1,
-    image:
-      'https://bizweb.dktcdn.net/100/260/688/articles/banner-khoa-tong-hop.jpg?v=1701944781280',
-  },
-  {
-    id: 2,
-    image:
-      'https://printgo.vn/uploads/media/792227/banner-quang-cao-tra-sua-19_1623309814.jpg',
-  },
-  {
-    id: 3,
-    image:
-      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb7i1iQzn1uIYQ9UTr9OLxZT56U6zImYwslHbRwyfFkKqcP3KJBU8Qkw1msnSWr-tmGyk&usqp=CAU',
-  },
-];
+

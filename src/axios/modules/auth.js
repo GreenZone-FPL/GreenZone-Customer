@@ -65,25 +65,25 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
     });
     const { data } = response;
     const userLastName = data.user.lastName;
-  
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-        data.token.accessToken.token,
-      );
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.refreshToken,
-        data.token.refreshToken.token,
-      );
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.userId,
-        data.user._id,
-      );
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.user,
-        data.user,
-      );
 
-    
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.accessToken,
+      data.token.accessToken.token,
+    );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.refreshToken,
+      data.token.refreshToken.token,
+    );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.userId,
+      data.user._id,
+    );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
+    );
+
+
 
 
     return data;

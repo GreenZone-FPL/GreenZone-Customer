@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: colors.fbBg,
         justifyContent: 'center',
-        padding: 10,
+        padding: 6,
         alignItems: 'center',
 
     }

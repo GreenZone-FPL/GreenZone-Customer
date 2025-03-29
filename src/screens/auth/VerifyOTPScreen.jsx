@@ -26,19 +26,23 @@ const VerifyOTPScreen = ({ route, navigation }) => {
     try {
       const response = await verifyOTP({ phoneNumber, code });
 
+
       const userLastName = response.user.lastName;
-      console.log('✅ OTP Verified, userLastName = ', response.user.lastName);
+      console.log('✅ OTP Verified, userLastName = ', response.user?.lastName);
       if (userLastName) {
         Toaster.show('Đăng nhập thành công!');
         await socketService.initialize();
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: true },
+          payload: { needLogin: false, isLoggedIn: true, needRegister: false, lastName: userLastName },
         });
 
 
       } else {
-        authDispatch({type: AuthActionTypes.REGISTER, payload: {isLoggedIn: false, needLogin: false, needRegister: true}});
+        authDispatch({
+          type: AuthActionTypes.REGISTER,
+          payload: { isLoggedIn: false, needLogin: false, needRegister: true }
+        });
         // navigation.navigate(AuthGraph.RegisterScreen);
         // navigation.reset({
         //   index: 1,

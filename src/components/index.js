@@ -18,6 +18,7 @@ export * from './buttons/PrimaryButton';
 export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
 export * from './buttons/ButtonGroup';
+export * from './buttons/AuthButton';
 
 // carousel
 export * from './carousel/CarouselBanner';

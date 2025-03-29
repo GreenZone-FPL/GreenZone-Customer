@@ -36,17 +36,24 @@ export const AppContextProvider = ({children}) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
-      const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
 
+      const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
+      console.log('token valid', isValid, 'lastName', user?.lastName)
       if (isValid && user.lastName) {
+       
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: true, lastName: user.lastName},
+          payload: {needLogin: false, isLoggedIn: true, lastName: user.lastName, needRegister: false},
         });
-      }else{
+      }else if(isValid && !user.lastName){
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false, isLoggedIn: false, needRegister: true},
+          payload: {needLogin: false, isLoggedIn: true, needRegister: true},
+        });
+      }else{ // Không có accessToken, chưa đăng ký
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: {needLogin: false, isLoggedIn: false, needRegister: false},
         });
       }
     };
