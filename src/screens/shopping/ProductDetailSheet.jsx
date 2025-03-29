@@ -105,10 +105,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
       {product && (
         <>
           <ScrollView style={styles.modalContent}>
-            <ProductImage
-              hideModal={() => navigation.goBack()}
-              product={product}
-            />
+            <ProductImage product={product}/>
 
 
             <ProductInfo
@@ -185,9 +182,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
                 navigation.goBack();
               })
             }
-
-
-
             }
             buttonTitle="Chọn -"
           />
@@ -197,26 +191,14 @@ const ProductDetailSheet = ({ route, navigation }) => {
   );
 };
 
-const notes = [
-  'Ít cafe',
-  'Đậm trà',
-  'Không kem',
-  'Nhiều cafe',
-  'Ít sữa',
-  'Nhiều sữa',
-  'Nhiều kem',
-  'Đá để riêng',
-];
-
-const ProductImage = ({ hideModal, product }) => {
+const ProductImage = ({ product }) => {
 
   return (
-    <View style={styles.imageContainer}>
-      <Pressable
-      >
-        <Image source={{ uri: product.image }} style={styles.productImage} />
-      </Pressable>
-    </View>
+
+    <Pressable style={styles.imageContainer}>
+      <Image source={{ uri: product.image }} style={styles.productImage} />
+    </Pressable>
+
   );
 };
 
@@ -338,7 +320,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
-    top: StatusBar.currentHeight + 40,
+    top: StatusBar.currentHeight + 40 + 16,
     right: GLOBAL_KEYS.PADDING_DEFAULT,
     zIndex: 1,
     backgroundColor: colors.green100,

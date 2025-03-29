@@ -1,14 +1,11 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Text, Pressable } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { PrimaryButton } from '../buttons/PrimaryButton';
-import { QuantitySelector } from '../buttons/QuantitySelector';
-import { TextFormatter } from '../../utils';
-import { Column } from '../containers/Column';
-import { Row } from '../containers/Row';
-import { QuantityButton } from '../buttons/QuantityButton';
+import React from 'react';
+import { Pressable, StyleSheet } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { PrimaryButton } from '../buttons/PrimaryButton';
+import { Row } from '../containers/Row';
 import { TitleText } from '../texts/TitleText';
 
 const CheckoutFooterPropTypes = {
@@ -115,7 +112,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.fbBg,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 14
+        padding: 12
     }
 });
 
