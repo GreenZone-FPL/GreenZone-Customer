@@ -17,14 +17,13 @@ import {MainGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
 import {AuthActionTypes, cartInitialState} from '../../reducers';
 import {AppAsyncStorage} from '../../utils';
 import {CartManager} from '../../utils';
-import { useAppContainer } from '../../containers';
+import {useAppContainer} from '../../containers';
 
 const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const {authState, authDispatch, cartDispatch} = useAppContext();
-  const {onLogout} = useAppContainer()
+  const {onLogout} = useAppContainer();
 
-  console.log('authState', authState);
   const handleProfile = async () => {
     setLoading(true);
     try {
@@ -103,11 +102,7 @@ const ProfileScreen = ({navigation}) => {
 
             <View style={styles.separator} />
             {authState.isLoggedIn && (
-              <CardUtiliti
-                icon="logout"
-                title="Đăng xuất"
-                onPress={onLogout}
-              />
+              <CardUtiliti icon="logout" title="Đăng xuất" onPress={onLogout} />
             )}
           </View>
         </Column>

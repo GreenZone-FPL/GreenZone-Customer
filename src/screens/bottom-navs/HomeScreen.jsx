@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -22,7 +22,7 @@ import {
   TicketDiscount,
   TruckFast,
 } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   BarcodeUser,
   CategoryMenu,
@@ -36,9 +36,10 @@ import {
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
+  NormalLoading,
 } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -48,14 +49,13 @@ import {
   OrderGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import { useAppContainer, useHomeContainer } from '../../containers';
+import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import {useAppContainer, useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
-import { AuthActionTypes } from '../../reducers';
-import { Icon } from 'react-native-paper';
-
+import {AuthActionTypes} from '../../reducers';
+import {Icon} from 'react-native-paper';
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -68,22 +68,26 @@ const HomeScreen = props => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [user, setUser] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
-  const { cartState, cartDispatch, authState, authDispatch } =
+  const {cartState, cartDispatch, authState, authDispatch} =
     useAppContext() || {};
-  console.log('authState', JSON.stringify(authState, null, 2))
-  const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer()
-  const { onNavigateLogin, onNavigateRegister } = useAppContainer()
+  console.log('authState', JSON.stringify(authState, null, 2));
+  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
+  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
 
   useEffect(() => {
     const getUserLastName = async () => {
-      const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
+      const user = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.user,
+      );
       if (user) {
-        setUser(user)
+        setUser(user);
       }
-    }
+    };
 
-    getUserLastName()
-  }, [authState])
+    getUserLastName();
+  }, [authState]);
+
+  console.log(user);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -150,7 +154,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
@@ -194,7 +198,7 @@ const HomeScreen = props => {
               : 'Xin chào'
             : 'Chào bạn mới'
         }
-        onBadgePress={() => { }}
+        onBadgePress={() => {}}
         isHome={false}
       />
 
@@ -209,30 +213,47 @@ const HomeScreen = props => {
           <>
             {!authState.lastName && (
               <Pressable
-                style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 5 }}
+                style={{
+                  marginHorizontal: 16,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
                 onPress={onNavigateRegister}>
-
-                <NormalText text='Đăng ký' style={{ color: colors.primary, fontWeight: '600', textAlign: 'right' }} />
+                <NormalText
+                  text="Đăng ký"
+                  style={{
+                    color: colors.primary,
+                    fontWeight: '600',
+                    textAlign: 'right',
+                  }}
+                />
                 <Icon source={'lead-pencil'} color={colors.primary} size={18} />
               </Pressable>
-
             )}
-            <BarcodeUser codeId="M1678263323" />
-
+            {authState.lastName && <BarcodeUser />}
           </>
         ) : (
-
           <Pressable
-            style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 10 }}
+            style={{
+              marginHorizontal: 16,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+              marginBottom: 10,
+            }}
             onPress={onNavigateLogin}>
-
-            <NormalText text='Đăng nhập' style={{ color: colors.primary, fontWeight: '600', textAlign: 'right' }} />
+            <NormalText
+              text="Đăng nhập"
+              style={{
+                color: colors.primary,
+                fontWeight: '600',
+                textAlign: 'right',
+              }}
+            />
             <Icon source={'lead-pencil'} color={colors.primary} size={18} />
           </Pressable>
-
         )}
-
-
 
         <CardCategory />
 
@@ -260,7 +281,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -285,10 +306,10 @@ const HomeScreen = props => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
+            : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
@@ -308,20 +329,20 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({ IconComponent, title, onPress }) => (
+const Item = ({IconComponent, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
 
-const CardCategory = ({ navigation }) => {
+const CardCategory = ({navigation}) => {
   return (
     <View style={styles.card}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
+        contentContainerStyle={{gap: 22}}>
         {/* <Item
           IconComponent={() => (
             <TruckFast size="50" color={colors.primary} variant="Bulk" />
@@ -369,8 +390,6 @@ const CardCategory = ({ navigation }) => {
           title="Đổi xu"
         />
 
-
-
         <Item
           IconComponent={() => (
             <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
@@ -380,8 +399,6 @@ const CardCategory = ({ navigation }) => {
             navigation.navigate(UserGraph.ContactScreen);
           }}
         />
-
-
       </ScrollView>
     </View>
   );
@@ -389,11 +406,11 @@ const CardCategory = ({ navigation }) => {
 
 const Searchbar = props => {
   const [query, setQuery] = useState('');
-  const { navigation } = props;
+  const {navigation} = props;
 
   const handleSearch = () => {
     if (query.trim()) {
-      navigation.navigate('', { searchQuery: query });
+      navigation.navigate('', {searchQuery: query});
     } else {
       alert('Vui lòng nhập từ khóa tìm kiếm.');
     }
@@ -409,7 +426,7 @@ const Searchbar = props => {
         borderRadius: 4,
         gap: 10,
       }}>
-      <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
+      <View style={{justifyContent: 'space-between', flexDirection: 'row'}}>
         <TouchableOpacity style={styles.searchBar} onPress={handleSearch}>
           <SearchNormal1 size="20" color={colors.primary} style={styles.icon} />
           <TextInput
