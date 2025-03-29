@@ -43,14 +43,6 @@ const VerifyOTPScreen = ({ route, navigation }) => {
           type: AuthActionTypes.REGISTER,
           payload: { isLoggedIn: false, needLogin: false, needRegister: true }
         });
-        // navigation.navigate(AuthGraph.RegisterScreen);
-        // navigation.reset({
-        //   index: 1,
-        //   routes: [
-        //     { name: MainGraph.graphName },
-        //     { name: AuthGraph.RegisterScreen}
-        //   ],
-        // });
 
       }
     } catch (error) {

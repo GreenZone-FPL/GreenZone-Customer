@@ -7,13 +7,13 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph, VoucherGraph} from '../../layouts/graphs';
+import { Icon } from 'react-native-paper';
+import { LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph, VoucherGraph } from '../../layouts/graphs';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 const VoucherScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   return (
     <ScrollView style={styles.container}>
       <LightStatusBar />
@@ -81,20 +81,16 @@ const VoucherScreen = props => {
           />
         </View>
 
-        <View style={styles.ticket}>
-          <Text style={styles.ticketTitle}>Phiếu ưu đãi của bạn</Text>
-          <Pressable
-            onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
-            style={styles.btnTicket}>
-            <Text style={styles.textBtn}>Xem tất cả</Text>
-          </Pressable>
-        </View>
+
+        <Text style={styles.ticketTitle}>Phiếu ưu đãi</Text>
+
+
       </View>
     </ScrollView>
   );
 };
 
-const Card = ({iconName, color, title, onPress}) => {
+const Card = ({ iconName, color, title, onPress }) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -169,7 +165,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 4,

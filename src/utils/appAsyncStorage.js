@@ -124,7 +124,7 @@ export class AppAsyncStorage {
       this.STORAGE_KEYS.activeOrders,
       [],
     );
-    console.log('activeOrders', JSON.stringify(activeOrders, null, 2));
+    // console.log('activeOrders', JSON.stringify(activeOrders, null, 2));
     return activeOrders;
   }
 

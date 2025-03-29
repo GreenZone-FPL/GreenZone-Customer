@@ -21,7 +21,6 @@ export const authReducer = (state, action) => {
       return {
         ...state,
         ...action.payload,
-        needAuthen: true,
         needFlash: false,
       };
 

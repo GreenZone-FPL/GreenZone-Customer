@@ -1,8 +1,9 @@
 import React from 'react';
-import { Pressable, ViewStyle, TextStyle } from 'react-native';
+import { Pressable, ViewStyle, TextStyle, Dimensions, TouchableOpacity } from 'react-native';
 import { NormalText } from '../texts/NormalText';
-import { Icon } from 'react-native-paper';
 import { colors } from '../../constants';
+
+const { width } = Dimensions.get('window');
 
 interface AuthButtonProps {
     title: string;
@@ -13,20 +14,30 @@ interface AuthButtonProps {
 
 export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style, titleStyle }) => {
     return (
-        <Pressable
-            style={[{
-                marginHorizontal: 16,
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 5,
-                marginBottom: title === 'Đăng nhập' ? 10 : 0
-            }, style]}
+        <TouchableOpacity
+            style={[
+                {
+                    width: width / 3,
+                    backgroundColor: colors.primary,
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginHorizontal: 16,
+                    alignSelf: 'center',
+                    marginBottom: 10,
+                },
+                style,
+            ]}
             onPress={onPress}
         >
-            <NormalText text={title} style={[{ color: colors.primary, fontWeight: '600', textAlign: 'right' }, titleStyle]} />
-            <Icon source={'lead-pencil'} color={colors.primary} size={18} />
-        </Pressable>
+            <NormalText
+                text={title}
+                style={[
+                    { color: 'white', fontWeight: '600', textAlign: 'center' },
+                    titleStyle,
+                ]}
+            />
+        </TouchableOpacity>
     );
 };
-
-

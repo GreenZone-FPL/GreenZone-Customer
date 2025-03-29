@@ -1,7 +1,8 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
+  BackHandler,
   Image,
   KeyboardAvoidingView,
   Modal,
@@ -12,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { launchImageLibrary } from 'react-native-image-picker';
+
 import { Icon } from 'react-native-paper';
 import {
   Column,
@@ -28,7 +29,7 @@ import { register } from '../../axios';
 import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
-const RegisterScreen = ({navigation}) => {
+const RegisterScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('Bui');
   const [lastName, setLastName] = useState('Ngoc Dai');
   const [email, setEmail] = useState('dai@gmail.com');
@@ -44,7 +45,7 @@ const RegisterScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const {authDispatch} = useAppContext();
+  const { authState, authDispatch } = useAppContext();
 
   const onSelectDate = (event, selectedDate) => {
     if (event.type === 'dismissed') {
@@ -56,18 +57,6 @@ const RegisterScreen = ({navigation}) => {
     const formattedDate = currentDate.toISOString().split('T')[0];
     setShow(false);
     setDateOfBirth(formattedDate);
-  };
-
-  const openImagePicker = () => {
-    launchImageLibrary({mediaType: 'photo', quality: 1}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorCode) {
-        Alert.alert('Image Picker Error', response.errorMessage);
-      } else {
-        setAvatar(response.assets[0].uri); // Lưu URI của hình ảnh
-      }
-    });
   };
 
   const validateForm = () => {
@@ -114,30 +103,7 @@ const RegisterScreen = ({navigation}) => {
     if (!validateForm()) return;
     setLoading(true);
     try {
-      let avatarUrl = '';
 
-      // Nếu có avatar, tiến hành upload
-      // if (avatar) {
-      //   console.log("Uploading avatar...");
-      //   const file = {
-      //     uri: avatar,
-      //     type: "image/jpeg",
-      //     name: "avatar.jpg",
-      //   };
-
-      //   // Gọi API upload file
-      //   const uploadResult = await uploadFileAPI(file);
-      //   console.log('uploadResult', uploadResult.url)
-
-      //   // Kiểm tra nếu upload thất bại
-      //   if (uploadResult) {
-      //     avatarUrl = uploadResult.url; // Lấy URL avatar từ kết quả upload
-      //   } else {
-      //     console.log("Upload avatar failed, proceeding without avatar.");
-      //   }
-      // }
-
-      // Chuyển đổi giới tính
       const genderValue = gender === 'Nam' ? 'male' : 'female';
 
       // Tạo request
@@ -152,15 +118,20 @@ const RegisterScreen = ({navigation}) => {
 
       // Gọi API đăng ký
       const result = await register(request);
-      console.log('User registered:', result);
+      console.log('User registered:', JSON.stringify(result, null, 2));
+      if (result) {
+        Toaster.show('Đăng ký tài khoản thành công');
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: { needLogin: false, needRegister: false, lastName: lastName, isLoggedIn: true }
+        });
+      }
 
-      Toaster.show('Đăng ký tài khoản thành công');
-      // navigation.navigate(AppGraph.MAIN)
-      authDispatch({type: AuthActionTypes.LOGIN});
+
     } catch (error) {
       console.log('Registration failed:', error);
       Toaster.show(error.message);
-      authDispatch({type: AuthActionTypes.LOGIN});
+      authDispatch({ type: AuthActionTypes.LOGIN });
     } finally {
       setLoading(false);
     }
@@ -169,32 +140,20 @@ const RegisterScreen = ({navigation}) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={styles.innerContainer}
         keyboardShouldPersistTaps="handled">
         <NormalLoading visible={loading} />
         <Image
           source={require('../../assets/images/register_bg.png')}
-          style={{width: '100%', height: 200}}
+          style={{ width: '100%', height: 200 }}
         />
 
         <Column style={styles.formContainer}>
           <TitleText text="GREEN ZONE" style={styles.title} />
-          <Row style={{justifyContent: 'space-between'}}>
-            <TitleText text="ĐĂNG KÝ TÀI KHOẢN" />
 
-            {/* <TouchableOpacity
-              onPress={() => navigation.navigate(AppGraph.MAIN)}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <TitleText text='Bỏ qua' style={{ color: colors.red900, fontWeight: '400' }} />
-              <Icon
-                source="chevron-right-circle"
-                color={colors.red900}
-                size={20}
-              />
-            </TouchableOpacity> */}
-          </Row>
+          <TitleText text="ĐĂNG KÝ TÀI KHOẢN" />
 
           <CustomFlatInput
             label="Họ"
@@ -254,11 +213,11 @@ const RegisterScreen = ({navigation}) => {
             }}
           />
 
-          <NormalText
+          {/* <NormalText
             text="Upload avatar (Không bắt buộc)"
-            style={{color: colors.primary}}
+            style={{ color: colors.primary }}
           />
-          <Avatar uri={avatar} onPress={openImagePicker} />
+          <Avatar uri={avatar} onPress={openImagePicker} /> */}
 
           <RegisterButton onPress={handleRegister} title="ĐĂNG KÝ" />
         </Column>
@@ -277,32 +236,32 @@ const RegisterScreen = ({navigation}) => {
   );
 };
 
-const RegisterButton = ({title = 'Đăng ký', onPress}) => {
+const RegisterButton = ({ title = 'Đăng ký', onPress }) => {
   return (
     <TouchableOpacity
-      style={[styles.button, {backgroundColor: colors.primary}]}
+      style={[styles.button, { backgroundColor: colors.primary }]}
       onPress={onPress}>
-      <View style={{width: 35, height: 35}}></View>
+      <View style={{ width: 35, height: 35 }}></View>
       <Text style={styles.buttonText}>{title}</Text>
       <Icon source="arrow-right-circle" color={colors.white} size={35} />
     </TouchableOpacity>
   );
 };
 
-const Avatar = ({uri, size = 100, onPress}) => {
+const Avatar = ({ uri, size = 100, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View
         style={[
           styles.avatarContainer,
-          {width: size, height: size, borderRadius: size / 2},
+          { width: size, height: size, borderRadius: size / 2 },
         ]}>
         {uri ? (
           <Image
-            source={{uri}}
+            source={{ uri }}
             style={[
               styles.avatar,
-              {width: size - 6, height: size - 6, borderRadius: (size - 6) / 2},
+              { width: size - 6, height: size - 6, borderRadius: (size - 6) / 2 },
             ]}
           />
         ) : (
@@ -310,7 +269,7 @@ const Avatar = ({uri, size = 100, onPress}) => {
             source={require('../../assets/images/default_image.png')}
             style={[
               styles.avatar,
-              {width: size - 6, height: size - 6, borderRadius: (size - 6) / 2},
+              { width: size - 6, height: size - 6, borderRadius: (size - 6) / 2 },
             ]}
           />
         )}
@@ -319,7 +278,7 @@ const Avatar = ({uri, size = 100, onPress}) => {
   );
 };
 
-const DialogGender = ({visible, onClose, onSelect}) => {
+const DialogGender = ({ visible, onClose, onSelect }) => {
   return (
     <Modal
       animationType="slide"
@@ -328,7 +287,7 @@ const DialogGender = ({visible, onClose, onSelect}) => {
       onRequestClose={onClose}>
       <Column style={styles.modalContainer}>
         <Column style={styles.modalContent}>
-          <TitleText text="Chọn giới tính" style={{fontSize: 16}} />
+          <TitleText text="Chọn giới tính" style={{ fontSize: 16 }} />
 
           <TouchableOpacity
             style={styles.option}
@@ -347,7 +306,7 @@ const DialogGender = ({visible, onClose, onSelect}) => {
           </TouchableOpacity> */}
 
           <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <NormalText text="Hủy" style={{color: colors.red800}} />
+            <NormalText text="Hủy" style={{ color: colors.red800 }} />
           </TouchableOpacity>
         </Column>
       </Column>

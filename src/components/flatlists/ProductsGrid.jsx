@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   productName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
     textAlign: 'center',
   },
   productPrice: {
     marginTop: 4,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     color: colors.red900,
   },
   addButton: {
