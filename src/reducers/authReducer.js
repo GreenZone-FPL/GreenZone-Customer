@@ -8,27 +8,27 @@ export const AuthActionTypes = {
 
 export const authInitialState = {
   message: '',
-  needAuthen: false
+  needAuthen: false,
+  needFlash: true,
 };
 
 export const authReducer = (state, action) => {
   switch (action.type) {
     case AuthActionTypes.LOGIN:
-      return {...state, message: '', needAuthen: false,  ...action.payload};
+      return {...state, message: '', needAuthen: false, needFlash: false, ...action.payload};
 
     case AuthActionTypes.LOGIN_SESSION_EXPIRED:
       return {
         ...state,
         ...action.payload,
-       
-
+        needFlash: false,
       };
 
     case AuthActionTypes.REGISTER:
-      return {...state, message: '',  ...action.payload};
+      return {...state, message: '', needFlash: false, ...action.payload};
 
     case AuthActionTypes.LOGOUT:
-      return {...state, message: '', needAuthen: false, ...action.payload};
+      return {...state, message: '', needAuthen: false, needFlash: false, ...action.payload};
 
     case AuthActionTypes.CLEAR_MESSAGE:
       return {...state, message: ''};

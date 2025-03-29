@@ -1,9 +1,9 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppContextProvider, useAppContext } from './src/context/appContext';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {AppContextProvider, useAppContext} from './src/context/appContext';
 
 import {
   AppGraph,
@@ -40,18 +40,18 @@ import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
-import { PaperProvider } from 'react-native-paper';
+import {PaperProvider} from 'react-native-paper';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage from 'react-native-flash-message';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
-import { useAppContainer } from './src/containers/useAppContainer';
+import {useAppContainer} from './src/containers/useAppContainer';
 
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
-import { LogBox } from 'react-native';
+import {LogBox} from 'react-native';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -63,10 +63,10 @@ export default function App() {
   return (
     <AppContextProvider>
       <PaperProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+        <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
             <NavigationContainer ref={navigationRef}>
-              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+              <BaseStack.Navigator screenOptions={{headerShown: false}}>
                 <BaseStack.Screen
                   name="AppNavigator"
                   component={AppNavigator}
@@ -86,22 +86,23 @@ export default function App() {
 }
 
 function AppNavigator() {
-  const { authState } = useAppContext();
-  useAppContainer();
+  const {authState} = useAppContext();
+ useAppContainer();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
     presentation: 'transparentModal',
     headerShown: false,
   };
   return (
-    <BaseStack.Navigator screenOptions={{ headerShown: false }} >
+    <BaseStack.Navigator screenOptions={{headerShown: false}} >
       {authState.needAuthen === false ? (
         <>
-
-          <BaseStack.Screen
-            name={AuthGraph.SplashScreen2}
-            component={SplashScreen2}
-          />
+          {authState.needFlash && (
+            <BaseStack.Screen
+              name={AuthGraph.SplashScreen2}
+              component={SplashScreen2}
+            />
+          )}
 
           <BaseStack.Screen
             name={MainGraph.graphName}

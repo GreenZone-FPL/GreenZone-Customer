@@ -8,16 +8,14 @@ import {
   HeaderWithBadge,
   LightStatusBar,
   NormalLoading,
+  NormalText,
   Row,
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { MainGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
-import { AuthActionTypes, cartInitialState } from '../../reducers';
-import { AppAsyncStorage } from '../../utils';
-import { CartManager } from '../../utils';
-import { useAppContainer, useProfileContainer } from '../../containers';
+import { OrderGraph, UserGraph } from '../../layouts/graphs';
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -43,6 +41,10 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
+  const navigateIfLoggedIn = (screen) => {
+    authState.lastName ? navigation.navigate(screen) : onNavigateLogin();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -63,15 +65,7 @@ const ProfileScreen = ({ navigation }) => {
                 icon="google-maps"
                 color={colors.pink500}
                 title="Địa chỉ"
-                onPress={() => {
-                  if (authState.lastName) {
-                    navigation.navigate(UserGraph.AddressScreen)
-                  } else {
-                    onNavigateLogin()
-                  }
-
-                }}
-              />
+                onPress={() => navigateIfLoggedIn(UserGraph.AddressScreen)} />
             </Row>
 
             <Row style={styles.accountContainer}>
@@ -79,15 +73,8 @@ const ProfileScreen = ({ navigation }) => {
                 icon="file-document-edit"
                 color={colors.orange700}
                 title="Lịch sử đơn hàng"
-                onPress={() => {
-                  if (authState.lastName) {
-                    navigation.navigate(OrderGraph.OrderHistoryScreen);
-                  } else {
-                    onNavigateLogin()
-                  }
-
-                }}
-              />
+                onPress={() => navigateIfLoggedIn(OrderGraph.OrderHistoryScreen)} />
+              
             </Row>
           </Column>
 
@@ -97,41 +84,18 @@ const ProfileScreen = ({ navigation }) => {
             <CardUtiliti
               icon="cog"
               title="Cài đặt"
-              onPress={() => {
-                if (authState.lastName) {
-                  navigation.navigate(UserGraph.SettingScreen);
-                } else {
-                  onNavigateLogin()
-                }
-
-              }}
-            />
+              onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)} />
+            
             <View style={styles.separator} />
             <CardUtiliti
               icon="chat"
               title="Liên hệ góp ý"
-              onPress={() => {
-                if (authState.lastName) {
-                  navigation.navigate(UserGraph.ContactScreen);
-                } else {
-                  onNavigateLogin()
-                }
-
-              }}
-            />
+              onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)} />
             <View style={styles.separator} />
             <CardUtiliti
               icon="star"
               title="Đánh giá đơn hàng"
-              onPress={() => {
-                if (authState.lastName) {
-                  navigation.navigate(OrderGraph.RatingOrderScreen);
-                } else {
-                  onNavigateLogin()
-                }
-
-              }}
-            />
+              onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)} />
 
             <View style={styles.separator} />
             {authState.lastName && (
@@ -161,7 +125,8 @@ const CardUtiliti = ({ icon, title, onPress }) => (
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         color={colors.gray700}
       />
-      <Text style={styles.itemText}>{title}</Text>
+    <NormalText text={title}/>
+      {/* <Text style={styles.itemText}>{title}</Text> */}
     </View>
   </Pressable>
 );

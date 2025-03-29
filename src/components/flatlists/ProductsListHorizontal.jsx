@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   },
   priceText: {
     color: colors.primary,
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '700',
     paddingHorizontal: 4,
     paddingVertical: 2,
