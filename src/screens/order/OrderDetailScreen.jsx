@@ -102,9 +102,7 @@ const OrderDetailScreen = props => {
 
             {[
               'shippingOrder',
-              'failedDelivery',
               'readyForPickup',
-              'completed',
             ].includes(orderDetail.status) && (
                 <ShipperInfo
                   messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
