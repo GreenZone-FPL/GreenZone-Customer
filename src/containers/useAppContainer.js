@@ -99,19 +99,30 @@ export const useAppContainer = () => {
       const {type, icon} = OrderStatus.getMessageInfoByStatus(
         updateOrderMessage.status,
       );
+
+      const duration = 4000; // Thời gian hiển thị message
+
       showMessage({
         message: updateOrderMessage.message,
         type,
         icon,
-        duration: 4000,
+        duration,
         onPress: () => {
           navigation.navigate(OrderGraph.OrderDetailScreen, {
             orderId: updateOrderMessage.orderId,
           });
         },
       });
+
+      // Sau khi message ẩn đi, cập nhật visible thành false
+      const timer = setTimeout(() => {
+        setUpdateOrderMessage(prev => ({ ...prev, visible: false }));
+      }, duration);
+
+      return () => clearTimeout(timer); // Dọn dẹp nếu component unmount hoặc updateOrderMessage thay đổi
     }
-  }, [updateOrderMessage.status]);
+  }, [updateOrderMessage]);
+
 
   useEffect(() => {
     const initializeSocket = async () => {

@@ -193,19 +193,24 @@ const HomeScreen = props => {
 
         <CardCategory />
 
+
+        {
+          allProducts.length > 0 &&
+          <ProductsListHorizontal
+            title='Sản phẩm mới'
+            products={allProducts
+              .flatMap(category => category.products)
+              .slice(0, 10)}
+            onItemClick={productId => {
+              onNavigateProductDetailSheet(productId);
+            }}
+            onIconClick={productId => {
+              onClickAddToCart(productId);
+            }}
+          />
+        }
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
-        />
-        <ProductsListHorizontal
-          products={allProducts
-            .flatMap(category => category.products)
-            .slice(0, 10)}
-          onItemClick={productId => {
-            onNavigateProductDetailSheet(productId);
-          }}
-          onIconClick={productId => {
-            onClickAddToCart(productId);
-          }}
         />
 
         <FlatList

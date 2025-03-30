@@ -36,7 +36,7 @@ const OrderDetailScreen = props => {
   const { updateOrderMessage } = useAppContext();
   // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
- 
+
 
   const fetchOrderDetail = async () => {
     try {
@@ -102,9 +102,7 @@ const OrderDetailScreen = props => {
 
             {[
               'shippingOrder',
-              'failedDelivery',
               'readyForPickup',
-              'completed',
             ].includes(orderDetail.status) && (
                 <ShipperInfo
                   messageClick={() => navigation.navigate(ShoppingGraph.ChatScreen)}
@@ -162,8 +160,13 @@ const OrderDetailScreen = props => {
           content={'Thanh toán đơn hàng này'}
           approveText={'Đồng ý'}
           cancelText={'Chọn lại phương thức thanh toán'}
-        onApprove={navigation.navigate(ShoppingGraph.PayOsScreen, { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice })}
+          onApprove={() => navigation.navigate(ShoppingGraph.PayOsScreen,
+            { orderId: orderDetail._id, totalPrice: orderDetail.totalPrice }
+          )}
         />
+
+
+
         <ActionDialog
           visible={actionDialogVisible}
           title="Xác nhận"
@@ -173,12 +176,12 @@ const OrderDetailScreen = props => {
           onCancel={() => setActionDialogVisible(false)}
           onApprove={async () => {
             try {
-             const response =  await updateOrderStatus(
+              const response = await updateOrderStatus(
                 orderDetail._id,
                 OrderStatus.CANCELLED.value,
               );
 
-              if(response){
+              if (response) {
                 Toaster.show('Hủy đơn hàng thành công')
               }
               await fetchOrderDetail();
@@ -431,7 +434,7 @@ const PaymentDetails = ({
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
+        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginRight: 8 }}>
           Trạng thái đơn hàng
         </Text>
         <StatusText status={status} />
@@ -510,7 +513,7 @@ const PaymentDetails = ({
           marginVertical: 6,
           justifyContent: 'space-between',
         }}>
-        <Text style={{ fontSize: 14, color: colors.black, marginRight: 8 }}>
+        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginRight: 8 }}>
           Phương thức thanh toán:
         </Text>
         <View
@@ -519,7 +522,7 @@ const PaymentDetails = ({
             alignItems: 'center',
           }}>
           {getPaymentIcon(paymentMethod)}
-          <Text style={{ fontSize: 14, color: colors.black, marginLeft: 8 }}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginLeft: 8 }}>
             {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
           </Text>
         </View>

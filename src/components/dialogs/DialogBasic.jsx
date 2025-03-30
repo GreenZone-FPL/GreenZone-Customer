@@ -24,10 +24,11 @@ const DialogBasicPropTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  titleStyle: PropTypes.object,
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
+export const DialogBasic = ({ isVisible, onHide, title, children, style, titleStyle}) => {
 
   return (
     <Modal
@@ -44,7 +45,7 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style }) => {
             <KeyboardAvoidingView>
               <Row style={styles.header}>
                 <View style={styles.placeholderIcon} />
-                <Text style={styles.titleText}>{title}</Text>
+                <Text style={[styles.titleText, titleStyle]}>{title}</Text>
                 <TouchableOpacity onPress={onHide}>
                   <Icon
                     source="close"
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '600',
     color: colors.primary,
     textAlign: 'center',
