@@ -87,14 +87,14 @@ export default function App() {
 
 function AppNavigator() {
   const {authState} = useAppContext();
- useAppContainer();
+  useAppContainer();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
     presentation: 'transparentModal',
     headerShown: false,
   };
   return (
-    <BaseStack.Navigator screenOptions={{headerShown: false}} >
+    <BaseStack.Navigator screenOptions={{headerShown: false}}>
       {authState.needAuthen === false ? (
         <>
           {authState.needFlash && (

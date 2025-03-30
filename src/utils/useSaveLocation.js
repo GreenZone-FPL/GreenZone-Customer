@@ -1,4 +1,3 @@
-import {View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {fetchUserLocation} from './geoLocationUtils';
 import {AppAsyncStorage} from './appAsyncStorage';
@@ -7,7 +6,7 @@ import {getAllMerchants} from '../axios/modules/merchant';
 import {CartManager} from './cartMananger';
 import {useAppContext} from '../context/appContext';
 
-const CallSaveLocation = () => {
+const useSaveLocation = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [merchants, setMerchants] = useState([]);
@@ -122,4 +121,4 @@ const CallSaveLocation = () => {
   return null;
 };
 
-export default CallSaveLocation;
+export default useSaveLocation;

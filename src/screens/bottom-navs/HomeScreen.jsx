@@ -41,7 +41,7 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
-import CallSaveLocation from '../../utils/CallSaveLocation';
+import useSaveLocation from '../../utils/useSaveLocation';
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
@@ -63,7 +63,7 @@ const HomeScreen = props => {
     useHomeContainer();
   // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
-  // console.log('authState', authState)
+  console.log('authState', authState);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -82,6 +82,8 @@ const HomeScreen = props => {
     getMerchantLocation();
   }, []);
   console.log('error cartd', authState.lastName);
+
+  useSaveLocation();
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -178,15 +180,13 @@ const HomeScreen = props => {
         isHome={false}
       />
 
-      {/* // hàm gọi và save location cửa hàng gần nhất - user */}
-      <CallSaveLocation />
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          <BarcodeUser codeId="M1678263323" />
+          <BarcodeUser />
         ) : (
           <AuthButton title="Đăng nhập" onPress={handleLogin} />
         )}

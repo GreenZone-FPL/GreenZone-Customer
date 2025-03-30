@@ -76,11 +76,11 @@ const VoucherDetailSheet = ({navigation, route}) => {
                 <Text style={styles.copyText}>Sao chép</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.orderButton}
                 onPress={() => navigation.navigate(BottomGraph.OrderScreen)}>
                 <Text style={styles.orderButtonText}>Bắt đầu đặt hàng</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               <View style={styles.separator} />
 
@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
   qrCodeImage: {
     width: width / 3,
     height: width / 3,
+    borderRadius: 8,
     // backgroundColor: 'green'
   },
   discountCode: {
