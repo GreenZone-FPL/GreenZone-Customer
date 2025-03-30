@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Button,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -32,7 +33,7 @@ import {
 } from '../../components';
 import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
 import {useAppContainer, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
+import {useAppContext, } from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -48,8 +49,7 @@ const HomeScreen = props => {
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
-  const [orderPaymentLocal, setOrderPaymentLocal] = useState(null);
-
+  
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const [editOption, setEditOption] = useState('');
@@ -58,14 +58,16 @@ const HomeScreen = props => {
   const [currentCategory, setCurrentCategory] = useState(null);
 
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch, authState, authDispatch} =
+  const {cartState, cartDispatch, authState, authDispatch, awaitingPayments, setAwaitingPayments} =
     useAppContext() || {};
 
   const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
     useHomeContainer();
   // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
-  console.log('authState', authState);
+  // console.log('authState', authState);
+
+  // console.log('awaitingPayments:', awaitingPayments)
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -87,23 +89,6 @@ const HomeScreen = props => {
 
   useSaveLocation();
 
-  //hàm gọi đơn hàng chờ thanh toán
-  useEffect(() => {
-    const getOrderPayment = async () => {
-      try {
-        setOrderPaymentLocal(
-          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.awaitingPayment)
-        );
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    getOrderPayment();
-  }, []);
-  // console.log('error cartd', cartState);
-  console.log('paymentOrder: ', orderPaymentLocal)
-  // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
@@ -210,18 +195,58 @@ const HomeScreen = props => {
         )}
 
         <CardCategory />
-        {orderPaymentLocal ? (
-        <PrimaryButton title={'Thanh toán đơn hàng'} onPress={() => navigation.navigate(ShoppingGraph.PayOsScreen, {
-                            orderId: orderPaymentLocal.orderId,
-                            totalPrice: orderPaymentLocal.totalPrice,
-                          })}/>
-        ) : null}
+        <Button
+          title={'Tạo đơn hàng'}
+          onPress={async () => {
+            try {
+              const paymentParams = {
+                orderId: '0122221323123',
+                totalPrice: 100000,
+              };
+              await AppAsyncStorage.storeData(
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+                paymentParams,
+              );
+            } catch (error) {
+              console.log('error', error);
+            }
+           
+          }}
+        />
+        <Button
+          title={'Đọc đơn'}
+          onPress={async () => {
+            try {
+            const response =  await AppAsyncStorage.readData(
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+              );
+              console.log('data:' , response)
+            } catch (error) {
+              console.log('error', error);
+            }
+            
+          }}
+        />
+        {awaitingPayments ? (
+        <View style={{gap: 16}}>
+        <Button
+          title={'Thanh toán đơn'}
+          onPress={async () => {
+            try {
+              navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
+              // await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.awaitingPayments, null);
+              // setAwaitingPayments(null)
+            } catch (error) {
+              console.log('error', error);
+            }
+          }}
+        />
+        </View>              
+        ) : null} 
 
-
-        {
-          allProducts.length > 0 &&
+        {allProducts.length > 0 && (
           <ProductsListHorizontal
-            title='Sản phẩm mới'
+            title="Sản phẩm mới"
             products={allProducts
               .flatMap(category => category.products)
               .slice(0, 10)}
@@ -232,7 +257,7 @@ const HomeScreen = props => {
               onClickAddToCart(productId);
             }}
           />
-        }
+        )}
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
         />

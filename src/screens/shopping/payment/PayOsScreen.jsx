@@ -1,15 +1,28 @@
-import {View, Text, ScrollView, Alert, Button, StyleSheet , BackHandler} from 'react-native';
-import React, {useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  Alert,
+  Button,
+  StyleSheet,
+  BackHandler,
+} from 'react-native';
+import React, {useState, useEffect, useCallback} from 'react';
 import axios from 'axios';
 import WebView from 'react-native-webview';
-import {useRoute, useNavigation, useFocusEffect} from '@react-navigation/native';
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from '@react-navigation/native';
 import {hmacSHA256} from 'react-native-hmac';
 import {updatePaymentStatus, updateOrderStatus} from '../../../axios';
 import {colors} from '../../../constants';
 import {NormalLoading} from '../../../components';
 import {MainGraph} from '../../../layouts/graphs';
 import ToastDialog from '../../../components/dialogs/ToastDialog';
-import { AppAsyncStorage } from '../../../utils';
+import {AppAsyncStorage} from '../../../utils';
+import {useAppContext} from '../../../context/appContext';
 
 const PayOsScreen = () => {
   const clientID = 'fe4d0414-d208-41a0-9f57-6de694aac3e6';
@@ -29,38 +42,41 @@ const PayOsScreen = () => {
   const [paymentLinkId, setPaymentLinkId] = useState('');
   const {orderId, totalPrice} = route.params || {};
 
+  const {awaitingPayments, setAwaitingPayments} = useAppContext();
+
   console.log(orderId);
+  console.log('awaitingPayments', awaitingPayments);
 
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
-        Alert.alert("Thông báo", "Bạn có muốn quay lại không?", [
-          { text: "Không", style: "cancel" },
-          { 
-            text: "Có", 
+        Alert.alert('Thông báo', 'Bạn có muốn quay lại không?', [
+          {text: 'Không', style: 'cancel'},
+          {
+            text: 'Có',
             onPress: () => {
               navigation.reset({
                 index: 1,
                 routes: [
                   // { name: 'OrderDetailScreen'},
-                  // { name: MainGraph.graphName}, 
-                  { name: 'OrderDetailScreen', params: { orderId } }
+                  // { name: MainGraph.graphName},
+                  {name: 'OrderDetailScreen', params: {orderId}},
                 ], // Chỉ quay về MainGraph
               });
-            }
-          }
+            },
+          },
         ]);
         return true; // Chặn Back mặc định
       };
 
       const backHandler = BackHandler.addEventListener(
-        "hardwareBackPress",
-        backAction
+        'hardwareBackPress',
+        backAction,
       );
 
       return () => backHandler.remove(); // Xóa sự kiện khi rời khỏi màn hình
-    }, [navigation])
+    }, [navigation]),
   );
 
   useEffect(() => {
@@ -131,15 +147,26 @@ const PayOsScreen = () => {
   const handleNavigationChange = async navState => {
     const {url} = navState;
     console.log('Current URL:', url);
-    
+
     if (url.includes('/success')) {
       try {
         await updatePaymentStatus(orderId, 'success', paymentLinkId);
-        await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.awaitingPayment);
+        await AppAsyncStorage.storeData(
+          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+          null,
+        );
+        setAwaitingPayments(null);
         setToast({
           visible: true,
           message: 'Thanh toán thành công',
           type: 'success',
+        });
+        navigation.reset({
+          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+          routes: [
+            {name: MainGraph.graphName},
+            {name: 'OrderDetailScreen', params: {orderId}},
+          ],
         });
       } catch (error) {
         setToast({
@@ -148,28 +175,31 @@ const PayOsScreen = () => {
           type: 'error',
         });
       }
-      navigation.replace('OrderSuccessScreen', {orderId});
+      
     } else if (url.includes('status=CANCELLED')) {
-      setToast({
-        visible: true,
-        message: 'Bạn đã hủy thanh toán.',
-        type: 'warning',
-      });
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
         await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
-        await AppAsyncStorage.removeData(AppAsyncStorage.STORAGE_KEYS.awaitingPayment);
+        await AppAsyncStorage.storeData(
+          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+          null,
+        );
+        setAwaitingPayments(null);
+        setToast({
+          visible: true,
+          message: 'Bạn đã hủy thanh toán.',
+          type: 'warning',
+        });
+        navigation.reset({
+          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+          routes: [
+            {name: MainGraph.graphName},
+            {name: 'OrderDetailScreen', params: {orderId}},
+          ],
+        });
       } catch (error) {
         console.log('Không cập nhật');
       }
-      navigation.reset({
-        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-        routes: [
-          { name: MainGraph.graphName}, 
-          { name: 'OrderDetailScreen', params: { orderId } }
-        ],
-      });
-      
     }
   };
 
@@ -186,10 +216,8 @@ const PayOsScreen = () => {
           iconColor="red"
         />
       )}
-      {' '}
       {paymentLink ? (
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          {' '}
           <WebView
             source={{uri: paymentLink}}
             style={{width: '100%', height: 600}}
@@ -197,12 +225,10 @@ const PayOsScreen = () => {
             domStorageEnabled
             onNavigationStateChange={handleNavigationChange}
           />
-          {' '}
         </ScrollView>
       ) : (
         <Text style={styles.message}>Đang tạo liên kết thanh toán...</Text>
       )}
-         {' '}
     </View>
   );
 };
