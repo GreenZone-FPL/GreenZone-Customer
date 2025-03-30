@@ -6,7 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import {
@@ -14,7 +14,7 @@ import {
   MessageFavorite,
   Rank,
   TaskSquare,
-  TicketDiscount
+  TicketDiscount,
 } from 'iconsax-react-native';
 import {getAllCategories, getAllProducts} from '../../axios';
 import {
@@ -38,13 +38,14 @@ import {
   OrderGraph,
   ShoppingGraph,
   UserGraph,
-  VoucherGraph
+  VoucherGraph,
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 import {useAppContainer, useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
 import {AuthActionTypes} from '../../reducers';
 import {Icon} from 'react-native-paper';
+import {use} from 'react';
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
@@ -65,7 +66,6 @@ const HomeScreen = props => {
   const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
   const {onNavigateLogin, onNavigateRegister} = useAppContainer();
 
- 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
     const getMerchantLocation = async () => {
@@ -82,7 +82,7 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
-  // console.log('error cartd', cartState);
+  console.log('error cartd', authState.lastName);
 
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
@@ -189,12 +189,12 @@ const HomeScreen = props => {
         {authState.isLoggedIn ? (
           <>
             {!authState.lastName && (
-              <AuthButton title='Đăng ký' onPress={onNavigateRegister} />
+              <AuthButton title="Đăng ký" onPress={onNavigateRegister} />
             )}
-            <BarcodeUser codeId="M1678263323" />
+            {authState.lastName && <BarcodeUser codeId="M1678263323" />}
           </>
         ) : (
-          <AuthButton title='Đăng nhập' onPress={onNavigateLogin} />
+          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
         )}
 
         <CardCategory />
@@ -284,7 +284,7 @@ const CardCategory = ({navigation}) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
+        contentContainerStyle={{gap: 22}}>
         <Item
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
@@ -379,5 +379,3 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
-
-
