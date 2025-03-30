@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Linking, AppState, Text } from 'react-native';
+import { View, AppState, Text } from 'react-native';
 import CryptoJS from 'crypto-js';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { updatePaymentStatus, updateOrderStatus } from '../../../axios';
+import { WebView } from 'react-native-webview';
+import { PaperProvider } from 'react-native-paper';
 
 // Hàm tạo MAC (chữ ký)
 const generateMac = (appid, apptransid, appuser, amount, apptime, embeddata, item, key1) => {
@@ -14,42 +14,17 @@ const generateMac = (appid, apptransid, appuser, amount, apptime, embeddata, ite
 const getAppTransId = () => {
   const date = new Date();
   date.setHours(date.getHours() + 7);
-  const yymmdd = date.toISOString().slice(2, 10).replace(/-/g, ''); // yymmdd
+  const yymmdd = date.toISOString().slice(2, 10).replace(/-/g, '');
   const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
   return `${yymmdd}_${randomNum}`;
 };
 
 const ZalopayScreen = () => {
   const [orderUrl, setOrderUrl] = useState(null);
-  const [appState, setAppState] = useState(AppState.currentState);
-  const route = useRoute();
-  const navigation = useNavigation();
-  const { orderId, totalPrice } = route.params || {};
-
+  
   useEffect(() => {
     handlePayment(); // Gọi thanh toán tự động khi vào màn hình
-    checkInitialURL();
-
-    const handleAppStateChange = (nextAppState) => {
-      if (appState.match(/inactive|background/) && nextAppState === 'active') {
-        checkPaymentStatus();
-      }
-      setAppState(nextAppState);
-    };
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
-    return () => {
-      subscription.remove();
-    };
   }, []);
-
-  const checkInitialURL = async () => {
-    const initialUrl = await Linking.getInitialURL();
-    if (initialUrl && initialUrl.startsWith('myapp://zalopay-callback')) {
-      console.log('Deep Link Triggered:', initialUrl);
-      checkPaymentStatus();
-    }
-  };
 
   const handlePayment = async () => {
     const APP_ID = '2554'; 
@@ -58,10 +33,10 @@ const ZalopayScreen = () => {
   
     const appTransId = getAppTransId();
     const appTime = Date.now();
-    const amount = totalPrice;
+    const amount = 100000;
   
     const embedData = JSON.stringify({ promo: 'none' });
-    const item = JSON.stringify([{ itemid: orderId, itename: 'Tổng Tiền', itemprice: totalPrice, itemquantity: 1 }]);
+    const item = JSON.stringify([{ itemid: 'ksdjjk223k43', itename: 'Tổng Tiền', itemprice: amount, itemquantity: 1 }]);
   
     const order = {
       app_id: parseInt(APP_ID),
@@ -88,11 +63,8 @@ const ZalopayScreen = () => {
       const data = await response.json();
 
       if (data.order_url) {
+        console.log('Order URL:', data.order_url);
         setOrderUrl(data.order_url);
-        await updatePaymentStatus(orderId, 'success', data.order_token);
-        Linking.openURL(data.order_url)
-          .then(() => console.log('🔹 Mở ZaloPay:', data.order_url))
-          .catch(err => console.error('❌ Lỗi mở URL:', err));
       } else {
         alert(`Lỗi: ${data.return_message || 'Không thể tạo đơn hàng.'}`);
       }
@@ -102,12 +74,25 @@ const ZalopayScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center' }}>
-      <View style={{ margin: 16, alignItems: 'center' }}>
-        <Text>Đang xử lý thanh toán...</Text>
+    <PaperProvider>
+      <View style={{ flex: 1 }}>
+        {orderUrl ? (
+          <WebView 
+            source={{ uri: orderUrl }} 
+            style={{ flex: 1 }}
+            onNavigationStateChange={(navState) => {
+              console.log('WebView URL:', navState.url);
+            }}
+          />
+        ) : (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text>Đang xử lý thanh toán...</Text>
+          </View>
+        )}
       </View>
-    </View>
+    </PaperProvider>
   );
 };
+
 
 export default ZalopayScreen;

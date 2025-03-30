@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
+  Button,
   Dimensions,
   FlatList,
   SafeAreaView,
@@ -24,13 +25,14 @@ import {
   HeaderWithBadge,
   LightStatusBar,
   NotificationList,
+  PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
 } from '../../components';
 import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
 import {useAppContainer, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
+import {useAppContext, } from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -63,7 +65,7 @@ const HomeScreen = props => {
   const [currentCategory, setCurrentCategory] = useState(null);
 
   const lastCategoryRef = useRef(currentCategory);
-  const {cartState, cartDispatch, authState, authDispatch} =
+  const {cartState, cartDispatch, authState, authDispatch, awaitingPayments, setAwaitingPayments} =
     useAppContext() || {};
 
   const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
@@ -107,7 +109,6 @@ const HomeScreen = props => {
 
   useSaveLocation();
 
-  // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
   };
@@ -221,6 +222,54 @@ const HomeScreen = props => {
         )}
 
         <CardCategory />
+        <Button
+          title={'Tạo đơn hàng'}
+          onPress={async () => {
+            try {
+              const paymentParams = {
+                orderId: '0122221323123',
+                totalPrice: 100000,
+              };
+              await AppAsyncStorage.storeData(
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+                paymentParams,
+              );
+            } catch (error) {
+              console.log('error', error);
+            }
+           
+          }}
+        />
+        <Button
+          title={'Đọc đơn'}
+          onPress={async () => {
+            try {
+            const response =  await AppAsyncStorage.readData(
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+              );
+              console.log('data:' , response)
+            } catch (error) {
+              console.log('error', error);
+            }
+            
+          }}
+        />
+        {awaitingPayments ? (
+        <View style={{gap: 16}}>
+        <Button
+          title={'Thanh toán đơn'}
+          onPress={async () => {
+            try {
+              navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
+              // await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.awaitingPayments, null);
+              // setAwaitingPayments(null)
+            } catch (error) {
+              console.log('error', error);
+            }
+          }}
+        />
+        </View>              
+        ) : null} 
 
         {allProducts.length > 0 && (
           <ProductsListHorizontal

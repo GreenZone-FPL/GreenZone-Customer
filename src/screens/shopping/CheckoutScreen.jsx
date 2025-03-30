@@ -71,13 +71,14 @@ const CheckoutScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const {cartState, cartDispatch, setUpdateOrderMessage} = useAppContext();
+  const {cartState, cartDispatch, setUpdateOrderMessage, awaitingPayments, setAwaitingPayments} = useAppContext();
   const [timeInfo, setTimeInfo] = React.useState({
     selectedDay: 'Hôm nay',
     selectedTime: 'Sớm nhất có thể',
   });
 
   const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
@@ -371,6 +372,15 @@ const CheckoutScreen = ({navigation}) => {
             await CartManager.clearOrderItems(cartDispatch);
 
             if (response?.data?.status === 'awaitingPayment') {
+              const paymentParams = {
+                orderId: response.data._id,
+                totalPrice: response.data.totalPrice,
+              };
+              await AppAsyncStorage.storeData(
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+                paymentParams,
+              );
+              setAwaitingPayments(paymentParams)
               if (selectedPaymentMethod?.value === 'PayOs') {
                 navigation.navigate(ShoppingGraph.PayOsScreen, {
                   orderId: response.data._id,

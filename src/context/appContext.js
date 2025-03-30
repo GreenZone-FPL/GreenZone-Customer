@@ -32,6 +32,9 @@ export const AppContextProvider = ({children}) => {
   });
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
+  
+   const [awaitingPayments, setAwaitingPayments] = useState(null);
+ 
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -78,6 +81,22 @@ export const AppContextProvider = ({children}) => {
     return () => {};
   }, []);
 
+  useEffect(() => {
+      const getAwaitingPayments = async () => {
+        try {
+          setAwaitingPayments(
+            await AppAsyncStorage.readData(
+              AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+            ),
+          );
+        } catch (error) {
+          console.log('error', error);
+        }
+      };
+  
+      getAwaitingPayments();
+    }, []);
+
   return (
     <AppContext.Provider
       value={{
@@ -91,6 +110,8 @@ export const AppContextProvider = ({children}) => {
         setActiveOrders,
         merchantLocation,
         setMerchantLocation,
+        awaitingPayments,
+        setAwaitingPayments,
       }}>
       {children}
     </AppContext.Provider>
