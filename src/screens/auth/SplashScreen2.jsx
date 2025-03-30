@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, Image} from 'react-native';
 import {MainGraph} from '../../layouts/graphs';
-import CallSaveLocation from '../../utils/CallSaveLocation';
 const SplashScreen2 = ({navigation}) => {
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,7 +19,6 @@ const SplashScreen2 = ({navigation}) => {
         style={{alignSelf: 'center', resizeMode: 'contain', marginRight: 20}}
         source={require('../../assets/images/logo.png')}
       />
-      <CallSaveLocation />
     </View>
   );
 };

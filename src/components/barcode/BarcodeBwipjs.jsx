@@ -1,28 +1,27 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import bwipjs from '@bwip-js/react-native';
-import {GLOBAL_KEYS} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
 import {getProfile} from '../../axios/index';
-import {Ani_ModalLoading} from '../animations/Ani_ModalLoading';
 import {useAppContext} from '../../context/appContext';
 import NormalLoading from '../animations/NormalLoading';
 
 const width = Dimensions.get('window').width;
 
-const Barcodebwipjs = () => {
+const Barcodebwipjs = ({isHome}) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [text, setText] = useState();
-  const {authState} = useAppContext();
+  const [user, setUser] = useState();
 
   // Lấy profile
+
   const feathProfile = async () => {
     setLoading(true);
     try {
-      const reponse = await getProfile();
+      const response = await getProfile();
 
-      setText(reponse.code);
+      setUser(response);
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -39,12 +38,15 @@ const Barcodebwipjs = () => {
       try {
         const svg = await bwipjs.toSVG({
           bcid: 'code128',
-          text: text ? text : 'New account',
-          scale: 1,
-          height: 5,
+          text: user?.code ? user?.code : 'new',
+          scale: 15,
+          height: 4,
           includetext: true,
           textsize: GLOBAL_KEYS.TEXT_SIZE_SMALL - 4,
           textyoffset: GLOBAL_KEYS.PADDING_SMALL - 4,
+          padding: 0,
+          margin: 0,
+          textfont: 'Helvetica',
         });
         setBarcodeSVG(svg);
       } catch (e) {
@@ -52,23 +54,48 @@ const Barcodebwipjs = () => {
       }
     };
 
-
     generateBarcode();
-  }, [text]);
+  }, [user]);
 
   return (
     <View style={styles.container}>
-      {barcodeSVG && <SvgXml xml={barcodeSVG} width="100%" height="100%" />}
-      <NormalLoading visible={loading} />
+      {loading ? (
+        <NormalLoading visible={loading} />
+      ) : (
+        <View
+          style={{
+            padding: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+          }}>
+          {user?.firstName && (
+            <Text
+              style={[
+                styles.text,
+                {color: isHome ? colors.white : colors.primary},
+              ]}>
+              {user?.firstName + ' ' + user?.lastName}
+            </Text>
+          )}
+          {barcodeSVG && <SvgXml xml={barcodeSVG} width="100%" height="100%" />}
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: width - GLOBAL_KEYS.PADDING_DEFAULT * 2,
-    height: width / 7,
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    maxHeight: 120,
+    justifyContent: 'center',
+    width: '100%',
+  },
+  text: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+    marginTop: 16,
+    alignSelf: 'flex-start',
   },
 });
 

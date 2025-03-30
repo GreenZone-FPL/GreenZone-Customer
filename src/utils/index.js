@@ -5,4 +5,4 @@ export * from './geoLocationUtils';
 export * from './textFormatter';
 export * from './toaster';
 export * from './locationManager';
-export * from './CallSaveLocation';
+export * from './useSaveLocation';
