@@ -161,13 +161,6 @@ const PayOsScreen = () => {
           message: 'Thanh toán thành công',
           type: 'success',
         });
-        navigation.reset({
-          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-          routes: [
-            {name: MainGraph.graphName},
-            {name: 'OrderDetailScreen', params: {orderId}},
-          ],
-        });
       } catch (error) {
         setToast({
           visible: true,
@@ -175,7 +168,13 @@ const PayOsScreen = () => {
           type: 'error',
         });
       }
-      
+      navigation.reset({
+        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        routes: [
+          {name: MainGraph.graphName},
+          {name: 'OrderDetailScreen', params: {orderId}},
+        ],
+      });
     } else if (url.includes('status=CANCELLED')) {
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
@@ -190,16 +189,17 @@ const PayOsScreen = () => {
           message: 'Bạn đã hủy thanh toán.',
           type: 'warning',
         });
-        navigation.reset({
-          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-          routes: [
-            {name: MainGraph.graphName},
-            {name: 'OrderDetailScreen', params: {orderId}},
-          ],
-        });
+       
       } catch (error) {
         console.log('Không cập nhật');
       }
+      navigation.reset({
+        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        routes: [
+          {name: MainGraph.graphName},
+          {name: 'OrderDetailScreen', params: {orderId}},
+        ],
+      });
     }
   };
 
