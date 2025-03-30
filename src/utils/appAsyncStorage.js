@@ -54,24 +54,6 @@ export class AppAsyncStorage {
     }
   }
 
-  // xoá data chỉ chừa lại key cần chừa
-  static clearExceptSomeKeys = async keysToKeep => {
-    try {
-      // Lấy tất cả các key đang lưu
-      const allKeys = await AsyncStorage.getAllKeys();
-
-      // Lọc ra những key cần xóa (loại bỏ các key cần giữ lại)
-      const keysToRemove = allKeys.filter(key => !keysToKeep.includes(key));
-
-      // Xóa các key đã lọc
-      await AsyncStorage.multiRemove(keysToRemove);
-
-      console.log('Cleared all except:', keysToKeep);
-    } catch (error) {
-      console.log('Error clearing storage:', error);
-    }
-  };
-
   static async isTokenValid() {
     const accessToken = await AppAsyncStorage.readData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
