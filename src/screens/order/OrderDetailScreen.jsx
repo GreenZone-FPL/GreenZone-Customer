@@ -63,7 +63,7 @@ const OrderDetailScreen = props => {
           title="Chi tiết đơn hàng"
           onLeftPress={() => navigation.goBack()}
         />
-        <NormalLoading visible={true} />
+        <NormalLoading visible={loading} />
       </View>
     );
   }

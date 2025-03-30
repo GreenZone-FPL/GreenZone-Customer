@@ -8,16 +8,18 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {LightStatusBar} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {AppGraph} from '../../layouts/graphs';
+import { Icon } from 'react-native-paper';
+import { LightStatusBar } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph } from '../../layouts/graphs';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 import VoucherVertical from '../../components/vouchers/VoucherVertical';
+import { useAppContext } from '../../context/appContext';
 
 const width = Dimensions.get('window').width;
 const VoucherScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
+  const { authState } = useAppContext()
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
@@ -32,8 +34,8 @@ const VoucherScreen = props => {
             <Pressable
               style={styles.myTicket}
               onPress={() =>
-                // navigation.navigate(VoucherGraph.MyVouchersScreen)
-                {}
+              // navigation.navigate(VoucherGraph.MyVouchersScreen)
+              { }
               }>
               <Icon
                 source="ticket-confirmation-outline"
@@ -83,16 +85,21 @@ const VoucherScreen = props => {
 
         <Text style={styles.ticketTitle}>Phiếu ưu đãi</Text>
 
-        <VoucherVertical
-          navigation={navigation}
-          route={{params: {isUpdateOrderInfo: false}}}
-        />
+        {
+          authState.lastName ?
+            <VoucherVertical
+              navigation={navigation}
+              route={{ params: { isUpdateOrderInfo: false } }}
+            /> :
+            null
+        }
+
       </View>
     </ScrollView>
   );
 };
 
-const Card = ({iconName, color, title, onPress}) => {
+const Card = ({ iconName, color, title, onPress }) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -166,7 +173,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 4,
