@@ -5,7 +5,7 @@ import { getOrdersByStatus } from '../../axios';
 import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-
+import { MainGraph } from '../../layouts/graphs';
 
 const width = Dimensions.get('window').width;
 
@@ -65,7 +65,16 @@ const OrderHistoryScreen = ({ navigation }) => {
       <LightStatusBar />
       <NormalHeader
         title="Lịch sử đơn hàng"
-        onLeftPress={() => navigation.goBack()}
+        onLeftPress={() => {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: MainGraph.graphName }],
+            });
+          }
+        }}
       />
 
       <CustomTabView
