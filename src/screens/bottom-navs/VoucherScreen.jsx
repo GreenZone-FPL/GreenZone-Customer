@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   ImageBackground,
   Pressable,
@@ -14,12 +14,28 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 import VoucherVertical from '../../components/vouchers/VoucherVertical';
-import { useAppContext } from '../../context/appContext';
+import {AppAsyncStorage} from '../../utils';
 
 const width = Dimensions.get('window').width;
 const VoucherScreen = props => {
-  const { navigation } = props;
-  const { authState } = useAppContext()
+  const {navigation} = props;
+  const [user, setUser] = useState(null);
+
+  // Gọi AppAsyncStorage hiển thị Barcode
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setUser(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
+        );
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
@@ -45,9 +61,11 @@ const VoucherScreen = props => {
               <Text style={styles.textVoucher}>Voucher của tôi</Text>
             </Pressable>
           </View>
-          <View style={styles.barCode}>
-            <BarcodeBwipjs />
-          </View>
+          {user && (
+            <View style={styles.barCode}>
+              <BarcodeBwipjs user={user} hasBackground={false} />
+            </View>
+          )}
         </View>
       </ImageBackground>
 
@@ -155,6 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     alignItems: 'center',
     backgroundColor: colors.white,
+    width: width - 32,
   },
   imgcode: {
     width: '100%',
