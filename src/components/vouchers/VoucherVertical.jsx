@@ -75,7 +75,7 @@ const ItemVoucher = ({onPress, item}) => {
       <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
         <View style={{maxWidth: width / 2}}>
-          <Text numberOfLines={2} style={{fontSize: 16, fontWeight: 'bold'}}>
+          <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
             {`${item.name}`}
           </Text>
         </View>

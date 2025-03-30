@@ -16,10 +16,9 @@ import {
   TaskSquare,
   TicketDiscount,
 } from 'iconsax-react-native';
-import {getAllCategories, getAllProducts} from '../../axios';
+import {getAllCategories, getAllProducts, getProfile} from '../../axios';
 import {
   AuthButton,
-  BarcodeUser,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
@@ -42,11 +41,19 @@ import {
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
+import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
+
+const width = Dimensions.get('window').width;
+
 const HomeScreen = props => {
   const {navigation} = props;
+
+  const [user, setUser] = useState(null);
+
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
+  const [isData, setIsData] = useState(false);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
@@ -63,7 +70,22 @@ const HomeScreen = props => {
     useHomeContainer();
   // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
-  console.log('authState', authState);
+  // console.log('authState', authState);
+
+  // Gọi AppAsyncStorage hiển thị Barcode
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setUser(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
+        );
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -186,18 +208,23 @@ const HomeScreen = props => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          <BarcodeUser />
+          user && (
+            <View style={styles.barCode}>
+              <BarcodeBwipjs user={user} />
+            </View>
+          )
         ) : (
-          <AuthButton title="Đăng nhập" onPress={handleLogin} />
+          <AuthButton
+            title="Đăng nhập"
+            onPress={() => console.log('Đăng nhập')}
+          />
         )}
 
         <CardCategory />
 
-
-        {
-          allProducts.length > 0 &&
+        {allProducts.length > 0 && (
           <ProductsListHorizontal
-            title='Sản phẩm mới'
+            title="Sản phẩm mới"
             products={allProducts
               .flatMap(category => category.products)
               .slice(0, 10)}
@@ -208,7 +235,7 @@ const HomeScreen = props => {
               onClickAddToCart(productId);
             }}
           />
-        }
+        )}
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
         />
@@ -373,5 +400,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
+  },
+  barCode: {
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+    width: width - 32,
+    alignSelf: 'center',
+    overflow: 'hidden',
   },
 });
