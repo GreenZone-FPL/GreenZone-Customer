@@ -25,6 +25,7 @@ import {
   HeaderWithBadge,
   LightStatusBar,
   NotificationList,
+  PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText
@@ -47,6 +48,7 @@ const HomeScreen = props => {
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
+  const [orderPaymentLocal, setOrderPaymentLocal] = useState(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
@@ -81,8 +83,23 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
-  // console.log('error cartd', cartState);
 
+  //hàm gọi đơn hàng chờ thanh toán
+  useEffect(() => {
+    const getOrderPayment = async () => {
+      try {
+        setOrderPaymentLocal(
+          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.awaitingPayment)
+        );
+      } catch (error) {
+        console.log('error', error);
+      }
+    };
+
+    getOrderPayment();
+  }, []);
+  // console.log('error cartd', cartState);
+  console.log('paymentOrder: ', orderPaymentLocal)
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -192,7 +209,12 @@ const HomeScreen = props => {
         )}
 
         <CardCategory />
-
+        {orderPaymentLocal ? (
+        <PrimaryButton title={'Thanh toán đơn hàng'} onPress={() => navigation.navigate(ShoppingGraph.PayOsScreen, {
+                            orderId: orderPaymentLocal.orderId,
+                            totalPrice: orderPaymentLocal.totalPrice,
+                          })}/>
+        ) : null}
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
         />

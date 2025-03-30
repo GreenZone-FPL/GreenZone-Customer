@@ -274,7 +274,9 @@ const UpdateProfileScreen = ({ navigation, route }) => {
             placeholder="Chọn giới tính"
             placeholderStyle={styles.placeholderText}
             style={styles.dropdown}
-            selectedTextStyle={styles.dropdownText}
+            selectedTextStyle={styles.placeholderText}
+            selectedTextProps={styles.placeholderText}
+            itemTextStyle={styles.placeholderText}
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
             onChange={item => {
@@ -373,12 +375,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   dropdownText: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#000',
   },
   placeholderText: {
     color: colors.black,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: 12,
   },
   imagePickerOverlay: {
     flex: 1,

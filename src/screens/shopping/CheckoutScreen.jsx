@@ -59,6 +59,8 @@ import {
   LocationManager,
 } from '../../utils';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
   const [dialogCreateOrderVisible, setDialogCreateOrderVisible] =
@@ -391,21 +393,29 @@ const CheckoutScreen = ({ navigation }) => {
             console.log('order data =', JSON.stringify(response, null, 2));
             await CartManager.clearOrderItems(cartDispatch)
 
-
-
             if (response?.data?.status === 'awaitingPayment') {
-              if (selectedPaymentMethod?.value === 'PayOs') {
-                navigation.navigate(ShoppingGraph.PayOsScreen, {
-                  orderId: response.data._id,
-                  totalPrice: response.data.totalPrice,
-                });
-              } else if (selectedPaymentMethod?.value === 'zalopay') {
-                navigation.navigate(ShoppingGraph.Zalopayscreen, {
-                  orderId: response.data._id,
-                  totalPrice: response.data.totalPrice,
-                });
+              const paymentParams = {
+                orderId: response.data._id,
+                totalPrice: response.data.totalPrice,
+              };
+              try {
+                await AppAsyncStorage.storeData(
+                  AppAsyncStorage.STORAGE_KEYS.awaitingPayment, paymentParams
+                )
+                if (selectedPaymentMethod?.value === 'PayOs') {
+                  navigation.navigate(ShoppingGraph.PayOsScreen, {
+                    orderId: response.data._id,
+                    totalPrice: response.data.totalPrice,
+                  });
+                } else if (selectedPaymentMethod?.value === 'zalopay') {
+                  navigation.navigate(ShoppingGraph.Zalopayscreen, {
+                    orderId: response.data._id,
+                    totalPrice: response.data.totalPrice,
+                  });
+                }
+              } catch (error) {
+                console.log('error:', error); // debug
               }
-
 
             } else {
               navigation.reset({
