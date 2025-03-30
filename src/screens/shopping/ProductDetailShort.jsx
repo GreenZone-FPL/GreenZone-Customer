@@ -5,7 +5,7 @@ import { getProductDetail } from '../../axios';
 import { CheckoutFooter, Column, NormalLoading, NotesList, OverlayStatusBar, RadioGroup, Row, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { CartManager } from '../../utils';
+import { CartManager, Toaster } from '../../utils';
 
 const { width, height } = Dimensions.get('window')
 const ProductDetailShort = ({ route, navigation }) => {
@@ -124,6 +124,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                     </ScrollView>
 
                     <CheckoutFooter
+                        setQuantity={setQuantity}
                         backgroundColor={colors.white}
                         quantity={quantity}
                         handlePlus={() => {
@@ -138,6 +139,11 @@ const ProductDetailShort = ({ route, navigation }) => {
                         }}
                         totalPrice={totalAmount}
                         onButtonPress={async () => {
+                            if(!quantity || quantity < 1){
+                                setQuantity(1)
+                                Toaster.show('Vui lòng nhập số lượng hợp lệ')
+                                return
+                              }
                             const updatedToppings = selectedToppings.map(topping => ({
                                 ...topping,
                                 topping: topping._id,

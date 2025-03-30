@@ -10,6 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AppAsyncStorage, CartManager } from '../utils';
 import { AuthActionTypes, cartInitialState } from '../reducers';
 
+
 export const useAppContainer = () => {
   const {
     updateOrderMessage,
@@ -49,8 +50,23 @@ export const useAppContainer = () => {
             { text: 'Đóng', style: 'cancel' },
             {
               text: 'Vẫn quay lại',
-              onPress: () =>
-                authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needRegister: false } }),
+              onPress: async () => {
+                const token = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken);
+                console.log('token', token);
+                if (token) {
+                  await AppAsyncStorage.removeData(
+                    AppAsyncStorage.STORAGE_KEYS.accessToken,
+                  );
+                  await AppAsyncStorage.removeData(
+                    AppAsyncStorage.STORAGE_KEYS.refreshToken,
+                  );
+
+                }
+                authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false, needRegister: false, needAuthen: false, lastName: null } })
+              
+              }
+
+
             },
           ]
         );

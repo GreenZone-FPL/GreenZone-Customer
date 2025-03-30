@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -19,7 +20,7 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { CartManager } from '../../utils';
+import { CartManager, Toaster } from '../../utils';
 
 const EditCartItemScreen = ({ route, navigation }) => {
 
@@ -109,7 +110,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
       {product && (
         <>
           <ScrollView style={styles.modalContent}>
-          <ProductImage product={product}/>
+            <ProductImage product={product} />
 
             <ProductInfo
               product={product}
@@ -148,6 +149,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
           </ScrollView>
 
           <CheckoutFooter
+            setQuantity={setQuantity}
             backgroundColor={colors.white}
             quantity={quantity}
             handlePlus={() => {
@@ -162,6 +164,43 @@ const EditCartItemScreen = ({ route, navigation }) => {
             }}
             totalPrice={totalAmount}
             onButtonPress={async () => {
+              if (quantity < 1) {
+                // Hiển thị cảnh báo khi số lượng sản phẩm nhỏ hơn 1
+                Alert.alert(
+                  "Xóa sản phẩm",
+                  "Bạn có chắc chắn muốn xóa sản phẩm này?",
+                  [
+                    {
+                      text: "Đóng",
+                      onPress: () => {
+                        setQuantity(1);
+                      },
+                      style: "cancel"
+                    },
+                    {
+                      text: "Xóa",
+                      onPress: async () => {
+
+                        console.log('productId', product._id)
+                        await CartManager.removeFromCart(product._id, cartDispatch);
+                        Toaster.show('Xóa thành công')
+                      }
+                    }
+                  ],
+                  { cancelable: false }
+                );
+                return
+              }
+              if (quantity >= 1  && !quantity) {
+                setQuantity(1)
+                Toaster.show('Vui lòng nhập số lượng hợp lệ')
+                return
+              }
+
+           
+
+
+
               const sortedToppings = selectedToppings?.length
                 ? [...selectedToppings].sort((a, b) =>
                   a._id.localeCompare(b._id),

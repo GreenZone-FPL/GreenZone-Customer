@@ -7,9 +7,11 @@ import { TextFormatter } from '../../utils';
 import { PrimaryButton } from '../buttons/PrimaryButton';
 import { Row } from '../containers/Row';
 import { TitleText } from '../texts/TitleText';
+import { TextInput } from 'react-native';
 
 const CheckoutFooterPropTypes = {
     quantity: PropTypes.number.isRequired,
+    setQuantity: PropTypes.func.isRequired,
     handlePlus: PropTypes.func.isRequired,
     handleMinus: PropTypes.func.isRequired,
     totalPrice: PropTypes.number,
@@ -38,8 +40,8 @@ const CheckoutFooterPropTypes = {
     />
  */
 export const CheckoutFooter = ({
-
     quantity,
+    setQuantity,
     handlePlus,
     handleMinus,
     totalPrice,
@@ -49,31 +51,58 @@ export const CheckoutFooter = ({
 }) => {
     return (
         <Row style={[styles.footer, { backgroundColor: backgroundColor }]}>
-
-            <Row style={{gap: 20}}>
-
+            <Row style={{ gap: 20 }}>
                 <Pressable style={styles.circleWrapper} onPress={handleMinus}>
                     <Feather name={"minus"} color={colors.primary} size={18} />
                 </Pressable>
 
+                <TextInput
+                    style={{
+                        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+                        textAlign: 'center',
+                        borderBottomWidth: 1,
+                        borderColor: colors.gray400,
+                        width: 25
+                    }}
+                    keyboardType="numeric"
+                    value={String(quantity)}
+                    onChangeText={(value) => {
+                        // Nếu người dùng xóa hết, cho phép để rỗng
+                        if (value === "") {
+                            setQuantity("");
+                        } else {
+                            // Chặn ký tự không hợp lệ (dấu chấm, dấu phẩy)
+                            const cleanedValue = value.replace(/[^0-9]/g, '');
 
-                <TitleText
-                    style={{fontSize: 18}}
-                    text={quantity}
+                            // Chỉ cập nhật khi giá trị thay đổi
+                            if (cleanedValue !== value) {
+                                setQuantity(parseInt(cleanedValue, 10)); // Chỉ cho phép số nguyên
+                            } else {
+                                const parsed = parseInt(value, 10);
+                                if (!isNaN(parsed)) {
+                                    setQuantity(parsed);
+                                }
+                            }
+                        }
+                    }}
+                    onBlur={() => {
+                        // Giới hạn khi mất focus, nếu số quá nhỏ, đặt lại thành 1
+                        if (!quantity || quantity < 1) setQuantity(1);
+                    }}
                 />
 
 
                 <Pressable style={styles.circleWrapper} onPress={handlePlus}>
                     <Feather name={"plus"} color={colors.primary} size={18} />
                 </Pressable>
-
             </Row>
 
             <PrimaryButton
                 style={{ flex: 1, borderRadius: 16 }}
-                titleStyle={{ fontSize: 16 }}
+                titleStyle={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}
                 title={`${buttonTitle} ${TextFormatter.formatCurrency(totalPrice)}`}
-                onPress={onButtonPress} />
+                onPress={onButtonPress}
+            />
         </Row>
     );
 };
