@@ -19,7 +19,7 @@ const OrderHistoryScreen = ({ navigation }) => {
 
 
   const { updateOrderMessage } = useAppContext();
-  console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
+  // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
   const fetchOrders = async (status = '') => {
     try {
@@ -103,7 +103,7 @@ const OrderListView = ({
   loading,
   onItemPress,
 }) => {
-  console.log('status', status)
+
   return (
     <View style={styles.scene}>
       {loading ? (

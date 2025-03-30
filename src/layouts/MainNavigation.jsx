@@ -68,7 +68,7 @@ const MainNavigation = () => {
           }
 
           return (
-            <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL }}>
+            <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>
               {label}
             </Text>
           );

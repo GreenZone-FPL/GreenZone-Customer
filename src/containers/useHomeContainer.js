@@ -1,17 +1,13 @@
-import { useEffect, useReducer } from 'react';
-import { AuthActionTypes } from '../reducers';
-import { useAppContext } from '../context/appContext';
 import { useNavigation } from '@react-navigation/native';
+import { useAppContext } from '../context/appContext';
 import { ShoppingGraph } from '../layouts/graphs';
-import { useAppContainer } from './useAppContainer';
 import { AppAsyncStorage } from '../utils';
+import { useAppContainer } from './useAppContainer';
 
 export const useHomeContainer = () => {
     const { authDispatch, authState } = useAppContext()
-    const { onNavigateLogin, onNavigateRegister} = useAppContainer()
+    const { onNavigateLogin, onNavigateRegister } = useAppContainer()
     const navigation = useNavigation()
-
-  
 
     const onNavigateProductDetailSheet = productId => {
         navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -23,16 +19,10 @@ export const useHomeContainer = () => {
             const isTokenValid = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken)
 
             if (isTokenValid && authState.lastName) {
-                navigation.navigate(ShoppingGraph.ProductDetailShort, {
-                    productId,
-                });
-            }
-            else if(isTokenValid && !authState.lastName) {
-                onNavigateRegister()
-            }else{
+                navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});}
+            else {
                 onNavigateLogin()
             }
-
 
         } catch (error) {
             console.log('Error', error)
@@ -40,8 +30,14 @@ export const useHomeContainer = () => {
 
     }
 
+    const handleLogin = () => {
+        console.log('press')
+        onNavigateLogin()
+
+    }
+
     return {
-        // onNavigateLogin,
+        handleLogin,
         onNavigateProductDetailSheet,
         onClickAddToCart
     }

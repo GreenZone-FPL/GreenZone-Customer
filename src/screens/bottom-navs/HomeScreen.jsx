@@ -28,9 +28,9 @@ import {
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
-  NormalLoading,
 } from '../../components';
 import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
+import {useAppContainer, useHomeContainer} from '../../containers';
 import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
@@ -41,11 +41,7 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
-import {useAppContainer, useHomeContainer} from '../../containers';
 import CallSaveLocation from '../../utils/CallSaveLocation';
-import {AuthActionTypes} from '../../reducers';
-import {Icon} from 'react-native-paper';
-import {use} from 'react';
 const HomeScreen = props => {
   const {navigation} = props;
   const [categories, setCategories] = useState([]);
@@ -63,8 +59,11 @@ const HomeScreen = props => {
   const {cartState, cartDispatch, authState, authDispatch} =
     useAppContext() || {};
 
-  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
-  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
+  const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
+    useHomeContainer();
+  // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
+
+  // console.log('authState', authState)
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -186,15 +185,10 @@ const HomeScreen = props => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
-        {authState.isLoggedIn ? (
-          <>
-            {!authState.lastName && (
-              <AuthButton title="Đăng ký" onPress={onNavigateRegister} />
-            )}
-            {authState.lastName && <BarcodeUser codeId="M1678263323" />}
-          </>
+        {authState.lastName ? (
+          <BarcodeUser codeId="M1678263323" />
         ) : (
-          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+          <AuthButton title="Đăng nhập" onPress={handleLogin} />
         )}
 
         <CardCategory />
@@ -364,10 +358,7 @@ const styles = StyleSheet.create({
   textTitle: {
     flexWrap: 'wrap',
     textAlign: 'center',
-    marginTop: 10,
-    width: 70,
     fontSize: 14,
-    height: 37,
     fontWeight: '600',
   },
   card: {

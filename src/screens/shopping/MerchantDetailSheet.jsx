@@ -79,8 +79,9 @@ const Body = ({item}) => {
     <ScrollView>
       <View style={styles.body}>
         <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.location}>{item.specificAddress}</Text>
+       
         <Text style={styles.openingHours}>Giờ mở cửa: {item.openTime}</Text>
+        <Text style={styles.openingHours}>Giờ đóng cửa: {item.closeTime}</Text>
         <TouchableOpacity
           onPress={() => openGoogleMaps(item.latitude, item.longitude)}
           style={styles.infoContainer}>
@@ -92,25 +93,19 @@ const Body = ({item}) => {
           <Text style={styles.infoText}>
             {item.specificAddress}, {item.ward}, {item.district},{' '}
             {item.province}
+            {/* {item.address} */}
           </Text>
         </TouchableOpacity>
 
-        <View style={styles.infoContainer}>
-          <Icon
-            source="cards-heart-outline"
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.primary}
-          />
-          <Text style={styles.infoText}>Thêm vào danh sách yêu thích</Text>
-        </View>
-
+       
+      
         <View style={styles.infoContainer}>
           <Icon
             source="phone-outline"
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
             color={colors.primary}
           />
-          <Text style={styles.infoText}>Liên hệ: {item.phoneNumber}</Text>
+          <Text style={styles.infoText}>Số điện thoại:  {item.phoneNumber}</Text>
         </View>
 
         <View style={styles.infoContainer}>
@@ -158,7 +153,7 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: 20,
     fontWeight: 'bold',
   },
   location: {
@@ -167,7 +162,7 @@ const styles = StyleSheet.create({
   },
   openingHours: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
+    // fontWeight: '500',
   },
   infoContainer: {
     flexDirection: 'row',

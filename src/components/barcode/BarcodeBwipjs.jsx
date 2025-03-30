@@ -52,6 +52,7 @@ const Barcodebwipjs = () => {
       }
     };
 
+
     generateBarcode();
   }, [text]);
 
