@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Dimensions,
   FlatList,
@@ -6,7 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 import {
@@ -14,9 +14,9 @@ import {
   MessageFavorite,
   Rank,
   TaskSquare,
-  TicketDiscount
+  TicketDiscount,
 } from 'iconsax-react-native';
-import { getAllCategories, getAllProducts } from '../../axios';
+import {getAllCategories, getAllProducts} from '../../axios';
 import {
   AuthButton,
   BarcodeUser,
@@ -28,23 +28,23 @@ import {
   PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useHomeContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
+import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
+import {useAppContainer, useHomeContainer} from '../../containers';
+import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
   OrderGraph,
   ShoppingGraph,
   UserGraph,
-  VoucherGraph
+  VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import CallSaveLocation from '../../utils/CallSaveLocation';
+import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import useSaveLocation from '../../utils/useSaveLocation';
 const HomeScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
   const [categories, setCategories] = useState([]);
 
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -58,14 +58,14 @@ const HomeScreen = props => {
   const [currentCategory, setCurrentCategory] = useState(null);
 
   const lastCategoryRef = useRef(currentCategory);
-  const { cartState, cartDispatch, authState, authDispatch } =
+  const {cartState, cartDispatch, authState, authDispatch} =
     useAppContext() || {};
 
-  const { onNavigateProductDetailSheet, onClickAddToCart, handleLogin } = useHomeContainer();
+  const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
+    useHomeContainer();
   // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
-
-  // console.log('authState', authState)
+  console.log('authState', authState);
 
   //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
   useEffect(() => {
@@ -83,6 +83,9 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
+  console.log('error cartd', authState.lastName);
+
+  useSaveLocation();
 
   //hàm gọi đơn hàng chờ thanh toán
   useEffect(() => {
@@ -147,7 +150,7 @@ const HomeScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
@@ -191,21 +194,19 @@ const HomeScreen = props => {
               : 'Xin chào'
             : 'Chào bạn mới'
         }
-        onBadgePress={() => { }}
+        onBadgePress={() => {}}
         isHome={false}
       />
 
-      {/* // hàm gọi và save location cửa hàng gần nhất - user */}
-      <CallSaveLocation />
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          <BarcodeUser codeId="M1678263323" />
+          <BarcodeUser />
         ) : (
-          <AuthButton title='Đăng nhập' onPress={handleLogin} />
+          <AuthButton title="Đăng nhập" onPress={handleLogin} />
         )}
 
         <CardCategory />
@@ -215,19 +216,25 @@ const HomeScreen = props => {
                             totalPrice: orderPaymentLocal.totalPrice,
                           })}/>
         ) : null}
+
+
+        {
+          allProducts.length > 0 &&
+          <ProductsListHorizontal
+            title='Sản phẩm mới'
+            products={allProducts
+              .flatMap(category => category.products)
+              .slice(0, 10)}
+            onItemClick={productId => {
+              onNavigateProductDetailSheet(productId);
+            }}
+            onIconClick={productId => {
+              onClickAddToCart(productId);
+            }}
+          />
+        }
         <NotificationList
           onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
-        />
-        <ProductsListHorizontal
-          products={allProducts
-            .flatMap(category => category.products)
-            .slice(0, 10)}
-          onItemClick={productId => {
-            onNavigateProductDetailSheet(productId);
-          }}
-          onIconClick={productId => {
-            onClickAddToCart(productId);
-          }}
         />
 
         <FlatList
@@ -239,7 +246,7 @@ const HomeScreen = props => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -264,10 +271,10 @@ const HomeScreen = props => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
+            : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
@@ -287,20 +294,20 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({ IconComponent, title, onPress }) => (
+const Item = ({IconComponent, title, onPress}) => (
   <TouchableOpacity onPress={onPress} style={styles.item}>
     {IconComponent && <IconComponent />}
     <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
   </TouchableOpacity>
 );
 
-const CardCategory = ({ navigation }) => {
+const CardCategory = ({navigation}) => {
   return (
     <View style={styles.card}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 22 }}>
+        contentContainerStyle={{gap: 22}}>
         <Item
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
@@ -392,5 +399,3 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
 });
-
-

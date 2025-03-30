@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
         marginTop: 8,
     },
     type: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        color: 'gray',
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray700,
     },
     date: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,

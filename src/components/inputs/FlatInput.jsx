@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: colors.red900,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     marginTop: 4,
   },
   disabledInput: {

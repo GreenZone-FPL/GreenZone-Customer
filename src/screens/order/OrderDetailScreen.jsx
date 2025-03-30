@@ -39,6 +39,8 @@ const OrderDetailScreen = props => {
   const {updateOrderMessage} = useAppContext();
   // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
+
+
   const fetchOrderDetail = async () => {
     try {
       const response = await getOrderDetail(orderId);
@@ -151,9 +153,7 @@ useFocusEffect(
 
             {[
               'shippingOrder',
-              'failedDelivery',
               'readyForPickup',
-              'completed',
             ].includes(orderDetail.status) && (
               <ShipperInfo
                 messageClick={() =>
@@ -221,6 +221,9 @@ useFocusEffect(
             })
           }
         />
+
+
+
         <ActionDialog
           visible={actionDialogVisible}
           title="Xác nhận"
@@ -236,7 +239,7 @@ useFocusEffect(
               );
 
               if (response) {
-                Toaster.show('Hủy đơn hàng thành công');
+                Toaster.show('Hủy đơn hàng thành công')
               }
               await fetchOrderDetail();
             } catch (error) {
@@ -512,7 +515,7 @@ const PaymentDetails = ({
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 14, color: colors.black, marginRight: 8}}>
+        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginRight: 8 }}>
           Trạng thái đơn hàng
         </Text>
         <StatusText status={status} />
@@ -589,7 +592,7 @@ const PaymentDetails = ({
           marginVertical: 6,
           justifyContent: 'space-between',
         }}>
-        <Text style={{fontSize: 14, color: colors.black, marginRight: 8}}>
+        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginRight: 8 }}>
           Phương thức thanh toán:
         </Text>
         <View
@@ -598,7 +601,7 @@ const PaymentDetails = ({
             alignItems: 'center',
           }}>
           {getPaymentIcon(paymentMethod)}
-          <Text style={{fontSize: 14, color: colors.black, marginLeft: 8}}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.black, marginLeft: 8 }}>
             {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
           </Text>
         </View>

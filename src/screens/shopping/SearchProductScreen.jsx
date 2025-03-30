@@ -10,6 +10,7 @@ import {
 } from '../../components';
 import {GLOBAL_KEYS, colors} from '../../constants';
 import {ShoppingGraph} from '../../layouts/graphs';
+import {useHomeContainer} from '../../containers';
 
 const {width} = Dimensions.get('window');
 
@@ -18,6 +19,7 @@ const SearchProductScreen = props => {
   const [allProducts, setAllProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -59,11 +61,11 @@ const SearchProductScreen = props => {
   };
 
   const onItemClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+    onNavigateProductDetailSheet(productId);
   };
 
   const onIconClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
+    onClickAddToCart(productId);
   };
 
   return (

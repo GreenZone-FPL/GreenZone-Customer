@@ -70,7 +70,7 @@ const Slider = ({item, handleGoBack}) => {
 
 const Body = ({item}) => {
   const openGoogleMaps = (latitude, longitude) => {
-   const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
     Linking.openURL(url).catch(err =>
       console.error('Lỗi mở Google Maps:', err),
     );
@@ -79,7 +79,7 @@ const Body = ({item}) => {
     <ScrollView>
       <View style={styles.body}>
         <Text style={styles.title}>{item.name}</Text>
-       
+
         <Text style={styles.openingHours}>Giờ mở cửa: {item.openTime}</Text>
         <Text style={styles.openingHours}>Giờ đóng cửa: {item.closeTime}</Text>
         <TouchableOpacity
@@ -90,22 +90,20 @@ const Body = ({item}) => {
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
             color={colors.primary}
           />
-          <Text style={styles.infoText}>
+          <Text numberOfLines={2} style={styles.infoText}>
             {item.specificAddress}, {item.ward}, {item.district},{' '}
             {item.province}
             {/* {item.address} */}
           </Text>
         </TouchableOpacity>
 
-       
-      
         <View style={styles.infoContainer}>
           <Icon
             source="phone-outline"
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
             color={colors.primary}
           />
-          <Text style={styles.infoText}>Số điện thoại:  {item.phoneNumber}</Text>
+          <Text style={styles.infoText}>Số điện thoại: {item.phoneNumber}</Text>
         </View>
 
         <View style={styles.infoContainer}>

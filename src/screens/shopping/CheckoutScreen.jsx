@@ -10,9 +10,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { Icon, RadioButton } from 'react-native-paper';
 import { createOrder } from '../../axios/';
@@ -33,12 +32,12 @@ import {
   Row,
   TitleText,
 } from '../../components';
+import LabelInput from '../../components/inputs/LabelInput';
 import {
   DeliveryMethod,
   GLOBAL_KEYS,
-  OrderStatus,
   PaymentMethod,
-  colors,
+  colors
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
@@ -55,11 +54,8 @@ import {
   CartManager,
   TextFormatter,
   Toaster,
-  fetchUserLocation,
-  LocationManager,
+  fetchUserLocation
 } from '../../utils';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -300,20 +296,7 @@ const CheckoutScreen = ({ navigation }) => {
                   onPress={() => CartManager.clearOrderItems(cartDispatch)}
                 />
 
-                {/* <Button
-                  title="Clear activeOrder"
-                  onPress={async () =>
-                    await AppAsyncStorage.storeData(
-                      AppAsyncStorage.STORAGE_KEYS.activeOrders,
-                      [],
-                    )
-                  }
-                />
-
-                <Button
-                  title="Read activeOrder"
-                  onPress={async () => await AppAsyncStorage.getActiveOrders()}
-                /> */}
+               
               </Column>
             </ScrollView>
 
@@ -381,7 +364,7 @@ const CheckoutScreen = ({ navigation }) => {
               response?.data?.status,
               data => {
                 setUpdateOrderMessage(prev => ({
-                    visible: data.status !== "waitingPayment",
+                  visible: data.status !== "waitingPayment",
                   orderId: data.orderId,
                   oldStatus: prev.status,
                   message: data.message,
@@ -450,11 +433,8 @@ const CheckoutScreen = ({ navigation }) => {
         onHide={() => setDialogRecipientInfoVisible(false)}
         onConfirm={data => {
           CartManager.updateOrderInfo(cartDispatch, {
-            shippingAddressInfo: {
-              ...cartState?.shippingAddressInfo,
               consigneeName: data.name,
               consigneePhone: data.phoneNumber,
-            },
           });
           setDialogRecipientInfoVisible(false);
         }}
@@ -500,34 +480,63 @@ const EmptyView = ({ goBack }) => {
 const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
   const [name, setName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
+  const [nameError, setNameError] = React.useState('');
+  const [phoneError, setPhoneError] = React.useState('');
+
+  const validate = () => {
+    let isValid = true;
+
+    if (!name.trim()) {
+      setNameError('Vui lòng nhập tên người nhận!');
+      isValid = false;
+    } else {
+      setNameError('');
+    }
+
+    if (!phoneNumber.trim()) {
+      setPhoneError('Vui lòng nhập số điện thoại!');
+      isValid = false;
+    } else if (!/^\d{10}$/.test(phoneNumber)) {
+      setPhoneError('Số điện thoại phải có đúng 10 chữ số!');
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+
+    return isValid;
+  };
+
+  const handleConfirm = () => {
+    if (validate()) {
+      onConfirm({ name, phoneNumber });
+      setName('');
+      setPhoneNumber('');
+      setNameError('');
+      setPhoneError('');
+    }
+  };
 
   return (
     <DialogBasic
-      title={'Thay đổi thông tin người nhận '}
+      titleStyle={{ color: colors.black }}
+      title={'Thay đổi thông tin người nhận'}
       isVisible={visible}
       onHide={onHide}
       style={{ backgroundColor: colors.fbBg }}>
       <Column style={styles.content}>
-        <FlatInput label={'Tên người nhận'} value={name} setValue={setName} />
 
-        <FlatInput
-          label={'Số điện thoại'}
-          value={phoneNumber}
-          setValue={setPhoneNumber}
-        />
+        <LabelInput label='Tên người nhận' required />
+        <FlatInput value={name} setValue={setName} placeholder='Nguyễn Văn A' invalidMessage={nameError} />
 
-        <PrimaryButton
-          title={'Cập nhật'}
-          onPress={() => {
-            onConfirm({ name, phoneNumber });
-            setName('');
-            setPhoneNumber('');
-          }}
-        />
+        <LabelInput label='Số điện thoại' required />
+        <FlatInput placeholder='0123456789' value={phoneNumber} setValue={setPhoneNumber} invalidMessage={phoneError} />
+
+        <PrimaryButton title={'Cập nhật'} onPress={handleConfirm} />
       </Column>
     </DialogBasic>
   );
 };
+
 
 const TimeSection = ({ timeInfo, showDialog, style }) => {
   const isToday = timeInfo?.selectedDay === 'Hôm nay';
@@ -1038,7 +1047,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   content: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: 12,
     backgroundColor: colors.transparent,
   },
 
