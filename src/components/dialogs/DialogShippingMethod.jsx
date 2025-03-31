@@ -180,9 +180,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.transparent,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.black,
     textAlign: 'center',
     flex: 1,
   },
