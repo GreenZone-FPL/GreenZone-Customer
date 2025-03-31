@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
-        fontWeight: '500'
+        fontWeight: '400'
     },
     required: {
         color: colors.red900,

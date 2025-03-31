@@ -138,7 +138,6 @@ export const useAppContainer = () => {
           setUpdateOrderMessage(prev => ({
             visible: true,
             orderId: data.orderId,
-            oldStatus: prev.status,
             message: data.message,
             status: data.status,
           }));

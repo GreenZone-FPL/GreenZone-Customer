@@ -52,6 +52,8 @@ const OrderDetailScreen = props => {
       setLoading(false);
     }
   };
+
+  
   useEffect(() => {
     fetchOrderDetail();
   }, [orderId, updateOrderMessage]);

@@ -14,18 +14,16 @@ const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = ({ navigation }) => {
   const [tabIndex, setTabIndex] = useState(0);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState({}); // Lưu trữ dữ liệu theo từng tab
   const [loading, setLoading] = useState(false);
 
-
   const { updateOrderMessage } = useAppContext();
-  // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
-  const fetchOrders = async (status = '') => {
+  const fetchOrders = async (status) => {
     try {
       setLoading(true);
       const data = await getOrdersByStatus(status);
-      setOrders(data);
+      setOrders(prev => ({ ...prev, [status]: data }));
     } catch (error) {
       console.error('Lỗi khi lấy đơn hàng:', error);
     } finally {
@@ -34,23 +32,12 @@ const OrderHistoryScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (updateOrderMessage?.status) {
-      const { status, oldStatus } = updateOrderMessage;
-      console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
-  
-      // Xác định trạng thái hiện tại của tab
-      const currentTabStatus = orderStatuses[tabIndex];
-  
-      // Nếu trạng thái mới khớp với tab hiện tại thì reload
-      if (status === currentTabStatus) {
-        fetchOrders(currentTabStatus);
-      }
-    }
-  }, [updateOrderMessage.status, tabIndex]); // Thêm tabIndex vào dependencies
-  
+    orderStatuses.forEach(status => fetchOrders(status));
+  }, [updateOrderMessage]);
 
-
-
+  useEffect(() => {
+    fetchOrders(orderStatuses[tabIndex]);
+  }, [tabIndex]);
 
   return (
     <View style={styles.container}>
@@ -61,10 +48,7 @@ const OrderHistoryScreen = ({ navigation }) => {
           if (navigation.canGoBack()) {
             navigation.goBack();
           } else {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: MainGraph.graphName }],
-            });
+            navigation.reset({ index: 0, routes: [{ name: MainGraph.graphName }] });
           }
         }}
       />
@@ -77,13 +61,12 @@ const OrderHistoryScreen = ({ navigation }) => {
           titleActiveColor: colors.primary,
           titleInActiveColor: colors.gray700,
         }}
-
       >
         {orderStatuses.map((status, index) => (
           <View key={index} style={{ flex: 1 }}>
             <OrderListView
               status={status}
-              orders={orders}
+              orders={orders[status] || []}
               loading={loading}
               onItemPress={(order) =>
                 navigation.navigate('OrderDetailScreen', { orderId: order._id })
@@ -91,43 +74,30 @@ const OrderHistoryScreen = ({ navigation }) => {
             />
           </View>
         ))}
-
       </CustomTabView>
     </View>
   );
 };
 
-
-const OrderListView = ({
-  status,
-  orders,
-  loading,
-  onItemPress,
-}) => {
-
-  return (
-    <View style={styles.scene}>
-      {loading ? (
-        <NormalLoading visible={loading} />
-      ) : orders.length > 0 ? (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={orders}
-          keyExtractor={item => item._id}
-          renderItem={({ item }) => (
-            <OrderItem
-              order={item}
-              onPress={onItemPress}
-            />
-          )}
-          contentContainerStyle={{ gap: 5 }}
-        />
-      ) : (
-        <EmptyView />
-      )}
-    </View>
-  );
-};
+const OrderListView = ({ status, orders, loading, onItemPress }) => (
+  <View style={styles.scene}>
+    {loading ? (
+      <NormalLoading visible={loading} />
+    ) : orders.length > 0 ? (
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={orders}
+        keyExtractor={item => item._id}
+        renderItem={({ item }) => (
+          <OrderItem order={item} onPress={onItemPress} />
+        )}
+        contentContainerStyle={{ gap: 5 }}
+      />
+    ) : (
+      <EmptyView />
+    )}
+  </View>
+);
 
 const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
   // console.log('order', JSON.stringify(order, null, 2))
