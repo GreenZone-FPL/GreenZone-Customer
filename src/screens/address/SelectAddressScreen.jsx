@@ -180,7 +180,7 @@ const SelectAddressScreen = ({navigation, route}) => {
         </Pressable>
         <View style={{flex: 1}}>
           <CustomSearchBar 
-          placeholder="Tìm kiếm cửa hàng ..."
+          placeholder="Tìm kiếm địa chỉ ..."
           searchQuery={searchText}
           setSearchQuery={handleSearch}
           leftIconColor={colors.black}
