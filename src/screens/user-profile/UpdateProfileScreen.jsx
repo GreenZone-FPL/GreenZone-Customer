@@ -28,7 +28,7 @@ import DatePicker from 'react-native-date-picker';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { uploadFile } from '../../axios/modules/file';
 import { updateUserProfile } from '../../axios/modules/user';
-import { AppAsyncStorage } from '../../utils';
+import { AppAsyncStorage, CartManager } from '../../utils';
 import { BottomGraph, MainGraph, UserGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
 
@@ -126,17 +126,17 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
       return;
     }
-  
+
     if (!validateEmail(email)) {
       ToastAndroid.show('Email không hợp lệ! Vui lòng nhập đúng định dạng.', ToastAndroid.SHORT);
       return; // Ngăn chặn tiếp tục xử lý nếu email không hợp lệ
     }
-  
-  
+
+
     const formattedDob = dob.toISOString().split('T')[0];
     const formattedGender =
       gender === 'Nam' ? 'male' : gender === 'Nữ' ? 'female' : 'other';
-  
+
     if (
       lastName === profile.lastName &&
       firstName === profile.firstName &&
@@ -148,7 +148,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       ToastAndroid.show('Không có thay đổi nào!', ToastAndroid.SHORT);
       return;
     }
-  
+
     try {
       setLoading(true);
       let avatarUrl = avatar || '';
@@ -158,7 +158,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
           avatarUrl = uploadedUrl;
         }
       }
-  
+
       const profileData = {
         firstName,
         lastName,
@@ -167,11 +167,11 @@ const UpdateProfileScreen = ({ navigation, route }) => {
         gender: formattedGender,
         avatar: avatarUrl,
       };
-  
+
       console.log('Dữ liệu gửi lên API:', profileData);
-  
+
       const result = await updateUserProfile(profileData);
-  
+
       if (result?._id) {
         setHasImageChanged(false);
         await AppAsyncStorage.storeData(
@@ -187,9 +187,9 @@ const UpdateProfileScreen = ({ navigation, route }) => {
             lastName: result.lastName,
           },
         });
-  
+        await CartManager.updateOrderInfo(cartDispatch, { consigneeName: `${result.lastName} ${result.firstName}` })
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
-        navigation.goBack();
+
       }
     } catch (error) {
       console.error('Lỗi cập nhật hồ sơ:', error.response?.data || error.message);
@@ -198,7 +198,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <KeyboardAvoidingView style={styles.container}>
       <NormalLoading visible={loading} />
