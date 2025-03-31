@@ -347,7 +347,6 @@ const CheckoutScreen = ({ navigation }) => {
             const newActiveOrder = {
               visible: true,
               orderId: response?.data?._id,
-              oldStatus: response?.data?.status,
               message: 'Đặt hàng thành công',
               status: response?.data?.status,
             };
@@ -358,13 +357,12 @@ const CheckoutScreen = ({ navigation }) => {
               response?.data?._id,
               response?.data?.status,
               data => {
-                setUpdateOrderMessage(prev => ({
+                setUpdateOrderMessage({
                   visible: data.status !== 'waitingPayment',
                   orderId: data.orderId,
-                  oldStatus: prev.status,
                   message: data.message,
                   status: data.status,
-                }));
+                });
               },
             );
 
