@@ -27,9 +27,9 @@ export const register = async ({
 
     const { data } = response;
 
-   
 
-   
+
+
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -73,24 +73,26 @@ export const verifyOTP = async ({ phoneNumber, code }) => {
       code,
     });
     const { data } = response;
-    const userLastName = data.user.lastName;
 
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.accessToken,
-      data.token.accessToken.token,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.refreshToken,
-      data.token.refreshToken.token,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.userId,
-      data.user._id,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.user,
-      data.user,
-    );
+    if (data.user.lastName) {
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.accessToken,
+        data.token.accessToken.token,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.refreshToken,
+        data.token.refreshToken.token,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.userId,
+        data.user._id,
+      );
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.user,
+        data.user,
+      );
+    }
+
 
 
 

@@ -40,17 +40,17 @@ class SocketService {
     try {
       // Nếu socket chưa khởi tạo, khởi tạo ngay
       if (!this.socket || !this.socket.connected) {
-        console.log("Socket chưa được khởi tạo, đang khởi tạo...");
+        // console.log("Socket chưa được khởi tạo, đang khởi tạo...");
         await this.initialize();
       }
   
       if (!this.socket) {
-        console.log("Không thể khởi tạo socket, thoát khỏi joinOrder2");
+        // console.log("Không thể khởi tạo socket, thoát khỏi joinOrder2");
         return;
       }
   
       this.socket.emit("order.join", orderId, () => {
-        console.log(`Đã tham gia order ${orderId}`);
+        // console.log(`Đã tham gia order ${orderId}`);
       });
   
       // Lấy danh sách activeOrders từ AsyncStorage
@@ -112,7 +112,7 @@ class SocketService {
     try {
       // Kiểm tra xem socket đã được khởi tạo chưa
       if (!this.socket || !this.socket.connected) {
-        console.log("Socket chưa được khởi tạo hoặc chưa kết nối!");
+        // console.log("Socket chưa được khởi tạo hoặc chưa kết nối!");
         await this.initialize();  
       }
   
@@ -122,7 +122,7 @@ class SocketService {
       if (activeOrders && activeOrders.length > 0) {
         // Duyệt qua từng đơn hàng để tham gia lại
         for (const order of activeOrders) {
-          console.log(`Đang rejoin order với ID: ${order.orderId} và trạng thái: ${order.status}`); // Log ID và status
+          // console.log(`Đang rejoin order với ID: ${order.orderId} và trạng thái: ${order.status}`); // Log ID và status
   
           // Gọi joinOrder2 cho mỗi đơn hàng, đồng thời gọi callback khi hoàn thành
           await this.joinOrder2(order.orderId, order.status, (data) => {

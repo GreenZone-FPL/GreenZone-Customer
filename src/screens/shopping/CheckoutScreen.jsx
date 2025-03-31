@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
@@ -13,8 +13,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon, RadioButton} from 'react-native-paper';
-import {createOrder} from '../../axios/';
+import { Icon, RadioButton } from 'react-native-paper';
+import { createOrder } from '../../axios/';
 import {
   ActionDialog,
   Column,
@@ -39,7 +39,7 @@ import {
   PaymentMethod,
   colors,
 } from '../../constants';
-import {useAppContext} from '../../context/appContext';
+import { useAppContext } from '../../context/appContext';
 import {
   BottomGraph,
   MainGraph,
@@ -57,8 +57,8 @@ import {
   fetchUserLocation,
 } from '../../utils';
 
-const {width} = Dimensions.get('window');
-const CheckoutScreen = ({navigation}) => {
+const { width } = Dimensions.get('window');
+const CheckoutScreen = ({ navigation }) => {
   const [dialogCreateOrderVisible, setDialogCreateOrderVisible] =
     useState(false);
 
@@ -71,7 +71,7 @@ const CheckoutScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [currentLocation, setCurrentLocation] = useState('');
   const [note, setNote] = useState('');
-  const {cartState, cartDispatch, setUpdateOrderMessage, awaitingPayments, setAwaitingPayments} = useAppContext();
+  const { cartState, cartDispatch, setUpdateOrderMessage, awaitingPayments, setAwaitingPayments } = useAppContext();
   const [timeInfo, setTimeInfo] = React.useState({
     selectedDay: 'Hôm nay',
     selectedTime: 'Sớm nhất có thể',
@@ -87,7 +87,7 @@ const CheckoutScreen = ({navigation}) => {
     };
     initSocket();
 
-    return () => {};
+    return () => { };
   }, []);
   useEffect(() => {
     if (timeInfo?.fulfillmentDateTime) {
@@ -97,7 +97,7 @@ const CheckoutScreen = ({navigation}) => {
       const nowISO = new Date().toISOString();
 
       if (fulfillmentTimeISO < nowISO) {
-        setTimeInfo({selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể'});
+        setTimeInfo({ selectedDay: 'Hôm nay', selectedTime: 'Sớm nhất có thể' });
       }
     }
   }, [timeInfo?.fulfillmentDateTime]);
@@ -165,7 +165,7 @@ const CheckoutScreen = ({navigation}) => {
                     fontWeight: '700',
                     fontSize: 16,
                   }}
-                  rightTextStyle={{color: colors.primary}}
+                  rightTextStyle={{ color: colors.primary }}
                   onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
 
@@ -192,7 +192,7 @@ const CheckoutScreen = ({navigation}) => {
                         });
                       }}
                     />
-                    <Row style={{gap: 0}}>
+                    <Row style={{ gap: 0 }}>
                       {cartState?.shippingAddressInfo && (
                         <RecipientInfo
                           cartDispatch={cartDispatch}
@@ -200,7 +200,7 @@ const CheckoutScreen = ({navigation}) => {
                           onChangeRecipientInfo={() =>
                             setDialogRecipientInfoVisible(true)
                           }
-                          style={{flex: 1}}
+                          style={{ flex: 1 }}
                         />
                       )}
 
@@ -208,7 +208,7 @@ const CheckoutScreen = ({navigation}) => {
                         timeInfo={timeInfo}
                         showDialog={() => setDialogSelectTimeVisible(true)}
                         cartState={cartState}
-                        style={{flex: 1}}
+                        style={{ flex: 1 }}
                       />
                     </Row>
                   </>
@@ -220,7 +220,7 @@ const CheckoutScreen = ({navigation}) => {
                       timeInfo={timeInfo}
                       showDialog={() => setDialogSelectTimeVisible(true)}
                       cartState={cartState}
-                      style={{flex: 1}}
+                      style={{ flex: 1 }}
                     />
                   </>
                 )}
@@ -259,7 +259,7 @@ const CheckoutScreen = ({navigation}) => {
                   })
                 }
               />
-              <Column style={{gap: 16, marginHorizontal: 16}}>
+              <Column style={{ gap: 16, marginHorizontal: 16 }}>
                 <Button
                   title="Log cartState"
                   onPress={() =>
@@ -376,11 +376,12 @@ const CheckoutScreen = ({navigation}) => {
                 orderId: response.data._id,
                 totalPrice: response.data.totalPrice,
               };
+              console.log('paymentParams', paymentParams)
               await AppAsyncStorage.storeData(
-                AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-                paymentParams,
-              );
+                AppAsyncStorage.STORAGE_KEYS.awaitingPayments, paymentParams);
+
               setAwaitingPayments(paymentParams)
+
               if (selectedPaymentMethod?.value === 'PayOs') {
                 navigation.navigate(ShoppingGraph.PayOsScreen, {
                   orderId: response.data._id,
@@ -396,10 +397,10 @@ const CheckoutScreen = ({navigation}) => {
               navigation.reset({
                 index: 1,
                 routes: [
-                  {name: MainGraph.graphName},
+                  { name: MainGraph.graphName },
                   {
                     name: OrderGraph.OrderDetailScreen,
-                    params: {orderId: response?.data?._id},
+                    params: { orderId: response?.data?._id },
                   },
                 ],
               });
@@ -455,15 +456,15 @@ const CheckoutScreen = ({navigation}) => {
 };
 export default CheckoutScreen;
 
-const EmptyView = ({goBack}) => {
+const EmptyView = ({ goBack }) => {
   return (
-    <View style={[styles.container, {alignItems: 'center', gap: 50}]}>
+    <View style={[styles.container, { alignItems: 'center', gap: 50 }]}>
       <LightStatusBar />
       <NormalHeader title="Xác nhận đơn hàng" onLeftPress={goBack} />
       <Image
         resizeMode="contain"
         source={require('../../assets/images/empty_cart.png')}
-        style={{width: '80%', height: 300, alignSelf: 'center'}}
+        style={{ width: '80%', height: 300, alignSelf: 'center' }}
       />
 
       <NormalText text="Giỏ hàng của bạn đang trống" />
@@ -471,7 +472,7 @@ const EmptyView = ({goBack}) => {
   );
 };
 
-const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
+const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
   const [name, setName] = React.useState('');
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [nameError, setNameError] = React.useState('');
@@ -502,7 +503,7 @@ const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
 
   const handleConfirm = () => {
     if (validate()) {
-      onConfirm({name, phoneNumber});
+      onConfirm({ name, phoneNumber });
       setName('');
       setPhoneNumber('');
       setNameError('');
@@ -512,11 +513,11 @@ const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
 
   return (
     <DialogBasic
-      titleStyle={{color: colors.black}}
+      titleStyle={{ color: colors.black }}
       title={'Thay đổi thông tin người nhận'}
       isVisible={visible}
       onHide={onHide}
-      style={{backgroundColor: colors.fbBg}}>
+      style={{ backgroundColor: colors.fbBg }}>
       <Column style={styles.content}>
         <LabelInput label="Tên người nhận" required />
         <FlatInput
@@ -540,7 +541,7 @@ const DialogRecipientInfo = ({visible, onHide, onConfirm}) => {
   );
 };
 
-const TimeSection = ({timeInfo, showDialog, style}) => {
+const TimeSection = ({ timeInfo, showDialog, style }) => {
   const isToday = timeInfo?.selectedDay === 'Hôm nay';
   const isEarliest = timeInfo?.selectedTime === 'Sớm nhất có thể';
 
@@ -559,17 +560,17 @@ const TimeSection = ({timeInfo, showDialog, style}) => {
       {timeInfo && timeInfo.fulfillmentDateTime ? (
         <>
           <TitleText
-            style={{color: colors.green500}}
+            style={{ color: colors.green500 }}
             text={`${timeInfo.selectedTime}`}
           />
           <NormalText text={`${timeInfo.selectedDay}`} />
           {isToday && isEarliest && (
-            <TitleText text="15-30 phút" style={{color: colors.green500}} />
+            <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
           )}
         </>
       ) : (
         <>
-          <TitleText text="15-30 phút" style={{color: colors.green500}} />
+          <TitleText text="15-30 phút" style={{ color: colors.green500 }} />
           <NormalText text="Sớm nhất có thể" />
         </>
       )}
@@ -585,64 +586,64 @@ const ShippingAddress = ({
   // console.log("Dữ liệu shippingAddressInfo:", JSON.stringify(shippingAddressInfo, null, 2));
 
   return (
-    <View style={[styles.containerItem, {marginBottom: 0}]}>
+    <View style={[styles.containerItem, { marginBottom: 0 }]}>
       <DualTextRow
-        style={{marginVertical: 0, marginBottom: 8}}
+        style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Địa chỉ nhận hàng"
-        leftTextStyle={{fontWeight: '600'}}
+        leftTextStyle={{ fontWeight: '600' }}
         rightText="Thay đổi"
-        rightTextStyle={{color: colors.primary}}
+        rightTextStyle={{ color: colors.primary }}
         onRightPress={chooseUserAddress}
       />
       {deliveryMethod !== DeliveryMethod.PICK_UP.value &&
-      shippingAddressInfo ? (
+        shippingAddressInfo ? (
         <>
           {shippingAddressInfo.description && (
             <NormalText
               text={shippingAddressInfo.description}
-              style={{lineHeight: 20, color: colors.black}}
+              style={{ lineHeight: 20, color: colors.black }}
             />
           )}
           {shippingAddressInfo.location && (
             <NormalText
               text={shippingAddressInfo.location}
-              style={{lineHeight: 20, color: colors.black}}
+              style={{ lineHeight: 20, color: colors.black }}
             />
           )}
         </>
       ) : (
         <NormalText
           text="Vui lòng chọn địa chỉ giao hàng"
-          style={{color: colors.orange700}}
+          style={{ color: colors.orange700 }}
         />
       )}
     </View>
   );
 };
 
-const StoreAddress = ({storeInfo, chooseMerchant}) => {
+const StoreAddress = ({ storeInfo, chooseMerchant }) => {
   return (
     <View style={styles.containerItem}>
       <DualTextRow
-        style={{marginVertical: 0, marginBottom: 8}}
+        style={{ marginVertical: 0, marginBottom: 8 }}
         leftText="Địa chỉ cửa hàng"
-        leftTextStyle={{fontWeight: '600'}}
+        leftTextStyle={{ fontWeight: '600' }}
         rightText="Thay đổi"
-        rightTextStyle={{color: colors.primary}}
+        rightTextStyle={{ color: colors.primary }}
         onRightPress={chooseMerchant}
       />
       {storeInfo?.storeName && storeInfo?.storeAddress ? (
         <>
           <TitleText
             text={storeInfo?.storeName}
-            style={{marginBottom: 8, color: colors.green500}}
+            style={{ marginBottom: 8, color: colors.green500 }}
           />
           <NormalText text={storeInfo?.storeAddress} />
         </>
       ) : (
         <NormalText
           text="Vui lòng chọn địa chỉ cửa hàng"
-          style={{color: colors.orange700}}
+          style={{ color: colors.orange700 }}
         />
       )}
     </View>
@@ -700,30 +701,30 @@ const RecipientInfo = ({
         style,
       ]}>
       <NormalText text={`${consigneeName}`} style={{}} />
-      <NormalText text={`${consigneePhone}`} style={{color: colors.gray700}} />
+      <NormalText text={`${consigneePhone}`} style={{ color: colors.gray700 }} />
     </Pressable>
   );
 };
 
-const ProductsInfo = ({onEditItem, cart, cartDispatch, confirmDelete}) => (
+const ProductsInfo = ({ onEditItem, cart, cartDispatch, confirmDelete }) => (
   <FlatList
     data={cart}
     keyExtractor={item => item.itemId.toString()}
-    renderItem={({item}) => (
+    renderItem={({ item }) => (
       <Pressable onPress={() => onEditItem(item)}>
         <HorizontalProductItem
           confirmDelete={() => confirmDelete(item)}
           onDelete={async () => {
             await CartManager.removeFromCart(item.itemId, cartDispatch);
           }}
-          containerStyle={{paddingHorizontal: 16}}
+          containerStyle={{ paddingHorizontal: 16 }}
           item={item}
           enableAction={false}
           enableDelete={true}
         />
       </Pressable>
     )}
-    contentContainerStyle={{gap: 0, marginHorizontal: 0}}
+    contentContainerStyle={{ gap: 0, marginHorizontal: 0 }}
     nestedScrollEnabled={true}
     scrollEnabled={false}
   />
@@ -811,7 +812,7 @@ const PaymentDetailsView = ({
             ? ''
             : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`
         }
-        rightTextStyle={{color: colors.primary}}
+        rightTextStyle={{ color: colors.primary }}
         onLeftPress={() => onSelectVoucher()}
       />
 
@@ -826,7 +827,7 @@ const PaymentDetailsView = ({
         rightText={`${TextFormatter.formatCurrency(
           paymentDetails.paymentTotal,
         )}`}
-        leftTextStyle={{color: colors.black, fontWeight: '500', fontSize: 14}}
+        leftTextStyle={{ color: colors.black, fontWeight: '500', fontSize: 14 }}
         rightTextStyle={{
           fontWeight: '700',
           color: colors.primary,
@@ -863,7 +864,7 @@ const paymentMethods = [
     paymentMethod: PaymentMethod.ONLINE.value,
   },
 ];
-const PaymentMethodView = ({cartDispatch, cartState, onSelect}) => {
+const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState(null);
 
@@ -919,7 +920,7 @@ const PaymentMethodView = ({cartDispatch, cartState, onSelect}) => {
       <NormalText text="Phương thức thanh toán" />
 
       <TouchableOpacity
-        style={{flexDirection: 'row', alignItems: 'center', gap: 6}}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
         onPress={() => setIsVisible(true)}>
         {selectedMethod && (
           <>
@@ -934,7 +935,7 @@ const PaymentMethodView = ({cartDispatch, cartState, onSelect}) => {
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
         title="Chọn phương thức thanh toán">
-        <Column style={{marginHorizontal: 16}}>
+        <Column style={{ marginHorizontal: 16 }}>
           {paymentMethods.map(method => {
             const disabled =
               cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
@@ -961,7 +962,7 @@ const PaymentMethodView = ({cartDispatch, cartState, onSelect}) => {
                   onPress={() => handleSelectMethod(method, disabled)}
                 />
                 <Image source={method.image} style={styles.image} />
-                <Text style={{color: colors.gray700, marginLeft: 8}}>
+                <Text style={{ color: colors.gray700, marginLeft: 8 }}>
                   {method.name}
                 </Text>
               </TouchableOpacity>
@@ -973,7 +974,7 @@ const PaymentMethodView = ({cartDispatch, cartState, onSelect}) => {
   );
 };
 
-const Footer = ({cartState, showDialog, timeInfo, note, cartDispatch}) => {
+const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
   const paymentDetails = CartManager.getPaymentDetails(cartState);
 
   return (
@@ -983,7 +984,7 @@ const Footer = ({cartState, showDialog, timeInfo, note, cartDispatch}) => {
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         justifyContent: 'flex-end',
       }}>
-      <Row style={{justifyContent: 'space-between', marginBottom: 6}}>
+      <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
         <Column>
           <TitleText text="Tổng cộng" />
           <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
@@ -992,7 +993,7 @@ const Footer = ({cartState, showDialog, timeInfo, note, cartDispatch}) => {
               text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(
                 paymentDetails.voucherAmount,
               )}`}
-              style={{color: colors.primary, fontWeight: '500'}}
+              style={{ color: colors.primary, fontWeight: '500' }}
             />
           )}
         </Column>
@@ -1002,7 +1003,7 @@ const Footer = ({cartState, showDialog, timeInfo, note, cartDispatch}) => {
             text={`${TextFormatter.formatCurrency(
               paymentDetails.paymentTotal,
             )}`}
-            style={{color: colors.red900, textAlign: 'right', fontSize: 16}}
+            style={{ color: colors.red900, textAlign: 'right', fontSize: 16 }}
           />
           {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
         </Column>

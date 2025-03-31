@@ -11,7 +11,6 @@ export class AppAsyncStorage {
     activeOrders: 'activeOrders',
     currentLocation: 'currentLocation',
     merchantLocation: 'merchantLocation',
-
     awaitingPayments: 'awaitingPayments',
   };
 

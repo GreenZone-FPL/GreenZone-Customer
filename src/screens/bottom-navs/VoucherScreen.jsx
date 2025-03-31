@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ImageBackground,
   Pressable,
@@ -9,110 +9,100 @@ import {
   Dimensions,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { LightStatusBar } from '../../components';
+import { AuthButton, LightStatusBar, NormalText, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 import VoucherVertical from '../../components/vouchers/VoucherVertical';
-import {AppAsyncStorage} from '../../utils';
+import { AppAsyncStorage } from '../../utils';
+import { useAppContext } from '../../context/appContext';
 
 const width = Dimensions.get('window').width;
 const VoucherScreen = props => {
-  const {navigation} = props;
-  const [user, setUser] = useState(null);
-
-  // Gọi AppAsyncStorage hiển thị Barcode
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setUser(
-          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
-        );
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
+  const { navigation } = props;
+  const { authState } = useAppContext()
+  console.log('authState', authState)
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
+
       <ImageBackground
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
         style={styles.imageBg}>
         <View style={styles.column}>
+
           <Text style={styles.title}>Ưu đãi</Text>
-          <View style={styles.content}>
-            <Text style={styles.title}>Mới</Text>
-            <Pressable
-              style={styles.myTicket}
-              onPress={() =>
-              // navigation.navigate(VoucherGraph.MyVouchersScreen)
-              { }
-              }>
-              <Icon
-                source="ticket-confirmation-outline"
-                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                color={colors.primary}
-              />
-              <Text style={styles.textVoucher}>Voucher của tôi</Text>
-            </Pressable>
-          </View>
-          {user && (
-            <View style={styles.barCode}>
-              <BarcodeBwipjs user={user} hasBackground={false} />
-            </View>
+
+          {authState.lastName && (
+            <>
+
+              <Pressable
+                style={styles.myTicket}
+                onPress={() => {
+                  // navigation.navigate(VoucherGraph.MyVouchersScreen)
+                }}>
+                <Icon
+                  source="ticket-confirmation-outline"
+                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                  color={colors.primary}
+                />
+                <Text style={styles.textVoucher}>Voucher của tôi</Text>
+              </Pressable>
+
+              <View style={styles.barCode}>
+                <BarcodeBwipjs user={user} hasBackground={false} />
+              </View>
+            </>
+
           )}
         </View>
       </ImageBackground>
 
+      <AuthButton title='Đăng nhập' style={{ marginVertical: 16 }} />
+
       <View style={styles.column}>
-        <View style={styles.row}>
-          <Card
-            iconName="crown"
-            color={colors.yellow700}
-            title="Hạng thành viên"
-            onPress={() => {
-              navigation.navigate(AppGraph.MembershipScreen);
-            }}
-          />
-          <Card
-            iconName="clock-edit"
-            color={colors.red800}
-            title="Lịch sử mua hàng"
-            onPress={() => alert('Lịch sử mua hàng')}
-          />
-        </View>
+
         <View style={styles.row}>
           <Card
             iconName="shield-check"
             color={colors.orange700}
             title="Quyền lợi của bạn"
-            onPress={() => alert('Quyền lợi của bạn!')}
+          // onPress={() => alert('Quyền lợi của bạn!')}
           />
           <Card
             iconName="gift"
             color={colors.primary}
             title="Đổi thưởng"
-            onPress={() => alert('Đổi thưởng!')}
+          // onPress={() => alert('Đổi thưởng!')}
+          />
+        </View>
+        <View style={styles.row}>
+          <Card
+            iconName="clock-edit"
+            color={colors.red800}
+            title="Lịch sử đổi Bean"
+          // onPress={() => alert('Lịch sử đổi Bean')}
           />
         </View>
 
-        <Text style={styles.ticketTitle}>Phiếu ưu đãi</Text>
-
-        {
-          authState.lastName ?
-            <VoucherVertical
-              navigation={navigation}
-              route={{ params: { isUpdateOrderInfo: false } }}
-            /> :
-            null
-        }
 
       </View>
+
+
+
+      {
+        !authState.lastName &&
+        <>
+          <TitleText text='Phiếu ưu đãi' style={{ marginHorizontal: 16 }} />
+
+          <VoucherVertical
+            navigation={navigation}
+            route={{ params: { isUpdateOrderInfo: false } }}
+          />
+        </>
+      }
+
     </ScrollView>
   );
 };
@@ -125,7 +115,8 @@ const Card = ({ iconName, color, title, onPress }) => {
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         color={color}
       />
-      <Text style={styles.cardText}>{title}</Text>
+      <NormalText text={title} />
+
     </Pressable>
   );
 };
@@ -146,15 +137,11 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     color: colors.white,
   },
-  content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+
   myTicket: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -195,38 +182,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
-    elevation: 4,
+    elevation: 1.5,
   },
   cardText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
   },
-  ticket: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  ticketTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
-    color: colors.black,
-  },
-  btnTicket: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingVertical: 6,
-  },
-  textBtn: {
-    color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-  },
-  code: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    color: colors.black,
-  },
+
+
+
+
 });
 
 export default VoucherScreen;

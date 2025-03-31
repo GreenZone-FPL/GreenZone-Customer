@@ -161,13 +161,13 @@ const PayOsScreen = () => {
           message: 'Thanh toán thành công',
           type: 'success',
         });
-        navigation.reset({
-          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-          routes: [
-            {name: MainGraph.graphName},
-            {name: 'OrderDetailScreen', params: {orderId}},
-          ],
-        });
+        // navigation.reset({
+        //   index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        //   routes: [
+        //     {name: MainGraph.graphName},
+        //     {name: 'OrderDetailScreen', params: {orderId}},
+        //   ],
+        // });
       } catch (error) {
         setToast({
           visible: true,
@@ -180,23 +180,28 @@ const PayOsScreen = () => {
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
         await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
+
+
         await AppAsyncStorage.storeData(
           AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
           null,
         );
         setAwaitingPayments(null);
+
+
+        
         setToast({
           visible: true,
           message: 'Bạn đã hủy thanh toán.',
           type: 'warning',
         });
-        navigation.reset({
-          index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-          routes: [
-            {name: MainGraph.graphName},
-            {name: 'OrderDetailScreen', params: {orderId}},
-          ],
-        });
+        // navigation.reset({
+        //   index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        //   routes: [
+        //     {name: MainGraph.graphName},
+        //     {name: 'OrderDetailScreen', params: {orderId}},
+        //   ],
+        // });
       } catch (error) {
         console.log('Không cập nhật');
       }
@@ -205,8 +210,8 @@ const PayOsScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {' '}
-      {loading && <NormalLoading visible={loading} />}     {' '}
+
+      {loading && <NormalLoading visible={loading} />}
       {toast.visible && (
         <ToastDialog
           isVisible={toast.visible}

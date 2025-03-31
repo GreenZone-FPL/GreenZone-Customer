@@ -70,9 +70,10 @@ const HomeScreen = props => {
 
   const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
     useHomeContainer();
-  // const { onNavigateLogin, onNavigateRegister } = useAppContainer();
+  const { onNavigateLogin, onNavigateRegister } = useAppContainer();
 
   // console.log('authState', authState);
+  console.log('awaitingPayments', awaitingPayments);
 
   // Gọi AppAsyncStorage hiển thị Barcode
   useEffect(() => {
@@ -105,7 +106,7 @@ const HomeScreen = props => {
 
     getMerchantLocation();
   }, []);
-  console.log('error cartd', authState.lastName);
+
 
   useSaveLocation();
 
@@ -217,7 +218,7 @@ const HomeScreen = props => {
         ) : (
           <AuthButton
             title="Đăng nhập"
-            onPress={() => console.log('Đăng nhập')}
+            onPress={onNavigateLogin}
           />
         )}
 

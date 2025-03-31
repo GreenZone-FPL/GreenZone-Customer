@@ -8,11 +8,10 @@ const { width } = Dimensions.get('window');
 interface AuthButtonProps {
     title: string;
     onPress: () => void;
-    style?: ViewStyle;
-    titleStyle?: TextStyle;
+    style?: ViewStyle
 }
 
-export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style, titleStyle }) => {
+export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style }) => {
     return (
         <TouchableOpacity
             style={[
@@ -33,10 +32,9 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style, t
         >
             <NormalText
                 text={title}
-                style={[
-                    { color: 'white', fontWeight: '600', textAlign: 'center' },
-                    titleStyle,
-                ]}
+                style={
+                    { color: 'white', fontWeight: '600', textAlign: 'center' }
+                }
             />
         </TouchableOpacity>
     );
