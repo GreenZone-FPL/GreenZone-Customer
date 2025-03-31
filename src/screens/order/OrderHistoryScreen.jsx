@@ -37,17 +37,21 @@ const OrderHistoryScreen = ({ navigation }) => {
     if (updateOrderMessage?.status) {
       const { status, oldStatus } = updateOrderMessage;
       console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
-  
+
       // Xác định trạng thái hiện tại của tab
       const currentTabStatus = orderStatuses[tabIndex];
-  
+
       // Nếu trạng thái mới khớp với tab hiện tại thì reload
       if (status === currentTabStatus) {
         fetchOrders(currentTabStatus);
       }
     }
-  }, [updateOrderMessage.status, tabIndex]); // Thêm tabIndex vào dependencies
-  
+  }, [updateOrderMessage.status]); // Thêm tabIndex vào dependencies
+
+
+  useEffect(() => {
+    fetchOrders(orderStatuses[tabIndex]);
+  }, [tabIndex]); 
 
 
 

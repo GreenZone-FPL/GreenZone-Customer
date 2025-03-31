@@ -4,6 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import {
+  AuthButton,
   Column,
   HeaderWithBadge,
   LightStatusBar,
@@ -16,6 +17,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { OrderGraph, UserGraph } from '../../layouts/graphs';
+
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
@@ -51,6 +53,13 @@ const ProfileScreen = ({ navigation }) => {
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>
         <Column style={styles.body}>
+          {!authState.lastName &&
+
+            <AuthButton
+              title="Đăng nhập"
+              onPress={onNavigateLogin}
+            />
+          }
           <TitleText text="Tài khoản" />
           <NormalLoading visible={loading} />
           <Column>
@@ -74,7 +83,7 @@ const ProfileScreen = ({ navigation }) => {
                 color={colors.orange700}
                 title="Lịch sử đơn hàng"
                 onPress={() => navigateIfLoggedIn(OrderGraph.OrderHistoryScreen)} />
-              
+
             </Row>
           </Column>
 
@@ -85,7 +94,7 @@ const ProfileScreen = ({ navigation }) => {
               icon="cog"
               title="Cài đặt"
               onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)} />
-            
+
             <View style={styles.separator} />
             <CardUtiliti
               icon="chat"
@@ -125,7 +134,7 @@ const CardUtiliti = ({ icon, title, onPress }) => (
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
         color={colors.gray700}
       />
-    <NormalText text={title}/>
+      <NormalText text={title} />
       {/* <Text style={styles.itemText}>{title}</Text> */}
     </View>
   </Pressable>
