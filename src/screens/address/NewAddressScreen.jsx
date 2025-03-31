@@ -8,6 +8,7 @@ import {
   View,
   TextInput,
   ScrollView,
+  ToastAndroid
 } from 'react-native';
 import {
   FlatInput,
@@ -132,10 +133,11 @@ const NewAddressScreen = props => {
       // console.log('Tạo địa chỉ thành công:', response);
 
       // Có thể điều hướng người dùng quay lại hoặc hiển thị thông báo
-      navigation.goBack(); // hoặc showToast('Lưu thành công');
+      navigation.goBack(); // hoặc 
+      ToastAndroid.show('Lưu thành công!', ToastAndroid.SHORT);
     } catch (error) {
       console.error('Lỗi khi tạo địa chỉ:', error);
-      // showToast('Lưu thất bại, vui lòng thử lại');
+      ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
     }
   };
   return (
@@ -202,7 +204,7 @@ const NewAddressScreen = props => {
       )}
 
       <View style={styles.formContainer}>
-        <SelectLocation onAddressChange={handleAddressChange} />
+        {/* <SelectLocation onAddressChange={handleAddressChange} /> */}
         <FlatInput
           label="Địa chỉ cụ thể"
           setValue={setSpecificAddress}
