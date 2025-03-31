@@ -64,7 +64,6 @@ class SocketService {
         const newOrder = {
           visible: true,
           orderId,
-          oldStatus: status,
           message: "",
           status: status
         };
@@ -86,7 +85,7 @@ class SocketService {
           const newActiveOrders = currentActiveOrders
             .map(order =>
               order.orderId === data.orderId
-                ? { ...order, oldStatus: order.status, message: data.message, status: data.status }
+                ? { ...order, message: data.message, status: data.status }
                 : order
             )
             .filter(order => !["completed", "canceled"].includes(order.status)); // Xóa đơn đã hoàn thành hoặc bị hủy
