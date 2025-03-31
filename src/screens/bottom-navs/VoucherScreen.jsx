@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { AuthButton, LightStatusBar, NormalText, TitleText } from '../../components';
+import { AuthButton, Column, LightStatusBar, NormalText, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
@@ -21,7 +21,25 @@ const width = Dimensions.get('window').width;
 const VoucherScreen = props => {
   const { navigation } = props;
   const { authState } = useAppContext()
+  const [user, setUser] = useState(null)
   console.log('authState', authState)
+
+  useEffect(() => {
+    const getProfile = async () => {
+      try {
+        const response = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user, null)
+        if (response) {
+          setUser(response)
+        }
+      } catch (error) {
+        console.log('Error', error)
+      }
+
+    }
+
+    getProfile()
+  }, [])
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
@@ -58,8 +76,12 @@ const VoucherScreen = props => {
           )}
         </View>
       </ImageBackground>
+      {
+        !authState.lastName &&
+        <AuthButton title='Đăng nhập' style={{ marginVertical: 16 }} />
+      }
 
-      <AuthButton title='Đăng nhập' style={{ marginVertical: 16 }} />
+    
 
       <View style={styles.column}>
 
@@ -92,15 +114,15 @@ const VoucherScreen = props => {
 
 
       {
-        !authState.lastName &&
-        <>
-          <TitleText text='Phiếu ưu đãi' style={{ marginHorizontal: 16 }} />
+        authState.lastName &&
+        <Column style={{ marginHorizontal: 16 }} >
+          <TitleText text='Phiếu ưu đãi' />
 
           <VoucherVertical
             navigation={navigation}
             route={{ params: { isUpdateOrderInfo: false } }}
           />
-        </>
+        </Column>
       }
 
     </ScrollView>
@@ -150,6 +172,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
+    width: 150
   },
   textVoucher: {
     color: colors.primary,
