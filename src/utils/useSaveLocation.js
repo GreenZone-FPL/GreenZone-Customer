@@ -80,7 +80,7 @@ const useSaveLocation = () => {
         );
 
         if (nearest) {
-          console.log('nearest:', JSON.stringify(nearest, null, 2));
+          // console.log('nearest:', JSON.stringify(nearest, null, 2));
 
           await AppAsyncStorage.storeData(
             AppAsyncStorage.STORAGE_KEYS.merchantLocation,

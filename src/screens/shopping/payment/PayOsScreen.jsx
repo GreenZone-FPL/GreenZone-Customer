@@ -207,8 +207,8 @@ const PayOsScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {' '}
-      {loading && <NormalLoading visible={loading} />}     {' '}
+
+      {loading && <NormalLoading visible={loading} />}
       {toast.visible && (
         <ToastDialog
           isVisible={toast.visible}

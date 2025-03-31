@@ -100,7 +100,7 @@ useFocusEffect(
           title="Chi tiết đơn hàng"
           onLeftPress={backAction} // Dùng chung logic Back
         />
-        <NormalLoading visible={true} />
+        <NormalLoading visible={loading} />
       </View>
     );
   }

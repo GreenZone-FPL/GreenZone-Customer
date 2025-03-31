@@ -1,7 +1,9 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
 import {MainGraph} from '../../layouts/graphs';
-const SplashScreen2 = ({navigation}) => {
+
+const { width, height } = Dimensions.get('window')
+const SplashScreen2 = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.reset({
@@ -16,7 +18,7 @@ const SplashScreen2 = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image
-        style={{alignSelf: 'center', resizeMode: 'contain', marginRight: 20}}
+        style={{ alignSelf: 'center', resizeMode: 'contain', marginRight: 20, width: width / 1.2 }}
         source={require('../../assets/images/logo.png')}
       />
     </View>

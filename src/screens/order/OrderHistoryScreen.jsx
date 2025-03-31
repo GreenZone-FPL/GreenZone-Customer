@@ -34,28 +34,20 @@ const OrderHistoryScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const status = tabIndex === 0 ? '' : orderStatuses[tabIndex]; // Tab 0 là "Đang thực hiện"
-    fetchOrders(status);
-  }, [tabIndex]);
-
-
-  useEffect(() => {
     if (updateOrderMessage?.status) {
       const { status, oldStatus } = updateOrderMessage;
       console.log("⚡ Cập nhật trạng thái đơn hàng:", { oldStatus, status });
-
-      // Nếu trạng thái mới là "Hoàn thành" hoặc "Đã hủy" thì không cần reload
-      if (["completed", "cancelled"].includes(status)) return;
-
-      const isOldStatusProcessing = !["completed", "cancelled"].includes(oldStatus);
-      const isNewStatusProcessing = !["completed", "cancelled"].includes(status);
-
-      // Nếu trạng thái cũ thuộc tab "Đang thực hiện" nhưng trạng thái mới KHÔNG còn trong đó => Reload
-      if (isOldStatusProcessing && !isNewStatusProcessing) {
-        fetchOrders(""); // Tab "Đang thực hiện" luôn là ""
+  
+      // Xác định trạng thái hiện tại của tab
+      const currentTabStatus = orderStatuses[tabIndex];
+  
+      // Nếu trạng thái mới khớp với tab hiện tại thì reload
+      if (status === currentTabStatus) {
+        fetchOrders(currentTabStatus);
       }
     }
-  }, [updateOrderMessage.status]);
+  }, [updateOrderMessage.status, tabIndex]); // Thêm tabIndex vào dependencies
+  
 
 
 

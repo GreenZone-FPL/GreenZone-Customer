@@ -24,7 +24,7 @@ import { Toaster } from '../../utils';
 import { BackHandler } from 'react-native';
 
 const LoginScreen = ({ route, navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456749');
+  const [phoneNumber, setPhoneNumber] = useState('0123456739');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
