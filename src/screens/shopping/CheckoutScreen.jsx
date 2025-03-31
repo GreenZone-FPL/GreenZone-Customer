@@ -851,12 +851,12 @@ const paymentMethods = [
     value: 'PayOs',
     paymentMethod: PaymentMethod.ONLINE.value,
   },
-  {
-    name: 'ZaloPay',
-    image: require('../../assets/images/logo_zalopay.png'),
-    value: 'zalopay',
-    paymentMethod: PaymentMethod.ONLINE.value,
-  },
+  // {
+  //   name: 'ZaloPay',
+  //   image: require('../../assets/images/logo_zalopay.png'),
+  //   value: 'zalopay',
+  //   paymentMethod: PaymentMethod.ONLINE.value,
+  // },
 ];
 const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   const [isVisible, setIsVisible] = useState(false);
