@@ -432,6 +432,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
+    marginVertical: 8,
   },
   barCode: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
