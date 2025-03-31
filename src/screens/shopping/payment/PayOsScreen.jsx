@@ -42,7 +42,7 @@ const PayOsScreen = () => {
   const [paymentLinkId, setPaymentLinkId] = useState('');
   const {orderId, totalPrice} = route.params || {};
 
-  const {awaitingPayments, setAwaitingPayments} = useAppContext();
+  const {awaitingPayments, setAwaitingPayments} = useAppContext() || {};
 
   console.log(orderId);
   console.log('awaitingPayments', awaitingPayments);
@@ -151,23 +151,12 @@ const PayOsScreen = () => {
     if (url.includes('/success')) {
       try {
         await updatePaymentStatus(orderId, 'success', paymentLinkId);
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-          null,
-        );
-        setAwaitingPayments(null);
+        
         setToast({
           visible: true,
           message: 'Thanh toán thành công',
           type: 'success',
         });
-        // navigation.reset({
-        //   index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-        //   routes: [
-        //     {name: MainGraph.graphName},
-        //     {name: 'OrderDetailScreen', params: {orderId}},
-        //   ],
-        // });
       } catch (error) {
         setToast({
           visible: true,
@@ -175,36 +164,44 @@ const PayOsScreen = () => {
           type: 'error',
         });
       }
-      
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+        null,
+      );
+      setAwaitingPayments(null);
+      navigation.reset({
+        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        routes: [
+          {name: MainGraph.graphName},
+          {name: 'OrderDetailScreen', params: {orderId}},
+        ],
+      });
     } else if (url.includes('status=CANCELLED')) {
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
         await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
-
-
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-          null,
-        );
-        setAwaitingPayments(null);
-
-
-        
         setToast({
           visible: true,
           message: 'Bạn đã hủy thanh toán.',
           type: 'warning',
         });
-        // navigation.reset({
-        //   index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-        //   routes: [
-        //     {name: MainGraph.graphName},
-        //     {name: 'OrderDetailScreen', params: {orderId}},
-        //   ],
-        // });
+       
       } catch (error) {
         console.log('Không cập nhật');
       }
+      const response = await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+        null,
+      );
+      setAwaitingPayments(null);
+      console.log('datapayment:' , response)
+      navigation.reset({
+        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        routes: [
+          {name: MainGraph.graphName},
+          {name: 'OrderDetailScreen', params: {orderId}},
+        ],
+      });
     }
   };
 
