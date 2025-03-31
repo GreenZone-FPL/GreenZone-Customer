@@ -382,15 +382,9 @@ const CheckoutScreen = ({navigation}) => {
               );
               setAwaitingPayments(paymentParams)
               if (selectedPaymentMethod?.value === 'PayOs') {
-                navigation.navigate(ShoppingGraph.PayOsScreen, {
-                  orderId: response.data._id,
-                  totalPrice: response.data.totalPrice,
-                });
+                navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
               } else if (selectedPaymentMethod?.value === 'zalopay') {
-                navigation.navigate(ShoppingGraph.Zalopayscreen, {
-                  orderId: response.data._id,
-                  totalPrice: response.data.totalPrice,
-                });
+                navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
               }
             } else {
               navigation.reset({

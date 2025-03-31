@@ -42,7 +42,7 @@ const PayOsScreen = () => {
   const [paymentLinkId, setPaymentLinkId] = useState('');
   const {orderId, totalPrice} = route.params || {};
 
-  const {awaitingPayments, setAwaitingPayments} = useAppContext();
+  const {awaitingPayments, setAwaitingPayments} = useAppContext() || {};
 
   console.log(orderId);
   console.log('awaitingPayments', awaitingPayments);
@@ -151,11 +151,7 @@ const PayOsScreen = () => {
     if (url.includes('/success')) {
       try {
         await updatePaymentStatus(orderId, 'success', paymentLinkId);
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-          null,
-        );
-        setAwaitingPayments(null);
+        
         setToast({
           visible: true,
           message: 'Thanh toán thành công',
@@ -168,6 +164,11 @@ const PayOsScreen = () => {
           type: 'error',
         });
       }
+      await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+        null,
+      );
+      setAwaitingPayments(null);
       navigation.reset({
         index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
         routes: [
@@ -179,11 +180,6 @@ const PayOsScreen = () => {
       try {
         await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
         await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-          null,
-        );
-        setAwaitingPayments(null);
         setToast({
           visible: true,
           message: 'Bạn đã hủy thanh toán.',
@@ -193,6 +189,12 @@ const PayOsScreen = () => {
       } catch (error) {
         console.log('Không cập nhật');
       }
+      const response = await AppAsyncStorage.storeData(
+        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
+        null,
+      );
+      setAwaitingPayments(null);
+      console.log('datapayment:' , response)
       navigation.reset({
         index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
         routes: [
