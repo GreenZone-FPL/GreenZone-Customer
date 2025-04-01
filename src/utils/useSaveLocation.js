@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {fetchUserLocation} from './geoLocationUtils';
 import {AppAsyncStorage} from './appAsyncStorage';
 import LocationManager from './locationManager';
@@ -80,8 +80,6 @@ const useSaveLocation = () => {
         );
 
         if (nearest) {
-          // console.log('nearest:', JSON.stringify(nearest, null, 2));
-
           await AppAsyncStorage.storeData(
             AppAsyncStorage.STORAGE_KEYS.merchantLocation,
             {
@@ -106,8 +104,6 @@ const useSaveLocation = () => {
             },
           });
         }
-
-        console.log(JSON.stringify(cartState, null, 2));
       } catch (error) {
         console.log('Error finding nearest store:', error);
       }
