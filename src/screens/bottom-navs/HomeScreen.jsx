@@ -4,7 +4,6 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -18,6 +17,7 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
+  TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContainer, useHomeContainer} from '../../containers';
@@ -87,13 +87,13 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
             onPress={() => navigatePayOS(awaitingPayments)}>
-            <NormalText
-              style={{fontWeight: '500'}}
+            <TitleText
               text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
                 awaitingPayments.totalPrice,
               )} cần thanh toán`}
             />
-            <Text style={{fontSize: 12}}>Ấn để tiếp tục</Text>
+
+            <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
         )}
 
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   btnAwaitingPayments: {
     marginHorizontal: 16,
     backgroundColor: colors.yellow300,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
     paddingVertical: 8,
     borderRadius: 30,
     gap: 8,

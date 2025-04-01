@@ -31,36 +31,36 @@ const LoginScreen = ({route, navigation}) => {
   const {authState, authDispatch} = useAppContext();
 
   // Hàm gửi SMS OTP
-  const sendSms = async (phoneNumber, otpCode) => {
-    const API_URL =
-      'https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/';
-    const API_KEY = '7F3DD9B9C2A7A5F9466A718170142E';
-    const SECRET_KEY = 'C6F6C14B91E616D1CB60D66DCF6F39';
-    const BRAND_NAME = 'Baotrixemay';
-
-    const smsData = {
-      ApiKey: API_KEY,
-      Content: `${otpCode} là mã xác minh đăng ký Baotrixemay của bạn`,
-      Phone: phoneNumber,
-      SecretKey: SECRET_KEY,
-      Brandname: BRAND_NAME,
-      SmsType: '2',
-    };
-
-    try {
-      const response = await axios.post(API_URL, smsData, {
-        headers: {'Content-Type': 'application/json'},
-      });
-      console.log('Kết quả gửi SMS:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error(
-        'Lỗi khi gửi SMS:',
-        error.response ? error.response.data : error.message,
-      );
-      throw error;
-    }
-  };
+  // const sendSms = async (phoneNumber, otpCode) => {
+  //   const API_URL =
+  //     'https://rest.esms.vn/MainService.svc/json/SendMultipleMessage_V4_post_json/';
+  //   const API_KEY = '7F3DD9B9C2A7A5F9466A718170142E';
+  //   const SECRET_KEY = 'C6F6C14B91E616D1CB60D66DCF6F39';
+  //   const BRAND_NAME = 'Baotrixemay';
+  //
+  //   const smsData = {
+  //     ApiKey: API_KEY,
+  //     Content: `${otpCode} là mã xác minh đăng ký Baotrixemay của bạn`,
+  //     Phone: phoneNumber,
+  //     SecretKey: SECRET_KEY,
+  //     Brandname: BRAND_NAME,
+  //     SmsType: '2',
+  //   };
+  //
+  //   try {
+  //     const response = await axios.post(API_URL, smsData, {
+  //       headers: {'Content-Type': 'application/json'},
+  //     });
+  //     console.log('Kết quả gửi SMS:', response.data);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error(
+  //       'Lỗi khi gửi SMS:',
+  //       error.response ? error.response.data : error.message,
+  //     );
+  //     throw error;
+  //   }
+  // };
 
   // const generateOtp = () => {
   //   const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -111,7 +111,7 @@ const LoginScreen = ({route, navigation}) => {
       backAction,
     );
     return () => backHandler.remove();
-  }, [navigation]);
+  }, [authDispatch, authState.needLogin, navigation]);
 
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -126,7 +126,7 @@ const LoginScreen = ({route, navigation}) => {
         authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
       });
     }
-  }, [authState.message]);
+  }, [authDispatch, authState.message, fadeAnim]);
 
   const handleSendOTP = async () => {
     if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
@@ -137,11 +137,14 @@ const LoginScreen = ({route, navigation}) => {
 
     setLoading(true);
     try {
-      const response = await sendOTP({phoneNumber});
+      const response = await sendOTP(phoneNumber);
       if (response) {
         console.log('otp = ', response.code);
 
-        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
+        navigation.navigate(AuthGraph.VerifyOTPScreen, {
+          phoneNumber,
+          expired: response?.expired,
+        });
       } else {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
