@@ -5,11 +5,10 @@ import socketService from '../services/socketService';
 import {useAppContext} from '../context/appContext';
 import {OrderStatus} from '../constants';
 import {showMessage} from 'react-native-flash-message';
-import {MainGraph, OrderGraph, ShoppingGraph} from '../layouts/graphs';
+import {MainGraph, OrderGraph} from '../layouts/graphs';
 import {useNavigation} from '@react-navigation/native';
 import {AppAsyncStorage, CartManager} from '../utils';
 import {AuthActionTypes, cartInitialState} from '../reducers';
-
 
 export const useAppContainer = () => {
   const {
@@ -18,7 +17,7 @@ export const useAppContainer = () => {
     cartDispatch,
     authDispatch,
     authState,
-    setAwaitingPayments
+    setAwaitingPayments,
   } = useAppContext();
 
   const navigation = useNavigation();
@@ -94,7 +93,7 @@ export const useAppContainer = () => {
     );
 
     return () => backHandler.remove();
-  }, [authState.needRegister]);
+  }, [authDispatch, authState.needLogin, authState.needRegister]);
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
@@ -118,13 +117,12 @@ export const useAppContainer = () => {
 
       // Sau khi message ẩn đi, cập nhật visible thành false
       const timer = setTimeout(() => {
-        setUpdateOrderMessage(prev => ({ ...prev, visible: false }));
+        setUpdateOrderMessage(prev => ({...prev, visible: false}));
       }, duration);
 
-      return () => clearTimeout(timer); // Dọn dẹp nếu component unmount hoặc updateOrderMessage thay đổi
+      return () => clearTimeout(timer);
     }
-  }, [updateOrderMessage]);
-
+  }, [navigation, setUpdateOrderMessage, updateOrderMessage]);
 
   useEffect(() => {
     const initializeSocket = async () => {
@@ -135,30 +133,30 @@ export const useAppContainer = () => {
         // Gọi lại tất cả các đơn hàng đã có trong activeOrders
         await socketService.rejoinOrder(data => {
           // Cập nhật trạng thái đơn hàng khi join thành công
-          setUpdateOrderMessage(prev => ({
+          setUpdateOrderMessage({
             visible: true,
             orderId: data.orderId,
             message: data.message,
             status: data.status,
-          }));
+          });
         });
       } catch (error) {
         console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);
       }
     };
 
-    initializeSocket();
+    initializeSocket().then(r => {});
 
     return () => {
       // Ngắt kết nối socket khi component bị unmount
       socketService.disconnect();
     };
-  }, []);
+  }, [setUpdateOrderMessage]);
 
   const onLogout = async () => {
     // Xóa token khỏi AsyncStorage
     await AppAsyncStorage.clearAll();
-    setAwaitingPayments(null)
+    setAwaitingPayments(null);
     await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
     authDispatch({
       type: AuthActionTypes.LOGOUT,
