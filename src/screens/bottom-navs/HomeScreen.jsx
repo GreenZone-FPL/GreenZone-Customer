@@ -31,7 +31,6 @@ const HomeScreen = () => {
   const {cartState, authState, awaitingPayments} = useAppContext();
 
   const {
-    navigation,
     isModalVisible,
     setIsModalVisible,
     selectedOption,
@@ -77,11 +76,7 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && (
-            <View style={styles.barCode}>
-              <BarcodeBwipjs user={user} />
-            </View>
-          )
+          user && <BarcodeBwipjs user={user} />
         ) : (
           <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
         )}
@@ -190,7 +185,8 @@ const styles = StyleSheet.create({
   },
   barCode: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    alignItems: 'center',
+    // alignItems: 'center',
+    backgroundColor: 'red',
   },
   btnAwaitingPayments: {
     marginHorizontal: 16,
