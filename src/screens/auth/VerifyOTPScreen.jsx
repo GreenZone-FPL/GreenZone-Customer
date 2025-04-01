@@ -1,97 +1,143 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { OtpInput } from 'react-native-otp-entry';
-import { verifyOTP } from '../../axios';
-import { NormalLoading } from '../../components';
-import { colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { AuthGraph, MainGraph } from '../../layouts/graphs';
-import { AuthActionTypes } from '../../reducers';
-import { Toaster } from '../../utils/toaster';
-import socketService from '../../services/socketService';
+import React, {useEffect, useState} from 'react';
+import {Keyboard, StatusBar, StyleSheet, Text} from 'react-native';
+import {OtpInput} from 'react-native-otp-entry';
+import {verifyOTP} from '../../axios';
+import {Column, NormalLoading, OverlayStatusBar} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {AuthActionTypes} from '../../reducers';
+import {Toaster} from '../../utils';
+import {useAppContext} from '../../context/appContext';
+import {IconButton} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 
-const VerifyOTPScreen = ({ route, navigation }) => {
-  const { authDispatch } = useAppContext();
-  const { phoneNumber } = route.params;
+const VerifyOTPScreen = ({route}) => {
+  const navigation = useNavigation();
+  const {phoneNumber, expired} = route.params;
+  const {authDispatch} = useAppContext();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    if (!expired) return;
+    const expirationTime = new Date(expired).getTime();
+    const now = Date.now();
+    const remaining = Math.max(0, Math.floor((expirationTime - now) / 1000));
+    setTimeLeft(remaining);
+
+    if (remaining === 0) return;
+
+    const interval = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [expired]);
+
+  useEffect(() => {
+    if (code.length === 6) {
+      Keyboard.dismiss();
+      handleVerifyOTP();
+    }
+  }, [code]);
+
+  const formatTime = seconds => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(
+      2,
+      '0',
+    )}`;
+  };
 
   const handleVerifyOTP = async () => {
-    if (code.length !== 6) {
-      Toaster.show('Vui lòng nhập mã OTP gồm 6 chữ số.');
-      return;
-    }
-
+    if (loading) return;
     setLoading(true);
+
     try {
-      const response = await verifyOTP({ phoneNumber, code });
+      const response = await verifyOTP({phoneNumber, code});
+      const userLastName = response.user?.lastName;
 
-
-      const userLastName = response.user.lastName;
-      console.log('✅ OTP Verified, userLastName = ', response.user?.lastName);
       if (userLastName) {
         Toaster.show('Đăng nhập thành công!');
-        await socketService.initialize();
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: true, needRegister: false, lastName: userLastName },
+          payload: {needLogin: false, isLoggedIn: true, lastName: userLastName},
         });
-
-
       } else {
         authDispatch({
           type: AuthActionTypes.REGISTER,
-          payload: { isLoggedIn: false, needLogin: false, needRegister: true }
+          payload: {isLoggedIn: false, needLogin: false, needRegister: true},
         });
-
       }
     } catch (error) {
-      Toaster.show(`Error: ${error}`);
-      console.log('Error', error);
+      Toaster.show(`Lỗi: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <NormalLoading visible={loading} />
-      <Text style={styles.title}>Xác thực OTP</Text>
-      <Text style={styles.subtitle}>Nhập mã OTP gửi đến {phoneNumber}</Text>
-
-      <OtpInput
-        focusColor={colors.primary}
-        autoFocus={true}
-        secureTextEntry={false}
-        numberOfDigits={6}
-        onTextChange={setCode}
+    <Column style={styles.container}>
+      <IconButton
+        icon="close"
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        iconColor={colors.black}
+        style={styles.closeButton}
+        onPress={() => navigation.goBack()}
       />
+      <OverlayStatusBar />
+      <Column style={styles.content}>
+        <NormalLoading visible={loading} />
+        <Text style={styles.title}>Xác thực OTP</Text>
+        <Text style={styles.subtitle}>
+          Mã xác thực đã được gửi đến {phoneNumber}
+        </Text>
 
-      <TouchableOpacity style={styles.button} onPress={handleVerifyOTP}>
-        <Text style={styles.buttonText}>Xác nhận</Text>
-      </TouchableOpacity>
-    </View>
+        <OtpInput autoFocus={false} numberOfDigits={6} onTextChange={setCode} />
+
+        {timeLeft > 0 ? (
+          <Text style={styles.subtitle}>
+            Mã OTP hết hạn sau {formatTime(timeLeft)}
+          </Text>
+        ) : (
+          <Text style={[styles.subtitle, {color: 'red'}]}>OTP đã hết hạn</Text>
+        )}
+      </Column>
+    </Column>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.overlay,
+    position: 'relative',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: StatusBar.currentHeight,
+    right: GLOBAL_KEYS.PADDING_DEFAULT,
+    zIndex: 1,
+    backgroundColor: colors.gray200,
+  },
+  content: {
+    marginTop: StatusBar.height,
+    backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: colors.fbBg,
     gap: 20,
+    flex: 1,
   },
-  title: { fontSize: 28, fontWeight: 'bold', color: colors.black },
-  subtitle: { fontSize: 14, color: colors.gray850 },
-  button: {
-    backgroundColor: colors.primary,
-    padding: 16,
-    borderRadius: 10,
-    width: '80%',
-  },
-  buttonText: { color: colors.white, fontSize: 16, textAlign: 'center' },
+  title: {fontSize: 28, fontWeight: 'bold', color: colors.black},
+  subtitle: {fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray850},
 });
 
 export default VerifyOTPScreen;

@@ -27,6 +27,11 @@ const AuthNavigator = () => {
           />
           <AuthStack.Screen
             name={AuthGraph.VerifyOTPScreen}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false,
+            }}
             component={VerifyOTPScreen}
           />
         </>
