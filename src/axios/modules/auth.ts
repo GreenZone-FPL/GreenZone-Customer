@@ -1,7 +1,8 @@
 import axiosInstance from '../axiosInstance';
 import {AppAsyncStorage} from '../../utils';
+import {RegisterRequest} from '../../type/register';
 
-export const getProfile = async () => {
+export const getProfile = async (): Promise<void> => {
   try {
     const response = await axiosInstance.get('/auth/profile');
 
@@ -12,18 +13,9 @@ export const getProfile = async () => {
   }
 };
 
-export const register = async ({
-  firstName,
-  lastName,
-  email,
-  dateOfBirth,
-  gender,
-  avatar = null,
-}) => {
+export const register = async (request: RegisterRequest) => {
   try {
-    const body = {firstName, lastName, email, dateOfBirth, gender, avatar};
-
-    const response = await axiosInstance.post('/auth/otp/register', body);
+    const response = await axiosInstance.post('/auth/otp/register', request);
 
     const {data} = response;
 

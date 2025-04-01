@@ -24,7 +24,7 @@ import {AuthActionTypes} from '../../reducers';
 import {Toaster} from '../../utils';
 
 const LoginScreen = ({route, navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456721');
+  const [phoneNumber, setPhoneNumber] = useState('0123456722');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
