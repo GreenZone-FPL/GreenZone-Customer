@@ -1,205 +1,63 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React from 'react';
 import {
-  Button,
-  Dimensions,
   FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
-  Text,
-  ToastAndroid,
 } from 'react-native';
-
-import {
-  Coin1,
-  MessageFavorite,
-  Rank,
-  TaskSquare,
-  TicketDiscount,
-} from 'iconsax-react-native';
-import {getAllCategories, getAllProducts, getProfile} from '../../axios';
 import {
   AuthButton,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NormalText,
   NotificationList,
-  PrimaryButton,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText,
 } from '../../components';
-import {colors, DeliveryMethod, GLOBAL_KEYS} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContainer, useHomeContainer} from '../../containers';
 import {useAppContext} from '../../context/appContext';
-import {
-  AppGraph,
-  BottomGraph,
-  OrderGraph,
-  ShoppingGraph,
-  UserGraph,
-  VoucherGraph,
-} from '../../layouts/graphs';
-import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
+import {CategoryView} from './HomeComponents/CategoryView';
 
-const width = Dimensions.get('window').width;
+const HomeScreen = () => {
+  const {cartState, authState, awaitingPayments} = useAppContext();
 
-const HomeScreen = props => {
-  const {navigation} = props;
-
-  const [user, setUser] = useState(null);
-
-  const [categories, setCategories] = useState([]);
-
-  const [merchantLocal, setMerchantLocal] = useState(null);
-  const [isData, setIsData] = useState(false);
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
-  const [editOption, setEditOption] = useState('');
-  const [allProducts, setAllProducts] = useState([]);
-  const [positions, setPositions] = useState({});
-  const [currentCategory, setCurrentCategory] = useState(null);
-
-  const lastCategoryRef = useRef(currentCategory);
   const {
-    cartState,
-    cartDispatch,
-    authState,
-    authDispatch,
-    awaitingPayments,
-    setAwaitingPayments,
-  } = useAppContext() || {};
+    isModalVisible,
+    setIsModalVisible,
+    selectedOption,
+    currentCategory,
+    handleScroll,
+    user,
+    allProducts,
+    handleEditOption,
+    handleOptionSelect,
+    handleCloseDialog,
+    onLayoutCategory,
+    onNavigateProductDetailSheet,
+    onClickAddToCart,
+    navigatePayOS,
+    navigateCheckOut,
+    navigateAdvertising,
+  } = useHomeContainer();
 
-  const {onNavigateProductDetailSheet, onClickAddToCart, handleLogin} =
-    useHomeContainer();
-  const { onNavigateLogin, onNavigateRegister } = useAppContainer();
-
-  // console.log('authState', authState);
-  console.log('awaitingPayments', awaitingPayments);
-
-  // Gọi AppAsyncStorage hiển thị Barcode
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setUser(
-          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
-        );
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  //hàm gọi vị trí cửa hàng gần nhất và vị trí người dùng hiệnt tại
-  useEffect(() => {
-    const getMerchantLocation = async () => {
-      try {
-        setMerchantLocal(
-          await AppAsyncStorage.readData(
-            AppAsyncStorage.STORAGE_KEYS.merchantLocation,
-          ),
-        );
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    getMerchantLocation();
-  }, []);
-
+  const {onNavigateLogin} = useAppContainer();
 
   useSaveLocation();
 
-  const handleCloseDialog = () => {
-    setIsModalVisible(false);
-  };
-
-  // Hàm xử lý khi chọn phương thức giao hàng
-  const handleOptionSelect = async option => {
-    if (option === 'Mang đi') {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        deliveryMethod: DeliveryMethod.PICK_UP.value,
-        store: cartState?.storeSelect,
-        storeInfo: {
-          storeName: cartState?.storeInfoSelect?.storeName,
-          storeAddress: cartState?.storeInfoSelect?.storeAddress,
-        },
-      });
-    } else if (option === 'Giao hàng') {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        deliveryMethod: DeliveryMethod.DELIVERY.value,
-        store: merchantLocal?._id,
-        storeInfo: {
-          storeName: merchantLocal?.name,
-          storeAddress: merchantLocal?.storeAddress,
-        },
-      });
-    }
-    setSelectedOption(option);
-    setIsModalVisible(false);
-  };
-
-  const handleEditOption = option => {
-    if (option === 'Giao hàng') {
-      navigation.navigate(UserGraph.SelectAddressScreen, {
-        isUpdateOrderInfo: true,
-      });
-    } else if (option === 'Mang đi') {
-      navigation.navigate(BottomGraph.MerchantScreen, {
-        isUpdateOrderInfo: true,
-        fromHome: true,
-      });
-    }
-    setEditOption(option);
-    setIsModalVisible(false);
-  };
-
-  const onLayoutCategory = (categoryId, event) => {
-    event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
-    });
-  };
-
-  const handleScroll = useCallback(
-    event => {
-      const scrollY = event.nativeEvent.contentOffset.y;
-      let closestCategory = 'Danh mục';
-      let minDistance = Number.MAX_VALUE;
-
-      Object.entries(positions).forEach(([categoryId, posY]) => {
-        const distance = Math.abs(scrollY - posY);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCategory =
-            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
-        }
-      });
-
-      if (closestCategory !== lastCategoryRef.current) {
-        lastCategoryRef.current = closestCategory;
-        setCurrentCategory(closestCategory);
-      }
-    },
-    [positions, allProducts],
-  );
-
-  useEffect(() => {
-    if (categories.length === 0) fetchData(getAllCategories, setCategories);
-    if (allProducts.length === 0) fetchData(getAllProducts, setAllProducts);
-  }, []);
+  console.log('awaitingPayments', awaitingPayments);
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-
       <HeaderWithBadge
         title={
           authState.isLoggedIn
@@ -218,38 +76,26 @@ const HomeScreen = props => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && (
-            <View style={styles.barCode}>
-              <BarcodeBwipjs user={user} />
-            </View>
-          )
+          user && <BarcodeBwipjs user={user} />
         ) : (
-          <AuthButton
-            title="Đăng nhập"
-            onPress={onNavigateLogin}
-          />
+          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
         )}
 
-        <CardCategory navigation={navigation}/>
-        {awaitingPayments ? (
+        <CategoryView />
+
+        {awaitingPayments && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
-            onPress={async () => {
-              try {
-                navigation.navigate(
-                  ShoppingGraph.PayOsScreen,
-                  awaitingPayments,
-                );
-              } catch (error) {
-                console.log('error', error);
-              }
-            }}>
-            <Text style={{fontWeight: '500', fontSize: 12}}>
-              Bạn có đơn hàng cần thanh toán
-            </Text>
+            onPress={() => navigatePayOS(awaitingPayments)}>
+            <NormalText
+              style={{fontWeight: '500'}}
+              text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
+                awaitingPayments.totalPrice,
+              )} cần thanh toán`}
+            />
             <Text style={{fontSize: 12}}>Ấn để tiếp tục</Text>
           </TouchableOpacity>
-        ) : null}
+        )}
 
         {allProducts.length > 0 && (
           <ProductsListHorizontal
@@ -265,9 +111,7 @@ const HomeScreen = props => {
             }}
           />
         )}
-        <NotificationList
-          onSeeMorePress={() => navigation.navigate(AppGraph.AdvertisingScreen)}
-        />
+        <NotificationList onSeeMorePress={navigateAdvertising} />
 
         <FlatList
           data={allProducts}
@@ -293,8 +137,6 @@ const HomeScreen = props => {
             </View>
           )}
         />
-
-        {/* <Searchbar /> */}
       </ScrollView>
       <DeliveryButton
         deliveryMethod={selectedOption}
@@ -311,9 +153,7 @@ const HomeScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={async () => {
-          await navigation.navigate(ShoppingGraph.CheckoutScreen);
-        }}
+        onPressCart={navigateCheckOut}
       />
       <DialogShippingMethod
         isVisible={isModalVisible}
@@ -326,82 +166,15 @@ const HomeScreen = props => {
   );
 };
 
-const Item = ({IconComponent, title, onPress}) => (
-  <TouchableOpacity onPress={onPress} style={styles.item}>
-    {IconComponent && <IconComponent />}
-    <TitleText text={title} style={styles.textTitle} numberOfLines={1} />
-  </TouchableOpacity>
-);
-
-const CardCategory = ({navigation}) => {
-  return (
-    <View style={styles.card}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}>
-        <Item
-          IconComponent={() => (
-            <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
-          )}
-          title="Voucher"
-          onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
-        />
-
-        <Item
-          IconComponent={() => (
-            <Rank size="50" color={colors.pink500} variant="Bulk" />
-          )}
-          title="Hạng thành viên"
-          onPress={() => {
-            navigation.navigate(AppGraph.MembershipScreen);
-          }}
-        />
-
-        <Item
-          IconComponent={() => (
-            <TaskSquare size="50" color={colors.orange700} variant="Bulk" />
-          )}
-          title="Đơn Hàng"
-          onPress={() => navigation.navigate(OrderGraph.OrderHistoryScreen)}
-        />
-
-        <Item
-          IconComponent={() => (
-            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
-          )}
-          title="Đổi xu"
-          onPress={() => {
-            ToastAndroid.show('Đang phát triển!', ToastAndroid.SHORT);
-          }}
-        />
-
-        <Item
-          IconComponent={() => (
-            <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
-          )}
-          title="Góp ý"
-          onPress={() => {
-            navigation.navigate(UserGraph.ContactScreen);
-          }}
-        />
-      </ScrollView>
-    </View>
-  );
-};
-
 export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
     backgroundColor: colors.white,
     position: 'relative',
-    height: Dimensions.get('window').height,
   },
   containerContent: {
-    flexDirection: 'column',
     flex: 1,
     marginBottom: 90,
   },
@@ -410,44 +183,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  item: {
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  itemImage: {
-    width: 50,
-    height: 50,
-    resizeMode: 'cover',
-  },
-  textTitle: {
-    flexWrap: 'wrap',
-    textAlign: 'center',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  card: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    marginHorizontal: 16,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    justifyContent: 'space-around',
-    marginVertical: 8,
-  },
-  barCode: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    justifyContent: 'center',
-    width: width - 32,
-    alignSelf: 'center',
-    overflow: 'hidden',
-  },
   btnAwaitingPayments: {
     marginHorizontal: 16,
-    backgroundColor: colors.yellow500,
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 12,
+    backgroundColor: colors.yellow300,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 30,
+    gap: 8,
   },
 });

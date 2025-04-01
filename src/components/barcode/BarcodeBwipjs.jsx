@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ImageBackground,
   Dimensions,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import bwipjs from '@bwip-js/react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
 const width = Dimensions.get('window').width;
 
@@ -19,7 +19,7 @@ const BarcodeUser = ({hasBackground = true, user}) => {
     const generateBarcode = async () => {
       if (!user?.code) return;
       try {
-        const svg = await bwipjs.toSVG({
+        const svg = bwipjs.toSVG({
           bcid: 'code128',
           text: user.code,
           scale: 15,
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: width - 32,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    alignSelf: 'center',
   },
   imageBackground: {
     width: '100%',

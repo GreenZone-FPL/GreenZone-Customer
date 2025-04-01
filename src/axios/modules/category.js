@@ -1,13 +1,12 @@
-import axiosInstance from "../axiosInstance";
+import axiosInstance from '../axiosInstance';
 
 export const getAllCategories = async () => {
-    try {
+  try {
+    const response = await axiosInstance.get('/v1/category/all');
 
-        const response = await axiosInstance.get("/v1/category/all");
-
-        return response.data
-    } catch (error) {
-        console.log("Error:", error);
-        throw error; 
-    }
+    return response.data;
+  } catch (error) {
+    console.log('Error:', error);
+    throw error;
+  }
 };

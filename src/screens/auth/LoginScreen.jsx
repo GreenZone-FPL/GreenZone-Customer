@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Animated,
+  BackHandler,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { sendOTP } from '../../axios';
+import {Icon} from 'react-native-paper';
+import {sendOTP} from '../../axios';
 import {
   Column,
   FlatInput,
@@ -16,20 +17,18 @@ import {
   NormalLoading,
   TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { AuthGraph, MainGraph } from '../../layouts/graphs';
-import { AuthActionTypes } from '../../reducers';
-import { Toaster } from '../../utils';
-import { BackHandler } from 'react-native';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {AuthGraph} from '../../layouts/graphs';
+import {AuthActionTypes} from '../../reducers';
+import {Toaster} from '../../utils';
 
-const LoginScreen = ({ route, navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456739');
+const LoginScreen = ({route, navigation}) => {
+  const [phoneNumber, setPhoneNumber] = useState('0123456779');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch } = useAppContext();
-
+  const {authState, authDispatch} = useAppContext();
 
   // Hàm gửi SMS OTP
   const sendSms = async (phoneNumber, otpCode) => {
@@ -50,7 +49,7 @@ const LoginScreen = ({ route, navigation }) => {
 
     try {
       const response = await axios.post(API_URL, smsData, {
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
       });
       console.log('Kết quả gửi SMS:', response.data);
       return response.data;
@@ -83,7 +82,7 @@ const LoginScreen = ({ route, navigation }) => {
   //     const result = await sendSms(phoneNumber, otp);
   //     if (result.CodeResult === '100') {
 
-  //       navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber, otp}); 
+  //       navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber, otp});
   //     } else {
   //       Alert.alert('Thất bại', `Lỗi gửi SMS: ${result.ErrorMessage}`);
   //     }
@@ -98,7 +97,10 @@ const LoginScreen = ({ route, navigation }) => {
     const backAction = () => {
       if (authState.needLogin) {
         // navigation.navigate(MainGraph.graphName);
-        authDispatch({ type: AuthActionTypes.LOGIN, payload: { needLogin: false } });
+        authDispatch({
+          type: AuthActionTypes.LOGIN,
+          payload: {needLogin: false},
+        });
       }
 
       return true;
@@ -121,7 +123,7 @@ const LoginScreen = ({ route, navigation }) => {
         delay: 2000,
         useNativeDriver: true,
       }).start(() => {
-        authDispatch({ type: AuthActionTypes.CLEAR_MESSAGE });
+        authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
       });
     }
   }, [authState.message]);
@@ -135,11 +137,11 @@ const LoginScreen = ({ route, navigation }) => {
 
     setLoading(true);
     try {
-      const response = await sendOTP({ phoneNumber });
+      const response = await sendOTP({phoneNumber});
       if (response) {
         console.log('otp = ', response.code);
 
-        navigation.navigate(AuthGraph.VerifyOTPScreen, { phoneNumber });
+        navigation.navigate(AuthGraph.VerifyOTPScreen, {phoneNumber});
       } else {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
@@ -153,7 +155,7 @@ const LoginScreen = ({ route, navigation }) => {
   return (
     <Column style={styles.container}>
       {authState.message ? (
-        <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.toast, {opacity: fadeAnim}]}>
           <Icon source="information" size={20} color={colors.primary} />
           <Text style={styles.toastText}>{authState.message}</Text>
         </Animated.View>
@@ -162,9 +164,9 @@ const LoginScreen = ({ route, navigation }) => {
       <LightStatusBar />
       <Image
         source={require('../../assets/images/register_bg.png')}
-        style={{ width: '100%', height: 200 }}
+        style={{width: '100%', height: 200}}
       />
-      <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
+      <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
       <FlatInput
@@ -182,7 +184,7 @@ const LoginScreen = ({ route, navigation }) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <View style={{ width: 30, height: 30 }}></View>
+        <View style={{width: 30, height: 30}}></View>
         <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
         <Icon source="arrow-right-circle" color={colors.white} size={30} />
       </TouchableOpacity>
@@ -215,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
@@ -237,6 +239,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
+    height: 50,
   },
   button: {
     flexDirection: 'row',

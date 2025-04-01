@@ -99,14 +99,14 @@ const VoucherScreen = props => {
           // onPress={() => alert('Đổi thưởng!')}
           />
         </View>
-        <View style={styles.row}>
+        {/* <View style={styles.row}>
           <Card
             iconName="clock-edit"
             color={colors.red800}
             title="Lịch sử đổi Bean"
           // onPress={() => alert('Lịch sử đổi Bean')}
           />
-        </View>
+        </View> */}
 
 
       </View>

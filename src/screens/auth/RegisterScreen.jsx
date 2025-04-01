@@ -30,11 +30,11 @@ import { useAppContext } from '../../context/appContext';
 import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
 const RegisterScreen = ({ navigation }) => {
-  const [firstName, setFirstName] = useState('Bui');
-  const [lastName, setLastName] = useState('Ngoc Dai');
-  const [email, setEmail] = useState('dai@gmail.com');
-  const [dateOfBirth, setDateOfBirth] = useState('2025-02-15');
-  const [gender, setGender] = useState('Nam');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [gender, setGender] = useState('');
   const [avatar, setAvatar] = useState(null);
   const [firstNameError, setFirstNameError] = useState('');
   const [lastNameError, setLastNameError] = useState('');
