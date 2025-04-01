@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from 'react';
 import {StatusBar, StyleSheet, Text} from 'react-native';
 import {OtpInput} from 'react-native-otp-entry';
@@ -11,7 +12,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {IconButton} from 'react-native-paper';
 import {useVerifyOTPContainer} from '../../containers';
 
-const VerifyOTPScreen = ({route}) => {
+const VerifyOTPScreen: React.FC = ({route}) => {
   const {expired, phoneNumber} = route.params;
   const {navigation, setCode, timeLeft, loading, formatTime} =
     useVerifyOTPContainer(expired, phoneNumber);
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray200,
   },
   content: {
-    marginTop: StatusBar.height,
+    marginTop: StatusBar.currentHeight,
     backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
