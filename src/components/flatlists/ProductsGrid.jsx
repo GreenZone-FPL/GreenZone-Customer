@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
   productInfo: {
     marginTop: 8,
     alignItems: 'flex-start',
+    width: '65%'
   },
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
-    textAlign: 'center',
   },
   productPrice: {
     marginTop: 4,

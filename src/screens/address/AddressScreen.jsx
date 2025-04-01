@@ -69,7 +69,7 @@ const AddressScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <CardLocation
                 address={item}
-                onEdit={() => navigation.navigate(UserGraph.NewAddressScreen, { address: item })}
+                // onEdit={() => navigation.navigate(UserGraph.NewAddressScreen, { address: item })}
                 onDelete={() => {
                   setSelectedAddress(item);
                   setShowDeleteDialog(true);

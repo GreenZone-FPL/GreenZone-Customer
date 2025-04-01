@@ -183,11 +183,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
-  barCode: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    // alignItems: 'center',
-    backgroundColor: 'red',
-  },
   btnAwaitingPayments: {
     marginHorizontal: 16,
     backgroundColor: colors.yellow300,

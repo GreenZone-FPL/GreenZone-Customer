@@ -206,7 +206,7 @@ const NewAddressScreen = props => {
       <View style={styles.formContainer}>
         {/* <SelectLocation onAddressChange={handleAddressChange} /> */}
         <FlatInput
-          label="Địa chỉ cụ thể"
+          label="Nhập địa chỉ cụ thể"
           setValue={setSpecificAddress}
           value={specificAddress}
           placeholder="Ngõ/ngách/..."
