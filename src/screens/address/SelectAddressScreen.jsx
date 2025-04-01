@@ -61,7 +61,7 @@ const SelectAddressScreen = ({navigation, route}) => {
   
     }, [])
   );
-
+  console.log('địa chỉ', addresses)
   // Lấy vị trí người dùng
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
@@ -129,13 +129,38 @@ const SelectAddressScreen = ({navigation, route}) => {
           shippingAddressInfo: addressFinish,
         });
       }
-
+  
       navigation.goBack();
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
   };
+  const onConfirmAddress = (address) => {
+    if (address) {
+      const addressFinish = {
+        _id: address._id,
+        latitude: address.latitude,
+        longitude: address.longitude,
+        location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
+        specificAddress: address.specificAddress,
+        province: address.province,
+        district: address.district,
+        ward: address.ward,
+        isDefault: address.isDefault,
+      };
+      console.log('Địa chỉ đã chọn:', addressFinish);
+      if (isUpdateOrderInfo && cartDispatch) {
+        CartManager.updateOrderInfo(cartDispatch, {
+          shippingAddress: addressFinish.location,
+          shippingAddressInfo: addressFinish,
+        });
+      }
   
+      navigation.goBack(); // Điều hướng về màn hình trước
+    } else {
+      console.log('Chưa chọn địa chỉ');
+    }
+  };
   // Tìm kiếm
   const handleSearch = async text => {
     setSearchText(text);
@@ -180,7 +205,7 @@ const SelectAddressScreen = ({navigation, route}) => {
         </Pressable>
         <View style={{flex: 1}}>
           <CustomSearchBar 
-          placeholder="Tìm kiếm cửa hàng ..."
+          placeholder="Tìm kiếm địa chỉ ..."
           searchQuery={searchText}
           setSearchQuery={handleSearch}
           leftIconColor={colors.black}

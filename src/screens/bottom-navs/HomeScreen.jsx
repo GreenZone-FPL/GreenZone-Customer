@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
   Text,
+  ToastAndroid,
 } from 'react-native';
 
 import {
@@ -229,7 +230,7 @@ const HomeScreen = props => {
           />
         )}
 
-        <CardCategory />
+        <CardCategory navigation={navigation}/>
         {awaitingPayments ? (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
@@ -370,6 +371,9 @@ const CardCategory = ({navigation}) => {
             <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
           )}
           title="Đổi xu"
+          onPress={() => {
+            ToastAndroid.show('Đang phát triển!', ToastAndroid.SHORT);
+          }}
         />
 
         <Item
@@ -428,6 +432,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
+    marginVertical: 8,
   },
   barCode: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
