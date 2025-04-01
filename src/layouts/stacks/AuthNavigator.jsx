@@ -17,6 +17,11 @@ const AuthNavigator = () => {
       {authState.needRegister ? (
         <AuthStack.Screen
           name={AuthGraph.RegisterScreen}
+          options={{
+            animation: 'slide_from_bottom',
+            presentation: 'transparentModal',
+            headerShown: false,
+          }}
           component={RegisterScreen}
         />
       ) : authState.needLogin ? (

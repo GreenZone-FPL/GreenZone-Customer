@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import {StyleSheet, Text, View} from 'react-native';
+import {TextInput} from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../../constants';
 
 // PropTypes cho FlatInput
 const FlatInputPropTypes = {
@@ -13,29 +13,6 @@ const FlatInputPropTypes = {
   setIsPasswordVisible: PropTypes.func,
   isPasswordVisible: PropTypes.bool,
   secureTextEntry: PropTypes.bool,
-  style: PropTypes.object,
-  editable: PropTypes.bool,
-  keyboardType: PropTypes.oneOf([
-    'default',
-    'number-pad',
-    'decimal-pad',
-    'numeric',
-    'email-address',
-    'phone-pad',
-    'url',
-  ]),
-};
-
-// PropTypes cho CustomFlatInput
-const CustomFlatInputPropTypes = {
-  label: PropTypes.string,
-  placeholder: PropTypes.string,
-  value: PropTypes.string.isRequired,
-  setValue: PropTypes.func.isRequired,
-  invalidMessage: PropTypes.string,
-  rightIcon: PropTypes.string,
-  onRightPress: PropTypes.func,
-  rightIconColor: PropTypes.string,
   style: PropTypes.object,
   editable: PropTypes.bool,
   keyboardType: PropTypes.oneOf([
@@ -73,8 +50,8 @@ export const FlatInput = ({
   editable = true,
   keyboardType = 'default',
   onSubmitEditing,
-  returnKeyType = "done",
-  autoFocus = false
+  returnKeyType = 'done',
+  autoFocus = false,
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -124,8 +101,32 @@ FlatInput.propTypes = FlatInputPropTypes;
  *    keyboardType="email-address"
  * />
  */
+
+// PropTypes cho CustomFlatInput
+const CustomFlatInputPropTypes = {
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  value: PropTypes.string.isRequired,
+  setValue: PropTypes.func.isRequired,
+  invalidMessage: PropTypes.string,
+  rightIcon: PropTypes.string,
+  onRightPress: PropTypes.func,
+  rightIconColor: PropTypes.string,
+  style: PropTypes.object,
+  editable: PropTypes.bool,
+  keyboardType: PropTypes.oneOf([
+    'default',
+    'number-pad',
+    'decimal-pad',
+    'numeric',
+    'email-address',
+    'phone-pad',
+    'url',
+  ]),
+  onSubmitEditing: PropTypes.func,
+};
 export const CustomFlatInput = ({
-  label = 'Default label',
+  label = '',
   placeholder = '',
   value,
   setValue,
@@ -140,7 +141,8 @@ export const CustomFlatInput = ({
   keyboardType = 'default',
   enableLeftIcon = false,
   enableRightIcon = false,
- 
+  onSubmitEditing,
+  returnKeyType = 'done',
 }) => {
   return (
     <View style={[styles.inputContainer, style]}>
@@ -156,26 +158,24 @@ export const CustomFlatInput = ({
         activeUnderlineColor={colors.primary}
         underlineColor={colors.primary}
         style={styles.input}
+        onSubmitEditing={onSubmitEditing}
         right={
-
-          enableRightIcon &&
-          <TextInput.Icon
-            color={rightIconColor}
-            icon={rightIcon}
-            onPress={onRightPress}
-          />
-
-
+          enableRightIcon && (
+            <TextInput.Icon
+              color={rightIconColor}
+              icon={rightIcon}
+              onPress={onRightPress}
+            />
+          )
         }
         left={
-          enableLeftIcon &&
-          <TextInput.Icon
-            color={leftIconColor}
-            icon={leftIcon}
-          />
+          enableLeftIcon && (
+            <TextInput.Icon color={leftIconColor} icon={leftIcon} />
+          )
         }
         editable={editable}
         keyboardType={keyboardType}
+        returnKeyType={returnKeyType}
       />
       {invalidMessage && <Text style={styles.errorText}>{invalidMessage}</Text>}
     </View>
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     elevation: 3,
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
+    shadowOffset: {width: 0, height: 3},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
@@ -205,5 +205,3 @@ const styles = StyleSheet.create({
     color: colors.gray500,
   },
 });
-
-

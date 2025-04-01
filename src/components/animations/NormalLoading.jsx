@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import LottieView from 'lottie-react-native';
-import { colors } from 'react-native-elements';
+import {colors} from 'react-native-elements';
 
-export const NormalLoading = ({ visible }) => {
+export const NormalLoading = ({visible}) => {
   if (!visible) return null;
 
   return (
@@ -23,12 +23,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.overlay
-
+    backgroundColor: colors.overlay,
   },
   lottie: {
     width: 50,
     height: 50,
+    zIndex: 1,
   },
 });
 
