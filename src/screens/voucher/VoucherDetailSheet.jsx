@@ -1,20 +1,19 @@
 import React, {useState} from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StatusBar,
   Dimensions,
   Image,
-  ScrollView,
-  StyleSheet,
   Linking,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {OverlayStatusBar} from '../../components';
 import {Icon} from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {BottomGraph} from '../../layouts/graphs';
 import {TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
@@ -54,7 +53,7 @@ const VoucherDetailSheet = ({navigation, route}) => {
             <Icon
               source="close"
               size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-              color={colors.primary}
+              color={colors.black}
             />
           </TouchableOpacity>
         </View>
@@ -159,13 +158,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   closeButton: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    backgroundColor: colors.gray300,
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
-    width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
-    height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
+    // position: 'absolute',
+    // top: StatusBar.currentHeight,
+    // right: GLOBAL_KEYS.PADDING_DEFAULT,
+    // zIndex: 1,
+    backgroundColor: colors.gray200,
+    margin: 16,
   },
   borderContainer: {
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   voucherTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '700',
     textAlign: 'center',
     color: colors.primary,

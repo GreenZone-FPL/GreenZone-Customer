@@ -12,7 +12,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 
 const width = Dimensions.get('window').width;
 
-const BarcodeUser = ({hasBackground = true, user}) => {
+export const BarcodeUser = ({hasBackground = true, user, style}) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
 
   useEffect(() => {
@@ -55,7 +55,12 @@ const BarcodeUser = ({hasBackground = true, user}) => {
 
   if (user && barcodeSVG) {
     return (
-      <View style={[styles.container, {maxHeight: hasBackground ? 160 : 120}]}>
+      <View
+        style={[
+          styles.container,
+          {maxHeight: hasBackground ? 160 : 120},
+          style,
+        ]}>
         {hasBackground ? (
           <ImageBackground
             source={require('../../assets/images/bgvoucher.png')}
@@ -103,5 +108,3 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
 });
-
-export default BarcodeUser;

@@ -1,16 +1,14 @@
 // animations
-export * from './animations/Ani_ModalLoading'
-export * from './animations/FillingJuiceLoading'
-export * from './animations/NormalLoading'
-export * from './animations/Ani_Success'
+export * from './animations/Ani_ModalLoading';
+export * from './animations/FillingJuiceLoading';
+export * from './animations/NormalLoading';
+export * from './animations/Ani_Success';
 // activity-indicator
 export * from './indicators/Indicator';
 //barcode
-export * from './barcode/barcodeUser';
+export * from './barcode/BarcodeUser';
 
 // bottom-sheets
-
-
 
 // buttons
 export * from './buttons/DeliveryButton';
@@ -25,7 +23,6 @@ export * from './carousel/CarouselBanner';
 
 // category
 export * from './category/CategoryMenu';
-
 
 // containers
 export * from './containers/Column';
@@ -47,6 +44,7 @@ export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
 export * from './flatlists/NotificationList';
 export * from './flatlists/ProductsGrid';
+export * from './flatlists/VoucherVertical';
 
 // footer
 export * from './footer/CheckoutFooter';
@@ -90,7 +88,6 @@ export * from './texts/PaymentMethodRow';
 export * from './texts/NormalText';
 export * from './texts/TitleText';
 export * from './texts/StatusText';
-
 
 // modals
 export * from './modal/ToppingModal';
