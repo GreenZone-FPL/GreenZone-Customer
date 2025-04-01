@@ -1,16 +1,16 @@
 import {useNavigation} from '@react-navigation/native';
-import {useAppContext} from '../context/appContext';
+import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
   ShoppingGraph,
   UserGraph,
-} from '../layouts/graphs';
-import {AppAsyncStorage, CartManager, fetchData} from '../utils';
-import {useAppContainer} from './useAppContainer';
+} from '../../layouts/graphs';
+import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import {useAppContainer} from '../useAppContainer';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {getAllProducts} from '../axios';
-import {DeliveryMethod} from '../constants';
+import {getAllProducts} from '../../axios';
+import {DeliveryMethod} from '../../constants';
 
 export const useHomeContainer = () => {
   const {authState, cartState, cartDispatch} = useAppContext();
