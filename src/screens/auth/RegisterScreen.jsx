@@ -1,120 +1,69 @@
-import DateTimePicker from '@react-native-community/datetimepicker';
-import React, { useState, useEffect } from 'react';
-import {
-  Alert,
-  BackHandler,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useEffect, useReducer, useState} from 'react';
+import {Dimensions, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity,} from 'react-native';
+import {Column, CustomFlatInput, NormalLoading, NormalText, OverlayStatusBar, TitleText,} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {Toaster} from '../../utils';
+import LabelInput from "../../components/inputs/LabelInput";
+import {useAppContext} from "../../context/appContext";
+import {AuthActionTypes} from "../../reducers";
+import {register} from "../../axios";
 
-import { Icon } from 'react-native-paper';
-import {
-  Column,
-  CustomFlatInput,
-  NormalLoading,
-  NormalText,
-  Row,
-  TitleText
-} from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+const initialState = {
+  firstName: '',
+  lastName: '',
+  firstNameError: '',
+  lastNameError: '',
+  loading: true,
+};
 
-import { register } from '../../axios';
-import { useAppContext } from '../../context/appContext';
-import { AuthActionTypes } from '../../reducers';
-import { Toaster } from '../../utils';
-const RegisterScreen = ({ navigation }) => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState('');
-  const [gender, setGender] = useState('');
-  const [avatar, setAvatar] = useState(null);
-  const [firstNameError, setFirstNameError] = useState('');
-  const [lastNameError, setLastNameError] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [dateOfBirthError, setDateOfBirthError] = useState('');
-  const [genderError, setGenderError] = useState('');
-  const [show, setShow] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_VALUE':
+      return {...state, [action.field]: action.value};
+    case 'SET_ERROR':
+      return {...state, [action.field + 'Error']: action.value};
+    case 'SET_LOADING':
+      return {...state, loading: action.value};
+    default:
+      return state;
+  }
+};
+const RegisterScreen = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [isValidForm, setIsValidForm] = useState(false);
 
-  const { authState, authDispatch } = useAppContext();
+  const {authState, authDispatch} = useAppContext();
 
-  const onSelectDate = (event, selectedDate) => {
-    if (event.type === 'dismissed') {
-      setShow(false); // Ẩn picker nếu người dùng hủy
-      return;
-    }
-
-    const currentDate = selectedDate || new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0];
-    setShow(false);
-    setDateOfBirth(formattedDate);
-  };
+  useEffect(() => {
+    setIsValidForm(state.firstName.trim() !== '' && state.lastName.trim() !== '');
+  }, [state.firstName, state.lastName]);
 
   const validateForm = () => {
     let valid = true;
-    if (!firstName) {
-      setFirstNameError('Họ không được để trống');
+
+    if (!state.lastName.trim()) {
+      dispatch({type: 'SET_ERROR', field: 'lastName', value: 'Trường này không được để trống'});
       valid = false;
-    } else {
-      setFirstNameError('');
     }
 
-    if (!lastName) {
-      setLastNameError('Tên không được để trống');
+    if (!state.firstName.trim()) {
+      dispatch({type: 'SET_ERROR', field: 'firstName', value: 'Trường này không được để trống'});
       valid = false;
-    } else {
-      setLastNameError('');
     }
-
-    if (!email) {
-      setEmailError('Email không được để trống');
-      valid = false;
-    } else {
-      setEmailError('');
-    }
-
-    if (!dateOfBirth) {
-      setDateOfBirthError('Ngày sinh không được để trống');
-      valid = false;
-    } else {
-      setDateOfBirthError('');
-    }
-
-    if (!gender) {
-      setGenderError('Giới tính không được để trống');
-      valid = false;
-    } else {
-      setGenderError('');
-    }
-
     return valid;
   };
 
   const handleRegister = async () => {
     if (!validateForm()) return;
-    setLoading(true);
+    dispatch({type: 'SET_LOADING', value: true});
+    Keyboard.dismiss();
+
     try {
-
-      const genderValue = gender === 'Nam' ? 'male' : 'female';
-
-      // Tạo request
       const request = {
-        firstName,
-        lastName,
-        email,
-        dateOfBirth,
-        gender: genderValue,
-        avatar: '', // Nếu không có avatar thì truyền giá trị rỗng
+        firstName: state.firstName,
+        lastName: state.lastName,
       };
+
 
       // Gọi API đăng ký
       const result = await register(request);
@@ -123,261 +72,95 @@ const RegisterScreen = ({ navigation }) => {
         Toaster.show('Đăng ký tài khoản thành công');
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, needRegister: false, lastName: lastName, isLoggedIn: true }
+          payload: {needLogin: false, needRegister: false, lastName: state.lastName, isLoggedIn: true}
         });
       }
 
-
+      console.log('User registered:', JSON.stringify(result.data, null, 2));
+      Toaster.show('Đăng ký thành công!');
     } catch (error) {
       console.log('Registration failed:', error);
       Toaster.show(error.message);
-      authDispatch({ type: AuthActionTypes.LOGIN });
+      authDispatch({type: AuthActionTypes.LOGIN});
     } finally {
-      setLoading(false);
+      dispatch({type: 'SET_LOADING', value: false});
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}>
-      <ScrollView
-        contentContainerStyle={styles.innerContainer}
-        keyboardShouldPersistTaps="handled">
-        <NormalLoading visible={loading} />
-        <Image
-          source={require('../../assets/images/register_bg.png')}
-          style={{ width: '100%', height: 200 }}
-        />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+      <ScrollView contentContainerStyle={{flex: 1}} keyboardShouldPersistTaps="handled">
+        <NormalLoading visible={state.loading}/>
 
-        <Column style={styles.formContainer}>
-          <TitleText text="GREEN ZONE" style={styles.title} />
+        <OverlayStatusBar/>
+        <Column style={styles.content}>
+          <Image source={require('../../assets/images/logo.png')} style={styles.logo}/>
+          <TitleText text="Xin chào, vui lòng nhập thông tin đăng ký của bạn" style={styles.message}/>
 
-          <TitleText text="ĐĂNG KÝ TÀI KHOẢN" />
-
+          <LabelInput label="Họ"/>
           <CustomFlatInput
-            label="Họ"
-            placeholder="Ví dụ: Nguyễn"
-            value={firstName}
-            setValue={setFirstName}
-            message={firstNameError}
+            value={state.firstName}
+            setValue={(value) => dispatch({type: 'SET_VALUE', field: 'firstName', value})}
+            invalidMessage={state.firstNameError}
+            leftIcon="account-circle-outline"
+            enableLeftIcon={true}
           />
-
+          <LabelInput label="Tên" required={true}/>
           <CustomFlatInput
-            label="Tên"
-            placeholder="Ví dụ: Văn A"
-            value={lastName}
-            setValue={setLastName}
-            message={lastNameError}
+            value={state.lastName}
+            setValue={(value) => dispatch({type: 'SET_VALUE', field: 'lastName', value})}
+            leftIcon="shield-account-outline"
+            invalidMessage={state.lastNameError}
+            enableLeftIcon={true}
           />
 
-          <CustomFlatInput
-            label="Email"
-            placeholder="Ví dụ: abc@gmail.com"
-            value={email}
-            keyboardType="email-address"
-            setValue={setEmail}
-            message={emailError}
-          />
-
-          <CustomFlatInput
-            label="Ngày sinh"
-            placeholder="Nhập ngày sinh"
-            value={dateOfBirth}
-            setValue={setDateOfBirth}
-            onRightPress={() => setShow(true)}
-            editable={false} // Không cho nhập trực tiếp
-            message={dateOfBirthError}
-            rightIcon="calendar-text"
-            enableRightIcon
-          />
-
-          <CustomFlatInput
-            label="Giới tính"
-            placeholder="Chọn giới tính"
-            value={gender}
-            setValue={setGender}
-            editable={false} // Không cho nhập trực tiếp
-            message={genderError}
-            enableRightIcon
-            rightIcon="chevron-down-circle"
-            onRightPress={() => setModalVisible(true)}
-          />
-
-          <DialogGender
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            onSelect={gender => {
-              setGender(gender);
-              setModalVisible(false);
-            }}
-          />
-
-          {/* <NormalText
-            text="Upload avatar (Không bắt buộc)"
-            style={{ color: colors.primary }}
-          />
-          <Avatar uri={avatar} onPress={openImagePicker} /> */}
-
-          <RegisterButton onPress={handleRegister} title="ĐĂNG KÝ" />
+          <TouchableOpacity
+            style={[styles.button, {backgroundColor: isValidForm ? colors.green500 : '#E3E3E5'}]}
+            disabled={!isValidForm}
+            onPress={handleRegister}
+          >
+            <NormalText text="Đăng ký" style={[styles.buttonText, {color: isValidForm ? colors.white : '#ACACAE'}]}/>
+          </TouchableOpacity>
         </Column>
-
-        {show ? (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={dateOfBirth ? new Date(dateOfBirth) : new Date()}
-            mode="date"
-            display="default"
-            onChange={onSelectDate}
-          />
-        ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 };
 
-const RegisterButton = ({ title = 'Đăng ký', onPress }) => {
-  return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: colors.primary }]}
-      onPress={onPress}>
-      <View style={{ width: 35, height: 35 }}></View>
-      <Text style={styles.buttonText}>{title}</Text>
-      <Icon source="arrow-right-circle" color={colors.white} size={35} />
-    </TouchableOpacity>
-  );
-};
+export default RegisterScreen;
 
-const Avatar = ({ uri, size = 100, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress}>
-      <View
-        style={[
-          styles.avatarContainer,
-          { width: size, height: size, borderRadius: size / 2 },
-        ]}>
-        {uri ? (
-          <Image
-            source={{ uri }}
-            style={[
-              styles.avatar,
-              { width: size - 6, height: size - 6, borderRadius: (size - 6) / 2 },
-            ]}
-          />
-        ) : (
-          <Image
-            source={require('../../assets/images/default_image.png')}
-            style={[
-              styles.avatar,
-              { width: size - 6, height: size - 6, borderRadius: (size - 6) / 2 },
-            ]}
-          />
-        )}
-      </View>
-    </TouchableOpacity>
-  );
-};
-
-const DialogGender = ({ visible, onClose, onSelect }) => {
-  return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}>
-      <Column style={styles.modalContainer}>
-        <Column style={styles.modalContent}>
-          <TitleText text="Chọn giới tính" style={{ fontSize: 16 }} />
-
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => onSelect('Nam')}>
-            <NormalText text="Nam" />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.option}
-            onPress={() => onSelect('Nữ')}>
-            <NormalText text="Nữ" />
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity style={styles.option} onPress={() => onSelect('Không xác định')}>
-            <NormalText text='Không xác định' />
-          </TouchableOpacity> */}
-
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <NormalText text="Hủy" style={{ color: colors.red800 }} />
-          </TouchableOpacity>
-        </Column>
-      </Column>
-    </Modal>
-  );
-};
 
 const styles = StyleSheet.create({
-  innerContainer: {
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: colors.fbBg,
-  },
-  formContainer: {
-    paddingBottom: 30, // Đảm bảo không bị cắt ở cuối
-    gap: 16,
-  },
-  title: {
-    fontSize: 20,
-    color: colors.primary,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  avatarContainer: {
-    borderWidth: 3,
-    borderColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    alignSelf: 'center',
-  },
-  avatar: {
-    resizeMode: 'cover',
-  },
-  modalContainer: {
+  content: {
     flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.white,
+    padding: 24,
+    gap: 12,
+    justifyContent: 'center'
   },
-  modalContent: {
-    width: 300,
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
+  logo: {
+    width: Dimensions.get('window').width / 1.5,
+    height: Dimensions.get('window').width / 1.5,
+    alignSelf: 'center'
   },
-  option: {
-    padding: 15,
-    width: '100%',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray300,
+  message: {
+    fontSize: 14,
+    color: colors.black,
+    textAlign: 'center',
+    fontWeight: '400'
   },
-  cancelButton: {
-    padding: 10,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
-  },
+
   button: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: 10,
+    padding: 16,
+    backgroundColor: colors.primary
   },
   buttonText: {
-    color: 'white',
+    color: colors.white,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
+    fontWeight: '400',
   },
 });
 

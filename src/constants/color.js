@@ -8,7 +8,7 @@ export const colors = Object.freeze({
   green100: '#EFFDEE',
   teal900: '#018786',
   teal700: '#06988B',
-  black: '#000000',
+  black: '#232323',
   gray900: '#434343',
   gray850: '#494949',
   gray700: '#666666',
@@ -37,4 +37,5 @@ export const colors = Object.freeze({
   fbBg: '#F2F4F7',
   lightRed: '#FDF3F2', // Đỏ nhạt
   lightBlue: '#F1F9FC', // Xanh nhạt
+  invalid: '#D32F2F',
 });

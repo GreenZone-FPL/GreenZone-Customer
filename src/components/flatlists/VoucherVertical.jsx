@@ -1,23 +1,25 @@
 import React, {useEffect, useState} from 'react';
 import {
-  Text,
   Dimensions,
   FlatList,
   Image,
   StyleSheet,
-  View,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import {getAllVoucher} from '../../axios/index';
-import {Column, NormalText} from '../../components';
+import {getAllVoucher} from '../../axios';
+import {Column, NormalText} from '../index';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {VoucherGraph} from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, TextFormatter} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
 
 const {width} = Dimensions.get('window');
 
-const VoucherVertical = ({navigation, route}) => {
+export const VoucherVertical = ({route}) => {
+  const navigation = useNavigation();
   const [vouchers, setVouchers] = useState([]);
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
@@ -116,5 +118,3 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
 });
-
-export default VoucherVertical;

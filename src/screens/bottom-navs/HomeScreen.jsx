@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {
   AuthButton,
+  BarcodeUser,
   DeliveryButton,
   DialogShippingMethod,
   HeaderWithBadge,
@@ -24,7 +25,6 @@ import {useAppContainer, useHomeContainer} from '../../containers';
 import {useAppContext} from '../../context/appContext';
 import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
-import BarcodeBwipjs from '../../components/barcode/BarcodeBwipjs';
 import {CategoryView} from './HomeComponents/CategoryView';
 
 const HomeScreen = () => {
@@ -76,7 +76,7 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && <BarcodeBwipjs user={user} />
+          user && <BarcodeUser user={user} />
         ) : (
           <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
         )}

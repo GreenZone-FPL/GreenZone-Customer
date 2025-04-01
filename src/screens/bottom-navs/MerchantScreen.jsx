@@ -17,7 +17,7 @@ import {
 import {Icon} from 'react-native-paper';
 import {getAllMerchants} from '../../axios/modules/merchant';
 import {CustomSearchBar, HeaderWithBadge, Indicator} from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
+import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph} from '../../layouts/graphs';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   tittle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     marginVertical: 10,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
