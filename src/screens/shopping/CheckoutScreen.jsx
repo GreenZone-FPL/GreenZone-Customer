@@ -259,7 +259,7 @@ const CheckoutScreen = ({ navigation }) => {
                   })
                 }
               />
-              <Column style={{ gap: 16, marginHorizontal: 16 }}>
+              {/* <Column style={{ gap: 16, marginHorizontal: 16 }}>
                 <Button
                   title="Log cartState"
                   onPress={() =>
@@ -292,7 +292,7 @@ const CheckoutScreen = ({ navigation }) => {
                   title="Xóa hết sản phẩm"
                   onPress={() => CartManager.clearOrderItems(cartDispatch)}
                 />
-              </Column>
+              </Column> */}
             </ScrollView>
 
             <Footer
