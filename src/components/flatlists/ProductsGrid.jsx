@@ -5,23 +5,23 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
-import { Column } from '../containers/Column';
-import { Row } from '../containers/Row';
+import {Icon} from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {TextFormatter} from '../../utils';
+import {Column} from '../containers/Column';
+import {Row} from '../containers/Row';
 
 const width = Dimensions.get('window').width;
 
 export const ProductsGrid = ({
-  title = "Món Mới Phải Thử",
+  title = 'Món Mới Phải Thử',
   scrollEnabled = false,
   onItemClick,
   onIconClick,
-  products
+  products,
 }) => {
   return (
     <View style={styles.container}>
@@ -30,7 +30,7 @@ export const ProductsGrid = ({
         data={products}
         numColumns={2} // Chuyển thành grid 2 cột
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <ItemProduct
             item={item}
             onItemClick={() => onItemClick(item._id)}
@@ -45,18 +45,24 @@ export const ProductsGrid = ({
   );
 };
 
-const ItemProduct = ({ item, onItemClick, onIconClick }) => {
+const ItemProduct = ({item, onItemClick, onIconClick}) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
         <FastImage
-          source={{ uri: item.image, priority: FastImage.priority.high }}
+          source={{uri: item.image, priority: FastImage.priority.high}}
           style={styles.itemImage}
           resizeMode={FastImage.resizeMode.cover}
         />
       </TouchableOpacity>
 
-      <Row style={{backgroundColor: 'white', width: '100%', justifyContent: 'space-between'}}>
+      <Row
+        style={{
+          backgroundColor: 'white',
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}>
         <Column style={styles.productInfo}>
           <Text style={styles.productName}>{item.name}</Text>
           <Text style={styles.productPrice}>
@@ -64,14 +70,10 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
           </Text>
         </Column>
 
-        <TouchableOpacity
-          onPress={onIconClick}
-          style={styles.addButton}>
+        <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
           <Icon source="plus" size={22} color={colors.white} />
         </TouchableOpacity>
-
       </Row>
-
     </View>
   );
 };
@@ -89,12 +91,12 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingBottom: 16,
-    gap: 12
+    gap: 12,
   },
   columnWrapper: {
     justifyContent: 'space-between',
     marginBottom: 16,
-    gap: 16
+    gap: 16,
   },
   itemProduct: {
     width: (width - GLOBAL_KEYS.PADDING_DEFAULT * 3) / 2, // Chia đều 2 cột
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
   productInfo: {
     marginTop: 8,
     alignItems: 'flex-start',
-    width: '65%'
+    width: '65%',
   },
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
