@@ -54,8 +54,6 @@ const NewAddressScreen = props => {
     selectedDistrict: null,
     selectedWard: null,
   });
-  console.log('Dịa chỉ:', JSON.stringify(selectedAddress, null, 2));
-  console.log('Dịa chỉAPI:', JSON.stringify(selectedAddressAPI, null, 2));
   const handleAddressChange = address => {
     setSelectedAddress(prev => ({
       ...prev,
@@ -81,7 +79,6 @@ const NewAddressScreen = props => {
     setSearchText(fullAddressText);
     setIsSearching(true);
     handleSearch(fullAddressText);
-    console.log('Địa chỉ đầy đủ:', fullAddressText);
   };
 
   const fetchPlaceDetails = async placeId => {
@@ -227,7 +224,6 @@ const NewAddressScreen = props => {
                 setSpecificAddress(
                   [result.terms[1]?.value, result.terms[0]?.value].join(' '),
                 );
-                console.log('Địa chỉ đã chọn:', result.description);
                 fetchPlaceDetails(result.place_id);
               }}
             />
