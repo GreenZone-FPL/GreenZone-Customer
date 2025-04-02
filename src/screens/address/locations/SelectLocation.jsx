@@ -102,6 +102,8 @@ const SelectLocation = ({initialAddress = {} , onAddressChange}) => {
                     placeholderStyle={styles.placeholderText}
                     style={styles.dropdown}
                     selectedTextStyle={styles.dropdownText}
+                    search
+                    searchPlaceholder="Tìm kiếm..."
                 />
                 <Dropdown
                     data={districts}
@@ -114,6 +116,8 @@ const SelectLocation = ({initialAddress = {} , onAddressChange}) => {
                     style={[styles.dropdown, { opacity: districts.length > 0 ? 1 : 0.5 }]}
                     disable={districts.length === 0}
                     selectedTextStyle={styles.dropdownText}
+                     search
+                    searchPlaceholder="Tìm kiếm..."
                 />
                 <Dropdown
                     data={wards}
@@ -125,7 +129,11 @@ const SelectLocation = ({initialAddress = {} , onAddressChange}) => {
                     placeholderStyle={styles.placeholderText}
                     style={[styles.dropdown, { opacity: wards.length > 0 ? 1 : 0.5 }]}
                     disable={wards.length === 0}
-                    selectedTextStyle={styles.dropdownText}
+                    selectedTextStyle={styles.placeholderText}
+                    search
+                    searchPlaceholder="Tìm kiếm..."
+                    selectedTextProps={styles.placeholderText}
+                    itemTextStyle={styles.placeholderText}
                 />
             </View>
     );
@@ -147,11 +155,11 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
     },
     placeholderText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontSize: 12,
         color: colors.black,
     },
     dropdownText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontSize: 12,
         color: colors.black,
     },
     button: {

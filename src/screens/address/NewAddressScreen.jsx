@@ -40,14 +40,28 @@ const NewAddressScreen = props => {
   const [longitude, setLongitude] = useState(null);
   const searchTimeout = useRef(null);
 
+  const [ward, setWard] = useState(null);
+  const [district, setDistrict] = useState(null);
+  const [province, setProvince] = useState(null);
+
   const [selectedAddress, setSelectedAddress] = useState({
     selectedProvince: null,
     selectedDistrict: null,
     selectedWard: null,
   });
-
+  const [selectedAddressAPI, setSelectedAddressAPI] = useState({
+    selectedProvince: null,
+    selectedDistrict: null,
+    selectedWard: null,
+  });
+  console.log('Dịa chỉ:', JSON.stringify(selectedAddress, null, 2));
+  console.log('Dịa chỉAPI:', JSON.stringify(selectedAddressAPI, null, 2));
   const handleAddressChange = address => {
     setSelectedAddress(prev => ({
+      ...prev,
+      ...address,
+    }));
+    setSelectedAddressAPI(prev => ({
       ...prev,
       ...address,
     }));
@@ -81,7 +95,12 @@ const NewAddressScreen = props => {
       const location = response.data.result.geometry.location;
       setLatitude(String(location.lat));
       setLongitude(String(location.lng));
-      // console.log('Toạ độ đã chọn:', location.lat, location.lng);
+      console.log('Toạ độ đã chọn:', JSON.stringify(response, null, 2));
+      const address = response.data.result.compound;
+      setWard(address.commune),
+      setDistrict(address.district),
+      setProvince(address.province)
+
     } catch (error) {
       console.error('Lỗi lấy tọa độ:', error);
     }
@@ -113,33 +132,46 @@ const NewAddressScreen = props => {
     }
   };
 
+  const isValidPhoneNumber = phone => {
+    const phoneRegex = /^(\+84|0)[3-9][0-9]{8}$/;
+    return phoneRegex.test(phone);
+  };
+
   const handleSaveAddress = async () => {
+    if (!specificAddress.trim()) {
+      ToastAndroid.show('Vui lòng nhập địa chỉ chi tiết!', ToastAndroid.SHORT);
+      return;
+    }
+    if (!consigneeName.trim()) {
+      ToastAndroid.show('Vui lòng nhập tên người nhận!', ToastAndroid.SHORT);
+      return;
+    }
+    if (!isValidPhoneNumber(consigneePhone)) {
+      ToastAndroid.show('Số điện thoại không hợp lệ!', ToastAndroid.SHORT);
+      return;
+    }
+
+    const payload = {
+      specificAddress,
+      ward: ward || selectedAddressAPI.selectedWard,
+      district: district || selectedAddressAPI.selectedDistrict,
+      province: province || selectedAddressAPI.selectedProvince,
+      consigneePhone,
+      consigneeName,
+      latitude: String(latitude),
+      longitude: String(longitude),
+    };
+    console.log('Tạo địa chỉ thành công:', JSON.stringify(payload, null, 2));
     try {
-      const {selectedProvince, selectedDistrict, selectedWard} =
-        selectedAddress;
-
-      const payload = {
-        specificAddress,
-        ward: selectedWard,
-        district: selectedDistrict,
-        province: selectedProvince,
-        consigneePhone,
-        consigneeName,
-        latitude: String(latitude),
-        longitude: String(longitude),
-      };
-
       const response = await postAddress(payload);
-      // console.log('Tạo địa chỉ thành công:', response);
-
-      // Có thể điều hướng người dùng quay lại hoặc hiển thị thông báo
-      navigation.goBack(); // hoặc 
       ToastAndroid.show('Lưu thành công!', ToastAndroid.SHORT);
+      navigation.goBack();
     } catch (error) {
       console.error('Lỗi khi tạo địa chỉ:', error);
       ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -204,7 +236,7 @@ const NewAddressScreen = props => {
       )}
 
       <View style={styles.formContainer}>
-        {/* <SelectLocation onAddressChange={handleAddressChange} /> */}
+        <SelectLocation onAddressChange={handleAddressChange} />
         <FlatInput
           label="Nhập địa chỉ cụ thể"
           setValue={setSpecificAddress}

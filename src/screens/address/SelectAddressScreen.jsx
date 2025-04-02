@@ -113,19 +113,12 @@ const SelectAddressScreen = ({navigation, route}) => {
 
       setSelectedAddress(updatedAddress);
       const addressFinish = {
-        _id: updatedAddress.place_id,
+        location: updatedAddress.description,
         latitude: String(updatedAddress.latitude),
         longitude: String(updatedAddress.longitude),
-        location: updatedAddress.description,
-        specificAddress: updatedAddress.name,
-        province: updatedAddress.compound.province,
-        district: updatedAddress.compound.district,
-        ward: updatedAddress.compound.commune,
-        isDefault: false,
       };
       if (isUpdateOrderInfo && cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
-          shippingAddress: addressFinish.location,
           shippingAddressInfo: addressFinish,
         });
       }
@@ -138,20 +131,13 @@ const SelectAddressScreen = ({navigation, route}) => {
   const onConfirmAddress = (address) => {
     if (address) {
       const addressFinish = {
-        _id: address._id,
+        location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
         latitude: address.latitude,
         longitude: address.longitude,
-        location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
-        specificAddress: address.specificAddress,
-        province: address.province,
-        district: address.district,
-        ward: address.ward,
-        isDefault: address.isDefault,
       };
       console.log('Địa chỉ đã chọn:', addressFinish);
       if (isUpdateOrderInfo && cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
-          shippingAddress: addressFinish.location,
           shippingAddressInfo: addressFinish,
         });
       }
