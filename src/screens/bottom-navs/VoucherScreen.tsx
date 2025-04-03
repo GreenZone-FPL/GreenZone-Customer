@@ -39,7 +39,7 @@ const VoucherScreen: React.FC = () => {
         style={styles.imageBg}>
         <Column style={{padding: 16, gap: 16}}>
           <Text style={styles.title}>Ưu đãi</Text>
-         <View style={{justifyContent:'center',alignItems:'center', height:"80%"}}>
+         <View style={{justifyContent:'center',alignItems:'center'}}>
          {!authState.lastName && (
             <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
       )}
