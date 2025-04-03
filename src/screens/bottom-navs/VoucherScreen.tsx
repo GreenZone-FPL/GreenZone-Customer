@@ -38,19 +38,15 @@ const VoucherScreen: React.FC = () => {
         resizeMode="cover"
         style={styles.imageBg}>
         <Column style={{padding: 16, gap: 16}}>
-          <Text style={styles.title}>Ưu đãi</Text>
-         <View style={{justifyContent:'center',alignItems:'center'}}>
-         {!authState.lastName && (
-            <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
-      )}
-         </View>
+         {!authState.lastName ?(
+          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />):
+          (<Text style={styles.title}>Ưu đãi</Text>)
+          }
           {authState.lastName && (
-            // eslint-disable-next-line react-native/no-inline-styles
             <Column style={{gap: 16}}>
               <Pressable
                 style={styles.myTicket}
                 onPress={() => {
-                  // navigation.navigate(VoucherGraph.MyVouchersScreen)
                 }}>
                 <Icon
                   source="ticket-confirmation-outline"
@@ -115,6 +111,7 @@ const styles = StyleSheet.create({
   imageBg: {
     width: '100%',
     height: width / 1.5,
+    justifyContent:'center'
   },
 
   title: {
