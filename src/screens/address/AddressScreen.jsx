@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     color: colors.black,
     textAlign: 'justify',
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    width: "58%"
+    width: "55%"
   },
   distance: {
     color: colors.gray700,
