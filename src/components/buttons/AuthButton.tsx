@@ -24,7 +24,6 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style })
                     justifyContent: 'center',
                     marginHorizontal: 16,
                     alignSelf: 'center',
-                    marginBottom: 10,
                 },
                 style,
             ]}

@@ -26,6 +26,7 @@ import {useAppContext} from '../../context/appContext';
 import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import {CategoryView} from './HomeComponents/CategoryView';
+import ButtonBackground from '../../components/background/ButtonBackground';
 
 const HomeScreen = () => {
   const {cartState, authState, awaitingPayments} = useAppContext();
@@ -78,7 +79,9 @@ const HomeScreen = () => {
         {authState.lastName ? (
           user && <BarcodeUser user={user} />
         ) : (
-          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+          <ButtonBackground
+            view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
+          />
         )}
 
         <CategoryView />

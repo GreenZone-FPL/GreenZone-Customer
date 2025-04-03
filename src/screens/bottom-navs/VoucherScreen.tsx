@@ -20,11 +20,14 @@ import {
   VoucherVertical,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {useVoucherContainer} from '../../containers';
+import {useAppContainer, useVoucherContainer} from '../../containers';
+import { View } from 'react-native-animatable';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen: React.FC = () => {
   const {authState, user} = useVoucherContainer();
+    const {onNavigateLogin} = useAppContainer();
+  
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -36,7 +39,11 @@ const VoucherScreen: React.FC = () => {
         style={styles.imageBg}>
         <Column style={{padding: 16, gap: 16}}>
           <Text style={styles.title}>Ưu đãi</Text>
-
+         <View style={{justifyContent:'center',alignItems:'center', height:"80%"}}>
+         {!authState.lastName && (
+            <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+      )}
+         </View>
           {authState.lastName && (
             // eslint-disable-next-line react-native/no-inline-styles
             <Column style={{gap: 16}}>
@@ -62,17 +69,16 @@ const VoucherScreen: React.FC = () => {
           )}
         </Column>
       </ImageBackground>
-      {!authState.lastName && (
-        <AuthButton title="Đăng nhập" style={{marginVertical: 16}} />
-      )}
+
 
       <Row style={{margin: 16}}>
         <Card
           iconName="shield-check"
           color={colors.orange700}
           title="Quyền lợi của bạn"
+          onPress={{}}
         />
-        <Card iconName="gift" color={colors.primary} title="Đổi thưởng" />
+        <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={{}} />
       </Row>
 
       {authState.lastName && (
@@ -86,13 +92,8 @@ const VoucherScreen: React.FC = () => {
   );
 };
 
-type CardProps = {
-  iconName: string;
-  color: string;
-  title: string;
-  onPress: () => void;
-};
-const Card: React.FC<CardProps> = ({iconName, color, title, onPress}) => {
+
+const Card = ({iconName, color, title, onPress}) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
