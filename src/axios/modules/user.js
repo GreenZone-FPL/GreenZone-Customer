@@ -54,3 +54,17 @@ export const updateUserProfile = async profileData => {
     throw new Error(error.response?.data?.message || 'Cập nhật hồ sơ thất bại');
   }
 };
+
+// gọi bean
+export const changeBeans = async voucherId => {
+  try {
+    const response = await axiosInstance.get(`/v1/user/exchange/${voucherId}`);
+    if (response.data) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.log('Đổi bean thất bại:', error);
+    return false;
+  }
+};

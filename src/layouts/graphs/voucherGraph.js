@@ -1,5 +1,4 @@
-import { AppGraph } from "./appGraph";
-
+import {AppGraph} from './appGraph';
 
 export const VoucherGraph = Object.freeze({
   graphName: AppGraph.VOUCHER,
@@ -7,4 +6,5 @@ export const VoucherGraph = Object.freeze({
   MyVouchersScreen: 'MyVouchersScreen',
   VoucherDetailSheet: 'VoucherDetailSheet',
   RankScreen: 'RankScreen',
+  BeanScreen: 'BeanScreen',
 });

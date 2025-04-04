@@ -5,6 +5,7 @@ import {
   BottomGraph,
   ShoppingGraph,
   UserGraph,
+  VoucherGraph,
 } from '../../layouts/graphs';
 import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
 import {useAppContainer} from '../useAppContainer';
@@ -175,6 +176,9 @@ export const useHomeContainer = () => {
   const navigateAdvertising = () => {
     navigation.navigate(AppGraph.AdvertisingScreen);
   };
+  const navigateBeanScreen = () => {
+    navigation.navigate(VoucherGraph.BeanScreen);
+  };
 
   return {
     navigation,
@@ -204,5 +208,6 @@ export const useHomeContainer = () => {
     navigateZaloPay,
     navigateCheckOut,
     navigateAdvertising,
+    navigateBeanScreen,
   };
 };

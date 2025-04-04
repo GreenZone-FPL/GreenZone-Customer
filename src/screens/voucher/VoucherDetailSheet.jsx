@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -14,7 +14,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {OverlayStatusBar} from '../../components';
 import {Icon} from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {TextFormatter} from '../../utils';
+import {AppAsyncStorage, TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -30,6 +30,7 @@ const VoucherDetailSheet = ({navigation, route}) => {
       setShowAlert(false);
     }, 2000);
   };
+  console.log('item', JSON.stringify(item, null, 2));
 
   const handleTermsText = () => {
     Linking.openURL(data.homepage);

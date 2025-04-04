@@ -1,5 +1,5 @@
 // @ts-ignore
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -23,18 +23,34 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useVoucherContainer } from '../../containers';
-import { View } from 'react-native-animatable';
+import { AppAsyncStorage } from '../../utils';
+import { getAllVoucher } from '../../axios';
+import { VoucherGraph } from '../../layouts/graphs';
 
 const width: number = Dimensions.get('window').width;
-const VoucherScreen: React.FC = () => {
+const VoucherScreen = ({navigation}) => {
   const { authState, user } = useVoucherContainer();
   const { onNavigateLogin } = useAppContainer();
 
-
+    const [vouchers, setVouchers] = useState([]);
+    useEffect(() => {
+      const fetchVouchers = async () => {
+       console.log( await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken) )
+        try {
+          if (await AppAsyncStorage.isTokenValid()) {
+            const response = await getAllVoucher();
+            setVouchers(response);
+          }
+        } catch (error) {
+          console.log('Lỗi khi gọi API Voucher:', error);
+        }
+      };
+  
+      fetchVouchers();
+    }, []);
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
-
       <ImageBackground
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
@@ -79,7 +95,7 @@ const VoucherScreen: React.FC = () => {
               title="Quyền lợi của bạn"
               onPress={{}}
             />
-            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={{}} />
+            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}} />
           </Row> :
 
           <Image
@@ -94,7 +110,7 @@ const VoucherScreen: React.FC = () => {
         <Column style={{ marginHorizontal: 16 }}>
           <TitleText text="Phiếu ưu đãi" />
 
-          <VoucherVertical route={{ params: { isUpdateOrderInfo: false } }} />
+          <VoucherVertical  vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
         </Column>
       )}
     </ScrollView>
@@ -120,6 +136,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
+    
+
   },
   imageBg: {
     width: '100%',
