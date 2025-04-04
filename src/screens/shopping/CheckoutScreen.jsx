@@ -80,6 +80,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  console.log('card:', JSON.stringify(cartState, null, 2))
 
   useEffect(() => {
     const initSocket = async () => {
