@@ -80,6 +80,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  console.log('card:', JSON.stringify(cartState, null, 2))
 
   useEffect(() => {
     const initSocket = async () => {
@@ -373,6 +374,7 @@ const CheckoutScreen = ({ navigation }) => {
               const paymentParams = {
                 orderId: response.data._id,
                 totalPrice: response.data.totalPrice,
+                paymentMethod: selectedPaymentMethod?.value
               };
               console.log('paymentParams', paymentParams)
               await AppAsyncStorage.storeData(
@@ -383,9 +385,9 @@ const CheckoutScreen = ({ navigation }) => {
               if (selectedPaymentMethod?.value === 'PayOs') {
                 navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
               } 
-              // else if (selectedPaymentMethod?.value === 'zalopay') {
-              //   navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
-              // }
+              else if (selectedPaymentMethod?.value === 'card') {
+                navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
+              }
             } else {
               navigation.reset({
                 index: 1,
@@ -850,12 +852,12 @@ const paymentMethods = [
     value: 'PayOs',
     paymentMethod: PaymentMethod.ONLINE.value,
   },
-  // {
-  //   name: 'ZaloPay',
-  //   image: require('../../assets/images/logo_zalopay.png'),
-  //   value: 'zalopay',
-  //   paymentMethod: PaymentMethod.ONLINE.value,
-  // },
+  {
+    name: 'Thẻ Visa, ngân hàng',
+    image: require('../../assets/images/logo_card.png'),
+    value: 'card',
+    paymentMethod: PaymentMethod.ONLINE.value,
+  },
 ];
 const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   const [isVisible, setIsVisible] = useState(false);

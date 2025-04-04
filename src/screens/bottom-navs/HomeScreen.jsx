@@ -45,6 +45,7 @@ const HomeScreen = () => {
     onNavigateProductDetailSheet,
     onClickAddToCart,
     navigatePayOS,
+    navigateZaloPay,
     navigateCheckOut,
     navigateAdvertising,
   } = useHomeContainer();
@@ -52,8 +53,6 @@ const HomeScreen = () => {
   const {onNavigateLogin} = useAppContainer();
 
   useSaveLocation();
-
-  console.log('awaitingPayments', awaitingPayments);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,13 +85,18 @@ const HomeScreen = () => {
         {awaitingPayments && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
-            onPress={() => navigatePayOS(awaitingPayments)}>
+            onPress={() =>
+              awaitingPayments.paymentMethod === 'PayOs'
+                ? navigatePayOS(awaitingPayments)
+                : awaitingPayments.paymentMethod === 'card'
+                ? navigateZaloPay(awaitingPayments)
+                : null
+            }>
             <TitleText
               text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
                 awaitingPayments.totalPrice,
               )} cần thanh toán`}
             />
-
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
         )}
