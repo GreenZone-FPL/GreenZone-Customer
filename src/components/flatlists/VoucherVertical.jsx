@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -8,36 +9,74 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {getAllVoucher} from '../../axios';
 import {Column, NormalText} from '../index';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {VoucherGraph} from '../../layouts/graphs';
-import {AppAsyncStorage, CartManager, TextFormatter} from '../../utils';
+import {CartManager, TextFormatter, Toaster} from '../../utils';
 import {useNavigation} from '@react-navigation/native';
+import {changeBeans} from '../../axios';
 
 const {width} = Dimensions.get('window');
 
-export const VoucherVertical = ({route}) => {
+export const VoucherVertical = ({route, vouchers, type}) => {
   const navigation = useNavigation();
-  const [vouchers, setVouchers] = useState([]);
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
+  const {isChangeBeans} = route.params || false;
 
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        if (await AppAsyncStorage.isTokenValid()) {
-          const response = await getAllVoucher();
-          setVouchers(response);
-        }
-      } catch (error) {
-        console.log('Lỗi khi gọi API Voucher:', error);
-      }
+  // PERCENTAGE = 'percentage',
+  // FIXED_AMOUNT = 'fixedAmount',
+
+  const changeBean = async id => {
+    // Hiển thị alert xác nhận
+    Alert.alert(
+      'Xác nhận đổi Bean',
+      'Bạn có chắc chắn muốn đổi Bean không?',
+      [
+        {
+          text: 'Hủy',
+          onPress: () => console.log('Hành động hủy bỏ'),
+          style: 'cancel',
+        },
+        {
+          text: 'Đồng ý',
+          onPress: async () => {
+            try {
+              const response = await changeBeans(id);
+              if (response === true) {
+                Toaster.show('Đổi thành công mã giảm giá');
+              } else {
+                Toaster.show('Bạn không đủ Bean');
+              }
+            } catch (error) {
+              console.error('Lỗi khi đổi bean:', error);
+            }
+          },
+        },
+      ],
+      {cancelable: false},
+    );
+  };
+
+  const filterByDiscountType = type => {
+    const discountTypeMap = {
+      1: 'percentage',
+      2: 'fixedAmount',
     };
 
-    fetchVouchers();
-  }, []);
+    const discountType = discountTypeMap[type];
+
+    if (!discountType) {
+      console.warn('Loại discountType không hợp lệ!');
+      return [];
+    }
+
+    const filtered = vouchers.filter(
+      voucher => voucher.discountType === discountType,
+    );
+    return filtered;
+  };
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
@@ -50,6 +89,8 @@ export const VoucherVertical = ({route}) => {
       }
 
       navigation.goBack();
+    } else if (isChangeBeans) {
+      changeBean(item._id);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }
@@ -58,7 +99,7 @@ export const VoucherVertical = ({route}) => {
   return (
     <Column style={styles.container}>
       <FlatList
-        data={vouchers}
+        data={filterByDiscountType(type)}
         keyExtractor={item => item._id.toString()}
         renderItem={({item}) => (
           <ItemVoucher onPress={() => onItemPress(item)} item={item} />

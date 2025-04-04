@@ -1,9 +1,9 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Text } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { colors, GLOBAL_KEYS } from '../constants';
-import { MainGraph } from './graphs';
+import {Text} from 'react-native';
+import {Icon} from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../constants';
+import {MainGraph} from './graphs';
 import HomeStackScreen from './stacks/HomeStackScreen';
 import MerchantStackScreen from './stacks/MerchantStackScreen';
 import OrderStackScreen from './stacks/OrderStackScreen';
@@ -13,11 +13,10 @@ import VoucherStackScreen from './stacks/VoucherStackScreen';
 const BottomTab = createBottomTabNavigator();
 
 const MainNavigation = () => {
-
   return (
     <BottomTab.Navigator
       initialRouteName={MainGraph.HomeStackScreen}
-      screenOptions={({ route }) => ({
+      screenOptions={({route}) => ({
         headerShown: false,
         tabBarShowLabel: true,
         tabBarStyle: {
@@ -25,16 +24,14 @@ const MainNavigation = () => {
           maxHeight: 80,
           height: 60,
         },
-        tabBarIcon: ({ focused }) => {
+        tabBarIcon: ({focused}) => {
           let iconName;
 
           if (route.name === MainGraph.HomeStackScreen) {
             iconName = focused ? 'home' : 'home-outline';
-          }
-          else if (route.name === MainGraph.OrderStackScreen) {
+          } else if (route.name === MainGraph.OrderStackScreen) {
             iconName = focused ? 'food' : 'food-outline';
-          }
-          else if (route.name === MainGraph.MerchantStackScreen) {
+          } else if (route.name === MainGraph.MerchantStackScreen) {
             iconName = focused ? 'store' : 'store-outline';
           } else if (route.name === MainGraph.VoucherStackScreen) {
             iconName = focused ? 'gift-open' : 'gift-outline';
@@ -50,16 +47,14 @@ const MainNavigation = () => {
             />
           );
         },
-        tabBarLabel: ({ focused }) => {
+        tabBarLabel: ({focused}) => {
           let label;
 
           if (route.name === MainGraph.HomeStackScreen) {
             label = 'Trang chủ';
-          }
-          else if (route.name === MainGraph.OrderStackScreen) {
+          } else if (route.name === MainGraph.OrderStackScreen) {
             label = 'Đặt hàng';
-          }
-          else if (route.name === MainGraph.MerchantStackScreen) {
+          } else if (route.name === MainGraph.MerchantStackScreen) {
             label = 'Cửa hàng';
           } else if (route.name === MainGraph.VoucherStackScreen) {
             label = 'Ưu đãi';
@@ -68,7 +63,11 @@ const MainNavigation = () => {
           }
 
           return (
-            <Text style={{ color: focused ? colors.primary : colors.gray700, fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>
+            <Text
+              style={{
+                color: focused ? colors.primary : colors.gray700,
+                fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+              }}>
               {label}
             </Text>
           );
@@ -79,7 +78,6 @@ const MainNavigation = () => {
       <BottomTab.Screen
         name={MainGraph.HomeStackScreen}
         component={HomeStackScreen}
-
       />
       <BottomTab.Screen
         name={MainGraph.OrderStackScreen}
