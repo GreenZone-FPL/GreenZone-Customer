@@ -90,7 +90,7 @@ const MyVoucherScreen = ({navigation, route}) => {
       )}
 
       <FlatList
-        data={filterByDiscountType(2)}
+        data={filterByDiscountType(1)}
         keyExtractor={item => item._id.toString()}
         renderItem={({item}) => (
           <ItemVoucher onPress={() => onItemPress(item)} item={item} />
