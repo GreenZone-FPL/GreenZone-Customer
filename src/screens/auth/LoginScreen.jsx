@@ -1,34 +1,36 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   BackHandler,
+  Dimensions,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {sendOTP} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { sendOTP } from '../../axios';
 import {
   Column,
   FlatInput,
   LightStatusBar,
+  NormalInput,
   NormalLoading,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {AuthGraph} from '../../layouts/graphs';
-import {AuthActionTypes} from '../../reducers';
-import {Toaster} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { AuthGraph } from '../../layouts/graphs';
+import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils';
 
-const LoginScreen = ({route, navigation}) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456722');
+const LoginScreen = ({ route, navigation }) => {
+  const [phoneNumber, setPhoneNumber] = useState('0123456723');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch} = useAppContext();
+  const { authState, authDispatch } = useAppContext();
 
   // Hàm gửi SMS OTP
   // const sendSms = async (phoneNumber, otpCode) => {
@@ -99,7 +101,7 @@ const LoginScreen = ({route, navigation}) => {
         // navigation.navigate(MainGraph.graphName);
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: {needLogin: false},
+          payload: { needLogin: false },
         });
       }
 
@@ -123,7 +125,7 @@ const LoginScreen = ({route, navigation}) => {
         delay: 2000,
         useNativeDriver: true,
       }).start(() => {
-        authDispatch({type: AuthActionTypes.CLEAR_MESSAGE});
+        authDispatch({ type: AuthActionTypes.CLEAR_MESSAGE });
       });
     }
   }, [authDispatch, authState.message, fadeAnim]);
@@ -158,7 +160,7 @@ const LoginScreen = ({route, navigation}) => {
   return (
     <Column style={styles.container}>
       {authState.message ? (
-        <Animated.View style={[styles.toast, {opacity: fadeAnim}]}>
+        <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
           <Icon source="information" size={20} color={colors.primary} />
           <Text style={styles.toastText}>{authState.message}</Text>
         </Animated.View>
@@ -166,13 +168,15 @@ const LoginScreen = ({route, navigation}) => {
 
       <LightStatusBar />
       <Image
-        source={require('../../assets/images/register_bg.png')}
-        style={{width: '100%', height: 200}}
-      />
-      <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+      
+      <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
-      <FlatInput
+      <NormalInput
+        required
         value={phoneNumber}
         label="Số điện thoại"
         placeholder="Nhập số điện thoại của bạn..."
@@ -187,9 +191,9 @@ const LoginScreen = ({route, navigation}) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-        <View style={{width: 30, height: 30}}></View>
-        <Text style={styles.buttonText}>ĐĂNG NHẬP</Text>
-        <Icon source="arrow-right-circle" color={colors.white} size={30} />
+       
+        <Text style={styles.buttonText}>Đăng nhập</Text>
+      
       </TouchableOpacity>
 
       <NormalLoading visible={loading} />
@@ -202,7 +206,7 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     padding: 16,
     gap: 24,
     alignItems: 'center',
@@ -220,7 +224,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 4,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
@@ -240,6 +244,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
   },
+  logo: {
+    width: Dimensions.get('window').width / 1.5,
+    height: Dimensions.get('window').width / 1.5,
+    alignSelf: 'center',
+  },
   input: {
     width: '100%',
     height: 50,
@@ -248,11 +257,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: colors.primary,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 20,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     width: '100%',
+    marginTop: 16
   },
   buttonText: {
     color: 'white',

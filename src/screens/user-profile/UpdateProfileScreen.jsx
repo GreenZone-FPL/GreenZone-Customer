@@ -1,36 +1,36 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
+  Modal,
   ScrollView,
   StyleSheet,
-  View,
-  TouchableOpacity,
   Text,
-  Modal,
   ToastAndroid,
-  Alert,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import {
-  CustomFlatInput,
-  FlatInput,
+  NormalInput,
   NormalHeader,
   NormalLoading,
-  PrimaryButton,
   NormalText,
+  PrimaryButton,
 } from '../../components';
-import { GLOBAL_KEYS, colors } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppContext, useAppContext } from '../../context/appContext';
 import { Dropdown } from 'react-native-element-dropdown';
 import DatePicker from 'react-native-date-picker';
-import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { uploadFile } from '../../axios/modules/file';
 import { updateUserProfile } from '../../axios/modules/user';
 import { AppAsyncStorage, CartManager } from '../../utils';
-import { BottomGraph, MainGraph, UserGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
+
+import LabelInput from '../../components/inputs/LabelInput';
 
 const { width } = Dimensions.get('window');
 
@@ -111,8 +111,9 @@ const UpdateProfileScreen = ({ navigation, route }) => {
     setImagePickerVisible(false);
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|vn|edu|gov|info|biz)$/;
+  const validateEmail = email => {
+    const emailRegex =
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|vn|edu|gov|info|biz)$/;
     return emailRegex.test(email.trim());
   };
   const handleUpdateProfile = async () => {
@@ -128,10 +129,12 @@ const UpdateProfileScreen = ({ navigation, route }) => {
     }
 
     if (!validateEmail(email)) {
-      ToastAndroid.show('Email không hợp lệ! Vui lòng nhập đúng định dạng.', ToastAndroid.SHORT);
+      ToastAndroid.show(
+        'Email không hợp lệ! Vui lòng nhập đúng định dạng.',
+        ToastAndroid.SHORT,
+      );
       return; // Ngăn chặn tiếp tục xử lý nếu email không hợp lệ
     }
-
 
     const formattedDob = dob.toISOString().split('T')[0];
     const formattedGender =
@@ -187,12 +190,16 @@ const UpdateProfileScreen = ({ navigation, route }) => {
             lastName: result.lastName,
           },
         });
-        await CartManager.updateOrderInfo(cartDispatch, { consigneeName: `${result.lastName} ${result.firstName}` })
+        await CartManager.updateOrderInfo(cartDispatch, {
+          consigneeName: `${result.lastName} ${result.firstName}`,
+        });
         ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
-
       }
     } catch (error) {
-      console.error('Lỗi cập nhật hồ sơ:', error.response?.data || error.message);
+      console.error(
+        'Lỗi cập nhật hồ sơ:',
+        error.response?.data || error.message,
+      );
       Alert.alert('Lỗi', error.response?.data?.message || error.message);
     } finally {
       setLoading(false);
@@ -227,18 +234,15 @@ const UpdateProfileScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.formContainer}>
-          <FlatInput label="Họ" value={lastName} setValue={setLastName} />
-          <FlatInput label="Tên" value={firstName} setValue={setFirstName} />
-          <FlatInput
-            label="Email"
-            value={email}
-            setValue={setEmail}
-            keyboardType="email-address"
-          />
+          <NormalInput label="Họ" value={firstName} setValue={setLastName} />
+          <NormalInput label="Tên" value={lastName} setValue={setFirstName} required />
+
+
+          <LabelInput label='Ngày sinh'   style={{ fontSize: 14 }}/>
           <TouchableOpacity
             onPress={() => setOpen(true)}
             style={styles.dropdown}>
-            <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT }}>
+            <Text style={{ fontSize: 14 }}>
               {dob instanceof Date && !isNaN(dob)
                 ? dob.toLocaleDateString('vi-VN', {
                   year: 'numeric',
@@ -249,6 +253,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
 
+          <LabelInput label='Giới tính'  style={{ fontSize: 14 }}/>
           <DatePicker
             modal
             open={open}
@@ -322,7 +327,7 @@ const UpdateProfileScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     gap: 16,
   },
   avatarContainer: {
@@ -358,29 +363,20 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: GLOBAL_KEYS.GAP_SMALL,
   },
   dropdown: {
-    borderColor: colors.primary,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingHorizontal: 16,
-    height: 50,
-    justifyContent: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    borderBottomColor: colors.primary,
-    borderBottomWidth: 1,
-    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    fontSize: 14
   },
-  dropdownText: {
-    fontSize: 12,
-    color: '#000',
-  },
+
   placeholderText: {
     color: colors.black,
-    fontSize: 12,
+    fontSize: 14,
   },
   imagePickerOverlay: {
     flex: 1,

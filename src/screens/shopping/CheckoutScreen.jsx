@@ -26,6 +26,7 @@ import {
   HorizontalProductItem,
   LightStatusBar,
   NormalHeader,
+  NormalInput,
   NormalLoading,
   NormalText,
   PrimaryButton,
@@ -56,6 +57,7 @@ import {
   Toaster,
   fetchUserLocation,
 } from '../../utils';
+import { color } from '@rneui/base';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = ({ navigation }) => {
@@ -259,40 +261,7 @@ const CheckoutScreen = ({ navigation }) => {
                   })
                 }
               />
-              {/* <Column style={{ gap: 16, marginHorizontal: 16 }}>
-                <Button
-                  title="Log cartState"
-                  onPress={() =>
-                    console.log(
-                      'cartState =',
-                      JSON.stringify(cartState, null, 2),
-                    )
-                  }
-                />
-                <Button
-                  title="Log Order"
-                  onPress={() =>
-                    console.log(
-                      'cartState =',
-                      JSON.stringify(
-                        CartManager.setupDeliveryOrder(cartState),
-                        null,
-                        2,
-                      ),
-                    )
-                  }
-                />
 
-                <Button
-                  title="Clear cartState"
-                  onPress={() => CartManager.clearCartState(cartDispatch)}
-                />
-
-                <Button
-                  title="Xóa hết sản phẩm"
-                  onPress={() => CartManager.clearOrderItems(cartDispatch)}
-                />
-              </Column> */}
             </ScrollView>
 
             <Footer
@@ -382,7 +351,7 @@ const CheckoutScreen = ({ navigation }) => {
 
               if (selectedPaymentMethod?.value === 'PayOs') {
                 navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
-              } 
+              }
               // else if (selectedPaymentMethod?.value === 'zalopay') {
               //   navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
               // }
@@ -510,18 +479,20 @@ const DialogRecipientInfo = ({ visible, onHide, onConfirm }) => {
       title={'Thay đổi thông tin người nhận'}
       isVisible={visible}
       onHide={onHide}
-      style={{ backgroundColor: colors.fbBg }}>
+      style={{ backgroundColor: colors.white }}>
       <Column style={styles.content}>
-        <LabelInput label="Tên người nhận" required />
-        <FlatInput
+
+        <NormalInput
+          label="Tên người nhận" required
           value={name}
           setValue={setName}
           placeholder="Nguyễn Văn A"
           invalidMessage={nameError}
         />
 
-        <LabelInput label="Số điện thoại" required />
-        <FlatInput
+
+        <NormalInput
+          label="Số điện thoại" required
           placeholder="0123456789"
           value={phoneNumber}
           setValue={setPhoneNumber}
@@ -659,7 +630,7 @@ const RecipientInfo = ({
           setUser(userData);
           if (!cartState?.consigneeName) {
             CartManager.updateOrderInfo(cartDispatch, {
-              consigneeName: `${userData.lastName} ${userData.firstName}`,
+              consigneeName: `${userData.firstName} ${userData.lastName}`,
               consigneePhone: userData.phoneNumber,
             });
           }
@@ -676,7 +647,7 @@ const RecipientInfo = ({
   if (!user) return null; // 🔥 Không render gì nếu chưa có user
 
   const consigneeName =
-    cartState?.consigneeName || `${user.lastName} ${user.firstName}`;
+    cartState?.consigneeName || `${user.firstName} ${user.lastName}`;
   const consigneePhone = cartState?.consigneePhone || user.phoneNumber;
 
   return (
@@ -973,13 +944,19 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
   return (
     <View
       style={{
-        backgroundColor: colors.fbBg,
+        backgroundColor: colors.white,
         padding: GLOBAL_KEYS.PADDING_DEFAULT,
         justifyContent: 'flex-end',
+        borderTopColor: colors.gray200,
+        borderTopWidth: 1
       }}>
       <Row style={{ justifyContent: 'space-between', marginBottom: 6 }}>
         <Column>
-          <TitleText text="Tổng cộng" />
+          <TitleText
+            style={{ fontSize: 18, color: colors.pink500, fontWeight: '700' }}
+            text={`${TextFormatter.formatCurrency(
+              paymentDetails.paymentTotal,
+            )}`} />
           <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
           {cartState?.voucher && (
             <NormalText
@@ -991,48 +968,40 @@ const Footer = ({ cartState, showDialog, timeInfo, note, cartDispatch }) => {
           )}
         </Column>
 
-        <Column>
+        <Pressable
+          onPress={async () => {
+            const orderInfo = {
+              fulfillmentDateTime:
+                timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+              totalPrice: paymentDetails.paymentTotal,
+              note,
+            };
+            const newCart = await CartManager.updateOrderInfo(
+              cartDispatch,
+              orderInfo,
+            );
+
+            const missingFields = CartManager.checkValid(newCart);
+            console.log('missingFields', missingFields);
+            if (missingFields) {
+              Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`);
+              return;
+            }
+            showDialog();
+          }}
+          style={{ backgroundColor: colors.primary, borderRadius: 8, paddingVertical: 12, paddingHorizontal: 20 }}
+        >
           <TitleText
-            text={`${TextFormatter.formatCurrency(
-              paymentDetails.paymentTotal,
-            )}`}
-            style={{ color: colors.red900, textAlign: 'right', fontSize: 16 }}
+            text={`Đặt hàng`}
+            style={{ color: colors.white, textAlign: 'right', fontSize: 14 }}
           />
-          {/* <NormalText text={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`} style={styles.textDiscount} /> */}
-        </Column>
+
+        </Pressable>
+
+
+
       </Row>
 
-      <PrimaryButton
-        title="Đặt hàng"
-        onPress={async () => {
-          const orderInfo = {
-            fulfillmentDateTime:
-              timeInfo?.fulfillmentDateTime || new Date().toISOString(),
-            totalPrice: paymentDetails.paymentTotal,
-            note,
-          };
-          const newCart = await CartManager.updateOrderInfo(
-            cartDispatch,
-            orderInfo,
-          );
-
-          const missingFields = CartManager.checkValid(newCart);
-          console.log('missingFields', missingFields);
-          if (missingFields) {
-            Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`);
-            return;
-          }
-          showDialog();
-        }}
-      />
-
-      {/* <DialogNotification
-        isVisible={isVisible}
-        onHide={() => setIsVisible(false)}
-        title='Xác nhận thông tin đơn hàng'
-        onConfirm={() => setIsVisible(false)}
-        address={address} // Truyền địa chỉ vào DialogNotification
-      /> */}
     </View>
   );
 };
@@ -1063,7 +1032,7 @@ const styles = StyleSheet.create({
   },
   content: {
     gap: 12,
-    backgroundColor: colors.transparent,
+    backgroundColor: colors.white,
   },
 
   input: {

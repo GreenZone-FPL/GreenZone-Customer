@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-paper';
-import { getProfile } from '../../axios';
+import React, {useState} from 'react';
+import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Icon} from 'react-native-paper';
+import {getProfile} from '../../axios';
 import {
   AuthButton,
   Column,
@@ -13,17 +13,15 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { OrderGraph, UserGraph } from '../../layouts/graphs';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContainer} from '../../containers';
+import {useAppContext} from '../../context/appContext';
+import {OrderGraph, UserGraph} from '../../layouts/graphs';
 
-
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch, cartDispatch } = useAppContext();
-  const { onLogout, onNavigateLogin } = useAppContainer();
-
+  const {authState, authDispatch, cartDispatch} = useAppContext();
+  const {onLogout, onNavigateLogin} = useAppContainer();
 
   const handleProfile = async () => {
     setLoading(true);
@@ -31,11 +29,10 @@ const ProfileScreen = ({ navigation }) => {
       if (authState.lastName) {
         const reponse = await getProfile();
         console.log('profile', reponse);
-        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
+        navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
       } else {
-        onNavigateLogin()
+        onNavigateLogin();
       }
-
     } catch (error) {
       console.log('error', error);
     } finally {
@@ -43,7 +40,7 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
-  const navigateIfLoggedIn = (screen) => {
+  const navigateIfLoggedIn = screen => {
     authState.lastName ? navigation.navigate(screen) : onNavigateLogin();
   };
 
@@ -53,13 +50,9 @@ const ProfileScreen = ({ navigation }) => {
       <HeaderWithBadge title="Cá nhân" />
       <ScrollView>
         <Column style={styles.body}>
-          {!authState.lastName &&
-
-            <AuthButton
-              title="Đăng nhập"
-              onPress={onNavigateLogin}
-            />
-          }
+          {!authState.lastName && (
+            <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+          )}
           <TitleText text="Tài khoản" />
           <NormalLoading visible={loading} />
           <Column>
@@ -74,7 +67,8 @@ const ProfileScreen = ({ navigation }) => {
                 icon="google-maps"
                 color={colors.pink500}
                 title="Địa chỉ"
-                onPress={() => navigateIfLoggedIn(UserGraph.AddressScreen)} />
+                onPress={() => navigateIfLoggedIn(UserGraph.AddressScreen)}
+              />
             </Row>
 
             <Row style={styles.accountContainer}>
@@ -82,8 +76,10 @@ const ProfileScreen = ({ navigation }) => {
                 icon="file-document-edit"
                 color={colors.orange700}
                 title="Lịch sử đơn hàng"
-                onPress={() => navigateIfLoggedIn(OrderGraph.OrderHistoryScreen)} />
-
+                onPress={() =>
+                  navigateIfLoggedIn(OrderGraph.OrderHistoryScreen)
+                }
+              />
             </Row>
           </Column>
 
@@ -91,20 +87,23 @@ const ProfileScreen = ({ navigation }) => {
 
           <View style={styles.utilities}>
             <CardUtiliti
-              icon="cog"
+              icon="cog-outline"
               title="Cài đặt"
-              onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)} />
+              onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)}
+            />
 
             <View style={styles.separator} />
             <CardUtiliti
-              icon="chat"
+              icon="chat-outline"
               title="Liên hệ góp ý"
-              onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)} />
+              onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)}
+            />
             <View style={styles.separator} />
             <CardUtiliti
-              icon="star"
+              icon="star-outline"
               title="Đánh giá đơn hàng"
-              onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)} />
+              onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
+            />
 
             <View style={styles.separator} />
             {authState.lastName && (
@@ -119,22 +118,18 @@ const ProfileScreen = ({ navigation }) => {
 
 export default ProfileScreen;
 
-const CardAccount = ({ icon, color, title, onPress }) => (
+const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
-    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
+    <Icon source={icon} size={30} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({ icon, title, onPress }) => (
+const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
-      <Icon
-        source={icon}
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.gray700}
-      />
-      <NormalText text={title} />
+      <Icon source={icon} size={26} color={colors.gray700} />
+      <NormalText text={title} style={{fontSize: 14}} />
       {/* <Text style={styles.itemText}>{title}</Text> */}
     </View>
   </Pressable>
@@ -164,24 +159,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    elevation: 3,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    paddingVertical: 12,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    elevation: 1,
+    gap: 10,
   },
   cardText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: 14,
     color: colors.black,
+    fontWeight: '600',
   },
   utilities: {
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    elevation: 3,
+    elevation: 1,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: 5,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
   },
   leftSection: {
     flexDirection: 'row',

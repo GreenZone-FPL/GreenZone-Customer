@@ -16,7 +16,7 @@ export const useRegisterContainer = () => {
     lastName: '',
     firstNameError: '',
     lastNameError: '',
-    loading: true,
+    loading: false,
   };
 
   const reducer = (
