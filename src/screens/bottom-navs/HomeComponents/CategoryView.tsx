@@ -1,3 +1,4 @@
+import React from 'react';
 import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {TitleText} from '../../../components';
 import {useNavigation} from '@react-navigation/native';
@@ -7,6 +8,7 @@ import {
   Rank,
   TaskSquare,
   TicketDiscount,
+  Coffee
 } from 'iconsax-react-native';
 import {
   AppGraph,
@@ -42,6 +44,7 @@ export const CategoryView: React.FC = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{gap: 22}}>
         <Item
+        
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
@@ -67,9 +70,10 @@ export const CategoryView: React.FC = () => {
 
         <Item
           IconComponent={() => (
-            <Coin1 size="50" color={colors.yellow600} variant="Bulk" />
+            <Coffee size="50" color={colors.yellow700} variant="Bulk" />
           )}
-          title="Đổi xu"
+          title="Đổi Bean"
+          onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}}
         />
 
         <Item
