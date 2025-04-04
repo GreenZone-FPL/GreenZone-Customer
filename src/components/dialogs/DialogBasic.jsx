@@ -3,6 +3,7 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -36,8 +37,8 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style, titleSt
       animationType="fade"
       transparent={true}
      >
-      <Column style={styles.overlay}>
-        <Column style={[styles.modalContainer, style]}>
+      <Pressable style={styles.overlay} onPress={onHide}>
+        <Pressable style={[styles.modalContainer, style]} onPress={() => {}}>
 
           <OverlayStatusBar />
 
@@ -50,7 +51,7 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style, titleSt
                   <Icon
                     source="close"
                     size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    color={colors.primary}
+                    color={colors.black}
                   />
                 </TouchableOpacity>
               </Row>
@@ -61,8 +62,8 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style, titleSt
           </ScrollView>
 
 
-        </Column>
-      </Column>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };
@@ -88,9 +89,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.black,
     textAlign: 'center',
     flex: 1,
   },

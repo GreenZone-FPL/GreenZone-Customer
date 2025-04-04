@@ -27,6 +27,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
 import { useProductDetailContainer } from '../../containers';
+import FastImage from 'react-native-fast-image';
 
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -93,7 +94,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
   }, []);
 
   return (
-    <View style={styles.modalContainer}>
+    <Pressable style={styles.modalContainer}>
       <OverlayStatusBar />
       <IconButton
         icon="close"
@@ -103,8 +104,9 @@ const ProductDetailSheet = ({ route, navigation }) => {
         onPress={() => navigation.goBack()}
       />
       {product && (
+
         <>
-          <ScrollView style={styles.modalContent}>
+          <ScrollView style={styles.modalContent} removeClippedSubviews={true} showsVerticalScrollIndicator  >
             <ProductImage product={product} />
 
 
@@ -164,12 +166,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
             totalPrice={totalAmount}
             onButtonPress={() => {
               onClickAddToCart(async () => {
-                if(!quantity || quantity < 1){
+                if (!quantity || quantity < 1) {
                   setQuantity(1)
                   Toaster.show('Vui lòng nhập số lượng hợp lệ')
                   return
                 }
-              
+               
+
                 const updatedToppings = selectedToppings.map(topping => ({
                   ...topping,
                   topping: topping._id,
@@ -193,8 +196,10 @@ const ProductDetailSheet = ({ route, navigation }) => {
             buttonTitle="Chọn -"
           />
         </>
+
+
       )}
-    </View>
+    </Pressable>
   );
 };
 
@@ -203,7 +208,11 @@ const ProductImage = ({ product }) => {
   return (
 
     <Pressable style={styles.imageContainer}>
-      <Image source={{ uri: product.image }} style={styles.productImage} />
+      <FastImage
+        style={styles.productImage}
+        source={{ uri: product.image }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
     </Pressable>
 
   );
@@ -316,7 +325,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.white,
     flexDirection: 'column',
-    gap: GLOBAL_KEYS.GAP_SMALL,
     marginTop: StatusBar.currentHeight + 40,
     flex: 1,
   },
