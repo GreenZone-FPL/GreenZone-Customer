@@ -67,13 +67,13 @@ const ProductDetailShort = ({ route, navigation }) => {
 
 
     return (
-        <Column style={styles.container}>
+        <Pressable style={styles.container} onPress={() => navigation.goBack()}>
             <OverlayStatusBar />
             {
 
                 product &&
 
-                <Column style={styles.contentContainer}>
+                <Pressable style={styles.contentContainer} onPress={() => {}}>
                     <ProductInfo
                         product={product}
                         showFullDescription={showFullDescription}
@@ -139,11 +139,11 @@ const ProductDetailShort = ({ route, navigation }) => {
                         }}
                         totalPrice={totalAmount}
                         onButtonPress={async () => {
-                            if(!quantity || quantity < 1){
+                            if (!quantity || quantity < 1) {
                                 setQuantity(1)
                                 Toaster.show('Vui lòng nhập số lượng hợp lệ')
                                 return
-                              }
+                            }
                             const updatedToppings = selectedToppings.map(topping => ({
                                 ...topping,
                                 topping: topping._id,
@@ -162,11 +162,11 @@ const ProductDetailShort = ({ route, navigation }) => {
                         buttonTitle='Chọn -'
                     />
 
-                </Column>
+                </Pressable>
 
             }
 
-        </Column>
+        </Pressable>
     );
 };
 
