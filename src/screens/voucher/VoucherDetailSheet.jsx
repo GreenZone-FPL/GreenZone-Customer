@@ -35,6 +35,9 @@ const VoucherDetailSheet = ({navigation, route}) => {
     Linking.openURL(data.homepage);
   };
 
+  if(!item){
+    return null
+  }
   return (
     <View style={styles.container}>
       {showAlert && (

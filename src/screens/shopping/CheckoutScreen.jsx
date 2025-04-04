@@ -82,7 +82,7 @@ const CheckoutScreen = ({ navigation }) => {
   const [selectedProduct, setSelectedProduct] = useState(null); // Sản phẩm cần xóa
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  console.log('card:', JSON.stringify(cartState, null, 2))
+
 
   useEffect(() => {
     const initSocket = async () => {
@@ -353,7 +353,7 @@ const CheckoutScreen = ({ navigation }) => {
 
               if (selectedPaymentMethod?.value === 'PayOs') {
                 navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
-              } 
+              }
               else if (selectedPaymentMethod?.value === 'card') {
                 navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
               }
@@ -876,27 +876,30 @@ const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
   };
 
   return (
-    <Row
-      style={{
-        justifyContent: 'space-between',
-        paddingHorizontal: 16,
-        backgroundColor: colors.white,
-        paddingVertical: 8,
-      }}>
-      <NormalText text="Phương thức thanh toán" />
+    <>
+      <Row
+        style={{
+          justifyContent: 'space-between',
+          paddingHorizontal: 16,
+          backgroundColor: colors.white,
+          paddingVertical: 8,
+        }}>
+        <NormalText text="Phương thức thanh toán" />
 
-      <TouchableOpacity
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-        onPress={() => setIsVisible(true)}>
-        {selectedMethod && (
-          <>
-            <Image source={selectedMethod.image} style={styles.image} />
-            <NormalText text={selectedMethod.name} />
-          </>
-        )}
-        <Icon source="chevron-down" size={24} color={colors.gray700} />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+          onPress={() => setIsVisible(true)}>
+          {selectedMethod && (
+            <>
+              <Image source={selectedMethod.image} style={styles.image} />
+              <NormalText text={selectedMethod.name} />
+            </>
+          )}
+          <Icon source="chevron-down" size={24} color={colors.gray700} />
+        </TouchableOpacity>
 
+
+      </Row>
       <DialogBasic
         isVisible={isVisible}
         onHide={() => setIsVisible(false)}
@@ -925,8 +928,8 @@ const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
                       : 'unchecked'
                   }
                   color={colors.primary}
-                  onPress={() => handleSelectMethod(method, disabled)}
-                />
+                  onPress={async() => await handleSelectMethod(method, disabled)}
+                /> 
                 <Image source={method.image} style={styles.image} />
                 <Text style={{ color: colors.gray700, marginLeft: 8 }}>
                   {method.name}
@@ -936,7 +939,8 @@ const PaymentMethodView = ({ cartDispatch, cartState, onSelect }) => {
           })}
         </Column>
       </DialogBasic>
-    </Row>
+    </>
+
   );
 };
 

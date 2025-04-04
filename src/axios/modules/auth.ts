@@ -46,7 +46,6 @@ export const register = async (request: RegisterRequest) => {
 export const sendOTP = async phoneNumber => {
   try {
     const response = await axiosInstance.post('/auth/otp/send', {phoneNumber});
-    console.log('response OTP', JSON.stringify(response, null, 2));
     return response.data;
   } catch (error) {
     console.log('error:', error);
