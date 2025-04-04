@@ -5,6 +5,7 @@ import {Icon} from 'react-native-paper';
 import {getProfile} from '../../axios';
 import {
   AuthButton,
+  AuthContainer,
   Column,
   HeaderWithBadge,
   LightStatusBar,
@@ -50,9 +51,7 @@ const ProfileScreen = ({navigation}) => {
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
       {!authState.lastName && (
-        <ButtonBackground
-          view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
-        />
+          <AuthContainer onPress={onNavigateLogin} />
       )}
       <ScrollView>
         <Column style={styles.body}>
@@ -140,7 +139,7 @@ const CardUtiliti = ({icon, title, onPress}) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     flexDirection: 'column',
   },
   body: {
@@ -164,7 +163,8 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     paddingVertical: 12,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.gray200,
     gap: 10,
   },
   cardText: {
@@ -177,12 +177,16 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.gray200
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 5,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+
+    
   },
   leftSection: {
     flexDirection: 'row',
