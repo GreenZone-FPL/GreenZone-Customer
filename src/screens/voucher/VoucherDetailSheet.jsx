@@ -14,7 +14,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {OverlayStatusBar} from '../../components';
 import {Icon} from 'react-native-paper';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {AppAsyncStorage, TextFormatter} from '../../utils';
+import {TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
 

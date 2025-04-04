@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   Dimensions,
@@ -9,20 +9,44 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import { getAllVoucher } from '../../axios/index';
-import { Column, LightStatusBar, NormalHeader, NormalText, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter } from '../../utils';
+import {getAllVoucher} from '../../axios/index';
+import {
+  Column,
+  LightStatusBar,
+  NormalHeader,
+  NormalText,
+  TitleText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {VoucherGraph} from '../../layouts/graphs';
+import {CartManager, TextFormatter} from '../../utils';
 
 const {width} = Dimensions.get('window');
 
-const MyVoucherScreen = ({ navigation, route }) => {
+const MyVoucherScreen = ({navigation, route}) => {
   const [vouchers, setVouchers] = useState([]);
-  const { cartDispatch } = useAppContext()
-  const { isUpdateOrderInfo } = route.params || false
+  const {cartDispatch} = useAppContext();
+  const {isUpdateOrderInfo} = route.params || false;
 
+  const filterByDiscountType = type => {
+    const discountTypeMap = {
+      1: 'percentage',
+      2: 'fixedAmount',
+    };
+
+    const discountType = discountTypeMap[type];
+
+    if (!discountType) {
+      console.warn('Loại discountType không hợp lệ!');
+      return [];
+    }
+
+    const filtered = vouchers.filter(
+      voucher => voucher.discountType === discountType,
+    );
+    return filtered;
+  };
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -39,49 +63,46 @@ const MyVoucherScreen = ({ navigation, route }) => {
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      console.log('item Vouher = ', item)
+      console.log('item Vouher = ', item);
       if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch,
-          {
-            voucher: item._id,
-            voucherInfo: item
-          }
-        )
+        CartManager.updateOrderInfo(cartDispatch, {
+          voucher: item._id,
+          voucherInfo: item,
+        });
       }
 
-      navigation.goBack()
+      navigation.goBack();
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }
-
   };
 
   return (
     <Column style={styles.container}>
       <LightStatusBar />
-      <NormalHeader title="Phiếu ưu đãi của tôi" onLeftPress={() => navigation.goBack()} />
+      <NormalHeader
+        title="Phiếu ưu đãi của tôi"
+        onLeftPress={() => navigation.goBack()}
+      />
 
-      {
-        vouchers.length > 0 &&
-        <TitleText text='Voucher khả dụng' style={{ marginHorizontal: 16 }} />
-      }
+      {vouchers.length > 0 && (
+        <TitleText text="Voucher khả dụng" style={{marginHorizontal: 16}} />
+      )}
 
       <FlatList
-        data={vouchers}
+        data={filterByDiscountType(2)}
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) =>
+        renderItem={({item}) => (
           <ItemVoucher onPress={() => onItemPress(item)} item={item} />
-        }
+        )}
         showsVerticalScrollIndicator={false}
         scrollEnabled
       />
-
     </Column>
   );
 };
 
-
-const ItemVoucher = ({ onPress, item }) => {
+const ItemVoucher = ({onPress, item}) => {
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
       <Image source={{uri: item.image}} style={styles.itemImage} />
@@ -104,11 +125,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.fbBg,
-    gap: 16
+    gap: 16,
   },
 
   itemVoucher: {
-    flex:1,
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -127,7 +148,7 @@ const styles = StyleSheet.create({
     height: width / 4.5,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     resizeMode: 'cover',
-  }
+  },
 });
 
 export default MyVoucherScreen;
