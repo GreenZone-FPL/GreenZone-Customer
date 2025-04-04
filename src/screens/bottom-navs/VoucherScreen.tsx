@@ -7,10 +7,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  Image
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   AuthButton,
+  AuthContainer,
   BarcodeUser,
   Column,
   LightStatusBar,
@@ -19,15 +21,15 @@ import {
   TitleText,
   VoucherVertical,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer, useVoucherContainer} from '../../containers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useVoucherContainer } from '../../containers';
 import { View } from 'react-native-animatable';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen: React.FC = () => {
-  const {authState, user} = useVoucherContainer();
-    const {onNavigateLogin} = useAppContainer();
-  
+  const { authState, user } = useVoucherContainer();
+  const { onNavigateLogin } = useAppContainer();
+
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -37,13 +39,14 @@ const VoucherScreen: React.FC = () => {
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
         style={styles.imageBg}>
-        <Column style={{padding: 16, gap: 16}}>
-         {!authState.lastName ?(
-          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />):
-          (<Text style={styles.title}>Ưu đãi</Text>)
+        <Column style={{ padding: 16, gap: 16 }}>
+          <TitleText text='Ưu đãi' style={styles.title} />
+          {!authState.lastName && (
+            <AuthContainer onPress={onNavigateLogin} />) 
+
           }
           {authState.lastName && (
-            <Column style={{gap: 16}}>
+            <Column style={{ gap: 16 }}>
               <Pressable
                 style={styles.myTicket}
                 onPress={() => {
@@ -59,7 +62,7 @@ const VoucherScreen: React.FC = () => {
               <BarcodeUser
                 user={user}
                 hasBackground={false}
-                style={{width: Dimensions.get('window').width}}
+                style={{ width: Dimensions.get('window').width }}
               />
             </Column>
           )}
@@ -67,21 +70,31 @@ const VoucherScreen: React.FC = () => {
       </ImageBackground>
 
 
-      <Row style={{margin: 16}}>
-        <Card
-          iconName="shield-check"
-          color={colors.orange700}
-          title="Quyền lợi của bạn"
-          onPress={{}}
-        />
-        <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={{}} />
-      </Row>
+      {
+        authState.lastName ?
+          <Row style={{ margin: 16 }}>
+            <Card
+              iconName="shield-check"
+              color={colors.orange700}
+              title="Quyền lợi của bạn"
+              onPress={{}}
+            />
+            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={{}} />
+          </Row> :
+
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+
+      }
+
 
       {authState.lastName && (
-        <Column style={{marginHorizontal: 16}}>
+        <Column style={{ marginHorizontal: 16 }}>
           <TitleText text="Phiếu ưu đãi" />
 
-          <VoucherVertical route={{params: {isUpdateOrderInfo: false}}} />
+          <VoucherVertical route={{ params: { isUpdateOrderInfo: false } }} />
         </Column>
       )}
     </ScrollView>
@@ -89,7 +102,7 @@ const VoucherScreen: React.FC = () => {
 };
 
 
-const Card = ({iconName, color, title, onPress}) => {
+const Card = ({ iconName, color, title, onPress }) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -111,7 +124,7 @@ const styles = StyleSheet.create({
   imageBg: {
     width: '100%',
     height: width / 1.5,
-    justifyContent:'center'
+    justifyContent: 'center'
   },
 
   title: {
@@ -121,6 +134,7 @@ const styles = StyleSheet.create({
   },
 
   myTicket: {
+    alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
@@ -133,6 +147,12 @@ const styles = StyleSheet.create({
   textVoucher: {
     color: colors.primary,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    textAlign: 'right'
+  },
+  logo: {
+    width: Dimensions.get('window').width / 1.5,
+    height: Dimensions.get('window').width / 1.5,
+    alignSelf: 'center',
   },
 
   card: {
@@ -143,7 +163,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 1.5,

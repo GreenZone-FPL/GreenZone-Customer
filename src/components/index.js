@@ -27,6 +27,7 @@ export * from './category/CategoryMenu';
 // containers
 export * from './containers/Column';
 export * from './containers/Row';
+export * from './containers/AuthContainer';
 
 // dialogs
 export * from './dialogs/ActionDialog';
