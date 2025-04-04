@@ -89,6 +89,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     resizeMode: 'cover',
+    overflow: 'hidden',
   },
   barCodeContainer: {
     alignItems: 'center',

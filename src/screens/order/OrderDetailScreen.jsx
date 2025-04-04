@@ -38,7 +38,7 @@ const OrderDetailScreen = props => {
   const [actionDialogVisible, setActionDialogVisible] = useState(false);
   const [paymentDialogVisible, setPaymentDialogVisible] = useState(false);
 
-  const {updateOrderMessage} = useAppContext();
+  const { updateOrderMessage, awaitingPayments } = useAppContext();
   // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
   const fetchOrderDetail = async () => {
@@ -214,12 +214,11 @@ const OrderDetailScreen = props => {
           approveText={'Thanh toán'}
           onCancel={() => setPaymentDialogVisible(false)}
           cancelText={'Đóng'}
-          onApprove={() =>
-            navigation.navigate(ShoppingGraph.PayOsScreen, {
-              orderId: orderDetail._id,
-              totalPrice: orderDetail.totalPrice,
-            })
-          }
+          onApprove={() => awaitingPayments.paymentMethod === 'PayOs'
+            ? navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
+            : awaitingPayments.paymentMethod === 'card'
+            ? navigation.navigate(ShoppingGraph.Zalopayscreen, awaitingPayments)
+            : null }
         />
 
         <ActionDialog

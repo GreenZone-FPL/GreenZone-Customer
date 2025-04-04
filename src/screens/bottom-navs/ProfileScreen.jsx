@@ -17,6 +17,7 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContainer} from '../../containers';
 import {useAppContext} from '../../context/appContext';
 import {OrderGraph, UserGraph} from '../../layouts/graphs';
+import ButtonBackground from '../../components/background/ButtonBackground';
 
 const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
@@ -48,11 +49,13 @@ const ProfileScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
+      {!authState.lastName && (
+        <ButtonBackground
+          view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
+        />
+      )}
       <ScrollView>
         <Column style={styles.body}>
-          {!authState.lastName && (
-            <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
-          )}
           <TitleText text="Tài khoản" />
           <NormalLoading visible={loading} />
           <Column>

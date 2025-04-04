@@ -43,10 +43,6 @@ const PayOsScreen = () => {
   const {orderId, totalPrice} = route.params || {};
 
   const {awaitingPayments, setAwaitingPayments} = useAppContext() || {};
-
-  console.log(orderId);
-  console.log('awaitingPayments', awaitingPayments);
-
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
@@ -124,8 +120,6 @@ const PayOsScreen = () => {
         },
       );
 
-      console.log('PayOS Response:', response.data);
-
       if (response.data.code === '00' && response.data.data?.checkoutUrl) {
         setPaymentLink(response.data.data.checkoutUrl);
         setPaymentLinkId(response.data.data.paymentLinkId);
@@ -147,6 +141,7 @@ const PayOsScreen = () => {
   const handleNavigationChange = async navState => {
     const {url} = navState;
     console.log('Current URL:', url);
+    console.log('link id:', paymentLinkId)
 
     if (url.includes('/success')) {
       try {

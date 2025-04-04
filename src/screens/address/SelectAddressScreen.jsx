@@ -61,7 +61,7 @@ const SelectAddressScreen = ({navigation, route}) => {
   
     }, [])
   );
-  console.log('địa chỉ', addresses)
+  // console.log('địa chỉ', addresses)
   // Lấy vị trí người dùng
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
@@ -134,11 +134,15 @@ const SelectAddressScreen = ({navigation, route}) => {
         location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
         latitude: address.latitude,
         longitude: address.longitude,
+        consigneeName: address.consigneeName,
+        consigneePhone: address.consigneePhone,
       };
       console.log('Địa chỉ đã chọn:', addressFinish);
       if (isUpdateOrderInfo && cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: addressFinish,
+          consigneeName: addressFinish.consigneeName,
+          consigneePhone: addressFinish.consigneePhone,
         });
       }
   

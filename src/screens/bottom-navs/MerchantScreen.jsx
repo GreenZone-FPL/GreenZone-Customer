@@ -16,9 +16,15 @@ import {
 } from 'react-native';
 import {Icon} from 'react-native-paper';
 import {getAllMerchants} from '../../axios/modules/merchant';
-import {CustomSearchBar, HeaderWithBadge, Indicator} from '../../components';
+import {
+  AuthButton,
+  CustomSearchBar,
+  HeaderWithBadge,
+  Indicator,
+} from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {AppGraph} from '../../layouts/graphs';
+import ButtonBackground from '../../components/background/ButtonBackground';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
@@ -41,7 +47,8 @@ const MerchantScreen = ({navigation, route}) => {
   const {fromCheckout} = route.params || false;
   const {fromHome} = route.params || false;
 
-  const {cartDispatch} = useAppContext();
+  const {cartDispatch, authState, onNavigateLogin} = useAppContext();
+
   // hàm gọi api merchants
   const fetchMerchants = async () => {
     try {
@@ -223,6 +230,12 @@ const MerchantScreen = ({navigation, route}) => {
         enableLeftIcon={isUpdateOrderInfo}
         onLeftPress={() => navigation.goBack()}
       />
+
+      {!authState.lastName && (
+        <ButtonBackground
+          view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
+        />
+      )}
 
       <View style={styles.content}>
         <View style={styles.tool}>

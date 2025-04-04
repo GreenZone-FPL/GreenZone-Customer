@@ -1,10 +1,10 @@
 // @ts-ignore
 import React from 'react';
-import {Dimensions, TouchableOpacity, ViewStyle} from 'react-native';
-import {NormalText} from '../texts/NormalText';
-import {colors} from '../../constants';
+import { Dimensions, TouchableOpacity, ViewStyle } from 'react-native';
+import { NormalText } from '../texts/NormalText';
+import { colors } from '../../constants';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 interface AuthButtonProps {
   title: string;
@@ -12,11 +12,7 @@ interface AuthButtonProps {
   style?: ViewStyle;
 }
 
-export const AuthButton: React.FC<AuthButtonProps> = ({
-  title,
-  onPress,
-  style,
-}) => {
+export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style }) => {
   return (
     <TouchableOpacity
       style={[
@@ -29,14 +25,16 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
           justifyContent: 'center',
           marginHorizontal: 16,
           alignSelf: 'center',
-          marginBottom: 10,
         },
         style,
       ]}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <NormalText
         text={title}
-        style={{color: 'white', fontWeight: '600', textAlign: 'center'}}
+        style={
+          { color: 'white', fontWeight: '600', textAlign: 'center' }
+        }
       />
     </TouchableOpacity>
   );

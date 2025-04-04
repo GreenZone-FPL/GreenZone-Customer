@@ -26,6 +26,7 @@ import {useAppContext} from '../../context/appContext';
 import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import {CategoryView} from './HomeComponents/CategoryView';
+import ButtonBackground from '../../components/background/ButtonBackground';
 
 const HomeScreen = () => {
   const {cartState, authState, awaitingPayments} = useAppContext();
@@ -45,6 +46,7 @@ const HomeScreen = () => {
     onNavigateProductDetailSheet,
     onClickAddToCart,
     navigatePayOS,
+    navigateZaloPay,
     navigateCheckOut,
     navigateAdvertising,
   } = useHomeContainer();
@@ -52,8 +54,6 @@ const HomeScreen = () => {
   const {onNavigateLogin} = useAppContainer();
 
   useSaveLocation();
-
-  console.log('awaitingPayments', awaitingPayments);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,7 +78,9 @@ const HomeScreen = () => {
         {authState.lastName ? (
           user && <BarcodeUser user={user} />
         ) : (
-          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+          <ButtonBackground
+            view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
+          />
         )}
 
         <CategoryView />
@@ -86,13 +88,18 @@ const HomeScreen = () => {
         {awaitingPayments && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
-            onPress={() => navigatePayOS(awaitingPayments)}>
+            onPress={() =>
+              awaitingPayments.paymentMethod === 'PayOs'
+                ? navigatePayOS(awaitingPayments)
+                : awaitingPayments.paymentMethod === 'card'
+                ? navigateZaloPay(awaitingPayments)
+                : null
+            }>
             <TitleText
               text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
                 awaitingPayments.totalPrice,
               )} cần thanh toán`}
             />
-
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
         )}

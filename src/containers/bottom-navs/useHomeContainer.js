@@ -164,6 +164,10 @@ export const useHomeContainer = () => {
     navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments);
   };
 
+  const navigateZaloPay = awaitingPayments => {
+    navigation.navigate(ShoppingGraph.Zalopayscreen, awaitingPayments);
+  };
+
   const navigateCheckOut = () => {
     navigation.navigate(ShoppingGraph.CheckoutScreen);
   };
@@ -197,6 +201,7 @@ export const useHomeContainer = () => {
     onNavigateProductDetailSheet,
     onClickAddToCart,
     navigatePayOS,
+    navigateZaloPay,
     navigateCheckOut,
     navigateAdvertising,
   };
