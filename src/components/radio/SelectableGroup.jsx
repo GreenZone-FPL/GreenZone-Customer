@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {Selectable} from './Selectable';
+import { View, Text, StyleSheet } from 'react-native';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Selectable } from './Selectable';
 import PropTypes from 'prop-types';
 
 const SelectableGroupPropTypes = {
@@ -34,6 +34,7 @@ export const SelectableGroup = ({
             {required && <Text style={styles.redText}>*</Text>}
             {note && <Text style={styles.note}> ({note})</Text>}
           </Text>
+
           {items.map(item => {
             if (item == null) {
               return;
@@ -79,13 +80,13 @@ const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
     setSelectedGroup(prevGroup =>
       prevGroup.map(item =>
         item._id === itemToPlus._id
-          ? {...item, quantity: item.quantity + 1}
+          ? { ...item, quantity: item.quantity + 1 }
           : item,
       ),
     );
   } else if (selectedGroup.length < 3) {
     // Nếu chưa đủ 3 items, có thể thêm mới
-    setSelectedGroup(prevGroup => [...prevGroup, {...itemToPlus, quantity: 1}]);
+    setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
   }
 };
 
@@ -97,7 +98,7 @@ const handleMinus = (itemToMinus, selectedGroup, setSelectedGroup) => {
     setSelectedGroup(prevGroup =>
       prevGroup.map(item =>
         item._id === itemToMinus._id
-          ? {...item, quantity: item.quantity - 1}
+          ? { ...item, quantity: item.quantity - 1 }
           : item,
       ),
     );

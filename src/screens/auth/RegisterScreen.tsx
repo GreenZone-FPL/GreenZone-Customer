@@ -72,16 +72,16 @@ const RegisterScreen: React.FC = () => {
             style={[
               styles.button,
               // eslint-disable-next-line react-native/no-inline-styles
-              { backgroundColor: isValidForm ? colors.green500 : '#E3E3E5' },
+              { backgroundColor: isValidForm ? colors.primary : colors.disabledBg },
             ]}
             disabled={!isValidForm}
             onPress={handleRegister}>
             <NormalText
-              text="Đăng ký"
+              text="Tạo tài khoản"
               style={[
                 styles.buttonText,
                 // eslint-disable-next-line react-native/no-inline-styles
-                { color: isValidForm ? colors.white : '#ACACAE' },
+                { color: isValidForm ? colors.white : colors.disabledText },
               ]}
             />
           </TouchableOpacity>
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     padding: 16,
     backgroundColor: colors.primary,
+    marginTop: 16
   },
   buttonText: {
     color: colors.white,

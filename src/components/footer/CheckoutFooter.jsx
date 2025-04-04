@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
+import { TextFormatter, Toaster } from '../../utils';
 import { PrimaryButton } from '../buttons/PrimaryButton';
 import { Row } from '../containers/Row';
 import { TitleText } from '../texts/TitleText';
@@ -62,7 +62,7 @@ export const CheckoutFooter = ({
                         textAlign: 'center',
                         borderBottomWidth: 1,
                         borderColor: colors.gray400,
-                        width: 25
+                        width: 35
                     }}
                     keyboardType="numeric"
                     value={String(quantity)}
@@ -70,7 +70,12 @@ export const CheckoutFooter = ({
                         // Nếu người dùng xóa hết, cho phép để rỗng
                         if (value === "") {
                             setQuantity("");
-                        } else {
+                        } 
+                        else if(value >= 99){
+                            setQuantity(99)
+                            Toaster.show('Số lượng không vượt quá 99')
+                        }
+                        else {
                             // Chặn ký tự không hợp lệ (dấu chấm, dấu phẩy)
                             const cleanedValue = value.replace(/[^0-9]/g, '');
 

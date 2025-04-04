@@ -1,210 +1,61 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import {
-  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
   Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  ToastAndroid,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { Icon } from 'react-native-paper';
+import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker';
 import {
-  NormalInput,
+  DialogBasic,
   NormalHeader,
+  NormalInput,
   NormalLoading,
   NormalText,
+  OverlayStatusBar,
   PrimaryButton,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { AppContext, useAppContext } from '../../context/appContext';
-import { Dropdown } from 'react-native-element-dropdown';
-import DatePicker from 'react-native-date-picker';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { uploadFile } from '../../axios/modules/file';
-import { updateUserProfile } from '../../axios/modules/user';
-import { AppAsyncStorage, CartManager } from '../../utils';
-import { AuthActionTypes } from '../../reducers';
-
 import LabelInput from '../../components/inputs/LabelInput';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useUpdateProfileContainer } from '../../containers';
 
 const { width } = Dimensions.get('window');
 
 const UpdateProfileScreen = ({ navigation, route }) => {
-  const [lastName, setLastName] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [email, setEmail] = useState('');
-  const [dob, setDob] = useState(new Date());
-  const [gender, setGender] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isFocus, setIsFocus] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [selectedImages, setSelectedImages] = useState([]);
-  const [isImagePickerVisible, setImagePickerVisible] = useState(false);
-  const [avatar, setAvatar] = useState('');
-  const [hasImageChanged, setHasImageChanged] = useState(false); // biến cờ mới
+  const { profile } = route.params;
+  const defaultStyles = useDefaultStyles();
 
   const {
-    updateOrderMessage,
-    setUpdateOrderMessage,
-    cartDispatch,
-    authDispatch,
-    authState,
-  } = useAppContext();
-
-  const genderOptions = [
-    { label: 'Nam', value: 'Nam' },
-    { label: 'Nữ', value: 'Nữ' },
-    { label: 'Khác', value: 'Khác' },
-  ];
-
-  const { isLoggedIn } = useContext(AppContext);
-  const { profile } = route.params;
-
-  useEffect(() => {
-    setLastName(profile.lastName || '');
-    setFirstName(profile.firstName || '');
-    setEmail(profile.email || '');
-    setDob(profile.dateOfBirth ? new Date(profile.dateOfBirth) : new Date());
-    setGender(
-      profile.gender === 'male'
-        ? 'Nam'
-        : profile.gender === 'female'
-          ? 'Nữ'
-          : profile.gender === 'other'
-            ? 'Khác'
-            : null,
-    );
-    setAvatar(profile.avatar || '');
-    setSelectedImages([]);
-    setHasImageChanged(false);
-  }, [isLoggedIn]);
-
-  const openCamera = () => {
-    const options = { saveToPhotos: true, mediaType: 'photo' };
-    launchCamera(options, response => {
-      if (response.didCancel || response.errorCode) return;
-      const newImage = response?.assets[0]?.uri;
-      // Nếu ảnh mới khác với ảnh hiện tại thì mới cập nhật state
-      if (newImage && newImage !== avatar) {
-        setSelectedImages([newImage]);
-        setHasImageChanged(true);
-      }
-    });
-    setImagePickerVisible(false);
-  };
-
-  const openImageLibrary = () => {
-    const options = { mediaType: 'photo', selectionLimit: 1 };
-    launchImageLibrary(options, response => {
-      if (response.didCancel || response.errorCode) return;
-      const newImage = response.assets?.[0]?.uri;
-      if (newImage && newImage !== avatar) {
-        setSelectedImages([newImage]);
-        setHasImageChanged(true);
-      }
-    });
-    setImagePickerVisible(false);
-  };
-
-  const validateEmail = email => {
-    const emailRegex =
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|net|org|vn|edu|gov|info|biz)$/;
-    return emailRegex.test(email.trim());
-  };
-  const handleUpdateProfile = async () => {
-    if (
-      !lastName.trim() ||
-      !firstName.trim() ||
-      !email.trim() ||
-      !dob ||
-      !gender
-    ) {
-      ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      ToastAndroid.show(
-        'Email không hợp lệ! Vui lòng nhập đúng định dạng.',
-        ToastAndroid.SHORT,
-      );
-      return; // Ngăn chặn tiếp tục xử lý nếu email không hợp lệ
-    }
-
-    const formattedDob = dob.toISOString().split('T')[0];
-    const formattedGender =
-      gender === 'Nam' ? 'male' : gender === 'Nữ' ? 'female' : 'other';
-
-    if (
-      lastName === profile.lastName &&
-      firstName === profile.firstName &&
-      email.trim().toLowerCase() === profile.email.toLowerCase() &&
-      formattedDob === profile.dateOfBirth &&
-      formattedGender === profile.gender &&
-      !hasImageChanged
-    ) {
-      ToastAndroid.show('Không có thay đổi nào!', ToastAndroid.SHORT);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      let avatarUrl = avatar || '';
-      if (hasImageChanged && selectedImages.length > 0) {
-        const uploadedUrl = await uploadFile(selectedImages[0]);
-        if (uploadedUrl) {
-          avatarUrl = uploadedUrl;
-        }
-      }
-
-      const profileData = {
-        firstName,
-        lastName,
-        email: email.trim().toLowerCase(),
-        dateOfBirth: formattedDob,
-        gender: formattedGender,
-        avatar: avatarUrl,
-      };
-
-      console.log('Dữ liệu gửi lên API:', profileData);
-
-      const result = await updateUserProfile(profileData);
-
-      if (result?._id) {
-        setHasImageChanged(false);
-        await AppAsyncStorage.storeData(
-          AppAsyncStorage.STORAGE_KEYS.user,
-          result,
-        );
-        await authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: {
-            needLogin: false,
-            needRegister: false,
-            isLoggedIn: true,
-            lastName: result.lastName,
-          },
-        });
-        await CartManager.updateOrderInfo(cartDispatch, {
-          consigneeName: `${result.lastName} ${result.firstName}`,
-        });
-        ToastAndroid.show('Cập nhật thành công!', ToastAndroid.SHORT);
-      }
-    } catch (error) {
-      console.error(
-        'Lỗi cập nhật hồ sơ:',
-        error.response?.data || error.message,
-      );
-      Alert.alert('Lỗi', error.response?.data?.message || error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    dob,
+    setDob,
+    gender,
+    setGender,
+    avatar,
+    loading,
+    setIsFocus,
+    open,
+    setOpen,
+    selectedImages,
+    isImagePickerVisible,
+    setImagePickerVisible,
+    lastNameMessage,
+    setLastNameMessage,
+    openCamera,
+    openImageLibrary,
+    handleUpdateProfile,
+    genderOptions
+  } = useUpdateProfileContainer(profile)
 
   return (
     <KeyboardAvoidingView style={styles.container}>
@@ -234,43 +85,42 @@ const UpdateProfileScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.formContainer}>
-          <NormalInput label="Họ" value={firstName} setValue={setLastName} />
-          <NormalInput label="Tên" value={lastName} setValue={setFirstName} required />
+          <NormalInput
+            label="Họ"
+            value={firstName}
+            setValue={setFirstName}
+          />
+          <NormalInput
+            label="Tên"
+            value={lastName}
+            setValue={(value) => {
+              setLastName(value)
+              if (lastNameMessage) {
+                setLastNameMessage('')
+              }
 
-
-          <LabelInput label='Ngày sinh'   style={{ fontSize: 14 }}/>
-          <TouchableOpacity
-            onPress={() => setOpen(true)}
-            style={styles.dropdown}>
-            <Text style={{ fontSize: 14 }}>
-              {dob instanceof Date && !isNaN(dob)
-                ? dob.toLocaleDateString('vi-VN', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
-                : 'Chọn ngày sinh'}
-            </Text>
-          </TouchableOpacity>
-
-          <LabelInput label='Giới tính'  style={{ fontSize: 14 }}/>
-          <DatePicker
-            modal
-            open={open}
-            date={dob}
-            mode="date"
-            locale="vi"
-            title={'Chọn thời gian'}
-            confirmText="Xác nhận"
-            cancelText="Hủy"
-            maximumDate={new Date()}
-            onConfirm={selectedDate => {
-              setOpen(false);
-              setDob(selectedDate);
             }}
-            onCancel={() => setOpen(false)}
+            invalidMessage={lastNameMessage}
+            required
           />
 
+
+
+          <LabelInput label="Ngày sinh" style={{ fontSize: 14 }} />
+          <Pressable
+            style={styles.dropdown}
+            onPress={() => setOpen(true)}
+          >
+            <NormalText text={dob.toLocaleDateString('vi-VN')} style={{ fontSize: 14 }} />
+          </Pressable>
+
+
+
+
+
+
+
+          <LabelInput label='Giới tính' style={{ fontSize: 14 }} />
           <Dropdown
             data={genderOptions}
             labelField="label"
@@ -291,17 +141,36 @@ const UpdateProfileScreen = ({ navigation, route }) => {
           />
 
           <PrimaryButton
-            disabled={loading}
+            style={{ backgroundColor: (loading || !!lastNameMessage) ? colors.disabledBg : colors.primary }}
+            disabled={loading || !!lastNameMessage}
             title="Cập nhật tài khoản"
             onPress={handleUpdateProfile}
           />
+
+          <DialogBasic isVisible={open} onHide={() => setOpen(false)} title={'Lịch'}>
+
+            <DateTimePicker
+              mode="single"
+              locale="vi"
+              date={dob}
+              onChange={({ date }) => {
+                setDob(date)
+                setOpen(false)
+              }}
+              maxDate={new Date()}
+
+              styles={defaultStyles}
+            />
+          </DialogBasic>
+
 
           <Modal
             visible={isImagePickerVisible}
             animationType="slide"
             transparent={true}>
-            <View style={styles.imagePickerOverlay}>
-              <View style={styles.imagePickerContainer}>
+            <Pressable style={styles.imagePickerOverlay} onPress={() => setImagePickerVisible(false)}>
+              <OverlayStatusBar />
+              <View style={styles.imagePickerContainer} >
                 <TouchableOpacity style={styles.option} onPress={openCamera}>
                   <NormalText text="Chụp ảnh mới" />
                 </TouchableOpacity>
@@ -316,8 +185,11 @@ const UpdateProfileScreen = ({ navigation, route }) => {
                   <NormalText text="Hủy bỏ" />
                 </TouchableOpacity>
               </View>
-            </View>
+            </Pressable>
           </Modal>
+
+
+
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -361,6 +233,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2,
     padding: 4,
   },
+ 
   formContainer: {
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,

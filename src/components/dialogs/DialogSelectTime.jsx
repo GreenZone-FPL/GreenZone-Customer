@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, StyleSheet, TouchableOpacity, View, Pressable } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
@@ -23,8 +23,8 @@ export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
 
     return (
         <Modal visible={visible} animationType="fade" transparent={true}>
-            <Column style={styles.overlay}>
-                <Column style={[styles.modalContainer]}>
+            <Pressable style={styles.overlay} onPress={onClose}>
+                <Pressable style={[styles.modalContainer]} onPress={() => {}}>
                     <OverlayStatusBar />
 
                     <Row style={styles.header}>
@@ -74,8 +74,8 @@ export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
                             }}
                         />
                     </Column>
-                </Column>
-            </Column>
+                </Pressable>
+            </Pressable>
         </Modal>
     );
 };

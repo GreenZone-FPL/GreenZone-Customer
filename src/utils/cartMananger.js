@@ -178,7 +178,7 @@ export const CartManager = (() => {
         (total, item) => total + item.quantity,
         0,
       );
-      if (cartLength + quantity > 10) {
+      if (cartLength> 10) {
         Toaster.show('Giỏ hàng tối đa 10 sản phẩm');
         return;
       }
