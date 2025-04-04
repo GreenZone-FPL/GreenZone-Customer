@@ -10,6 +10,7 @@ import {
 import {getAllCategories, getAllProducts, getAllToppings} from '../../axios';
 import {
   AuthButton,
+  AuthContainer,
   CategoryMenu,
   DeliveryButton,
   DialogBasic,
@@ -161,9 +162,7 @@ const OrderScreen = props => {
         onScroll={handleScroll}
         scrollEventThrottle={16}>
         {!authState.lastName && (
-          <ButtonBackground
-            view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
-          />
+             <AuthContainer onPress={onNavigateLogin} />
         )}
         <CategoryMenu
           categories={categories}

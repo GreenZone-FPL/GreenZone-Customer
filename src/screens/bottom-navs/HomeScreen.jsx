@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {
   AuthButton,
+  AuthContainer,
   BarcodeUser,
   DeliveryButton,
   DialogShippingMethod,
@@ -20,16 +21,16 @@ import {
   ProductsListHorizontal,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
+import { TextFormatter } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
-import {CategoryView} from './HomeComponents/CategoryView';
-import ButtonBackground from '../../components/background/ButtonBackground';
+import { CategoryView } from './HomeComponents/CategoryView';
+
 
 const HomeScreen = () => {
-  const {cartState, authState, awaitingPayments} = useAppContext();
+  const { cartState, authState, awaitingPayments } = useAppContext();
 
   const {
     isModalVisible,
@@ -51,7 +52,7 @@ const HomeScreen = () => {
     navigateAdvertising,
   } = useHomeContainer();
 
-  const {onNavigateLogin} = useAppContainer();
+  const { onNavigateLogin } = useAppContainer();
 
   useSaveLocation();
 
@@ -66,7 +67,7 @@ const HomeScreen = () => {
               : 'Xin chào'
             : 'Chào bạn mới'
         }
-        onBadgePress={() => {}}
+        onBadgePress={() => { }}
         isHome={false}
       />
 
@@ -78,9 +79,9 @@ const HomeScreen = () => {
         {authState.lastName ? (
           user && <BarcodeUser user={user} />
         ) : (
-          <ButtonBackground
-            view={<AuthButton title="Đăng nhập" onPress={onNavigateLogin} />}
-          />
+
+          <AuthContainer onPress={onNavigateLogin} />
+
         )}
 
         <CategoryView />
@@ -92,8 +93,8 @@ const HomeScreen = () => {
               awaitingPayments.paymentMethod === 'PayOs'
                 ? navigatePayOS(awaitingPayments)
                 : awaitingPayments.paymentMethod === 'card'
-                ? navigateZaloPay(awaitingPayments)
-                : null
+                  ? navigateZaloPay(awaitingPayments)
+                  : null
             }>
             <TitleText
               text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
@@ -129,7 +130,7 @@ const HomeScreen = () => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -152,10 +153,10 @@ const HomeScreen = () => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-            ? cartState?.shippingAddressInfo?.location
-            : cartState
-            ? cartState?.address?.label
-            : 'Đang xác định vị trí...'
+              ? cartState?.shippingAddressInfo?.location
+              : cartState
+                ? cartState?.address?.label
+                : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
