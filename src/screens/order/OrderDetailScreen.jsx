@@ -38,7 +38,7 @@ const OrderDetailScreen = props => {
   const [actionDialogVisible, setActionDialogVisible] = useState(false);
   const [paymentDialogVisible, setPaymentDialogVisible] = useState(false);
 
-  const { updateOrderMessage, awaitingPayments } = useAppContext();
+  const {updateOrderMessage, awaitingPayments} = useAppContext();
   // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
 
   const fetchOrderDetail = async () => {
@@ -214,11 +214,16 @@ const OrderDetailScreen = props => {
           approveText={'Thanh toán'}
           onCancel={() => setPaymentDialogVisible(false)}
           cancelText={'Đóng'}
-          onApprove={() => awaitingPayments.paymentMethod === 'PayOs'
-            ? navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
-            : awaitingPayments.paymentMethod === 'card'
-            ? navigation.navigate(ShoppingGraph.Zalopayscreen, awaitingPayments)
-            : null }
+          onApprove={() =>
+            awaitingPayments.paymentMethod === 'PayOs'
+              ? navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
+              : awaitingPayments.paymentMethod === 'card'
+              ? navigation.navigate(
+                  ShoppingGraph.Zalopayscreen,
+                  awaitingPayments,
+                )
+              : null
+          }
         />
 
         <ActionDialog
@@ -444,9 +449,11 @@ const PaymentDetails = ({
   // Số tiền giảm giá từ voucher (nếu có)
   const discount = voucher
     ? voucher.discountType === 'percentage'
-      ? (subTotal * voucher.discountValue) / 100
-      : voucher.discountValue
-    : 0;
+      ? (subTotal * voucher.value) / 100
+      : voucher.value
+    : subTotal - voucher.value < 0
+    ? 0
+    : subTotal - voucher.value;
 
   // Chọn icon phù hợp với phương thức thanh toán
   const getPaymentIcon = method => {

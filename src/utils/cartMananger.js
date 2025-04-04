@@ -6,7 +6,7 @@ import {Toaster} from './toaster';
 const requiredFieldsPickUp = [
   'deliveryMethod',
   'fulfillmentDateTime',
-  'totalPrice',
+  // 'totalPrice',
   'paymentMethod',
   'store',
   'orderItems',
@@ -15,7 +15,7 @@ const requiredFieldsPickUp = [
 const requiredFieldsDelivery = [
   'deliveryMethod',
   'fulfillmentDateTime',
-  'totalPrice',
+  // 'totalPrice',
   'paymentMethod',
   'shippingAddress',
   'store',
@@ -136,12 +136,15 @@ export const CartManager = (() => {
     let voucherAmount = 0;
 
     if (cartState?.voucherInfo?.discountType === 'percentage') {
-      voucherAmount = (cartState?.voucherInfo?.discountValue * cartTotal) / 100;
+      voucherAmount = (cartState?.voucherInfo?.value * cartTotal) / 100;
     } else if (cartState?.voucherInfo?.discountType === 'fixedAmount') {
-      voucherAmount = cartState?.voucherInfo?.discountValue;
+      voucherAmount = cartState?.voucherInfo?.value;
     }
 
-    const paymentTotal = cartTotal + deliveryAmount - voucherAmount;
+    const paymentTotal =
+      cartTotal + deliveryAmount - voucherAmount < 0
+        ? 0
+        : cartTotal + deliveryAmount - voucherAmount;
     return {cartTotal, deliveryAmount, voucherAmount, paymentTotal};
   };
 
@@ -170,7 +173,6 @@ export const CartManager = (() => {
     quantity,
     cartDispatch,
   ) => {
-
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
@@ -178,7 +180,7 @@ export const CartManager = (() => {
         (total, item) => total + item.quantity,
         0,
       );
-      if (cartLength> 10) {
+      if (cartLength > 10) {
         Toaster.show('Giỏ hàng tối đa 10 sản phẩm');
         return;
       }
