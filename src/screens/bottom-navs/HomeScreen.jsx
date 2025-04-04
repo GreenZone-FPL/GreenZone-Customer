@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.yellow300,
     paddingHorizontal: 24,
     paddingVertical: 8,
-    borderRadius: 30,
+    borderRadius: 8,
     gap: 8,
   },
 });

@@ -90,20 +90,20 @@ const ProfileScreen = ({navigation}) => {
 
           <View style={styles.utilities}>
             <CardUtiliti
-              icon="cog"
+              icon="cog-outline"
               title="Cài đặt"
               onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)}
             />
 
             <View style={styles.separator} />
             <CardUtiliti
-              icon="chat"
+              icon="chat-outline"
               title="Liên hệ góp ý"
               onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)}
             />
             <View style={styles.separator} />
             <CardUtiliti
-              icon="star"
+              icon="star-outline"
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
@@ -123,7 +123,7 @@ export default ProfileScreen;
 
 const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
-    <Icon source={icon} size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={color} />
+    <Icon source={icon} size={30} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
@@ -131,12 +131,8 @@ const CardAccount = ({icon, color, title, onPress}) => (
 const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
-      <Icon
-        source={icon}
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.gray700}
-      />
-      <NormalText text={title} />
+      <Icon source={icon} size={26} color={colors.gray700} />
+      <NormalText text={title} style={{fontSize: 14}} />
       {/* <Text style={styles.itemText}>{title}</Text> */}
     </View>
   </Pressable>
@@ -166,24 +162,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    elevation: 3,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    paddingVertical: 12,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    elevation: 1,
+    gap: 10,
   },
   cardText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: 14,
     color: colors.black,
+    fontWeight: '600',
   },
   utilities: {
     backgroundColor: colors.white,
     padding: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    elevation: 3,
+    elevation: 1,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingVertical: 5,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
   },
   leftSection: {
     flexDirection: 'row',

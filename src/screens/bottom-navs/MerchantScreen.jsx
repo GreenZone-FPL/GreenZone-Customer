@@ -365,7 +365,7 @@ const MerchantScreen = ({navigation, route}) => {
                 />
               )}
             </View>
-            <Text style={styles.tittle}>Cửa hàng Khác</Text>
+            <Text style={styles.tittle}>Cửa hàng khác</Text>
             {sortedMerchants.length == 0 ? (
               <Indicator
                 size={GLOBAL_KEYS.ICON_SIZE_LARGE}
@@ -481,7 +481,9 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.1,
     shadowRadius: 5,
-    elevation: 4,
+    elevation: 1,
+    borderWidth: 1,
+    borderColor: colors.fbBg,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,

@@ -12,28 +12,30 @@ import {
 import {
   Column,
   CustomFlatInput,
+  LightStatusBar,
+  NormalInput,
   NormalLoading,
   NormalText,
   OverlayStatusBar,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import LabelInput from '../../components/inputs/LabelInput';
-import {useRegisterContainer} from '../../containers';
+import { useRegisterContainer } from '../../containers';
 
 const RegisterScreen: React.FC = () => {
-  const {state, dispatch, isValidForm, handleRegister} = useRegisterContainer();
+  const { state, dispatch, isValidForm, handleRegister } = useRegisterContainer();
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{flex: 1}}>
+      style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={{flex: 1}}
+        contentContainerStyle={{ flex: 1 }}
         keyboardShouldPersistTaps="handled">
         <NormalLoading visible={state.loading} />
 
-        <OverlayStatusBar />
+        <LightStatusBar />
         <Column style={styles.content}>
           <Image
             source={require('../../assets/images/logo.png')}
@@ -44,32 +46,33 @@ const RegisterScreen: React.FC = () => {
             style={styles.message}
           />
 
-          <LabelInput label="Họ" />
-          <CustomFlatInput
+
+          <NormalInput
+            label="Họ"
+            required
             value={state.firstName}
             setValue={(value: string) =>
-              dispatch({type: 'SET_VALUE', field: 'firstName', value})
+              dispatch({ type: 'SET_VALUE', field: 'firstName', value })
             }
             invalidMessage={state.firstNameError}
-            leftIcon="account-circle-outline"
-            enableLeftIcon={true}
           />
-          <LabelInput label="Tên" required={true} />
-          <CustomFlatInput
+
+          <NormalInput
+            label="Tên"
+            required
             value={state.lastName}
             setValue={(value: string) =>
-              dispatch({type: 'SET_VALUE', field: 'lastName', value})
+              dispatch({ type: 'SET_VALUE', field: 'lastName', value })
             }
-            leftIcon="shield-account-outline"
             invalidMessage={state.lastNameError}
-            enableLeftIcon={true}
+
           />
 
           <TouchableOpacity
             style={[
               styles.button,
               // eslint-disable-next-line react-native/no-inline-styles
-              {backgroundColor: isValidForm ? colors.green500 : '#E3E3E5'},
+              { backgroundColor: isValidForm ? colors.green500 : '#E3E3E5' },
             ]}
             disabled={!isValidForm}
             onPress={handleRegister}>
@@ -78,7 +81,7 @@ const RegisterScreen: React.FC = () => {
               style={[
                 styles.buttonText,
                 // eslint-disable-next-line react-native/no-inline-styles
-                {color: isValidForm ? colors.white : '#ACACAE'},
+                { color: isValidForm ? colors.white : '#ACACAE' },
               ]}
             />
           </TouchableOpacity>
@@ -92,8 +95,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 24,
-    gap: 12,
+    padding: 16,
+    gap: 8,
     justifyContent: 'center',
   },
   logo: {

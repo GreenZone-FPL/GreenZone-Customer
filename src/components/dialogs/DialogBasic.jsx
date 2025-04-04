@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     borderBottomWidth: 2,
-    borderBottomColor: colors.gray200,
+    borderBottomColor: colors.fbBg,
     backgroundColor: colors.white,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
