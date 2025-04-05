@@ -166,7 +166,7 @@ const ZalopayScreen = () => {
     console.log('WebView URL:', navState.url);
     console.log('linkid', paymentLinkId)
     if (navState.url.includes('returncode=1')) {
-      Alert.alert('Thông báo', 'Thanh toán thành công!');
+      // Alert.alert('Thông báo', 'Thanh toán thành công!');
       await updatePaymentStatus(orderId, 'success', paymentLinkId);
       setToast({
         visible: true,
