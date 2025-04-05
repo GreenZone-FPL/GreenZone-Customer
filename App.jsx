@@ -47,6 +47,8 @@ import FlashMessage from 'react-native-flash-message';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
+import BeanScreen from './src/screens/voucher/BeanScreen';
+
 import {useAppContainer} from './src/containers/useAppContainer';
 
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
@@ -103,7 +105,6 @@ function AppNavigator() {
               component={SplashScreen2}
             />
           )}
-
           <BaseStack.Screen
             name={MainGraph.graphName}
             component={MainNavigation}
@@ -161,6 +162,10 @@ function AppNavigator() {
           <BaseStack.Screen
             name={VoucherGraph.MyVouchersScreen}
             component={MyVoucherScreen}
+          />
+          <BaseStack.Screen
+            name={VoucherGraph.BeanScreen}
+            component={BeanScreen}
           />
           <BaseStack.Screen
             name={UserGraph.AddressMerchantScreen}

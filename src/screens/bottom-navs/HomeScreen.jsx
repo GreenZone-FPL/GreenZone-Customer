@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {
   AuthButton,
+  AuthContainer,
   BarcodeUser,
   DeliveryButton,
   DialogShippingMethod,
@@ -27,7 +28,7 @@ import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import {CategoryView} from './HomeComponents/CategoryView';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const {cartState, authState, awaitingPayments} = useAppContext();
 
   const {
@@ -48,6 +49,7 @@ const HomeScreen = () => {
     navigateZaloPay,
     navigateCheckOut,
     navigateAdvertising,
+    navigateBeanScreen,
   } = useHomeContainer();
 
   const {onNavigateLogin} = useAppContainer();
@@ -75,9 +77,15 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && <BarcodeUser user={user} />
+          user && (
+            <BarcodeUser
+              user={user}
+              showPoints={false}
+              onPress={navigateBeanScreen}
+            />
+          )
         ) : (
-          <AuthButton title="Đăng nhập" onPress={onNavigateLogin} />
+          <AuthContainer onPress={onNavigateLogin} />
         )}
 
         <CategoryView />
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.yellow300,
     paddingHorizontal: 24,
     paddingVertical: 8,
-    borderRadius: 30,
+    borderRadius: 8,
     gap: 8,
   },
 });

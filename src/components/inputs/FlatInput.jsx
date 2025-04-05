@@ -61,7 +61,7 @@ export const FlatInput = ({
         onChangeText={setValue}
         mode="flat"
         placeholder={placeholder}
-        placeholderTextColor={colors.gray400}
+        placeholderTextColor={colors.black}
         error={!!invalidMessage}
         outlineColor={!!invalidMessage ? colors.red800 : colors.primary}
         activeUnderlineColor={colors.primary}
@@ -72,7 +72,7 @@ export const FlatInput = ({
         right={
           secureTextEntry && (
             <TextInput.Icon
-              color={colors.gray400}
+              color={colors.black}
               icon={isPasswordVisible ? 'eye-off' : 'eye'}
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             />
@@ -152,7 +152,7 @@ export const CustomFlatInput = ({
         onChangeText={setValue}
         mode="flat"
         placeholder={placeholder}
-        placeholderTextColor={colors.gray400}
+        placeholderTextColor={colors.black}
         error={!!invalidMessage}
         outlineColor={!!invalidMessage ? colors.red800 : colors.primary}
         activeUnderlineColor={colors.primary}
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    color: colors.black
   },
   errorText: {
     color: colors.red900,

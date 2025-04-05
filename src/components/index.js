@@ -27,6 +27,7 @@ export * from './category/CategoryMenu';
 // containers
 export * from './containers/Column';
 export * from './containers/Row';
+export * from './containers/AuthContainer';
 
 // dialogs
 export * from './dialogs/ActionDialog';
@@ -60,6 +61,7 @@ export * from './inputs/CustomSearchBar';
 export * from './inputs/FlatInput';
 export * from './inputs/OutlineInput';
 export * from './inputs/LabelInput';
+export * from './inputs/NormalInput';
 
 // items
 export * from './items/HorizontalProductItem';

@@ -1,16 +1,17 @@
 // @ts-ignore
 import React from 'react';
-import {StyleSheet, Text} from 'react-native';
+import {StyleSheet, Text, TextStyle} from 'react-native';
 import {colors, GLOBAL_KEYS} from '../../constants';
 
 interface LabelInputProps {
   label: string;
   required?: boolean;
+  style?: TextStyle;
 }
 
-const LabelInput: React.FC<LabelInputProps> = ({label, required = false}) => {
+const LabelInput: React.FC<LabelInputProps> = ({label, required = false, style}) => {
   return (
-    <Text style={styles.label}>
+    <Text style={[styles.label, style]}>
       {label}
       {required && <Text style={styles.required}> *</Text>}
     </Text>

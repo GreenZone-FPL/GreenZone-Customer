@@ -1,5 +1,5 @@
 // @ts-ignore
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -7,10 +7,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  Image
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import {
   AuthButton,
+  AuthContainer,
   BarcodeUser,
   Column,
   LightStatusBar,
@@ -19,31 +21,51 @@ import {
   TitleText,
   VoucherVertical,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useVoucherContainer} from '../../containers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useVoucherContainer } from '../../containers';
+import { AppAsyncStorage } from '../../utils';
+import { getAllVoucher } from '../../axios';
+import { VoucherGraph } from '../../layouts/graphs';
 
 const width: number = Dimensions.get('window').width;
-const VoucherScreen: React.FC = () => {
-  const {authState, user} = useVoucherContainer();
+const VoucherScreen = ({navigation}) => {
+  const { authState, user } = useVoucherContainer();
+  const { onNavigateLogin } = useAppContainer();
 
+    const [vouchers, setVouchers] = useState([]);
+    useEffect(() => {
+      const fetchVouchers = async () => {
+       console.log( await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken) )
+        try {
+          if (await AppAsyncStorage.isTokenValid()) {
+            const response = await getAllVoucher();
+            setVouchers(response);
+          }
+        } catch (error) {
+          console.log('Lỗi khi gọi API Voucher:', error);
+        }
+      };
+  
+      fetchVouchers();
+    }, []);
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
-
       <ImageBackground
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
         style={styles.imageBg}>
-        <Column style={{padding: 16, gap: 16}}>
-          <Text style={styles.title}>Ưu đãi</Text>
+        <Column style={{ padding: 16, gap: 16 }}>
+          <TitleText text='Ưu đãi' style={styles.title} />
+          {!authState.lastName && (
+            <AuthContainer onPress={onNavigateLogin} />) 
 
+          }
           {authState.lastName && (
-            // eslint-disable-next-line react-native/no-inline-styles
-            <Column style={{gap: 16}}>
+            <Column style={{ gap: 16 }}>
               <Pressable
                 style={styles.myTicket}
                 onPress={() => {
-                  // navigation.navigate(VoucherGraph.MyVouchersScreen)
                 }}>
                 <Icon
                   source="ticket-confirmation-outline"
@@ -56,43 +78,47 @@ const VoucherScreen: React.FC = () => {
               <BarcodeUser
                 user={user}
                 hasBackground={false}
-                style={{width: Dimensions.get('window').width}}
+                style={{ width: Dimensions.get('window').width }}
               />
             </Column>
           )}
         </Column>
       </ImageBackground>
-      {!authState.lastName && (
-        <AuthButton title="Đăng nhập" style={{marginVertical: 16}} />
-      )}
 
-      <Row style={{margin: 16}}>
-        <Card
-          iconName="shield-check"
-          color={colors.orange700}
-          title="Quyền lợi của bạn"
-        />
-        <Card iconName="gift" color={colors.primary} title="Đổi thưởng" />
-      </Row>
+
+      {
+        authState.lastName ?
+          <Row style={{ margin: 16 }}>
+            <Card
+              iconName="shield-check"
+              color={colors.orange700}
+              title="Quyền lợi của bạn"
+              onPress={{}}
+            />
+            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}} />
+          </Row> :
+
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+
+      }
+
 
       {authState.lastName && (
-        <Column style={{marginHorizontal: 16}}>
+        <Column style={{ marginHorizontal: 16 }}>
           <TitleText text="Phiếu ưu đãi" />
 
-          <VoucherVertical route={{params: {isUpdateOrderInfo: false}}} />
+          <VoucherVertical  vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
         </Column>
       )}
     </ScrollView>
   );
 };
 
-type CardProps = {
-  iconName: string;
-  color: string;
-  title: string;
-  onPress: () => void;
-};
-const Card: React.FC<CardProps> = ({iconName, color, title, onPress}) => {
+
+const Card = ({ iconName, color, title, onPress }) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -110,10 +136,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
+    
+
   },
   imageBg: {
     width: '100%',
     height: width / 1.5,
+    justifyContent: 'center'
   },
 
   title: {
@@ -123,6 +152,7 @@ const styles = StyleSheet.create({
   },
 
   myTicket: {
+    alignSelf: 'flex-end',
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
@@ -135,6 +165,12 @@ const styles = StyleSheet.create({
   textVoucher: {
     color: colors.primary,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    textAlign: 'right'
+  },
+  logo: {
+    width: Dimensions.get('window').width / 1.5,
+    height: Dimensions.get('window').width / 1.5,
+    alignSelf: 'center',
   },
 
   card: {
@@ -145,7 +181,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 1.5,

@@ -9,6 +9,8 @@ import {
 
 import {getAllCategories, getAllProducts, getAllToppings} from '../../axios';
 import {
+  AuthButton,
+  AuthContainer,
   CategoryMenu,
   DeliveryButton,
   DialogBasic,
@@ -22,8 +24,8 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
 import {fetchData, fetchUserLocation} from '../../utils';
-import { useAppContainer, useHomeContainer } from '../../containers';
-
+import {useAppContainer, useHomeContainer} from '../../containers';
+import ButtonBackground from '../../components/background/ButtonBackground';
 
 const OrderScreen = props => {
   const {navigation} = props;
@@ -40,10 +42,10 @@ const OrderScreen = props => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
   const {cartState, cartDispatch, authState, authDispatch} =
-  useAppContext() || {};
+    useAppContext() || {};
 
-const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
-const {onNavigateLogin, onNavigateRegister} = useAppContainer();
+  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
+  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -138,8 +140,6 @@ const {onNavigateLogin, onNavigateRegister} = useAppContainer();
     setDialogVisible(false);
   };
 
-
-
   const openDialogCategoryPress = () => {
     setDialogVisible(true);
   };
@@ -161,6 +161,9 @@ const {onNavigateLogin, onNavigateRegister} = useAppContainer();
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}>
+        {!authState.lastName && (
+             <AuthContainer onPress={onNavigateLogin} />
+        )}
         <CategoryMenu
           categories={categories}
           loading={loading}
@@ -171,12 +174,12 @@ const {onNavigateLogin, onNavigateRegister} = useAppContainer();
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
-            onItemClick={productId => {
-              onNavigateProductDetailSheet(productId);
-            }}
-            onIconClick={productId => {
-              onClickAddToCart(productId);
-            }}
+          onItemClick={productId => {
+            onNavigateProductDetailSheet(productId);
+          }}
+          onIconClick={productId => {
+            onClickAddToCart(productId);
+          }}
         />
 
         <FlatList

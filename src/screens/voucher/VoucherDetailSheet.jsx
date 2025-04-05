@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -30,6 +30,7 @@ const VoucherDetailSheet = ({navigation, route}) => {
       setShowAlert(false);
     }, 2000);
   };
+  console.log('item', JSON.stringify(item, null, 2));
 
   const handleTermsText = () => {
     Linking.openURL(data.homepage);
