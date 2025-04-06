@@ -29,6 +29,7 @@ import { CategoryView } from './HomeComponents/CategoryView';
 
 const HomeScreen = () => {
   const {cartState, authState, awaitingPayments} = useAppContext();
+
   const {
     isModalVisible,
     setIsModalVisible,

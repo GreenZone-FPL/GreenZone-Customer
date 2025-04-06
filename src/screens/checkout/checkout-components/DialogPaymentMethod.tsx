@@ -21,7 +21,7 @@ export const paymentMethods: PaymentMethodItem[] = [
     {
         label: 'PayOs',
         image: require('../../../assets/images/logo_payos.png'),
-        value: 'PayOs',
+        value: 'payos',
         paymentMethod: PaymentMethod.ONLINE.value,
     },
     {

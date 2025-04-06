@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Dimensions,
   SafeAreaView,
@@ -85,6 +85,9 @@ const CheckoutScreen = () => {
   } = useCheckoutContainer()
 
 
+  useEffect(() => {
+    console.log('cartState', JSON.stringify(cartState, null, 2))
+  }, [cartState])
 
 
   return (

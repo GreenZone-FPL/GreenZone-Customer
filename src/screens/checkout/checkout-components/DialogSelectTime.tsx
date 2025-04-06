@@ -51,10 +51,7 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
                                     >
                                         <TitleText
                                             text={item}
-                                            style={[
-                                                styles.dayText,
-                                                selectedDay === item && styles.selectedDayText
-                                            ]}
+                                            style={{color: selectedDay === item ? colors.black : colors.gray400}}
                                         />
                                     </TouchableOpacity>
                                 ))}

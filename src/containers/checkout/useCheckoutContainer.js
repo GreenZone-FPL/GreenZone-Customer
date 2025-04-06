@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {
     DeliveryMethod,
-    OnlineMethod
+    OnlineMethod,
+    PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { CartActionTypes } from '../../reducers';
@@ -56,6 +57,13 @@ export const useCheckoutContainer = () => {
                         onlineMethod: method.value,
                     },
                 });
+
+                // {
+                //     label: 'Thanh toán khi nhận hàng',
+                //     image: require('../../../assets/images/logo_vnd.png'),
+                //     value: 'cash',
+                //     paymentMethod: PaymentMethod.COD.value,
+                // },
             }
             setDialogPaymentMethodVisible(false);
         } else {
@@ -74,7 +82,7 @@ export const useCheckoutContainer = () => {
                 );
             } else {
                 selectedPayment = paymentMethods.find(
-                    (m) => m.value === OnlineMethod.CARD.value
+                    (m) => m.paymentMethod === PaymentMethod.COD.value
                 );
             }
 
@@ -132,6 +140,7 @@ export const useCheckoutContainer = () => {
 
     const onApproveCreateOrder =  async () => {
         try {
+            setLoading(true)
             let response = null;
             if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
                 const pickupOrder = CartManager.setUpPickupOrder(cartState);
@@ -152,7 +161,7 @@ export const useCheckoutContainer = () => {
                 response = await createOrder(deliveryOrder);
             }
             const newActiveOrder = {
-                visible: true,
+                visible: response?.data.status !== 'awaitingPayment',
                 orderId: response?.data?._id,
                 message: 'Đặt hàng thành công',
                 status: response?.data?.status,
@@ -210,6 +219,7 @@ export const useCheckoutContainer = () => {
             console.log('error', error);
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
         } finally {
+            setLoading(false)
             setDialogCreateOrderVisible(false);
         }
     }
