@@ -7,13 +7,16 @@ export const DeliveryMethod = Object.freeze({
     },
 });
 
-
+// Định nghĩa kiểu cho OnlineMethod
+export const OnlineMethod = Object.freeze({
+    PAYOS: { label: "PayOS", value: "payos" },
+    CARD: { label: "Card", value: "card" },
+});
 
 export const PaymentMethod = Object.freeze({
     ONLINE: { label: "online", value: "online" },
     COD: { label: "cod", value: "cod" }
 })
-
 
 export const OrderStatus = Object.freeze({
     AWAITING_PAYMENT: { label: "Chờ thanh toán", value: "awaitingPayment" },

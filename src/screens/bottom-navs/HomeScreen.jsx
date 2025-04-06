@@ -8,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import {
-  AuthButton,
   AuthContainer,
   BarcodeUser,
   DeliveryButton,
@@ -19,18 +18,17 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText,
+  TitleText
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
+import { TextFormatter } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
-import {CategoryView} from './HomeComponents/CategoryView';
+import { CategoryView } from './HomeComponents/CategoryView';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = () => {
   const {cartState, authState, awaitingPayments} = useAppContext();
-
   const {
     isModalVisible,
     setIsModalVisible,
@@ -53,9 +51,7 @@ const HomeScreen = ({navigation}) => {
   } = useHomeContainer();
 
   const {onNavigateLogin} = useAppContainer();
-
   useSaveLocation();
-
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -89,7 +85,6 @@ const HomeScreen = ({navigation}) => {
         )}
 
         <CategoryView />
-
         {awaitingPayments && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
@@ -179,7 +174,6 @@ const HomeScreen = ({navigation}) => {
 };
 
 export default HomeScreen;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

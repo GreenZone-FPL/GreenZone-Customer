@@ -108,12 +108,6 @@ export const CartManager = (() => {
   const updateOrderInfo = async (cartDispatch, orderDetails) => {
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
-
-      //   if (cart.orderItems.length === 0) {
-      //     Toaster.show('Giỏ hàng trống, không thể tạo đơn hàng');
-      //     return;
-      //   }
-
       cartDispatch({
         type: CartActionTypes.UPDATE_ORDER_INFO,
         payload: orderDetails,
