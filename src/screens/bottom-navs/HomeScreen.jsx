@@ -44,8 +44,6 @@ const HomeScreen = () => {
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
-    navigatePayOS,
-    navigateZaloPay,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
