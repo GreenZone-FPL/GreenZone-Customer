@@ -1,50 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, Modal, StyleSheet, TouchableOpacity, View, Pressable } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../../components';
+import { colors, GLOBAL_KEYS } from '../../../constants';
+import { TimeInfo } from '../../../type/checkout';
 
+interface DialogSelectTimeProps {
+    visible: boolean,
+    onClose: () => void,
+    onConfirm: (value: TimeInfo) => void
+}
 
-export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
+export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
+    visible = true,
+    onClose,
+    onConfirm
+}) => {
     const dateOptions = ["Hôm nay", "Ngày mai"];
-
-    // Hàm tạo danh sách thời gian dựa vào ngày được chọn
-
     const [selectedDay, setSelectedDay] = useState(dateOptions[0]);
     const [timeSlots, setTimeSlots] = useState(generateTimeSlots(selectedDay));
     const [selectedTime, setSelectedTime] = useState(timeSlots[0]);
 
-    // Cập nhật danh sách thời gian khi thay đổi ngày
     useEffect(() => {
         const newTimeSlots = generateTimeSlots(selectedDay);
         setTimeSlots(newTimeSlots);
-        setSelectedTime(newTimeSlots[0]); // Reset lựa chọn thời gian
+        setSelectedTime(newTimeSlots[0]);
     }, [selectedDay]);
 
     return (
-        <Modal visible={visible} animationType="fade" transparent={true}>
+        <Modal visible={visible} animationType="fade" transparent>
             <Pressable style={styles.overlay} onPress={onClose}>
-                <Pressable style={[styles.modalContainer]} onPress={() => {}}>
+                <Pressable style={styles.modalContainer} onPress={() => { }}>
                     <OverlayStatusBar />
-
                     <Row style={styles.header}>
                         <View style={styles.placeholderIcon} />
-                        <TitleText style={{ color: colors.primary }} text='Chọn thời gian' />
+                        <TitleText style={styles.headerTitle} text='Chọn thời gian' />
                         <TouchableOpacity onPress={onClose}>
                             <Icon source="close" size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
                         </TouchableOpacity>
                     </Row>
 
-                    <Column style={{ padding: 16 }}>
-                        <Row style={{ justifyContent: 'center', alignContent: 'center' }}>
-                            <Column style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Column style={styles.body}>
+                        <Row >
+                            <Column style={styles.dateColumn}>
                                 {dateOptions.map((item, index) => (
                                     <TouchableOpacity
                                         key={index}
-                                        style={[styles.dayItem, selectedDay === item && styles.selectedDay]}
+                                        style={[styles.dayItem, selectedDay === item && styles.selectedDayItem]}
                                         onPress={() => setSelectedDay(item)}
                                     >
-                                        <TitleText text={item} style={{ color: selectedDay === item ? colors.black : colors.gray400, textAlign: 'center' }} />
+                                        <TitleText
+                                            text={item}
+                                            style={{color: selectedDay === item ? colors.black : colors.gray400}}
+                                        />
                                     </TouchableOpacity>
                                 ))}
                             </Column>
@@ -53,16 +61,22 @@ export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
                                 data={timeSlots}
                                 keyExtractor={(item) => item}
                                 showsVerticalScrollIndicator={false}
-                                style={{ maxHeight: 150, flex: 1 }}
+                                style={styles.timeList}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
                                         style={[styles.timeItem, selectedTime === item && styles.selectedTimeItem]}
                                         onPress={() => setSelectedTime(item)}
                                     >
-                                        <TitleText text={item} style={{ color: selectedTime === item ? colors.black : colors.gray400, textAlign: 'center' }} />
+                                        <TitleText
+                                            text={item}
+                                            style={[
+                                                styles.timeText,
+                                                selectedTime === item && styles.selectedTimeText
+                                            ]}
+                                        />
                                     </TouchableOpacity>
                                 )}
-                                contentContainerStyle={{ gap: 10 }}
+                                contentContainerStyle={styles.timeListContent}
                             />
                         </Row>
 
@@ -80,9 +94,8 @@ export const DialogSelectTime = ({ visible = true, onClose, onConfirm }) => {
     );
 };
 
-
-const generateTimeSlots = (selectedDay) => {
-    let timeList = [];
+const generateTimeSlots = (selectedDay: string) => {
+    let timeList: string[] = [];
     const now = new Date();
     let hour = now.getHours();
     let minute = now.getMinutes();
@@ -90,7 +103,6 @@ const generateTimeSlots = (selectedDay) => {
     if (selectedDay === "Hôm nay") {
         timeList.push("Sớm nhất có thể");
 
-        // Tính thời điểm tiếp theo là mốc 30 phút
         if (minute < 30) {
             minute = 30;
         } else {
@@ -98,7 +110,6 @@ const generateTimeSlots = (selectedDay) => {
             minute = 0;
         }
 
-        // Thêm các mốc 30 phút tiếp theo
         while (hour < 24) {
             timeList.push(`${hour.toString().padStart(2, '0')}:${minute === 0 ? "00" : "30"}`);
             if (minute === 0) {
@@ -109,22 +120,22 @@ const generateTimeSlots = (selectedDay) => {
             }
         }
     } else {
-        // Ngày mai: danh sách bắt đầu từ 08:00 đến 23:30
         for (let h = 8; h < 24; h++) {
             timeList.push(`${h.toString().padStart(2, '0')}:00`);
             timeList.push(`${h.toString().padStart(2, '0')}:30`);
         }
     }
+
     return timeList;
 };
 
-const calculateFulfillmentDateTime = (selectedDay, selectedTime) => {
+const calculateFulfillmentDateTime = (selectedDay: string, selectedTime: string) => {
     const now = new Date();
-    let fulfillmentDate = new Date(now);
+    const fulfillmentDate = new Date(now);
 
     if (selectedDay === "Ngày mai") {
         fulfillmentDate.setDate(now.getDate() + 1);
-        fulfillmentDate.setHours(8, 0, 0, 0); // Mặc định bắt đầu từ 08:00
+        fulfillmentDate.setHours(8, 0, 0, 0);
     }
 
     if (selectedTime !== "Sớm nhất có thể") {
@@ -134,7 +145,6 @@ const calculateFulfillmentDateTime = (selectedDay, selectedTime) => {
 
     return fulfillmentDate.toISOString();
 };
-
 
 const styles = StyleSheet.create({
     overlay: {
@@ -165,26 +175,60 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
     },
+    headerTitle: {
+        color: colors.primary,
+    },
     placeholderIcon: {
         width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
         height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
         backgroundColor: colors.transparent,
     },
+    body: {
+        padding: 16,
+        gap: 16,
+    },
+
+    dateColumn: {
+        flex: 1,
+        alignItems: 'center',
+        gap: 8,
+    },
     dayItem: {
         padding: 10,
-        marginVertical: 5,
         borderRadius: 8,
+        backgroundColor: colors.white,
+        width: '100%',
     },
-    selectedDay: {
-        color: colors.primary,
+    selectedDayItem: {
+        backgroundColor: colors.white,
+    },
+    dayText: {
+        color: colors.gray400,
+        textAlign: 'center',
+    },
+    selectedDayText: {
+        color: colors.black,
+    },
+    timeList: {
+        maxHeight: 150,
+        flex: 1,
+    },
+    timeListContent: {
+        gap: 10,
     },
     timeItem: {
         padding: 10,
         borderRadius: 8,
+        backgroundColor: colors.white,
     },
     selectedTimeItem: {
-        color: colors.primary,
+        backgroundColor: colors.white,
+    },
+    timeText: {
+        color: colors.gray400,
+        textAlign: 'center',
+    },
+    selectedTimeText: {
+        color: colors.black,
     },
 });
-
-

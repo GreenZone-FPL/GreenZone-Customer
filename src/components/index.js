@@ -37,7 +37,7 @@ export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
 export * from './dialogs/DialogReviewOder';
 export * from './dialogs/DialogNotification';
-export * from './dialogs/DialogSelectTime';
+
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';

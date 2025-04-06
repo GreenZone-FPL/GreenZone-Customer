@@ -1,13 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {Icon} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {TextFormatter} from '../../utils';
-import {Row} from '../containers/Row';
-import {Column} from '../containers/Column';
-import {NormalText} from '../texts/NormalText';
-import {color} from '@rneui/base';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { Column } from '../containers/Column';
+import { NormalText } from '../texts/NormalText';
 
 const HorizontalProductItemPropTypes = {
   item: PropTypes.object.isRequired,

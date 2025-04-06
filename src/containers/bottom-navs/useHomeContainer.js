@@ -162,6 +162,7 @@ export const useHomeContainer = () => {
   };
 
   const navigatePayOS = awaitingPayments => {
+    console.log('navigate')
     navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments);
   };
 
