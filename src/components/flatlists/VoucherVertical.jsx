@@ -62,7 +62,6 @@ export const VoucherVertical = ({route, vouchers, type}) => {
           onPress: async () => {
             try {
               const response = await changeBeans(item._id);
-              console.log(response);
               if (response) {
                 Toaster.show('Đổi thành công mã giảm giá');
               } else {
@@ -98,7 +97,7 @@ export const VoucherVertical = ({route, vouchers, type}) => {
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      console.log('item Vouher = ', item);
+      // console.log('item Vouher = ', item);
       if (cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
           voucher: item._id,

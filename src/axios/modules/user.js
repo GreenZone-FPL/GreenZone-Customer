@@ -74,7 +74,6 @@ export const getMyVouchers = async () => {
   try {
     const response = await axiosInstance.get(`v1/user/my-voucher`);
     if (response) {
-      console.log(response.data);
       return response.data;
     }
   } catch (error) {
