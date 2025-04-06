@@ -19,7 +19,12 @@ import {changeBeans} from '../../axios';
 
 const {width} = Dimensions.get('window');
 
-export const VoucherVertical = ({route, vouchers, type}) => {
+export const VoucherVertical = ({
+  route,
+  vouchers,
+  type,
+  setChangePoint = false,
+}) => {
   const navigation = useNavigation();
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
@@ -64,6 +69,7 @@ export const VoucherVertical = ({route, vouchers, type}) => {
               const response = await changeBeans(item._id);
               if (response) {
                 Toaster.show('Đổi thành công mã giảm giá');
+                setChangePoint(prev => !prev);
               } else {
                 Toaster.show('Bạn không đủ Bean');
               }
