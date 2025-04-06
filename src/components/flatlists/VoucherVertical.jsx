@@ -24,15 +24,33 @@ export const VoucherVertical = ({route, vouchers, type}) => {
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
   const {isChangeBeans} = route.params || false;
-
+  const [validVouchers, setValidVouchers] = useState([]);
   // PERCENTAGE = 'percentage',
   // FIXED_AMOUNT = 'fixedAmount',
 
-  const changeBean = async id => {
+  // check voucher
+  useEffect(() => {
+    const checkVoucher = () => {
+      const now = new Date();
+
+      const isVouchers = vouchers.filter(voucher => {
+        const start = new Date(voucher.startDate);
+        const end = new Date(voucher.endDate);
+
+        return start <= now && end >= now;
+      });
+
+      return setValidVouchers(isVouchers);
+    };
+
+    checkVoucher();
+  }, [vouchers]);
+
+  const changeBean = async item => {
     // Hiển thị alert xác nhận
     Alert.alert(
       'Xác nhận đổi Bean',
-      'Bạn có chắc chắn muốn đổi Bean không?',
+      `Bạn có chắc muốn đổi "${item.requiredPoints}" Bean lấy mã giảm giá "${item.name}" không?`,
       [
         {
           text: 'Hủy',
@@ -43,8 +61,9 @@ export const VoucherVertical = ({route, vouchers, type}) => {
           text: 'Đồng ý',
           onPress: async () => {
             try {
-              const response = await changeBeans(id);
-              if (response === true) {
+              const response = await changeBeans(item._id);
+              console.log(response);
+              if (response) {
                 Toaster.show('Đổi thành công mã giảm giá');
               } else {
                 Toaster.show('Bạn không đủ Bean');
@@ -68,11 +87,10 @@ export const VoucherVertical = ({route, vouchers, type}) => {
     const discountType = discountTypeMap[type];
 
     if (!discountType) {
-      console.warn('Loại discountType không hợp lệ!');
-      return [];
+      return validVouchers;
     }
 
-    const filtered = vouchers.filter(
+    const filtered = validVouchers.filter(
       voucher => voucher.discountType === discountType,
     );
     return filtered;
@@ -90,7 +108,7 @@ export const VoucherVertical = ({route, vouchers, type}) => {
 
       navigation.goBack();
     } else if (isChangeBeans) {
-      changeBean(item._id);
+      changeBean(item);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }

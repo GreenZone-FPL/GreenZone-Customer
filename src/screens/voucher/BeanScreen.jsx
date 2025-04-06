@@ -9,7 +9,7 @@ import {
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useHomeContainer} from '../../containers';
-import {getAllVoucher} from '../../axios';
+import {getAllVoucher, getMyVouchers} from '../../axios';
 import {AppAsyncStorage} from '../../utils';
 
 const BeanScreen = ({navigation}) => {
@@ -22,9 +22,14 @@ const BeanScreen = ({navigation}) => {
       try {
         if (await AppAsyncStorage.isTokenValid()) {
           const response = await getAllVoucher();
-          console.log('Lỗi khi gọi API Voucher:', response);
+          const response2 = await getMyVouchers();
 
-          setVouchers(response);
+          if (response) {
+            setVouchers(response);
+          }
+          if (response2) {
+            setMyVouchers(response2);
+          }
         }
       } catch (error) {
         console.log('Lỗi khi gọi API Voucher:', error);
@@ -61,14 +66,6 @@ const BeanScreen = ({navigation}) => {
           vouchers={vouchers}
           type={2}
           route={{params: {isUpdateOrderInfo: false, isChangeBeans: true}}}
-        />
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Voucher đã đổi</Text>
-        <VoucherVertical
-          vouchers={myVouchers}
-          type={2}
-          route={{params: {isUpdateOrderInfo: false}}}
         />
       </View>
     </View>

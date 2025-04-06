@@ -1,11 +1,6 @@
-import React, { useEffect } from 'react';
-import {
-  Dimensions,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet
-} from 'react-native';
-import { createOrder } from '../../axios';
+import React, {useEffect} from 'react';
+import {Dimensions, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {createOrder} from '../../axios';
 import {
   ActionDialog,
   Column,
@@ -14,17 +9,17 @@ import {
   LightStatusBar,
   NormalHeader,
   NormalLoading,
-  Row
+  Row,
 } from '../../components';
 
 import {
   DeliveryMethod,
   GLOBAL_KEYS,
   OnlineMethod,
-  colors
+  colors,
 } from '../../constants';
-import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
-import { useAppContext } from '../../context/appContext';
+import {useCheckoutContainer} from '../../containers/checkout/useCheckoutContainer';
+import {useAppContext} from '../../context/appContext';
 import {
   BottomGraph,
   MainGraph,
@@ -33,13 +28,9 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { CartActionTypes } from '../../reducers';
+import {CartActionTypes} from '../../reducers';
 import socketService from '../../services/socketService';
-import {
-  AppAsyncStorage,
-  CartManager,
-  Toaster
-} from '../../utils';
+import {AppAsyncStorage, CartManager, Toaster} from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -51,13 +42,18 @@ import {
   RecipientInfo,
   ShippingAddress,
   StoreAddress,
-  TimeSection
+  TimeSection,
 } from './checkout-components';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const CheckoutScreen = () => {
-
-  const { cartState, cartDispatch, setUpdateOrderMessage, awaitingPayments, setAwaitingPayments } = useAppContext();
+  const {
+    cartState,
+    cartDispatch,
+    setUpdateOrderMessage,
+    awaitingPayments,
+    setAwaitingPayments,
+  } = useAppContext();
 
   const {
     navigation,
@@ -81,14 +77,12 @@ const CheckoutScreen = () => {
     paymentMethod,
     deleteProduct,
     handleSelectMethod,
-    onApproveCreateOrder
-  } = useCheckoutContainer()
-
+    onApproveCreateOrder,
+  } = useCheckoutContainer();
 
   useEffect(() => {
-    console.log('cartState', JSON.stringify(cartState, null, 2))
-  }, [cartState])
-
+    console.log('cartState', JSON.stringify(cartState, null, 2));
+  }, [cartState]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,7 +122,7 @@ const CheckoutScreen = () => {
                     fontWeight: '700',
                     fontSize: 16,
                   }}
-                  rightTextStyle={{ color: colors.primary }}
+                  rightTextStyle={{color: colors.primary}}
                   onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
 
@@ -155,7 +149,7 @@ const CheckoutScreen = () => {
                         });
                       }}
                     />
-                    <Row style={{ gap: 0 }}>
+                    <Row style={{gap: 0}}>
                       {cartState?.shippingAddressInfo && (
                         <RecipientInfo
                           cartDispatch={cartDispatch}
@@ -163,57 +157,51 @@ const CheckoutScreen = () => {
                           onChangeRecipientInfo={() =>
                             setDialogRecipientInfoVisible(true)
                           }
-                          style={{ flex: 1 }}
+                          style={{flex: 1}}
                         />
                       )}
-
 
                       <TimeSection
                         timeInfo={timeInfo}
                         showDialog={() => setDialogSelectTimeVisible(true)}
                         cartState={cartState}
-                        style={{ flex: 1 }}
+                        style={{flex: 1}}
                       />
                     </Row>
                   </>
                 )}
 
-                {
-                  cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
-                    <>
-                      <TimeSection
-                        timeInfo={timeInfo}
-                        showDialog={() => setDialogSelectTimeVisible(true)}
-                        cartState={cartState}
-                        style={{ flex: 1 }}
-                      />
-                    </>
-                  )}
+                {cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
+                  <>
+                    <TimeSection
+                      timeInfo={timeInfo}
+                      showDialog={() => setDialogSelectTimeVisible(true)}
+                      cartState={cartState}
+                      style={{flex: 1}}
+                    />
+                  </>
+                )}
               </Column>
 
-
-
-              {
-                cartState.orderItems.length > 0 && (
-                  <ProductsInfo
-                    items={cartState.orderItems}
-                    onEditItem={item =>
-                      navigation.navigate(ShoppingGraph.EditCartItemScreen, {
-                        updateItem: item,
-                      })
-                    }
-                    confirmDelete={product => {
-                      setSelectedProduct(product);
-                      setActionDialogVisible(true);
-                    }}
-                  />
-                )
-              }
+              {cartState.orderItems.length > 0 && (
+                <ProductsInfo
+                  items={cartState.orderItems}
+                  onEditItem={item =>
+                    navigation.navigate(ShoppingGraph.EditCartItemScreen, {
+                      updateItem: item,
+                    })
+                  }
+                  confirmDelete={product => {
+                    setSelectedProduct(product);
+                    setActionDialogVisible(true);
+                  }}
+                />
+              )}
 
               <PaymentDetailsView
                 cartState={cartState}
                 onSelectVoucher={() =>
-                  navigation.navigate(VoucherGraph.MyVouchersScreen, {
+                  navigation.navigate(VoucherGraph.VouchersMerchantScreen, {
                     isUpdateOrderInfo: true,
                   })
                 }
@@ -222,7 +210,6 @@ const CheckoutScreen = () => {
                 selectedMethod={paymentMethod}
                 openDialog={() => setDialogPaymentMethodVisible(true)}
               />
-
             </ScrollView>
 
             <Footer
@@ -234,7 +221,6 @@ const CheckoutScreen = () => {
           </>
         )}
       </>
-
 
       <DialogPaymentMethod
         visible={dialogPaymentMethodVisible}
@@ -252,8 +238,8 @@ const CheckoutScreen = () => {
           setTimeInfo(data);
           cartDispatch({
             type: CartActionTypes.UPDATE_ORDER_INFO,
-            payload: { fulfillmentDateTime: data.fulfillmentDateTime }
-          })
+            payload: {fulfillmentDateTime: data.fulfillmentDateTime},
+          });
           setDialogSelectTimeVisible(false);
         }}
       />
@@ -305,8 +291,6 @@ const CheckoutScreen = () => {
           setDialogShippingMethodVisible(false);
         }}
       />
-
-
     </SafeAreaView>
   );
 };
