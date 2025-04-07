@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Dimensions,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -31,6 +32,7 @@ import {
   RecipientInfo,
   ShipperInfo,
 } from './order-detail-components';
+import { Toaster } from '../../utils';
 
 const OrderDetailScreen = ({ route }) => {
   const { orderId } = route.params;
@@ -120,7 +122,7 @@ const OrderDetailScreen = ({ route }) => {
                   style={[styles.cancelButton, styles.flex1]}
                   onPress={() => setCancelDialogVisible(true)}
                 >
-                  <NormalText text="Hủy đơn hàng" style={{color: colors.red900}}/>
+                  <NormalText text="Hủy đơn hàng" style={{ color: colors.red900 }} />
                 </Pressable>
               )}
 
@@ -133,6 +135,15 @@ const OrderDetailScreen = ({ route }) => {
               />
             )}
           </Row>
+
+          <PrimaryButton
+            titleStyle={styles.codTitle}
+            style={styles.codButton}
+            title="Đổi sang thanh toán khi nhận hàng"
+            onPress={() => Toaster.show('Tính năng đang phát triển')}
+          />
+
+
         </ScrollView>
       )}
 
@@ -189,6 +200,15 @@ const styles = StyleSheet.create({
   payButton: {
     marginHorizontal: 16,
     flex: 1,
+  },
+  codButton: {
+    alignSelf: 'center',
+    backgroundColor: colors.yellow600,
+    margin: 16
+  },
+  codTitle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.gray900
   },
   cancelButton: {
     backgroundColor: colors.white,
