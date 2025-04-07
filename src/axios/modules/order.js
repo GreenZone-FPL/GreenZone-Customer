@@ -14,7 +14,7 @@ export const createOrder = async (body) => {
 
 export const getOrderDetail = async (orderId) => {
   try {
-   
+
     const response = await axiosInstance.get(`/v1/order/${orderId}`);
     return response.data;
 
@@ -24,10 +24,10 @@ export const getOrderDetail = async (orderId) => {
   }
 };
 
-export const updateOrderStatus = async (orderId, status ) => {
+export const updateOrderStatus = async (orderId, status) => {
   try {
-   
-    const body = {status}
+
+    const body = { status }
     const response = await axiosInstance.patch(`/v1/order/${orderId}/status`, body);
     return response;
 
@@ -39,14 +39,33 @@ export const updateOrderStatus = async (orderId, status ) => {
 
 export const getOrdersByStatus = async (status) => {
   try {
-   
+
     const url = status ? `/v1/order/my-order?status=${status}` : '/v1/order/my-order';
-    
+
     const response = await axiosInstance.get(url);
 
     return response.data;
   } catch (error) {
     console.log('error', error);
+    throw error;
+  }
+};
+
+export const cancelOrder = async (
+  orderId,
+  cancelReason = 'Đổi ý không muốn mua nữa'
+) => {
+  try {
+    const body = { status: OrderStatus.CANCELLED.value, cancelReason };
+
+    const response = await axiosInstance.patch(
+      `/v1/order/${orderId}/status`,
+      body
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log('Error', error);
     throw error;
   }
 };
@@ -62,9 +81,9 @@ export const getOrderHistoryByStatus = async () => {
     const responses = await Promise.all(
       statuses.map(status =>
         axiosInstance
-          .get(`/v1/order/my-order`, {params: {status}})
-          .then(response => ({status, data: response.data}))
-          .catch(error => ({status, data: [], error})),
+          .get(`/v1/order/my-order`, { params: { status } })
+          .then(response => ({ status, data: response.data }))
+          .catch(error => ({ status, data: [], error })),
       ),
     );
 

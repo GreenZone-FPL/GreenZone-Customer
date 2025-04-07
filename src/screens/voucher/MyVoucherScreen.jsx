@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   Dimensions,
@@ -9,7 +9,7 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import {getAllVoucher} from '../../axios/index';
+import { getAllVoucher } from '../../axios/index';
 import {
   Column,
   LightStatusBar,
@@ -17,17 +17,18 @@ import {
   NormalText,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {VoucherGraph} from '../../layouts/graphs';
-import {CartManager, TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { VoucherGraph } from '../../layouts/graphs';
+import { CartManager, TextFormatter } from '../../utils';
+import { CartActionTypes } from '../../reducers';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const MyVoucherScreen = ({navigation, route}) => {
+const MyVoucherScreen = ({ navigation, route }) => {
   const [vouchers, setVouchers] = useState([]);
-  const {cartDispatch} = useAppContext();
-  const {isUpdateOrderInfo} = route.params || false;
+  const { cartDispatch } = useAppContext();
+  const { isUpdateOrderInfo } = route.params || false;
 
   const filterByDiscountType = type => {
     const discountTypeMap = {
@@ -64,16 +65,18 @@ const MyVoucherScreen = ({navigation, route}) => {
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
       console.log('item Vouher = ', item);
-      if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch, {
+     
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           voucher: item._id,
           voucherInfo: item,
-        });
-      }
+        }
+      })
 
       navigation.goBack();
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
 
@@ -86,13 +89,13 @@ const MyVoucherScreen = ({navigation, route}) => {
       />
 
       {vouchers.length > 0 && (
-        <TitleText text="Voucher khả dụng" style={{marginHorizontal: 16}} />
+        <TitleText text="Voucher khả dụng" style={{ marginHorizontal: 16 }} />
       )}
 
       <FlatList
         data={filterByDiscountType(1)}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemVoucher onPress={() => onItemPress(item)} item={item} />
         )}
         showsVerticalScrollIndicator={false}
@@ -102,13 +105,13 @@ const MyVoucherScreen = ({navigation, route}) => {
   );
 };
 
-const ItemVoucher = ({onPress, item}) => {
+const ItemVoucher = ({ onPress, item }) => {
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
-      <Image source={{uri: item.image}} style={styles.itemImage} />
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
-        <View style={{maxWidth: width / 2}}>
-          <Text numberOfLines={2} style={{fontSize: 16, fontWeight: 'bold'}}>
+        <View style={{ maxWidth: width / 2 }}>
+          <Text numberOfLines={2} style={{ fontSize: 16, fontWeight: 'bold' }}>
             {`Voucher ${item.name}`}
           </Text>
         </View>
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,

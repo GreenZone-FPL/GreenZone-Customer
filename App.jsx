@@ -34,7 +34,7 @@ import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-import CheckoutScreen from './src/screens/shopping/CheckoutScreen';
+import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
