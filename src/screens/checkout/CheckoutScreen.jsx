@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
@@ -8,7 +9,7 @@ import {
   LightStatusBar,
   NormalHeader,
   NormalLoading,
-  Row
+  Row,
 } from '../../components';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
 import { useCheckoutContainer } from '../../containers';
@@ -24,12 +25,14 @@ import {
   RecipientInfo,
   ShippingAddress,
   StoreAddress,
-  TimeSection
+  TimeSection,
 } from './checkout-components';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 const CheckoutScreen = () => {
-  const { cartState, cartDispatch, } = useAppContext();
+
+const { cartState, cartDispatch, } = useAppContext();
+
   const {
     navigation,
     dialogCreateOrderVisible,
@@ -60,6 +63,7 @@ const CheckoutScreen = () => {
     handleSelectMethod,
     onApproveCreateOrder
   } = useCheckoutContainer()
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -104,7 +108,7 @@ const CheckoutScreen = () => {
                       shippingAddressInfo={cartState?.shippingAddressInfo}
                       chooseUserAddress={chooseUserAddress}
                     />
-                    <Row style={{ gap: 0 }}>
+                    <Row style={{gap: 0}}>
                       {cartState?.shippingAddressInfo && (
                         <RecipientInfo
                           cartDispatch={cartDispatch}
@@ -112,34 +116,31 @@ const CheckoutScreen = () => {
                           onChangeRecipientInfo={() =>
                             setDialogRecipientInfoVisible(true)
                           }
-                          style={{ flex: 1 }}
+                          style={{flex: 1}}
                         />
                       )}
-
 
                       <TimeSection
                         timeInfo={timeInfo}
                         showDialog={() => setDialogSelectTimeVisible(true)}
                         cartState={cartState}
-                        style={{ flex: 1 }}
+                        style={{flex: 1}}
                       />
                     </Row>
                   </>
                 )}
 
-                {
-                  cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
-                    <>
-                      <TimeSection
-                        timeInfo={timeInfo}
-                        showDialog={() => setDialogSelectTimeVisible(true)}
-                        cartState={cartState}
-                        style={{ flex: 1 }}
-                      />
-                    </>
-                  )}
+                {cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
+                  <>
+                    <TimeSection
+                      timeInfo={timeInfo}
+                      showDialog={() => setDialogSelectTimeVisible(true)}
+                      cartState={cartState}
+                      style={{flex: 1}}
+                    />
+                  </>
+                )}
               </Column>
-
 
 
               {
@@ -158,12 +159,12 @@ const CheckoutScreen = () => {
               <PaymentDetailsView
                 cartState={cartState}
                 onSelectVoucher={onSelectVoucher}
+
               />
               <PaymentMethodView
                 selectedMethod={paymentMethod}
                 openDialog={() => setDialogPaymentMethodVisible(true)}
               />
-
             </ScrollView>
 
             <Footer
@@ -175,7 +176,6 @@ const CheckoutScreen = () => {
           </>
         )}
       </>
-
 
       <DialogPaymentMethod
         visible={dialogPaymentMethodVisible}
@@ -189,6 +189,7 @@ const CheckoutScreen = () => {
         visible={dialogSelecTimeVisible}
         onClose={() => setDialogSelectTimeVisible(false)}
         onConfirm={onConfirmSelectTime}
+
       />
 
       <ActionDialog
