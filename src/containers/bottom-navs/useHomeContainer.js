@@ -209,6 +209,8 @@ export const useHomeContainer = () => {
     handleLogin,
     onNavigateProductDetailSheet,
     onClickAddToCart,
+    navigatePayOS,
+    navigateZaloPay,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,

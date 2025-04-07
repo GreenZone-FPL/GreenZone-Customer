@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Dimensions, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {createOrder} from '../../axios';
 import {
   ActionDialog,
   Column,
@@ -10,9 +11,26 @@ import {
   NormalLoading,
   Row,
 } from '../../components';
-import {DeliveryMethod, GLOBAL_KEYS, colors} from '../../constants';
-import {useCheckoutContainer} from '../../containers';
+
+import {
+  DeliveryMethod,
+  GLOBAL_KEYS,
+  OnlineMethod,
+  colors,
+} from '../../constants';
+import {useCheckoutContainer} from '../../containers/checkout/useCheckoutContainer';
 import {useAppContext} from '../../context/appContext';
+import {
+  BottomGraph,
+  MainGraph,
+  OrderGraph,
+  ShoppingGraph,
+  UserGraph,
+  VoucherGraph,
+} from '../../layouts/graphs';
+import {CartActionTypes} from '../../reducers';
+import socketService from '../../services/socketService';
+import {AppAsyncStorage, CartManager, Toaster} from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -29,7 +47,14 @@ import {
 
 const {width} = Dimensions.get('window');
 const CheckoutScreen = () => {
-  const {cartState, cartDispatch} = useAppContext();
+  const {
+    cartState,
+    cartDispatch,
+    setUpdateOrderMessage,
+    awaitingPayments,
+    setAwaitingPayments,
+  } = useAppContext();
+
   const {
     navigation,
     dialogCreateOrderVisible,
@@ -46,20 +71,18 @@ const CheckoutScreen = () => {
     setActionDialogVisible,
     loading,
     timeInfo,
+    setTimeInfo,
     selectedProduct,
     setSelectedProduct,
     paymentMethod,
-    chooseMerchant,
-    chooseUserAddress,
-    navigateEditCartItem,
-    onConfirmSelectTime,
-    onSelectVoucher,
-    onConfirmRecipientInfo,
-    onSelectShippingMethod,
     deleteProduct,
     handleSelectMethod,
     onApproveCreateOrder,
   } = useCheckoutContainer();
+
+  useEffect(() => {
+    console.log('cartState', JSON.stringify(cartState, null, 2));
+  }, [cartState]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,24 +98,43 @@ const CheckoutScreen = () => {
         ) : (
           <>
             <ScrollView style={styles.containerContent}>
-              <Column style={styles.form}>
+              <Column
+                style={{
+                  paddingVertical: 16,
+                  backgroundColor: colors.white,
+                  marginVertical: 8,
+                }}>
                 <DualTextRow
-                  style={styles.dualTextRow}
+                  style={{
+                    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+                    marginTop: 8,
+                    marginBottom: 0,
+                    backgroundColor: colors.white,
+                  }}
                   leftText={
                     cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
                       ? DeliveryMethod.PICK_UP.label
                       : DeliveryMethod.DELIVERY.label
                   }
                   rightText={'Thay đổi'}
-                  leftTextStyle={styles.leftText}
-                  rightTextStyle={styles.rightText}
+                  leftTextStyle={{
+                    color: colors.primary,
+                    fontWeight: '700',
+                    fontSize: 16,
+                  }}
+                  rightTextStyle={{color: colors.primary}}
                   onRightPress={() => setDialogShippingMethodVisible(true)}
                 />
 
                 {cartState?.deliveryMethod === DeliveryMethod.PICK_UP.value && (
                   <StoreAddress
                     storeInfo={cartState?.storeInfo}
-                    chooseMerchant={chooseMerchant}
+                    chooseMerchant={() => {
+                      navigation.navigate(BottomGraph.MerchantScreen, {
+                        isUpdateOrderInfo: true,
+                        fromCheckout: true,
+                      });
+                    }}
                   />
                 )}
 
@@ -101,7 +143,11 @@ const CheckoutScreen = () => {
                     <ShippingAddress
                       deliveryMethod={cartState?.deliveryMethod}
                       shippingAddressInfo={cartState?.shippingAddressInfo}
-                      chooseUserAddress={chooseUserAddress}
+                      chooseUserAddress={() => {
+                        navigation.navigate(UserGraph.SelectAddressScreen, {
+                          isUpdateOrderInfo: true,
+                        });
+                      }}
                     />
                     <Row style={{gap: 0}}>
                       {cartState?.shippingAddressInfo && (
@@ -140,7 +186,11 @@ const CheckoutScreen = () => {
               {cartState.orderItems.length > 0 && (
                 <ProductsInfo
                   items={cartState.orderItems}
-                  onEditItem={navigateEditCartItem}
+                  onEditItem={item =>
+                    navigation.navigate(ShoppingGraph.EditCartItemScreen, {
+                      updateItem: item,
+                    })
+                  }
                   confirmDelete={product => {
                     setSelectedProduct(product);
                     setActionDialogVisible(true);
@@ -150,7 +200,11 @@ const CheckoutScreen = () => {
 
               <PaymentDetailsView
                 cartState={cartState}
-                onSelectVoucher={onSelectVoucher}
+                onSelectVoucher={() =>
+                  navigation.navigate(VoucherGraph.VouchersMerchantScreen, {
+                    isUpdateOrderInfo: true,
+                  })
+                }
               />
               <PaymentMethodView
                 selectedMethod={paymentMethod}
@@ -179,7 +233,15 @@ const CheckoutScreen = () => {
       <DialogSelectTime
         visible={dialogSelecTimeVisible}
         onClose={() => setDialogSelectTimeVisible(false)}
-        onConfirm={onConfirmSelectTime}
+        onConfirm={data => {
+          // console.log('timeInfo', data);
+          setTimeInfo(data);
+          cartDispatch({
+            type: CartActionTypes.UPDATE_ORDER_INFO,
+            payload: {fulfillmentDateTime: data.fulfillmentDateTime},
+          });
+          setDialogSelectTimeVisible(false);
+        }}
       />
 
       <ActionDialog
@@ -204,7 +266,13 @@ const CheckoutScreen = () => {
       <DialogRecipientInfo
         visible={dialogRecipientInforVisible}
         onHide={() => setDialogRecipientInfoVisible(false)}
-        onConfirm={onConfirmRecipientInfo}
+        onConfirm={data => {
+          CartManager.updateOrderInfo(cartDispatch, {
+            consigneeName: data.name,
+            consigneePhone: data.phoneNumber,
+          });
+          setDialogRecipientInfoVisible(false);
+        }}
       />
 
       <DeliveryMethodSheet
@@ -215,7 +283,13 @@ const CheckoutScreen = () => {
             : DeliveryMethod.DELIVERY
         }
         onClose={() => setDialogShippingMethodVisible(false)}
-        onSelect={onSelectShippingMethod}
+        onSelect={async option => {
+          console.log('option', option);
+          await CartManager.updateOrderInfo(cartDispatch, {
+            deliveryMethod: option.value,
+          });
+          setDialogShippingMethodVisible(false);
+        }}
       />
     </SafeAreaView>
   );
@@ -233,24 +307,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fbBg,
     flex: 1,
     gap: 16,
-  },
-  form: {
-    paddingVertical: 16,
-    backgroundColor: colors.white,
-    marginVertical: 8,
-  },
-  dualTextRow: {
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginTop: 8,
-    marginBottom: 0,
-    backgroundColor: colors.white,
-  },
-  leftText: {
-    color: colors.primary,
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  rightText: {
-    color: colors.primary,
   },
 });
