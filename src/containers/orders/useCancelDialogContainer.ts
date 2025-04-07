@@ -9,9 +9,9 @@ export const useCancelDialogContainer = (
     callBack: () => Promise<void>
 ) => {
     const cancelReasons = [
-        'Người nhận không bắt máy',
-        'Người nhận bom hàng',
-        'Sai địa chỉ',
+        'Đổi ý không muốn mua nữa',
+        'Tôi đặt nhầm sản phẩm',
+        'Tôi muốn đổi sản phẩm khác',
         'Lý do khác'
     ];
 
@@ -49,17 +49,12 @@ export const useCancelDialogContainer = (
                     onPress: async () => {
                         try {
                             setLoading(true)
-                            const merchant = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.merchant, null)
-                            if (merchant) {
-                                console.log('shipperId', merchant._id)
-                                await cancelOrder(orderId, reasonToSubmit);
-                                setSelectedReason('');
-                                setCustomReason('');
-                                setError(false);
-                                onHide(); // Đóng dialog
-                                await callBack()
-                            }
-
+                            await cancelOrder(orderId, reasonToSubmit);
+                            setSelectedReason('');
+                            setCustomReason('');
+                            setError(false);
+                            onHide();
+                            await callBack()
                         } catch (error) {
                             Toaster.show(error.message)
                         } finally {

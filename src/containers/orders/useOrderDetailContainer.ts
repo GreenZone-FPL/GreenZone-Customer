@@ -27,7 +27,6 @@ export const useOrderDetailContainer = (orderId: string) => {
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethodItem>(onlineMethods[0]);
     const [dialogPaymentMethodVisible, setDialogPaymentMethodVisible] = useState(false);
-    const [dialogCancelOrderVisible, setDialogCancelOrderVisible] = useState(false);
     const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
     const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
     const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
@@ -95,7 +94,7 @@ export const useOrderDetailContainer = (orderId: string) => {
         } catch (error) {
             console.error('Cancel order error:', error);
         } finally {
-            setDialogCancelOrderVisible(false);
+            setCancelDialogVisible(false);
         }
     };
 
@@ -121,8 +120,6 @@ export const useOrderDetailContainer = (orderId: string) => {
         setPaymentMethod,
         dialogPaymentMethodVisible,
         setDialogPaymentMethodVisible,
-        dialogCancelOrderVisible,
-        setDialogCancelOrderVisible,
         fetchOrderDetail,
         handleSelectMethod,
         onCancelOrder,

@@ -13,4 +13,5 @@ export * from './checkout/useCheckoutContainer';
 
 export * from './orders/useOrderDetailContainer';
 export * from './orders/useCancelDialogContainer';
+export * from './orders/useOrderHistoryContainer';
 

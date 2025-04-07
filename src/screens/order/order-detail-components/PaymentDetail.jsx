@@ -1,11 +1,10 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
 import { Icon, Snackbar } from 'react-native-paper';
-import { DualTextRow, NormalText, Row, StatusText } from '../../../components';
-import { colors, GLOBAL_KEYS } from '../../../constants';
-import { Toaster } from '../../../utils';
 import Toast from 'react-native-toast-message';
+import { DualTextRow, Row, StatusText } from '../../../components';
+import { colors, GLOBAL_KEYS } from '../../../constants';
 
 export const PaymentDetails = ({ detail }) => {
     const {

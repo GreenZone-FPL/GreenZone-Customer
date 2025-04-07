@@ -1,52 +1,58 @@
-import { Call, Send2 } from 'iconsax-react-native';
 import React from 'react';
-import { Linking, StyleSheet, TouchableOpacity } from 'react-native';
-import { Column, NormalText, Row } from '../../../components';
+import { StyleSheet, Text, View } from 'react-native';
+import { DualTextRow, NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
 
 export const RecipientInfo = ({ detail }) => {
-    const handleCall = () => {
-        if (!detail?.consigneePhone) return;
-
-        const phoneNumber = `tel:${detail.consigneePhone}`;
-
-        Linking.openURL(phoneNumber).catch((err) => console.error("Failed to open dialer:", err));
-    };
-
-    const handleSend = () => {
-        if (!detail?.consigneePhone) return;
-
-        const message = `sms:${detail.consigneePhone}`;
-
-        Linking.openURL(message).catch((err) => console.error("Failed to open SMS app:", err));
-    };
-
+    const {
+      deliveryMethod,
+      owner,
+      consigneeName,
+      consigneePhone,
+      shippingAddress,
+    } = detail;
+  
+    // Nếu là pickup hoặc các thông tin giao hàng bị null, thì lấy thông tin owner
+    const recipientName =
+      deliveryMethod === 'pickup' || !consigneeName
+        ? `${owner.lastName} ${owner.firstName}`
+        : consigneeName;
+  
+    const recipientPhone =
+      deliveryMethod === 'pickup' || !consigneePhone
+        ? owner.phoneNumber
+        : consigneePhone;
+  
+    const recipientAddress =
+      deliveryMethod !== 'pickup' && shippingAddress
+        ? shippingAddress
+        : 'Không có địa chỉ giao hàng';
+  
     return (
-        <Column style={[styles.areaContainer, { paddingHorizontal: 16 }]}>
-            <Row style={{ justifyContent: 'space-between' }}>
-                <Title title="Người nhận" icon="map-marker" />
-
-                <Row style={{ flexDirection: 'row', gap: 16 }}>
-                    <TouchableOpacity onPress={handleCall}>
-                        <Call size="22" color={colors.green700} variant="Bold" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSend}>
-                        <Send2 size="22" color={colors.green700} variant="Bold" />
-                    </TouchableOpacity>
-                </Row>
-            </Row>
-
-            <NormalText
-                text={[detail.consigneeName, '|', detail.consigneePhone].join(' ')}
-                style={{ color: colors.black }}
-            />
-
-            <NormalText text={detail.shippingAddress} style={styles.normalText} />
-
-        </Column>
+      <View
+        style={[
+          styles.areaContainer,
+          { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
+        ]}>
+        <Title title="Người nhận" icon="map-marker-outline" />
+        <NormalText
+          text={[recipientName, recipientPhone].join(' - ')}
+          style={{ color: colors.black, fontWeight: '500' }}
+        />
+        {/* Hiển thị địa chỉ nếu có */}
+        {deliveryMethod !== 'pickup' && (
+          <Text style={styles.normalText}>{recipientAddress}</Text>
+        )}
+  
+        <DualTextRow
+          style={{ marginVertical: 0 }}
+          leftText={`Thời gian mong muốn nhận hàng`}
+          rightText={new Date(detail.fulfillmentDateTime).toLocaleString('vi-VN')}
+        />
+      </View>
     );
-};
+  };
 
 
 const styles = StyleSheet.create({
