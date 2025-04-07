@@ -30,11 +30,15 @@ import { ShoppingGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 
+import { CancelDialog, PaymentDetails, ProductsInfo, RecipientInfo } from './order-detail-components';
+
 const OrderDetailScreen = ({ route }) => {
   const { orderId } = route.params;
   const { cartState } = useAppContext();
 
   const {
+    cancelDialogVisible,
+    setCancelDialogVisible,
     navigation,
     orderDetail,
     loading,
@@ -45,7 +49,9 @@ const OrderDetailScreen = ({ route }) => {
     setDialogCancelOrderVisible,
     handleSelectMethod,
     onCancelOrder,
+    fetchOrderDetail,
     backAction,
+    callBackAfterCancel,
   } = useOrderDetailContainer(orderId)
 
   if (loading) {
@@ -145,13 +151,19 @@ const OrderDetailScreen = ({ route }) => {
                 orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
                   <Pressable
                     style={[styles.button, { flex: 1 }]}
-                    onPress={() => setDialogCancelOrderVisible(true)}>
+                    onPress={() => setCancelDialogVisible(true)}>
                     <Text style={styles.normalText}>Hủy đơn hàng</Text>
                   </Pressable>
                 )}
             </Row>
           </ScrollView>
         )}
+        <CancelDialog
+          visible={cancelDialogVisible}
+          onHide={() => setCancelDialogVisible(false)}
+          orderId={orderId}
+          callBack={callBackAfterCancel}
+        />
 
         <DialogPaymentMethod
           methods={onlineMethods}
@@ -162,15 +174,6 @@ const OrderDetailScreen = ({ route }) => {
           handleSelectMethod={handleSelectMethod}
         />
 
-        <ActionDialog
-          visible={dialogCancelOrderVisible}
-          title="Xác nhận"
-          content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
-          cancelText="Đóng"
-          approveText="Đồng ý"
-          onCancel={() => setDialogCancelOrderVisible(false)}
-          onApprove={onCancelOrder}
-        />
       </View>
     </PaperProvider>
   );

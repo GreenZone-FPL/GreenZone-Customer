@@ -2,7 +2,7 @@ import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation
 import { useCallback, useEffect, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { cancelOrder, getOrderDetail } from '../../axios';
-import { OnlineMethod } from '../../constants';
+import { OnlineMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { onlineMethods } from '../../screens/checkout/checkout-components';
 import { PaymentMethodItem } from "../../type/checkout";
@@ -28,9 +28,9 @@ export const useOrderDetailContainer = (orderId: string) => {
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethodItem>(onlineMethods[0]);
     const [dialogPaymentMethodVisible, setDialogPaymentMethodVisible] = useState(false);
     const [dialogCancelOrderVisible, setDialogCancelOrderVisible] = useState(false);
-
+    const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
     const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
-    const { updateOrderMessage } = useAppContext();
+    const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
 
     useEffect(() => {
         fetchOrderDetail();
@@ -99,7 +99,19 @@ export const useOrderDetailContainer = (orderId: string) => {
         }
     };
 
+    const callBackAfterCancel = async () => {
+        await fetchOrderDetail()
+        setUpdateOrderMessage({
+            visible: true,
+            orderId: orderId,
+            message: 'Hủy đơn hàng thành công',
+            status: OrderStatus.CANCELLED.value,
+        })
+    }
+
     return {
+        cancelDialogVisible,
+        setCancelDialogVisible,
         navigation,
         orderDetail,
         setOrderDetail,
@@ -115,5 +127,6 @@ export const useOrderDetailContainer = (orderId: string) => {
         handleSelectMethod,
         onCancelOrder,
         backAction,
+        callBackAfterCancel,
     };
 };
