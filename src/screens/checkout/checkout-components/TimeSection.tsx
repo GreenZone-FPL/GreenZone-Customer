@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     container: {
         gap: 8,
         backgroundColor: colors.white,
-        paddingHorizontal: 16,
+        paddingHorizontal: 24,
         marginBottom: 8,
     },
     greenText: {

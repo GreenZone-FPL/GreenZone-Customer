@@ -59,8 +59,8 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         paddingHorizontal: 16,
         marginBottom: 8,
-        borderRightColor: colors.gray200,
-        borderRightWidth: 1,
+        borderRightColor: colors.primary,
+        borderRightWidth: 5,
     },
     phoneText: {
         color: colors.gray700,

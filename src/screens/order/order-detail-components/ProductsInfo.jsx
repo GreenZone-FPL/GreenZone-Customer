@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
         marginVertical: 4,
         flexDirection: 'row',
         alignItems: 'center',
-        gap: GLOBAL_KEYS.GAP_SMALL,
     },
     greenText: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -62,7 +61,6 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     flatListContentContainer: {
-        gap: 5,
-        backgroundColor: colors.fbBg,
+        backgroundColor: colors.white,
     },
 })

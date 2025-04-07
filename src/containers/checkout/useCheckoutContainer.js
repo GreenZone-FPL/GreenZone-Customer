@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import {
     DeliveryMethod,
     OnlineMethod,
+    OrderStatus,
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
@@ -183,8 +184,11 @@ export const useCheckoutContainer = () => {
             );
 
             console.log('order data =', JSON.stringify(response, null, 2));
-            await CartManager.clearOrderItems(cartDispatch);
-
+            if(response?.data.status !== OrderStatus.AWAITING_PAYMENT.value){
+                await CartManager.clearOrderItems(cartDispatch);
+            }
+           
+           
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
                     orderId: response.data._id,

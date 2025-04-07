@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  Dimensions,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
+import { Icon } from 'react-native-paper';
 import {
   LightStatusBar,
   NormalHeader,
@@ -20,6 +20,7 @@ import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -32,8 +33,6 @@ import {
   RecipientInfo,
   ShipperInfo,
 } from './order-detail-components';
-import { Toaster } from '../../utils';
-import { Icon } from 'react-native-paper';
 
 const OrderDetailScreen = ({ route }) => {
   const { orderId } = route.params;
@@ -112,14 +111,19 @@ const OrderDetailScreen = ({ route }) => {
             status={orderDetail.status}
             createdAt={orderDetail.createdAt}
           />
-          <Pressable
-            style={[styles.codButton]}
-            onPress={() => Toaster.show('Tính năng đang phát triển')}
-          >
-            <NormalText text="Đổi sang thanh toán khi nhận hàng" style={styles.codTitle} />
-            <Icon source='chevron-right' size={18} color={colors.primary}/>
-          </Pressable>
-       
+
+          {
+            orderDetail.status === OrderStatus.AWAITING_PAYMENT.value &&
+            <Pressable
+              style={[styles.codButton]}
+              onPress={() => Toaster.show('Tính năng đang phát triển')}
+            >
+              <NormalText text="Đổi sang thanh toán khi nhận hàng" style={styles.codTitle} />
+              <Icon source='chevron-right' size={18} color={colors.primary} />
+            </Pressable>
+          }
+
+
           <Row style={styles.buttonRow}>
 
 
@@ -143,10 +147,6 @@ const OrderDetailScreen = ({ route }) => {
               />
             )}
           </Row>
-
-
-
-
         </ScrollView>
       )}
 
@@ -166,7 +166,6 @@ const OrderDetailScreen = ({ route }) => {
         handleSelectMethod={handleSelectMethod}
       />
     </View>
-
   );
 };
 

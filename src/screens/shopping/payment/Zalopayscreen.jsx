@@ -1,28 +1,21 @@
-import React, {useState, useEffect, useCallback} from 'react';
 import {
-  View,
-  Text,
-  ScrollView,
-  Alert,
-  Button,
-  StyleSheet,
-  BackHandler,
-} from 'react-native';
-import {PaperProvider} from 'react-native-paper';
-import axios from 'axios';
-import {WebView} from 'react-native-webview';
-import {
-  useRoute,
-  useNavigation,
   useFocusEffect,
+  useNavigation,
+  useRoute,
 } from '@react-navigation/native';
 import CryptoJS from 'crypto-js';
-import {updatePaymentStatus, updateOrderStatus} from '../../../axios';
-import {AppAsyncStorage} from '../../../utils';
-import {useAppContext} from '../../../context/appContext';
-import {NormalLoading} from '../../../components';
-import {MainGraph} from '../../../layouts/graphs';
-import ToastDialog from '../../../components/dialogs/ToastDialog';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Alert,
+  BackHandler,
+  Text,
+  View
+} from 'react-native';
+import { WebView } from 'react-native-webview';
+import { updatePaymentStatus } from '../../../axios';
+import { useAppContext } from '../../../context/appContext';
+import { MainGraph } from '../../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../../utils';
 
 const generateMac = (
   appid,
@@ -52,31 +45,24 @@ const ZalopayScreen = () => {
   const [orderUrl, setOrderUrl] = useState(null);
   const route = useRoute();
   const navigation = useNavigation();
-    const [paymentLinkId, setPaymentLinkId] = useState('');
-  const {orderId, totalPrice} = route.params || {};
+  const [paymentLinkId, setPaymentLinkId] = useState('');
+  const { orderId, totalPrice } = route.params || {};
   const [toast, setToast] = useState({
     visible: false,
     message: '',
     type: 'info',
   });
-  const {awaitingPayments, setAwaitingPayments} = useAppContext() || {};
+  const { awaitingPayments, setAwaitingPayments, cartDispatch } = useAppContext()
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
         Alert.alert('Thông báo', 'Bạn có muốn quay lại không?', [
-          {text: 'Không', style: 'cancel'},
+          { text: 'Không', style: 'cancel' },
           {
             text: 'Có',
             onPress: () => {
-              navigation.reset({
-                index: 1,
-                routes: [
-                  // { name: 'OrderDetailScreen'},
-                  // { name: MainGraph.graphName},
-                  {name: 'OrderDetailScreen', params: {orderId}},
-                ], // Chỉ quay về MainGraph
-              });
+              navigation.goBack()
             },
           },
         ]);
@@ -105,7 +91,7 @@ const ZalopayScreen = () => {
     const appTime = Date.now();
     const amount = totalPrice;
 
-    const embedData = JSON.stringify({promo: 'none'});
+    const embedData = JSON.stringify({ promo: 'none' });
     const item = JSON.stringify([
       {
         itemid: 'ksdjjk223k43',
@@ -141,7 +127,7 @@ const ZalopayScreen = () => {
     try {
       const response = await fetch(ENDPOINT, {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(order),
       });
 
@@ -155,7 +141,7 @@ const ZalopayScreen = () => {
       console.log('Order URL:', data);
       setOrderUrl(data.order_url);
       setPaymentLinkId(data.order_token)
-      
+
     } catch (error) {
       Alert.alert('Lỗi', error.message);
     }
@@ -168,6 +154,7 @@ const ZalopayScreen = () => {
     if (navState.url.includes('returncode=1')) {
       Alert.alert('Thông báo', 'Thanh toán thành công!');
       await updatePaymentStatus(orderId, 'success', paymentLinkId);
+
       setToast({
         visible: true,
         message: 'Thanh toán thành công',
@@ -178,59 +165,39 @@ const ZalopayScreen = () => {
         AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
         null,
       );
+      await CartManager.clearOrderItems(cartDispatch);
       setAwaitingPayments(null);
       navigation.reset({
         index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
         routes: [
-          {name: MainGraph.graphName},
-          {name: 'OrderDetailScreen', params: {orderId}},
+          { name: MainGraph.graphName },
+          { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });
     } else if (navState.url.includes('returncode=-6012') || navState.url.includes('status=-49')) {
-      try {
-        await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
-        await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
-        setToast({
-          visible: true,
-          message: 'Bạn đã hủy thanh toán.',
-          type: 'warning',
-        });
-      } catch (error) {
-        console.log('Không cập nhật');
-      }
-      const response = await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-           null,
-         );
-         setAwaitingPayments(null);
-         console.log('datapayment:', response);
-         navigation.reset({
-           index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-           routes: [
-             {name: MainGraph.graphName},
-             {name: 'OrderDetailScreen', params: {orderId}},
-           ],
-         });
+      // call API delete order
+      Toaster.show('Bạn đã hủy giao dịch')
+      navigation.goBack()
     }
   };
 
   return (
-    <PaperProvider>
-      <View style={{flex: 1}}>
-        {orderUrl ? (
-          <WebView
-            source={{uri: orderUrl}}
-            style={{flex: 1}}
-            onNavigationStateChange={handleNavigationChange} // 🔥 Áp dụng hàm xử lý
-          />
-        ) : (
-          <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text>Đang xử lý thanh toán...</Text>
-          </View>
-        )}
-      </View>
-    </PaperProvider>
+
+    <View style={{ flex: 1 }}>
+      {orderUrl ? (
+        <WebView
+          source={{ uri: orderUrl }}
+          style={{ flex: 1 }}
+          onNavigationStateChange={handleNavigationChange}
+        />
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Đang xử lý thanh toán...</Text>
+        </View>
+      )}
+    </View>
+
   );
 };
 

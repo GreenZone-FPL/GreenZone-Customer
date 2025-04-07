@@ -118,7 +118,7 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
   if (!order) return null
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => onPress(order)} // Truyền order vào onPress
     >
       <Column style={styles.itemContainer} >
@@ -163,7 +163,7 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
             <Pressable 
             onPress={() => Toaster.show('Tính năng đang phát triển')}
             style={styles.changeMethodBtn}>
-              <NormalText text='Đổi phương thức thanh toán' style={styles.changeMethodText} />
+              <NormalText text='Đổi sang thanh toán khi nhận hàng' style={styles.changeMethodText} />
 
             </Pressable>
 
@@ -182,7 +182,7 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
       </Column>
 
 
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -275,13 +275,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   changeMethodBtn: {
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.gray400,
+    borderColor: colors.fbBg,
     backgroundColor: colors.white,
     marginRight: 5,
+    elevation: 2
   },
   changeMethodText: {
     color: colors.black,
@@ -290,9 +291,9 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   payBtn: {
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 12,
-    borderRadius: 8,
+    borderRadius: 20,
     backgroundColor: colors.primary,
     marginLeft: 8,
   },
