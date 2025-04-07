@@ -366,9 +366,9 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray700,
-    marginTop: 20,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    color: colors.black,
+    margin: 20,
   },
   confirmButton: {
     position: 'absolute',

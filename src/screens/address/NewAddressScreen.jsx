@@ -8,7 +8,11 @@ import {
   View,
   TextInput,
   ScrollView,
-  ToastAndroid
+  ToastAndroid,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {
   FlatInput,
@@ -170,98 +174,107 @@ const NewAddressScreen = props => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LightStatusBar />
-      <NormalHeader
-        title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
-        onLeftPress={() => {
-          if (isSearching) {
-            setIsSearching(false);
-            setSearchText('');
-            setSearchResults([]);
-          } else {
-            navigation.goBack();
-          }
-        }}
-        rightIcon={isSearching ? 'close' : 'magnify'}
-        enableRightIcon={true}
-        onRightPress={() => setIsSearching(!isSearching)}
-      />
-
-      {isSearching && (
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Nhập địa chỉ..."
-          value={searchText}
-          onChangeText={handleSearch}
-        />
-      )}
-
-      {isSearching && searchText.length > 2 && searchResults.length > 0 && (
-        <ScrollView style={styles.content}>
-          {searchResults.map(result => (
-            <CardSearch
-              key={result.place_id}
-              address={{
-                place_id: result.place_id,
-                specificAddress: [
-                  result.terms[1]?.value,
-                  result.terms[0]?.value,
-                ].join(' '),
-                ward: result.terms[2]?.value || '',
-                district: result.terms[3]?.value || '',
-                province: result.terms[4]?.value || '',
-              }}
-              isSelected={searchText === result.description}
-              onPress={() => {
+    <KeyboardAvoidingView
+      style={{flex: 1}}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <SafeAreaView style={styles.container}>
+          <LightStatusBar />
+          <NormalHeader
+            title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
+            onLeftPress={() => {
+              if (isSearching) {
                 setIsSearching(false);
-                setSearchText(result.description);
-                setSelectedAddress({
-                  selectedProvince: result.terms[4]?.value || '',
-                  selectedDistrict: result.terms[3]?.value || '',
-                  selectedWard: result.terms[2]?.value || '',
-                });
-                setSpecificAddress(
-                  [result.terms[1]?.value, result.terms[0]?.value].join(' '),
-                );
-                fetchPlaceDetails(result.place_id);
-              }}
+                setSearchText('');
+                setSearchResults([]);
+              } else {
+                navigation.goBack();
+              }
+            }}
+            rightIcon={isSearching ? 'close' : 'magnify'}
+            enableRightIcon={true}
+            onRightPress={() => setIsSearching(!isSearching)}
+          />
+  
+          {isSearching && (
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Nhập địa chỉ..."
+              value={searchText}
+              onChangeText={handleSearch}
             />
-          ))}
-        </ScrollView>
-      )}
-
-      <View style={styles.formContainer}>
-        <SelectLocation onAddressChange={handleAddressChange} />
-        <FlatInput
-          label="Nhập địa chỉ cụ thể"
-          setValue={setSpecificAddress}
-          value={specificAddress}
-          placeholder="Ngõ/ngách/..."
-          style={{marginBottom: 32}}
-        />
-        <TouchableOpacity
-          style={styles.btnConfirm}
-          onPress={handleConfirmAddress}>
-          <Text style={{color: colors.primary}}>Xác nhận địa chỉ</Text>
-        </TouchableOpacity>
-        <FlatInput
-          label="Người nhận"
-          setValue={setConsigneeName}
-          value={consigneeName}
-          placeholder="Họ tên"
-          style={{marginBottom: 32}}
-        />
-        <FlatInput
-          label="Số điện thoại"
-          setValue={setConsigneePhone}
-          value={consigneePhone}
-          placeholder="(+84)"
-          style={{marginBottom: 32}}
-        />
-        <PrimaryButton title="Lưu" onPress={handleSaveAddress} />
-      </View>
-    </SafeAreaView>
+          )}
+  
+          {isSearching && searchText.length > 2 && searchResults.length > 0 && (
+            <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+              {searchResults.map(result => (
+                <CardSearch
+                  key={result.place_id}
+                  address={{
+                    place_id: result.place_id,
+                    specificAddress: [
+                      result.terms[1]?.value,
+                      result.terms[0]?.value,
+                    ].join(' '),
+                    ward: result.terms[2]?.value || '',
+                    district: result.terms[3]?.value || '',
+                    province: result.terms[4]?.value || '',
+                  }}
+                  isSelected={searchText === result.description}
+                  onPress={() => {
+                    setIsSearching(false);
+                    setSearchText(result.description);
+                    setSelectedAddress({
+                      selectedProvince: result.terms[4]?.value || '',
+                      selectedDistrict: result.terms[3]?.value || '',
+                      selectedWard: result.terms[2]?.value || '',
+                    });
+                    setSpecificAddress(
+                      [result.terms[1]?.value, result.terms[0]?.value].join(' '),
+                    );
+                    fetchPlaceDetails(result.place_id);
+                  }}
+                />
+              ))}
+            </ScrollView>
+          )}
+  
+          <ScrollView
+            contentContainerStyle={styles.formContainer}
+            keyboardShouldPersistTaps="handled">
+            <SelectLocation onAddressChange={handleAddressChange} />
+            <FlatInput
+              label="Nhập địa chỉ cụ thể"
+              setValue={setSpecificAddress}
+              value={specificAddress}
+              placeholder="Ngõ/ngách/..."
+              style={{marginBottom: 32}}
+            />
+            <TouchableOpacity
+              style={styles.btnConfirm}
+              onPress={handleConfirmAddress}>
+              <Text style={{color: colors.primary}}>Xác nhận địa chỉ</Text>
+            </TouchableOpacity>
+            <FlatInput
+              label="Người nhận"
+              setValue={setConsigneeName}
+              value={consigneeName}
+              placeholder="Họ tên"
+              style={{marginBottom: 32}}
+            />
+            <FlatInput
+              label="Số điện thoại"
+              setValue={setConsigneePhone}
+              value={consigneePhone}
+              placeholder="(+84)"
+              style={{marginBottom: 32}}
+            />
+            <PrimaryButton title="Lưu" onPress={handleSaveAddress} />
+          </ScrollView>
+        </SafeAreaView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

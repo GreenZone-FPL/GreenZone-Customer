@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import Clipboard from '@react-native-clipboard/clipboard';
+import React from 'react';
 import {
-  BackHandler,
   FlatList,
   Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 import { Icon, PaperProvider } from 'react-native-paper';
 import {
@@ -23,75 +23,30 @@ import {
   Row,
   StatusText,
 } from '../../components';
-import { cancelOrder, getOrderDetail, updateOrderStatus } from '../../axios';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { ShoppingGraph } from '../../layouts/graphs';
+import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
+import { ShoppingGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
-import { useFocusEffect } from '@react-navigation/native';
+import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 
-const OrderDetailScreen = props => {
-  const { navigation, route } = props;
+const OrderDetailScreen = ({ route }) => {
   const { orderId } = route.params;
-  const [orderDetail, setOrderDetail] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [actionDialogVisible, setActionDialogVisible] = useState(false);
-  const [paymentDialogVisible, setPaymentDialogVisible] = useState(false);
+  const { cartState } = useAppContext();
 
-  const { updateOrderMessage, awaitingPayments } = useAppContext();
-  // console.log('updateOrderMessage = ', JSON.stringify(updateOrderMessage, null, 2))
-
-  const fetchOrderDetail = async () => {
-    try {
-      const response = await getOrderDetail(orderId);
-      // console.log('detail', JSON.stringify(response, null, 3));
-      setOrderDetail(response);
-    } catch (error) {
-      console.error('error', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrderDetail();
-  }, [orderId, updateOrderMessage]);
-  // ✅ Đảm bảo useCallback không thay đổi giữa các lần render
-  const backAction = useCallback(() => {
-    if (navigation.canGoBack()) {
-      navigation.goBack();
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'OrderHistoryScreen' }],
-      });
-    }
-    return true; // Chặn hành vi mặc định
-  }, [navigation]);
-
-  // ✅ Xử lý nút Back vật lý
-  useFocusEffect(
-    useCallback(() => {
-      const backAction = () => {
-        if (navigation.canGoBack()) {
-          navigation.goBack(); // Quay lại nếu có màn hình trước
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'OrderHistoryScreen' }], // Nếu không, quay về lịch sử đơn hàng
-          });
-        }
-        return true; // Chặn hành vi mặc định
-      };
-
-      const backHandler = BackHandler.addEventListener(
-        'hardwareBackPress',
-        backAction,
-      );
-
-      return () => backHandler.remove(); // Cleanup khi rời khỏi màn hình
-    }, [navigation]),
-  );
+  const {
+    navigation,
+    orderDetail,
+    loading,
+    paymentMethod,
+    dialogPaymentMethodVisible,
+    setDialogPaymentMethodVisible,
+    dialogCancelOrderVisible,
+    setDialogCancelOrderVisible,
+    handleSelectMethod,
+    onCancelOrder,
+    backAction,
+  } = useOrderDetailContainer(orderId)
 
   if (loading) {
     return (
@@ -112,16 +67,7 @@ const OrderDetailScreen = props => {
         <LightStatusBar />
         <NormalHeader
           title="Chi tiết đơn hàng"
-          onLeftPress={() => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            } else {
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'OrderHistoryScreen' }],
-              });
-            }
-          }}
+          onLeftPress={backAction}
         />
 
         {orderDetail && (
@@ -190,7 +136,7 @@ const OrderDetailScreen = props => {
                   style={{ marginHorizontal: 16, flex: 1 }}
                   title="Thanh toán"
                   onPress={() => {
-                    setPaymentDialogVisible(true);
+                    setDialogPaymentMethodVisible(true);
                   }}
                 />
               )}
@@ -199,7 +145,7 @@ const OrderDetailScreen = props => {
                 orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
                   <Pressable
                     style={[styles.button, { flex: 1 }]}
-                    onPress={() => setActionDialogVisible(true)}>
+                    onPress={() => setDialogCancelOrderVisible(true)}>
                     <Text style={styles.normalText}>Hủy đơn hàng</Text>
                   </Pressable>
                 )}
@@ -207,49 +153,23 @@ const OrderDetailScreen = props => {
           </ScrollView>
         )}
 
-        <ActionDialog
-          visible={paymentDialogVisible}
-          title={'Thanh toán'}
-          content={'Thanh toán đơn hàng này'}
-          approveText={'Thanh toán'}
-          onCancel={() => setPaymentDialogVisible(false)}
-          cancelText={'Đóng'}
-          onApprove={() =>
-            awaitingPayments.paymentMethod === 'PayOs'
-              ? navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments)
-              : awaitingPayments.paymentMethod === 'card'
-                ? navigation.navigate(
-                  ShoppingGraph.Zalopayscreen,
-                  awaitingPayments,
-                )
-                : null
-          }
+        <DialogPaymentMethod
+          methods={onlineMethods}
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
         />
 
         <ActionDialog
-          visible={actionDialogVisible}
+          visible={dialogCancelOrderVisible}
           title="Xác nhận"
           content={`Bạn có chắc chắn muốn hủy đơn hàng này"?`}
           cancelText="Đóng"
           approveText="Đồng ý"
-          onCancel={() => setActionDialogVisible(false)}
-          onApprove={async () => {
-            try {
-              const response = await cancelOrder(
-                orderDetail._id,
-                'Đổi ý không muốn mua nữa'
-              );
-
-              if (response) {
-                Toaster.show('Hủy đơn hàng thành công');
-              }
-              await fetchOrderDetail();
-            } catch (error) {
-              console.log('error', error);
-            } finally {
-              setActionDialogVisible(false);
-            }
-          }}
+          onCancel={() => setDialogCancelOrderVisible(false)}
+          onApprove={onCancelOrder}
         />
       </View>
     </PaperProvider>
@@ -545,8 +465,8 @@ const PaymentDetails = ({
       <DualTextRow
         leftText="Phí giao hàng"
         rightText={`${detail.deliveryMethod === 'delivery'
-            ? shippingFee.toLocaleString()
-            : 0
+          ? shippingFee.toLocaleString()
+          : 0
           }đ`}
       />
 
@@ -651,15 +571,26 @@ const PaymentDetails = ({
 };
 
 const OrderId = ({ _id }) => {
+
+  const handleCopy = () => {
+    Clipboard.setString(_id);
+    Toaster.show('Đã sao chép mã đơn hàng!')
+
+  };
+
+
   return (
     <View style={[styles.row, { marginBottom: 6 }]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
-      <Pressable style={styles.row} onPress={() => { }}>
+      <Pressable style={styles.row} onPress={handleCopy}>
         <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
       </Pressable>
+
+
+
     </View>
   );
 };
