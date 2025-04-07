@@ -19,43 +19,20 @@ import {changeBeans} from '../../axios';
 
 const {width} = Dimensions.get('window');
 
-export const VoucherVertical = ({
-  route,
-  vouchers,
-  type,
-  setChangePoint = false,
-}) => {
+export const VoucherVertical = ({route, vouchers, type}) => {
   const navigation = useNavigation();
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
   const {isChangeBeans} = route.params || false;
-  const [validVouchers, setValidVouchers] = useState([]);
+
   // PERCENTAGE = 'percentage',
   // FIXED_AMOUNT = 'fixedAmount',
 
-  // check voucher
-  useEffect(() => {
-    const checkVoucher = () => {
-      const now = new Date();
-
-      const isVouchers = vouchers.filter(voucher => {
-        const start = new Date(voucher.startDate);
-        const end = new Date(voucher.endDate);
-
-        return start <= now && end >= now;
-      });
-
-      return setValidVouchers(isVouchers);
-    };
-
-    checkVoucher();
-  }, [vouchers]);
-
-  const changeBean = async item => {
+  const changeBean = async id => {
     // Hiển thị alert xác nhận
     Alert.alert(
       'Xác nhận đổi Bean',
-      `Bạn có chắc muốn đổi "${item.requiredPoints}" Bean lấy mã giảm giá "${item.name}" không?`,
+      'Bạn có chắc chắn muốn đổi Bean không?',
       [
         {
           text: 'Hủy',
@@ -66,10 +43,9 @@ export const VoucherVertical = ({
           text: 'Đồng ý',
           onPress: async () => {
             try {
-              const response = await changeBeans(item._id);
-              if (response) {
+              const response = await changeBeans(id);
+              if (response === true) {
                 Toaster.show('Đổi thành công mã giảm giá');
-                setChangePoint(prev => !prev);
               } else {
                 Toaster.show('Bạn không đủ Bean');
               }
@@ -92,10 +68,11 @@ export const VoucherVertical = ({
     const discountType = discountTypeMap[type];
 
     if (!discountType) {
-      return validVouchers;
+      console.warn('Loại discountType không hợp lệ!');
+      return [];
     }
 
-    const filtered = validVouchers.filter(
+    const filtered = vouchers.filter(
       voucher => voucher.discountType === discountType,
     );
     return filtered;
@@ -103,7 +80,7 @@ export const VoucherVertical = ({
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      // console.log('item Vouher = ', item);
+      console.log('item Vouher = ', item);
       if (cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
           voucher: item._id,
@@ -113,7 +90,7 @@ export const VoucherVertical = ({
 
       navigation.goBack();
     } else if (isChangeBeans) {
-      changeBean(item);
+      changeBean(item._id);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }

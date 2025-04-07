@@ -1,10 +1,11 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
-import VouchersMerchantScreen from '../../screens/voucher/VouchersMerchantScreen';
+import MyVoucherScreen from '../../screens/voucher/MyVoucherScreen';
+
 import VoucherDetailSheet from '../../screens/voucher/VoucherDetailSheet';
 import {AppGraph, BottomGraph, MainGraph, VoucherGraph} from '../graphs';
-import MyVouchersScreen from '../../screens/voucher/MyVouchersScreen';
+import MembershipScreen from '../../screens/member-ship/MemberShipScreen';
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {
   return (
@@ -17,13 +18,8 @@ const VoucherStackScreen = () => {
       />
 
       <VoucherStack.Screen
-        name={VoucherGraph.VouchersMerchantScreen}
-        component={VouchersMerchantScreen}
-      />
-
-      <VoucherStack.Screen
         name={VoucherGraph.MyVouchersScreen}
-        component={MyVouchersScreen}
+        component={MyVoucherScreen}
       />
 
       <VoucherStack.Screen

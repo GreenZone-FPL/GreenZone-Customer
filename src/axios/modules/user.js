@@ -44,7 +44,7 @@ export const getFavoriteProducts = async () => {
 export const updateUserProfile = async profileData => {
   try {
     const response = await axiosInstance.put(`/v1/user/profile`, profileData);
-    // console.log('update thanh cong >>>>>>>>>>>>>');
+    console.log('update thanh cong >>>>>>>>>>>>>');
     return response.data;
   } catch (error) {
     console.error(
@@ -55,29 +55,16 @@ export const updateUserProfile = async profileData => {
   }
 };
 
-// doi bean
+// gọi bean
 export const changeBeans = async voucherId => {
   try {
-    const response = await axiosInstance.post(`/v1/user/exchange/${voucherId}`);
-    if (response.statusCode === 201) {
+    const response = await axiosInstance.get(`/v1/user/exchange/${voucherId}`);
+    if (response.data) {
       return true;
     }
     return false;
   } catch (error) {
     console.log('Đổi bean thất bại:', error);
-    return false;
-  }
-};
-
-// my voucher
-export const getMyVouchers = async () => {
-  try {
-    const response = await axiosInstance.get(`v1/user/my-voucher`);
-    if (response) {
-      return response.data;
-    }
-  } catch (error) {
-    console.log('error', error);
     return false;
   }
 };

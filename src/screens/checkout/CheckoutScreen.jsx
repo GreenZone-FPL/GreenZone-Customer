@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import {Dimensions, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -11,9 +10,9 @@ import {
   NormalLoading,
   Row,
 } from '../../components';
-import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
-import { useCheckoutContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
+import {DeliveryMethod, GLOBAL_KEYS, colors} from '../../constants';
+import {useCheckoutContainer} from '../../containers';
+import {useAppContext} from '../../context/appContext';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -30,9 +29,7 @@ import {
 
 const {width} = Dimensions.get('window');
 const CheckoutScreen = () => {
-
-const { cartState, cartDispatch, } = useAppContext();
-
+  const {cartState, cartDispatch} = useAppContext();
   const {
     navigation,
     dialogCreateOrderVisible,
@@ -61,9 +58,8 @@ const { cartState, cartDispatch, } = useAppContext();
     onSelectShippingMethod,
     deleteProduct,
     handleSelectMethod,
-    onApproveCreateOrder
-  } = useCheckoutContainer()
-
+    onApproveCreateOrder,
+  } = useCheckoutContainer();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,8 +75,7 @@ const { cartState, cartDispatch, } = useAppContext();
         ) : (
           <>
             <ScrollView style={styles.containerContent}>
-              <Column
-                style={styles.form}>
+              <Column style={styles.form}>
                 <DualTextRow
                   style={styles.dualTextRow}
                   leftText={
@@ -142,24 +137,20 @@ const { cartState, cartDispatch, } = useAppContext();
                 )}
               </Column>
 
-
-              {
-                cartState.orderItems.length > 0 && (
-                  <ProductsInfo
-                    items={cartState.orderItems}
-                    onEditItem={navigateEditCartItem}
-                    confirmDelete={product => {
-                      setSelectedProduct(product);
-                      setActionDialogVisible(true);
-                    }}
-                  />
-                )
-              }
+              {cartState.orderItems.length > 0 && (
+                <ProductsInfo
+                  items={cartState.orderItems}
+                  onEditItem={navigateEditCartItem}
+                  confirmDelete={product => {
+                    setSelectedProduct(product);
+                    setActionDialogVisible(true);
+                  }}
+                />
+              )}
 
               <PaymentDetailsView
                 cartState={cartState}
                 onSelectVoucher={onSelectVoucher}
-
               />
               <PaymentMethodView
                 selectedMethod={paymentMethod}
@@ -189,7 +180,6 @@ const { cartState, cartDispatch, } = useAppContext();
         visible={dialogSelecTimeVisible}
         onClose={() => setDialogSelectTimeVisible(false)}
         onConfirm={onConfirmSelectTime}
-
       />
 
       <ActionDialog

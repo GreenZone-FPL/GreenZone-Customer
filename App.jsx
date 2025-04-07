@@ -38,9 +38,9 @@ import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
+import MyVoucherScreen from './src/screens/voucher/MyVoucherScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import {PaperProvider} from 'react-native-paper';
-import VouchersMerchantScreen from './src/screens/voucher/VouchersMerchantScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage from 'react-native-flash-message';
@@ -54,7 +54,6 @@ import {useAppContainer} from './src/containers/useAppContainer';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import {LogBox} from 'react-native';
-import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -161,13 +160,8 @@ function AppNavigator() {
             component={MerchantScreen}
           />
           <BaseStack.Screen
-            name={VoucherGraph.VouchersMerchantScreen}
-            component={VouchersMerchantScreen}
-          />
-
-          <BaseStack.Screen
             name={VoucherGraph.MyVouchersScreen}
-            component={MyVouchersScreen}
+            component={MyVoucherScreen}
           />
           <BaseStack.Screen
             name={VoucherGraph.BeanScreen}

@@ -49,7 +49,7 @@ export const CategoryView: React.FC = () => {
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
-          onPress={() => navigation.navigate(VoucherGraph.VouchersMerchantScreen)}
+          onPress={() => navigation.navigate(VoucherGraph.MyVouchersScreen)}
         />
 
         <Item
