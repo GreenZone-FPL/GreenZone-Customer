@@ -71,13 +71,15 @@ const LoginScreen = ({ route, navigation }) => {
   // };
 
   // const handleSendOTP = async () => {
-  //   if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
-  //     setPhoneNumberError(true);
-  //     setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
-  //     return;
-  //   }
+    // const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
 
-  //   setLoading(true);
+    // if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
+    //   setPhoneNumberError(true);
+    //   setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
+    //   return;
+    // }
+
+    // setLoading(true);
   //   const otp = generateOtp(); // Tạo mã OTP
 
   //   try {
@@ -131,9 +133,11 @@ const LoginScreen = ({ route, navigation }) => {
   }, [authDispatch, authState.message, fadeAnim]);
 
   const handleSendOTP = async () => {
-    if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
+    const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+
+    if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
       setPhoneNumberError(true);
-      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
+      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
       return;
     }
 
@@ -156,6 +160,7 @@ const LoginScreen = ({ route, navigation }) => {
       setLoading(false);
     }
   };
+
 
   return (
     <Column style={styles.container}>

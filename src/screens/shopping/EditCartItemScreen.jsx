@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Image,
@@ -9,18 +9,17 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon, IconButton} from 'react-native-paper';
-import {getProductDetail} from '../../axios';
+import { Icon, IconButton } from 'react-native-paper';
+import { getProductDetail } from '../../axios';
 import {
   CheckoutFooter,
-  NotesList,
   OverlayStatusBar,
   RadioGroup,
-  SelectableGroup,
+  SelectableGroup
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {CartManager, Toaster} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { CartManager, Toaster } from '../../utils';
 
 const EditCartItemScreen = ({route, navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -28,10 +27,8 @@ const EditCartItemScreen = ({route, navigation}) => {
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
-  const [selectedNotes, setSelectedNotes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
-  const [customNote, setCustomNote] = useState('');
   const {updateItem} = route.params;
   const {cartDispatch} = useAppContext();
 
@@ -83,7 +80,7 @@ const EditCartItemScreen = ({route, navigation}) => {
             setSelectedToppings(updateItem.toppingItems);
           }
           setQuantity(updateItem.quantity);
-          setCustomNote(updateItem.note);
+
         }
       } catch (error) {
         console.error('Error fetchProductDetail:', error);
