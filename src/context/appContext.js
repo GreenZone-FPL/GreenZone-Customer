@@ -5,7 +5,7 @@ import React, {
   useReducer,
   useState,
 } from 'react';
-import { AppAsyncStorage } from '../utils';
+import {AppAsyncStorage} from '../utils';
 import {
   authReducer,
   authInitialState,
@@ -16,13 +16,13 @@ import {
   cartInitialState,
   CartActionTypes,
 } from '../reducers/cartReducer';
-import { CartManager } from '../utils';
+import {CartManager} from '../utils';
 
 export const AppContext = createContext();
 
 export let globalAuthDispatch = null;
 
-export const AppContextProvider = ({ children }) => {
+export const AppContextProvider = ({children}) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
   const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState);
 
@@ -35,24 +35,28 @@ export const AppContextProvider = ({ children }) => {
 
   const [awaitingPayments, setAwaitingPayments] = useState(null);
 
-
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
 
-      const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user)
-      console.log('token valid', isValid, 'lastName', user?.lastName)
+      const user = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.user,
+      );
       if (isValid && user.lastName) {
-
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: true, lastName: user.lastName, needRegister: false },
+          payload: {
+            needLogin: false,
+            isLoggedIn: true,
+            lastName: user.lastName,
+            needRegister: false,
+          },
         });
-
-      } else { // Không có accessToken, chưa đăng ký
+      } else {
+        // Không có accessToken, chưa đăng ký
         authDispatch({
           type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: false, needRegister: false },
+          payload: {needLogin: false, isLoggedIn: false, needRegister: false},
         });
       }
     };
@@ -71,14 +75,14 @@ export const AppContextProvider = ({ children }) => {
     const readCart = async () => {
       try {
         const cart = await CartManager.readCart();
-        cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
+        cartDispatch({type: CartActionTypes.READ_CART, payload: cart});
       } catch (error) {
         console.log('Error loading cart', error);
       }
     };
     readCart();
 
-    return () => { };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -86,9 +90,9 @@ export const AppContextProvider = ({ children }) => {
       try {
         const awaitingPayments = await AppAsyncStorage.readData(
           AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-        )
+        );
         if (awaitingPayments) {
-          setAwaitingPayments(awaitingPayments)
+          setAwaitingPayments(awaitingPayments);
         }
       } catch (error) {
         console.log('error', error);

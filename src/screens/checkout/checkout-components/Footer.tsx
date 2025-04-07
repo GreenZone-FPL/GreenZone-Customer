@@ -42,7 +42,6 @@ export const Footer: React.FC<FooterProps> = ({ cartState, showDialog, timeInfo,
                     const newCart = await CartManager.updateOrderInfo(cartDispatch, orderInfo);
 
                     const missingFields = CartManager.checkValid(newCart);
-                    console.log('missingFields', missingFields);
                     if (missingFields) {
                         Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`);
                         return;

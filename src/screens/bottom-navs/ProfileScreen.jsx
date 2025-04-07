@@ -30,7 +30,6 @@ const ProfileScreen = ({navigation}) => {
     try {
       if (authState.lastName) {
         const reponse = await getProfile();
-        console.log('profile', reponse);
         navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
       } else {
         onNavigateLogin();
@@ -50,9 +49,7 @@ const ProfileScreen = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <HeaderWithBadge title="Cá nhân" />
-      {!authState.lastName && (
-          <AuthContainer onPress={onNavigateLogin} />
-      )}
+      {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
       <ScrollView>
         <Column style={styles.body}>
           <TitleText text="Tài khoản" />
@@ -178,15 +175,13 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     elevation: 1,
     borderWidth: 1,
-    borderColor: colors.gray200
+    borderColor: colors.gray200,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 5,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
-
-    
   },
   leftSection: {
     flexDirection: 'row',
