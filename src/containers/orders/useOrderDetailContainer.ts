@@ -22,7 +22,6 @@ interface OrderDetail {
 }
 
 export const useOrderDetailContainer = (orderId: string) => {
-    console.log('orderId', orderId)
     const [orderDetail, setOrderDetail] = useState<OrderDetail | null>(null);
     const [loading, setLoading] = useState(true);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethodItem>(onlineMethods[0]);
@@ -38,7 +37,6 @@ export const useOrderDetailContainer = (orderId: string) => {
     const fetchOrderDetail = async () => {
         try {
             const response = await getOrderDetail(orderId);
-            console.log('response', response)
             setOrderDetail(response);
         } catch (error) {
             console.error('Error fetching order detail:', error);

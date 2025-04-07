@@ -276,7 +276,6 @@ const CheckoutScreen = () => {
         }
         onClose={() => setDialogShippingMethodVisible(false)}
         onSelect={async option => {
-          console.log('option', option);
           await CartManager.updateOrderInfo(cartDispatch, {
             deliveryMethod: option.value,
           });

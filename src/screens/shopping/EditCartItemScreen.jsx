@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Image,
@@ -9,8 +9,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Icon, IconButton } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
+import {Icon, IconButton} from 'react-native-paper';
+import {getProductDetail} from '../../axios';
 import {
   CheckoutFooter,
   NotesList,
@@ -18,12 +18,11 @@ import {
   RadioGroup,
   SelectableGroup,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { CartManager, Toaster } from '../../utils';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {CartManager, Toaster} from '../../utils';
 
-const EditCartItemScreen = ({ route, navigation }) => {
-
+const EditCartItemScreen = ({route, navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -33,13 +32,11 @@ const EditCartItemScreen = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const [customNote, setCustomNote] = useState('');
-  const { updateItem } = route.params;
-  const { cartDispatch } = useAppContext();
+  const {updateItem} = route.params;
+  const {cartDispatch} = useAppContext();
 
   useEffect(() => {
     if (product) {
-      console.log('Số lượng hiện tại:', quantity);
-
       const newTotalAmount = calculateTotal(
         product,
         selectedVariant,
@@ -134,7 +131,6 @@ const EditCartItemScreen = ({ route, navigation }) => {
             )}
 
             {product.topping.length > 0 && (
-
               <SelectableGroup
                 items={product.topping}
                 title="Chọn topping"
@@ -144,7 +140,6 @@ const EditCartItemScreen = ({ route, navigation }) => {
                 activeIconColor={colors.primary}
                 activeTextColor={colors.primary}
               />
-
             )}
           </ScrollView>
 
@@ -167,44 +162,41 @@ const EditCartItemScreen = ({ route, navigation }) => {
               if (quantity < 1) {
                 // Hiển thị cảnh báo khi số lượng sản phẩm nhỏ hơn 1
                 Alert.alert(
-                  "Xóa sản phẩm",
-                  "Bạn có chắc chắn muốn xóa sản phẩm này?",
+                  'Xóa sản phẩm',
+                  'Bạn có chắc chắn muốn xóa sản phẩm này?',
                   [
                     {
-                      text: "Đóng",
+                      text: 'Đóng',
                       onPress: () => {
                         setQuantity(1);
                       },
-                      style: "cancel"
+                      style: 'cancel',
                     },
                     {
-                      text: "Xóa",
+                      text: 'Xóa',
                       onPress: async () => {
-
-                        console.log('productId', product._id)
-                        await CartManager.removeFromCart(product._id, cartDispatch);
-                        Toaster.show('Xóa thành công')
-                      }
-                    }
+                        await CartManager.removeFromCart(
+                          product._id,
+                          cartDispatch,
+                        );
+                        Toaster.show('Xóa thành công');
+                      },
+                    },
                   ],
-                  { cancelable: false }
+                  {cancelable: false},
                 );
-                return
+                return;
               }
-              if (quantity >= 1  && !quantity) {
-                setQuantity(1)
-                Toaster.show('Vui lòng nhập số lượng hợp lệ')
-                return
+              if (quantity >= 1 && !quantity) {
+                setQuantity(1);
+                Toaster.show('Vui lòng nhập số lượng hợp lệ');
+                return;
               }
-
-           
-
-
 
               const sortedToppings = selectedToppings?.length
                 ? [...selectedToppings].sort((a, b) =>
-                  a._id.localeCompare(b._id),
-                )
+                    a._id.localeCompare(b._id),
+                  )
                 : [];
 
               const newCart = await CartManager.updateCartItem(
@@ -218,10 +210,8 @@ const EditCartItemScreen = ({ route, navigation }) => {
 
                   variantName: selectedVariant?.size,
                 },
-                cartDispatch
+                cartDispatch,
               );
-
-
 
               navigation.goBack();
             }}
@@ -233,23 +223,15 @@ const EditCartItemScreen = ({ route, navigation }) => {
   );
 };
 
-const ProductImage = ({ product }) => {
-
+const ProductImage = ({product}) => {
   return (
-
     <Pressable style={styles.imageContainer}>
-      <Image source={{ uri: product.image }} style={styles.productImage} />
+      <Image source={{uri: product.image}} style={styles.productImage} />
     </Pressable>
-
   );
 };
 
-const ProductInfo = ({
-  product,
-  showFullDescription,
-  toggleDescription,
-}) => {
-
+const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>

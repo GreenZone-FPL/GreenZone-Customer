@@ -140,12 +140,12 @@ const ItemVoucher = ({onPress, item}) => {
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
       <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
-        <View style={{maxWidth: width / 2}}>
-          <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
-            {`${item.name}`}
-          </Text>
-        </View>
-
+        <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
+          {`${item.name}`}
+        </Text>
+        {item?.voucherType === 'seed' && (
+          <Text>{item?.requiredPoints} Bean</Text>
+        )}
         <NormalText
           text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
         />

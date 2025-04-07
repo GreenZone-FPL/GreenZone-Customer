@@ -61,7 +61,6 @@ const SelectAddressScreen = ({ navigation, route }) => {
 
     }, [])
   );
-  // console.log('địa chỉ', addresses)
   // Lấy vị trí người dùng
   useEffect(() => {
     Geolocation.getCurrentPosition(position => {
@@ -99,10 +98,8 @@ const SelectAddressScreen = ({ navigation, route }) => {
           api_key: GOONG_API_KEY,
         },
       });
-      console.log('request')
       const name = response.data.result.name;
       const { lat, lng } = response.data.result.geometry.location;
-
 
       const updatedAddress = {
         ...address,
@@ -128,7 +125,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
   };
-  const onConfirmAddress = (address) => {
+  const onConfirmAddress = address => {
     if (address) {
       const addressFinish = {
         location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
@@ -173,8 +170,10 @@ const SelectAddressScreen = ({ navigation, route }) => {
             },
           });
 
-
-          console.log('response.data.predictions', JSON.stringify(response.data.predictions, null, 2))
+          console.log(
+            'response.data.predictions',
+            JSON.stringify(response.data.predictions, null, 2),
+          );
           setSearchResults(response.data.predictions || []);
         } catch (error) {
           console.error('Lỗi tìm kiếm địa chỉ:', error);
@@ -191,7 +190,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
 
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()}>
-          <Icon source='chevron-left' size={36} color={colors.black} />
+          <Icon source="chevron-left" size={36} color={colors.black} />
         </Pressable>
         <View style={{ flex: 1 }}>
           <CustomSearchBar
@@ -209,9 +208,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
             style={{ backgroundColor: colors.fbBg }}
             onFocus={() => setIsSearching(true)} />
         </View>
-
       </View>
-
 
       <ScrollView style={styles.content}>
         {isSearching && searchResults.length > 0 ? (
@@ -319,7 +316,6 @@ const CardSearch = ({ address, isSelected, onPress }) => (
         </Text>
       </View>
     </View>
-
   </Pressable>
 );
 
@@ -338,10 +334,8 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-between',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-
   },
-  content: {
-  },
+  content: {},
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -349,7 +343,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderBottomWidth: 1,
     borderColor: colors.gray200,
-    marginBottom: 5
+    marginBottom: 5,
   },
   selectedCard: {
     borderWidth: 1,
@@ -407,5 +401,4 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
   },
-
 });
