@@ -279,10 +279,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: colors.gray200,
+    borderColor: colors.fbBg,
     backgroundColor: colors.white,
     marginRight: 5,
-    // elevation: 1
+    elevation: 1
   },
   changeMethodText: {
     color: colors.black,
