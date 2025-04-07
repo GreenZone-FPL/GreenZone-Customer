@@ -19,3 +19,7 @@ export * from './user-profile/useUpdateProfileContainer';
 
 
 export * from './checkout/useCheckoutContainer';
+
+
+export * from './orders/useOrderDetailContainer';
+

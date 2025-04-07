@@ -1,8 +1,8 @@
 import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, StatusText } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { MainGraph } from '../../layouts/graphs';
@@ -116,41 +116,65 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
   return (
     <TouchableOpacity
       onPress={() => onPress(order)} // Truyền order vào onPress
-      style={styles.orderItem}>
-      <ItemOrderType deliveryMethod={order?.deliveryMethod} />
-      <Column style={styles.orderColumn}>
-        <Text numberOfLines={2} style={styles.orderName}>
-          {getOrderItemsText()}
-        </Text>
+    >
+      <Column style={styles.itemContainer} >
 
-        <Text style={styles.orderTime}>
-          {order?.createdAt
-            ? moment(order.createdAt)
-              .utcOffset(7)
-              .format('HH:mm - DD/MM/YYYY')
-            : 'Chưa có thời gian'}
-        </Text>
+        <Row style={styles.orderItem}>
+          <ItemOrderType deliveryMethod={order?.deliveryMethod} />
+          <Column style={styles.orderColumn}>
+            <Text numberOfLines={2} style={styles.orderName}>
+              {getOrderItemsText()}
+            </Text>
 
-        <NormalText
-          style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.green500 }}
-          text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
-      </Column>
-      <Column style={styles.orderColumnEnd}>
-        <Text style={styles.orderTotal}>
-          {order?.totalPrice
-            ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
-            : '0₫'}
-        </Text>
+            <Text style={styles.orderTime}>
+              {order?.createdAt
+                ? moment(order.createdAt)
+                  .utcOffset(7)
+                  .format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'}
+            </Text>
+
+            <NormalText
+              style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.teal700 }}
+              text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
+          </Column>
+          <Column style={styles.orderColumnEnd}>
+            {
+              ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
+              <StatusText status={order?.status} />
+            }
+
+            <Text style={styles.orderTotal}>
+              {order?.totalPrice
+                ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
+                : '0₫'}
+            </Text>
+          </Column>
+
+        </Row>
+
         {
-          ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
-          <StatusText status={order?.status} />
+          order?.status === OrderStatus.AWAITING_PAYMENT.value &&
+          <Row style={styles.buttonRow}>
+            <Pressable style={styles.changeMethodBtn}>
+              <NormalText text='Đổi phương thức thanh toán' style={styles.changeMethodText} />
+
+            </Pressable>
+
+            <Pressable style={styles.payBtn}>
+              <NormalText text='Thanh toán' style={styles.payText} />
+            </Pressable>
+          </Row>
         }
 
-
       </Column>
+
+
     </TouchableOpacity>
   );
 };
+
+
 
 const ItemOrderType = ({ deliveryMethod }) => {
   const imageMap = {
@@ -191,9 +215,13 @@ const styles = StyleSheet.create({
   },
   emptyContainer: { justifyContent: 'center', alignItems: 'center' },
   emptyImage: { width: width / 2, height: width / 2 },
+
+  itemContainer: {
+    backgroundColor: colors.white,
+    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+  },
   orderItem: {
     backgroundColor: colors.white,
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     paddingHorizontal: 16,
     flexDirection: 'row',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -219,18 +247,48 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     paddingVertical: 4,
-    // paddingHorizontal: 10
   },
   buttonText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.white,
-    // fontWeight: '500',
   },
   orderTypeIcon: {
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     resizeMode: 'cover',
-  }
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+  },
+  changeMethodBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.gray400,
+    backgroundColor: colors.white,
+    marginRight: 5,
+  },
+  changeMethodText: {
+    color: colors.black,
+    textAlign: 'center',
+    fontWeight: '400',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
+  },
+  payBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: colors.primary,
+    marginLeft: 8,
+  },
+  payText: {
+    color: colors.white,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
 });
 
 export default OrderHistoryScreen;

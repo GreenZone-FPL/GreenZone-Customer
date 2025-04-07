@@ -1,14 +1,28 @@
 import React from "react";
-import { Image, Pressable, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import { RadioButton } from "react-native-paper";
 import {
-    Column,
     DialogBasic,
     NormalText,
     Row
 } from '../../../components';
 import { colors, DeliveryMethod, PaymentMethod } from "../../../constants";
 import { PaymentMethodItem } from "../../../type/checkout";
+
+export const onlineMethods: PaymentMethodItem[] = [
+    {
+        label: 'PayOs',
+        image: require('../../../assets/images/logo_payos.png'),
+        value: 'payos',
+        paymentMethod: PaymentMethod.ONLINE.value,
+    },
+    {
+        label: 'Thẻ Visa, ngân hàng',
+        image: require('../../../assets/images/logo_card.png'),
+        value: 'card',
+        paymentMethod: PaymentMethod.ONLINE.value,
+    },
+];
 
 // Định nghĩa các phương thức thanh toán
 export const paymentMethods: PaymentMethodItem[] = [
@@ -33,6 +47,7 @@ export const paymentMethods: PaymentMethodItem[] = [
 ];
 
 interface DialogPaymentMethodProps {
+    methods: PaymentMethodItem[],
     visible: boolean;
     onHide: () => void;
     cartState: any;
@@ -41,6 +56,7 @@ interface DialogPaymentMethodProps {
 }
 
 export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
+    methods= paymentMethods,
     visible,
     onHide,
     cartState,
@@ -67,7 +83,7 @@ export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
                 }}
                 value={selectedMethod?.value}
             >
-                {paymentMethods.map(method => {
+                {methods.map(method => {
                     const disabled =
                         cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
                         method.paymentMethod === PaymentMethod.COD.value;
