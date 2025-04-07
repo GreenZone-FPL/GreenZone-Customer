@@ -1,44 +1,35 @@
 import moment from 'moment/moment';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, PrimaryButton, Row, StatusText } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
+import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { MainGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
+import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
+
 
 const width = Dimensions.get('window').width;
 
 const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
-const OrderHistoryScreen = ({ navigation }) => {
-  const [tabIndex, setTabIndex] = useState(0);
-  const [orders, setOrders] = useState({}); // Lưu trữ dữ liệu theo từng tab
-  const [loading, setLoading] = useState(false);
+const OrderHistoryScreen = () => {
+  const {cartState } = useAppContext();
 
-  const { updateOrderMessage } = useAppContext();
-
-  const fetchOrders = async (status) => {
-    try {
-      setLoading(true);
-      const data = await getOrdersByStatus(status);
-      setOrders(prev => ({ ...prev, [status]: data }));
-    } catch (error) {
-      console.error('Lỗi khi lấy đơn hàng:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    orderStatuses.forEach(status => fetchOrders(status));
-  }, [updateOrderMessage]);
-
-  useEffect(() => {
-    fetchOrders(orderStatuses[tabIndex]);
-  }, [tabIndex]);
-
+  const {
+    navigation,
+    tabIndex,
+    setTabIndex,
+    setSelectedOrder,
+    orders,
+    loading,
+    paymentMethod,
+    dialogPaymentMethodVisible,
+    setDialogPaymentMethodVisible,
+    handleSelectMethod,
+  } = useOrderHistoryContainer()
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -68,18 +59,31 @@ const OrderHistoryScreen = ({ navigation }) => {
               status={status}
               orders={orders[status] || []}
               loading={loading}
+              setSelectedOrder={setSelectedOrder}
               onItemPress={(order) =>
                 navigation.navigate('OrderDetailScreen', { orderId: order._id })
+              }
+              onPay={() =>
+                setDialogPaymentMethodVisible(true)
               }
             />
           </View>
         ))}
       </CustomTabView>
+
+      <DialogPaymentMethod
+        methods={onlineMethods}
+        visible={dialogPaymentMethodVisible}
+        onHide={() => setDialogPaymentMethodVisible(false)}
+        cartState={cartState}
+        selectedMethod={paymentMethod}
+        handleSelectMethod={handleSelectMethod}
+      />
     </View>
   );
 };
 
-const OrderListView = ({ status, orders, loading, onItemPress }) => (
+const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelectedOrder }) => (
   <View style={styles.scene}>
     {loading ? (
       <NormalLoading visible={loading} />
@@ -89,7 +93,7 @@ const OrderListView = ({ status, orders, loading, onItemPress }) => (
         data={orders}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <OrderItem order={item} onPress={onItemPress} />
+          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder = {setSelectedOrder}/>
         )}
         contentContainerStyle={{ gap: 5 }}
       />
@@ -99,7 +103,7 @@ const OrderListView = ({ status, orders, loading, onItemPress }) => (
   </View>
 );
 
-const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
+const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
   // console.log('order', JSON.stringify(order, null, 2))
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
@@ -156,12 +160,20 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&
           <Row style={styles.buttonRow}>
-            <Pressable style={styles.changeMethodBtn}>
+            <Pressable 
+            onPress={() => Toaster.show('Tính năng đang phát triển')}
+            style={styles.changeMethodBtn}>
               <NormalText text='Đổi phương thức thanh toán' style={styles.changeMethodText} />
 
             </Pressable>
 
-            <Pressable style={styles.payBtn}>
+            <Pressable
+              onPress={() => {
+                console.log('orderDetail', JSON.stringify(order, null, 2))
+                setSelectedOrder(order)
+                onPay()
+              }}
+              style={styles.payBtn}>
               <NormalText text='Thanh toán' style={styles.payText} />
             </Pressable>
           </Row>

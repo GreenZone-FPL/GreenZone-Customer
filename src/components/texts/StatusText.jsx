@@ -7,6 +7,7 @@ export const StatusText = ({ status }) => {
     const getStatusStyle = () => {
         switch (status) {
             case OrderStatus.AWAITING_PAYMENT.value:
+                return { color: colors.red800, backgroundColor: colors.lightRed }
             case OrderStatus.PENDING_CONFIRMATION.value:
                 return { color: colors.orange700, backgroundColor: colors.milk200 }
             case OrderStatus.COMPLETED.value:
