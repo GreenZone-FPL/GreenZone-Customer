@@ -66,6 +66,7 @@ const VoucherScreen = ({navigation}) => {
               <Pressable
                 style={styles.myTicket}
                 onPress={() => {
+                  navigation.navigate(VoucherGraph.MyVouchersScreen)
                 }}>
                 <Icon
                   source="ticket-confirmation-outline"
@@ -104,8 +105,6 @@ const VoucherScreen = ({navigation}) => {
           />
 
       }
-
-
       {authState.lastName && (
         <Column style={{ marginHorizontal: 16 }}>
           <TitleText text="Phiếu ưu đãi" />
