@@ -9,7 +9,6 @@ import {
 
 import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   CategoryMenu,
   DeliveryButton,
@@ -18,14 +17,13 @@ import {
   HeaderOrder,
   LightStatusBar,
   ProductsListHorizontal,
-  ProductsListVertical,
+  ProductsListVertical
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
 import { fetchData, fetchUserLocation } from '../../utils';
-import { useAppContainer, useHomeContainer } from '../../containers';
-import ButtonBackground from '../../components/background/ButtonBackground';
 
 const OrderScreen = props => {
   const { navigation } = props;
