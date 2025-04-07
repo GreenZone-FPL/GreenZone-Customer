@@ -1,6 +1,5 @@
-import React, {useEffect} from 'react';
-import {Dimensions, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
-import {createOrder} from '../../axios';
+import React, { useEffect } from 'react';
+import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -15,22 +14,18 @@ import {
 import {
   DeliveryMethod,
   GLOBAL_KEYS,
-  OnlineMethod,
-  colors,
+  colors
 } from '../../constants';
-import {useCheckoutContainer} from '../../containers/checkout/useCheckoutContainer';
-import {useAppContext} from '../../context/appContext';
+import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
+import { useAppContext } from '../../context/appContext';
 import {
   BottomGraph,
-  MainGraph,
-  OrderGraph,
   ShoppingGraph,
   UserGraph,
-  VoucherGraph,
+  VoucherGraph
 } from '../../layouts/graphs';
-import {CartActionTypes} from '../../reducers';
-import socketService from '../../services/socketService';
-import {AppAsyncStorage, CartManager, Toaster} from '../../utils';
+import { CartActionTypes } from '../../reducers';
+import { CartManager } from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -50,9 +45,6 @@ const CheckoutScreen = () => {
   const {
     cartState,
     cartDispatch,
-    setUpdateOrderMessage,
-    awaitingPayments,
-    setAwaitingPayments,
   } = useAppContext();
 
   const {
@@ -305,6 +297,5 @@ const styles = StyleSheet.create({
   containerContent: {
     backgroundColor: colors.fbBg,
     flex: 1,
-    gap: 16,
   },
 });

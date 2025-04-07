@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Icon } from "react-native-paper";
 import { NormalText, Row } from "../../../components";
 import { colors } from "../../../constants";
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         backgroundColor: colors.white,
         paddingVertical: 8,
-        marginVertical: 0
+        marginVertical: 0,
     },
     touchableOpacity: {
         flexDirection: "row",

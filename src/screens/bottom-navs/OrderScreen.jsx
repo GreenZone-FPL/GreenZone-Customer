@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,9 +7,8 @@ import {
   View,
 } from 'react-native';
 
-import {getAllCategories, getAllProducts, getAllToppings} from '../../axios';
+import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   CategoryMenu,
   DeliveryButton,
@@ -18,17 +17,16 @@ import {
   HeaderOrder,
   LightStatusBar,
   ProductsListHorizontal,
-  ProductsListVertical,
+  ProductsListVertical
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {AppGraph, ShoppingGraph, UserGraph} from '../../layouts/graphs';
-import {fetchData, fetchUserLocation} from '../../utils';
-import {useAppContainer, useHomeContainer} from '../../containers';
-import ButtonBackground from '../../components/background/ButtonBackground';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
+import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
+import { fetchData, fetchUserLocation } from '../../utils';
 
 const OrderScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [categories, setCategories] = useState([]);
   const [toppings, setToppings] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
@@ -41,11 +39,11 @@ const OrderScreen = props => {
   const scrollViewRef = useRef(null);
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-  const {cartState, cartDispatch, authState, authDispatch} =
+  const { cartState, cartDispatch, authState, authDispatch } =
     useAppContext() || {};
 
-  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
-  const {onNavigateLogin, onNavigateRegister} = useAppContainer();
+  const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer();
+  const { onNavigateLogin, onNavigateRegister } = useAppContainer();
   // Hàm xử lý khi đóng dialog
   const handleCloseDialog = () => {
     setIsModalVisible(false);
@@ -95,7 +93,7 @@ const OrderScreen = props => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({...prev, [categoryId]: y}));
+      setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
 
@@ -162,7 +160,7 @@ const OrderScreen = props => {
         onScroll={handleScroll}
         scrollEventThrottle={16}>
         {!authState.lastName && (
-             <AuthContainer onPress={onNavigateLogin} />
+          <AuthContainer onPress={onNavigateLogin} />
         )}
         <CategoryMenu
           categories={categories}
@@ -171,6 +169,7 @@ const OrderScreen = props => {
         />
 
         <ProductsListHorizontal
+          title='Sản phẩm mới'
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
@@ -187,7 +186,7 @@ const OrderScreen = props => {
           keyExtractor={item => item._id}
           scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
           showsVerticalScrollIndicator={false}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
@@ -211,10 +210,10 @@ const OrderScreen = props => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-            ? cartState?.shippingAddressInfo?.location
-            : cartState
-            ? cartState?.address?.label
-            : 'Đang xác định vị trí...'
+              ? cartState?.shippingAddressInfo?.location
+              : cartState
+                ? cartState?.address?.label
+                : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}

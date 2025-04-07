@@ -4,8 +4,9 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
+import { Icon } from 'react-native-paper';
 import {
   LightStatusBar,
   NormalHeader,
@@ -19,6 +20,7 @@ import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -110,6 +112,18 @@ const OrderDetailScreen = ({ route }) => {
             createdAt={orderDetail.createdAt}
           />
 
+          {
+            orderDetail.status === OrderStatus.AWAITING_PAYMENT.value &&
+            <Pressable
+              style={[styles.codButton]}
+              onPress={() => Toaster.show('Tính năng đang phát triển')}
+            >
+              <NormalText text="Đổi sang thanh toán khi nhận hàng" style={styles.codTitle} />
+              <Icon source='chevron-right' size={18} color={colors.primary} />
+            </Pressable>
+          }
+
+
           <Row style={styles.buttonRow}>
 
 
@@ -120,7 +134,7 @@ const OrderDetailScreen = ({ route }) => {
                   style={[styles.cancelButton, styles.flex1]}
                   onPress={() => setCancelDialogVisible(true)}
                 >
-                  <NormalText text="Hủy đơn hàng" style={{color: colors.red900}}/>
+                  <NormalText text="Hủy đơn hàng" style={{ color: colors.red900 }} />
                 </Pressable>
               )}
 
@@ -152,7 +166,6 @@ const OrderDetailScreen = ({ route }) => {
         handleSelectMethod={handleSelectMethod}
       />
     </View>
-
   );
 };
 
@@ -189,6 +202,18 @@ const styles = StyleSheet.create({
   payButton: {
     marginHorizontal: 16,
     flex: 1,
+  },
+  codButton: {
+    backgroundColor: colors.white,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  codTitle: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.primary,
+    fontWeight: '500',
+    flex: 1
   },
   cancelButton: {
     backgroundColor: colors.white,

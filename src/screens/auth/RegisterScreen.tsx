@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 16,
-    gap: 8,
+    gap: 6,
     justifyContent: 'center',
   },
   logo: {

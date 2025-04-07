@@ -63,22 +63,23 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
                 rightTextStyle={styles.totalRightText}
             />
 
-           
+
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     containerItem: {
-        paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
         backgroundColor: colors.fbBg,
-        gap: 2
+        gap: 2,
+        marginBottom: 2
     },
     dualTextRow: {
         marginVertical: 0,
         paddingVertical: 12,
         backgroundColor: colors.white,
         paddingHorizontal: 16,
+
     },
     leftText: {
         color: colors.primary,

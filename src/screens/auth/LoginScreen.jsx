@@ -26,7 +26,7 @@ import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
 
 const LoginScreen = ({ route, navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456723');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -159,6 +159,7 @@ const LoginScreen = ({ route, navigation }) => {
 
   return (
     <Column style={styles.container}>
+      <NormalLoading visible={loading} />
       {authState.message ? (
         <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
           <Icon source="information" size={20} color={colors.primary} />
@@ -168,10 +169,10 @@ const LoginScreen = ({ route, navigation }) => {
 
       <LightStatusBar />
       <Image
-            source={require('../../assets/images/logo.png')}
-            style={styles.logo}
-          />
-      
+        source={require('../../assets/images/logo.png')}
+        style={styles.logo}
+      />
+
       <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
@@ -191,12 +192,12 @@ const LoginScreen = ({ route, navigation }) => {
       />
 
       <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-       
+
         <Text style={styles.buttonText}>Đăng nhập</Text>
-      
+
       </TouchableOpacity>
 
-      <NormalLoading visible={loading} />
+
     </Column>
   );
 };
@@ -245,8 +246,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: Dimensions.get('window').width / 1.5,
-    height: Dimensions.get('window').width / 1.5,
+    width: Dimensions.get('window').width / 1.8,
+    height: Dimensions.get('window').width / 1.8,
     alignSelf: 'center',
   },
   input: {
@@ -262,58 +263,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginTop: 16
+    marginTop: 40
   },
   buttonText: {
-    color: 'white',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
-  },
-
-  separator: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.gray300,
-  },
-  socialButton: {
-    flexDirection: 'row',
-    backgroundColor: colors.blue600,
-    paddingVertical: 16,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  socialText: {
-    color: colors.white,
-    fontWeight: '500',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    marginLeft: 10,
-  },
-  googleButton: {
-    backgroundColor: colors.white,
-    borderColor: colors.gray200,
-    borderWidth: 1,
-  },
-  googleText: {
-    color: colors.black,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: colors.gray200,
-    padding: 40,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.black,
-  },
+    color: colors.white
+  }
 });
