@@ -33,6 +33,7 @@ import {
   ShipperInfo,
 } from './order-detail-components';
 import { Toaster } from '../../utils';
+import { Icon } from 'react-native-paper';
 
 const OrderDetailScreen = ({ route }) => {
   const { orderId } = route.params;
@@ -111,7 +112,14 @@ const OrderDetailScreen = ({ route }) => {
             status={orderDetail.status}
             createdAt={orderDetail.createdAt}
           />
-
+          <Pressable
+            style={[styles.codButton]}
+            onPress={() => Toaster.show('Tính năng đang phát triển')}
+          >
+            <NormalText text="Đổi sang thanh toán khi nhận hàng" style={styles.codTitle} />
+            <Icon source='chevron-right' size={18} color={colors.primary}/>
+          </Pressable>
+       
           <Row style={styles.buttonRow}>
 
 
@@ -136,12 +144,7 @@ const OrderDetailScreen = ({ route }) => {
             )}
           </Row>
 
-          <PrimaryButton
-            titleStyle={styles.codTitle}
-            style={styles.codButton}
-            title="Đổi sang thanh toán khi nhận hàng"
-            onPress={() => Toaster.show('Tính năng đang phát triển')}
-          />
+
 
 
         </ScrollView>
@@ -202,13 +205,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   codButton: {
-    alignSelf: 'center',
-    backgroundColor: colors.yellow600,
-    margin: 16
+    backgroundColor: colors.white,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   codTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray900
+    color: colors.primary,
+    fontWeight: '500',
+    flex: 1
   },
   cancelButton: {
     backgroundColor: colors.white,
