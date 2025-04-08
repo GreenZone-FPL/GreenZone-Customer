@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
 import { NormalText } from '../../../components';
-import { colors } from "../../../constants";
+import { colors, GLOBAL_KEYS } from "../../../constants";
 import { AppAsyncStorage, CartManager } from "../../../utils";
 
 interface RecipientInfoProps {
@@ -66,6 +66,8 @@ const styles = StyleSheet.create({
         color: colors.gray700,
     },
     consigneeName: {
-        fontWeight: '500'
+        fontWeight: '500',
+        color: colors.green500,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
     }
 });

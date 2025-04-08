@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
+  Alert,
   Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { IconButton } from 'react-native-paper';
 import {
   deleteFavoriteProduct,
@@ -17,17 +18,16 @@ import {
 } from '../../axios';
 import {
   CheckoutFooter,
-  NotesList,
   OverlayStatusBar,
   RadioGroup,
-  SelectableGroup,
+  SelectableGroup
 } from '../../components';
 import ToastDialog from '../../components/dialogs/ToastDialog';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useProductDetailContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
-import { useProductDetailContainer } from '../../containers';
-import FastImage from 'react-native-fast-image';
+
 
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -171,7 +171,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
                   Toaster.show('Vui lòng nhập số lượng hợp lệ')
                   return
                 }
-               
+
+                if (quantity > 99) {
+                  console.log('quantity', quantity)
+                  setQuantity(99)
+                  Toaster.show('Số lượng không vượt quá 99')
+                  return
+                }
 
                 const updatedToppings = selectedToppings.map(topping => ({
                   ...topping,
@@ -253,46 +259,48 @@ const ProductInfo = ({
 
 const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastIcon, setToastIcon] = useState('heart-outline');
-  const [toastIconColor, setToastIconColor] = useState(colors.gray300);
-  const [isToastVisible, setIsToastVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
 
   useEffect(() => {
-    const fetchFavorites = async () => {
+    const fetchFavoriteStatus = async () => {
       try {
+        setLoading(true)
         const favorites = await getFavoriteProducts();
-        setIsFavorite(favorites.some(item => item.product._id === productId));
-      } catch (error) {
-        console.error('Error fetching favorite status:', error);
+        const found = favorites.some(item => item.product._id === productId);
+        setIsFavorite(found);
+      } catch (err) {
+        Toaster.show('Lỗi khi lấy danh sách yêu thích')
+      }finally{
+        setLoading(false)
       }
     };
-
-    fetchFavorites();
+    fetchFavoriteStatus();
   }, [productId]);
 
   const toggleFavorite = async () => {
     try {
+      setLoading(true);
       if (isFavorite) {
         await deleteFavoriteProduct({ productId });
-        setToastMessage('Đã xóa khỏi danh sách yêu thích');
-        setToastIcon('heart-outline');
-        setToastIconColor(colors.gray300);
+        Toaster.show('Đã xóa khỏi danh sách yêu thích')
       } else {
         await postFavoriteProduct({ productId });
-        setToastMessage('Đã thêm vào danh sách yêu thích');
-        setToastIcon('heart');
-        setToastIconColor(colors.red800);
+        Toaster.show('Đã thêm vào danh sách yêu thích')
       }
       setIsFavorite(!isFavorite);
-      setIsToastVisible(true);
     } catch (error) {
-      setToastMessage('Có lỗi xảy ra!');
-      setToastIcon('alert-circle');
-      setToastIconColor(colors.red800);
+      Toaster.show('Lỗi khi cập nhật yêu thích')
+    } finally {
       setIsToastVisible(true);
-      console.error('Error updating favorite status:', error);
+      setLoading(false);
     }
+  };
+
+  const handlePress = async () => {
+    console.log('Loading:', loading);
+   
+    await toggleFavorite();
   };
 
   return (
@@ -301,14 +309,7 @@ const FavoriteButton = ({ productId }) => {
         icon={isFavorite ? 'heart' : 'heart-outline'}
         iconColor={isFavorite ? colors.red800 : colors.gray300}
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        onPress={toggleFavorite}
-      />
-      <ToastDialog
-        isVisible={isToastVisible}
-        onHide={() => setIsToastVisible(false)}
-        icon={toastIcon}
-        iconColor={toastIconColor}
-        title={toastMessage}
+        onPress={handlePress}
       />
     </>
   );
