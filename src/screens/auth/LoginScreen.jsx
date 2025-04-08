@@ -4,6 +4,7 @@ import {
   BackHandler,
   Dimensions,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -27,7 +28,6 @@ import { Toaster } from '../../utils';
 
 const LoginScreen = ({ route, navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { authState, authDispatch } = useAppContext();
@@ -71,15 +71,15 @@ const LoginScreen = ({ route, navigation }) => {
   // };
 
   // const handleSendOTP = async () => {
-    // const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+  // const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
 
-    // if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
-    //   setPhoneNumberError(true);
-    //   setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
-    //   return;
-    // }
+  // if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
+  //   setPhoneNumberError(true);
+  //   setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
+  //   return;
+  // }
 
-    // setLoading(true);
+  // setLoading(true);
   //   const otp = generateOtp(); // Tạo mã OTP
 
   //   try {
@@ -136,13 +136,13 @@ const LoginScreen = ({ route, navigation }) => {
     const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
 
     if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
-      setPhoneNumberError(true);
       setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
       return;
     }
 
-    setLoading(true);
+
     try {
+      setLoading(true);
       const response = await sendOTP(phoneNumber);
       if (response) {
         console.log('otp = ', response.code);
@@ -155,6 +155,7 @@ const LoginScreen = ({ route, navigation }) => {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
     } catch (error) {
+      Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       console.log('error', error);
     } finally {
       setLoading(false);
@@ -188,19 +189,17 @@ const LoginScreen = ({ route, navigation }) => {
         placeholder="Nhập số điện thoại của bạn..."
         style={styles.input}
         setValue={text => {
-          setPhoneNumberError(false);
           setPhoneNumberMessage('');
           setPhoneNumber(text);
         }}
-        error={phoneNumberError}
+
         invalidMessage={phoneNumberMessage}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-
+      <Pressable style={styles.button}  onPress={handleSendOTP}>
         <Text style={styles.buttonText}>Đăng nhập</Text>
-
-      </TouchableOpacity>
+      </Pressable>
+    
 
 
     </Column>
@@ -217,6 +216,8 @@ const styles = StyleSheet.create({
     gap: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+
   },
   toast: {
     position: 'absolute',
@@ -248,16 +249,13 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.primary,
     textAlign: 'center',
-    marginBottom: 20,
   },
   logo: {
     width: Dimensions.get('window').width / 1.8,
-    height: Dimensions.get('window').width / 1.8,
-    alignSelf: 'center',
+    height: Dimensions.get('window').width / 1.8
   },
   input: {
     width: '100%',
-    height: 50,
   },
   button: {
     flexDirection: 'row',
@@ -268,7 +266,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginTop: 40
   },
   buttonText: {
     color: colors.white

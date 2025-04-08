@@ -69,12 +69,10 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
                                     >
                                         <TitleText
                                             text={item}
-                                            style={[
-                                                styles.timeText,
-                                                selectedTime === item && styles.selectedTimeText
-                                            ]}
+                                            style={{color: selectedTime === item ? colors.black : colors.gray400}}
                                         />
                                     </TouchableOpacity>
+                                    
                                 )}
                                 contentContainerStyle={styles.timeListContent}
                             />

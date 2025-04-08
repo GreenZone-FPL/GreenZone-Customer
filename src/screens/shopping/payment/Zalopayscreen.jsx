@@ -14,7 +14,7 @@ import {
 import { WebView } from 'react-native-webview';
 import { updatePaymentStatus } from '../../../axios';
 import { useAppContext } from '../../../context/appContext';
-import { MainGraph } from '../../../layouts/graphs';
+import { MainGraph, OrderGraph } from '../../../layouts/graphs';
 import { AppAsyncStorage, Toaster } from '../../../utils';
 
 const generateMac = (
@@ -177,7 +177,7 @@ const ZalopayScreen = () => {
     } else if (navState.url.includes('returncode=-6012') || navState.url.includes('status=-49')) {
       // call API delete order
       Toaster.show('Bạn đã hủy giao dịch')
-      navigation.goBack()
+      navigation.navigate(OrderGraph.OrderDetailScreen, {orderId})
     }
   };
 
