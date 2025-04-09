@@ -103,6 +103,12 @@ const ProfileScreen = ({navigation}) => {
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
+             <View style={styles.separator} />
+             <CardUtiliti
+              icon="cloud-outline"
+              title="Zego"
+              onPress={() => navigateIfLoggedIn('ZegoScreen')}
+            />
 
             <View style={styles.separator} />
             {authState.lastName && (

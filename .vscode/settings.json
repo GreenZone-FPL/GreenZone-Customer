@@ -1,4 +1,3 @@
 {
-    "java.configuration.updateBuildConfiguration": "disabled",
-    "html.format.wrapLineLength": 200
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

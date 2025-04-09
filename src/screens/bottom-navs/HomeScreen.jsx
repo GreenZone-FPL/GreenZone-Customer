@@ -115,7 +115,7 @@ const HomeScreen = () => {
             }}
           />
         )}
-        <NotificationList onSeeMorePress={navigateAdvertising} />
+        {/* <NotificationList onSeeMorePress={navigateAdvertising} /> */}
 
         <FlatList
           data={allProducts}

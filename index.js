@@ -1,4 +1,11 @@
+/**
+ * @format
+ */
+
 import {AppRegistry} from 'react-native';
-import {name as appName} from './app.json';
 import App from './App';
+import {name as appName} from './app.json';
+
+console.log("✅ index.js is running!");
+
 AppRegistry.registerComponent(appName, () => App);

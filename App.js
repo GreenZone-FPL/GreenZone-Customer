@@ -1,9 +1,9 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {AppContextProvider, useAppContext} from './src/context/appContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppContextProvider, useAppContext } from './src/context/appContext';
 
 import {
   AppGraph,
@@ -39,7 +39,7 @@ import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
-import {PaperProvider} from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 import VouchersMerchantScreen from './src/screens/voucher/VouchersMerchantScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
@@ -49,13 +49,14 @@ import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import BeanScreen from './src/screens/voucher/BeanScreen';
 
-import {useAppContainer} from './src/containers/useAppContainer';
+import { useAppContainer } from './src/containers/useAppContainer';
 
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
-import {LogBox} from 'react-native';
+import { LogBox } from 'react-native';
 import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
-
+import ZegoScreen from './src/screens/zego/ZegoScreen';
+import CallingScreen from './src/screens/zego/CallingScreen';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -66,10 +67,10 @@ export default function App() {
   return (
     <AppContextProvider>
       <PaperProvider>
-        <GestureHandlerRootView style={{flex: 1}}>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
             <NavigationContainer ref={navigationRef}>
-              <BaseStack.Navigator screenOptions={{headerShown: false}}>
+              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
                 <BaseStack.Screen
                   name="AppNavigator"
                   component={AppNavigator}
@@ -89,7 +90,7 @@ export default function App() {
 }
 
 function AppNavigator() {
-  const {authState} = useAppContext();
+  const { authState } = useAppContext();
   useAppContainer();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
@@ -97,7 +98,7 @@ function AppNavigator() {
     headerShown: false,
   };
   return (
-    <BaseStack.Navigator screenOptions={{headerShown: false}}>
+    <BaseStack.Navigator screenOptions={{ headerShown: false }}>
       {authState.needAuthen === false ? (
         <>
           {authState.needFlash && (
@@ -135,6 +136,16 @@ function AppNavigator() {
             name={VoucherGraph.VoucherDetailSheet}
             options={slideFromBottomOption}
             component={VoucherDetailSheet}
+          /> 
+          <BaseStack.Screen
+            name={'ZegoScreen'}
+            options={slideFromBottomOption}
+            component={ZegoScreen}
+          />
+           <BaseStack.Screen
+            name={'CallingScreen'}
+            options={slideFromBottomOption}
+            component={CallingScreen}
           />
 
           <BaseStack.Screen
