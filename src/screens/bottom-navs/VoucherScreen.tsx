@@ -23,31 +23,31 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useVoucherContainer } from '../../containers';
-import { AppAsyncStorage } from '../../utils';
+import { AppAsyncStorage, Toaster } from '../../utils';
 import { getAllVoucher } from '../../axios';
 import { VoucherGraph } from '../../layouts/graphs';
 
 const width: number = Dimensions.get('window').width;
-const VoucherScreen = ({navigation}) => {
+const VoucherScreen = ({ navigation }) => {
   const { authState, user } = useVoucherContainer();
   const { onNavigateLogin } = useAppContainer();
 
-    const [vouchers, setVouchers] = useState([]);
-    useEffect(() => {
-      const fetchVouchers = async () => {
-       console.log( await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken) )
-        try {
-          if (await AppAsyncStorage.isTokenValid()) {
-            const response = await getAllVoucher();
-            setVouchers(response);
-          }
-        } catch (error) {
-          console.log('Lỗi khi gọi API Voucher:', error);
+  const [vouchers, setVouchers] = useState([]);
+  useEffect(() => {
+    const fetchVouchers = async () => {
+      console.log(await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken))
+      try {
+        if (await AppAsyncStorage.isTokenValid()) {
+          const response = await getAllVoucher();
+          setVouchers(response);
         }
-      };
-  
-      fetchVouchers();
-    }, []);
+      } catch (error) {
+        console.log('Lỗi khi gọi API Voucher:', error);
+      }
+    };
+
+    fetchVouchers();
+  }, []);
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
@@ -58,7 +58,7 @@ const VoucherScreen = ({navigation}) => {
         <Column style={{ padding: 16, gap: 16 }}>
           <TitleText text='Ưu đãi' style={styles.title} />
           {!authState.lastName && (
-            <AuthContainer onPress={onNavigateLogin} />) 
+            <AuthContainer onPress={onNavigateLogin} />)
 
           }
           {authState.lastName && (
@@ -66,6 +66,7 @@ const VoucherScreen = ({navigation}) => {
               <Pressable
                 style={styles.myTicket}
                 onPress={() => {
+                  navigation.navigate(VoucherGraph.MyVouchersScreen)
                 }}>
                 <Icon
                   source="ticket-confirmation-outline"
@@ -93,9 +94,9 @@ const VoucherScreen = ({navigation}) => {
               iconName="shield-check"
               color={colors.orange700}
               title="Quyền lợi của bạn"
-              onPress={{}}
+              onPress={() => { Toaster.show('Tính năng đang phát triển') }}
             />
-            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}} />
+            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.BeanScreen) }} />
           </Row> :
 
           <Image
@@ -104,13 +105,11 @@ const VoucherScreen = ({navigation}) => {
           />
 
       }
-
-
       {authState.lastName && (
         <Column style={{ marginHorizontal: 16 }}>
           <TitleText text="Phiếu ưu đãi" />
 
-          <VoucherVertical  vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
+          <VoucherVertical vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
         </Column>
       )}
     </ScrollView>
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
-    
+
 
   },
   imageBg: {

@@ -1,13 +1,12 @@
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { createOrder } from '../../axios';
+import { useNavigation } from '@react-navigation/native';
 import {
     DeliveryMethod,
     OnlineMethod,
+    OrderStatus,
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { BottomGraph, MainGraph, OrderGraph, ShoppingGraph, UserGraph, VoucherGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
@@ -17,6 +16,8 @@ import {
     Toaster,
     fetchUserLocation
 } from '../../utils';
+import { MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
+import { createOrder } from '../../axios';
 
 export const useCheckoutContainer = () => {
     const navigation = useNavigation()
@@ -57,6 +58,13 @@ export const useCheckoutContainer = () => {
                         onlineMethod: method.value,
                     },
                 });
+
+                // {
+                //     label: 'Thanh toán khi nhận hàng',
+                //     image: require('../../../assets/images/logo_vnd.png'),
+                //     value: 'cash',
+                //     paymentMethod: PaymentMethod.COD.value,
+                // },
             }
             setDialogPaymentMethodVisible(false);
         } else {
@@ -131,7 +139,7 @@ export const useCheckoutContainer = () => {
     }, []);
 
 
-    const onApproveCreateOrder = async () => {
+    const onApproveCreateOrder =  async () => {
         try {
             setLoading(true)
             let response = null;
@@ -176,8 +184,11 @@ export const useCheckoutContainer = () => {
             );
 
             console.log('order data =', JSON.stringify(response, null, 2));
-            await CartManager.clearOrderItems(cartDispatch);
-
+            if(response?.data.status !== OrderStatus.AWAITING_PAYMENT.value){
+                await CartManager.clearOrderItems(cartDispatch);
+            }
+           
+           
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
                     orderId: response.data._id,
@@ -217,60 +228,6 @@ export const useCheckoutContainer = () => {
         }
     }
 
-    const chooseMerchant = () => {
-        navigation.navigate(BottomGraph.MerchantScreen, {
-            isUpdateOrderInfo: true,
-            fromCheckout: true,
-        });
-    }
-
-    const chooseUserAddress = () => {
-        navigation.navigate(UserGraph.SelectAddressScreen, {
-            isUpdateOrderInfo: true,
-        })
-    }
-
-    const navigateEditCartItem = (item) => {
-        navigation.navigate(ShoppingGraph.EditCartItemScreen, {
-            updateItem: item,
-        })
-    }
-
-    const onSelectVoucher = () => {
-        navigation.navigate(VoucherGraph.MyVouchersScreen, {
-            isUpdateOrderInfo: true,
-        })
-    }
-
-    const onConfirmSelectTime = data => {
-        setTimeInfo(data);
-        cartDispatch({
-            type: CartActionTypes.UPDATE_ORDER_INFO,
-            payload: { fulfillmentDateTime: data.fulfillmentDateTime }
-        })
-        setDialogSelectTimeVisible(false);
-    }
-
-    const onConfirmRecipientInfo = data => {
-        CartManager.updateOrderInfo(cartDispatch, {
-            consigneeName: data.name,
-            consigneePhone: data.phoneNumber,
-        });
-        setDialogRecipientInfoVisible(false);
-    }
-
-    const onSelectShippingMethod = async option => {
-        console.log('option', option);
-        await CartManager.updateOrderInfo(cartDispatch, {
-            deliveryMethod: option.value,
-        });
-        setDialogShippingMethodVisible(false);
-    }
-
-      // useEffect(() => {
-      //   console.log('cartState', JSON.stringify(cartState, null, 2))
-      // }, [cartState])
-
     return {
         navigation,
         dialogCreateOrderVisible,
@@ -295,13 +252,6 @@ export const useCheckoutContainer = () => {
         setSelectedProduct,
         paymentMethod,
         setPaymentMethod,
-        chooseMerchant,
-        chooseUserAddress,
-        navigateEditCartItem,
-        onConfirmSelectTime,
-        onSelectVoucher,
-        onConfirmRecipientInfo,
-        onSelectShippingMethod,
         deleteProduct,
         handleSelectMethod,
         onApproveCreateOrder

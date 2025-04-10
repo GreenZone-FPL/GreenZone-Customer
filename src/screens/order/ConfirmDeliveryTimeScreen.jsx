@@ -50,7 +50,6 @@ const ConfirmDeliveryTimeScreen = props => {
 };
 
 const Header = ({currentDay, currentTime, handleGoBack}) => {
-  console.log('currentDay', currentDay);
   return (
     <View style={styles.header}>
       <Text style={styles.headerTitle}>Thời gian nhận</Text>

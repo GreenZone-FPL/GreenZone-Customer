@@ -96,7 +96,6 @@ export class AppAsyncStorage {
       }
 
       await this.storeData(this.STORAGE_KEYS.activeOrders, activeOrders);
-      console.log(`Order ${orderId} đã được lưu vào activeOrders`);
     } catch (error) {
       console.log('Lỗi khi lưu order:', error);
     }
@@ -107,7 +106,6 @@ export class AppAsyncStorage {
       this.STORAGE_KEYS.activeOrders,
       [],
     );
-    // console.log('activeOrders', JSON.stringify(activeOrders, null, 2));
     return activeOrders;
   }
 
@@ -119,7 +117,6 @@ export class AppAsyncStorage {
       );
       activeOrders = activeOrders.filter(o => o.orderId !== orderId);
       await this.storeData(this.STORAGE_KEYS.activeOrders, activeOrders);
-      console.log(`Order ${orderId} đã được xóa khỏi activeOrders`);
     } catch (error) {
       console.log('Lỗi khi xóa order:', error);
     }

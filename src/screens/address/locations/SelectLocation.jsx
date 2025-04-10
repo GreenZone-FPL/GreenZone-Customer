@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         borderBottomColor: colors.primary,
         borderBottomWidth: 3,
+        fontSize: 12
     },
     placeholderText: {
         fontSize: 12,

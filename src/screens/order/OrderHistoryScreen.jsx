@@ -1,44 +1,35 @@
 import moment from 'moment/moment';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getOrdersByStatus } from '../../axios';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, StatusText } from '../../components';
+import React from 'react';
+import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
+import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { MainGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
+import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
+
 
 const width = Dimensions.get('window').width;
 
 const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
-const OrderHistoryScreen = ({ navigation }) => {
-  const [tabIndex, setTabIndex] = useState(0);
-  const [orders, setOrders] = useState({}); // Lưu trữ dữ liệu theo từng tab
-  const [loading, setLoading] = useState(false);
+const OrderHistoryScreen = () => {
+  const {cartState } = useAppContext();
 
-  const { updateOrderMessage } = useAppContext();
-
-  const fetchOrders = async (status) => {
-    try {
-      setLoading(true);
-      const data = await getOrdersByStatus(status);
-      setOrders(prev => ({ ...prev, [status]: data }));
-    } catch (error) {
-      console.error('Lỗi khi lấy đơn hàng:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    orderStatuses.forEach(status => fetchOrders(status));
-  }, [updateOrderMessage]);
-
-  useEffect(() => {
-    fetchOrders(orderStatuses[tabIndex]);
-  }, [tabIndex]);
-
+  const {
+    navigation,
+    tabIndex,
+    setTabIndex,
+    setSelectedOrder,
+    orders,
+    loading,
+    paymentMethod,
+    dialogPaymentMethodVisible,
+    setDialogPaymentMethodVisible,
+    handleSelectMethod,
+  } = useOrderHistoryContainer()
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -68,18 +59,31 @@ const OrderHistoryScreen = ({ navigation }) => {
               status={status}
               orders={orders[status] || []}
               loading={loading}
+              setSelectedOrder={setSelectedOrder}
               onItemPress={(order) =>
                 navigation.navigate('OrderDetailScreen', { orderId: order._id })
+              }
+              onPay={() =>
+                setDialogPaymentMethodVisible(true)
               }
             />
           </View>
         ))}
       </CustomTabView>
+
+      <DialogPaymentMethod
+        methods={onlineMethods}
+        visible={dialogPaymentMethodVisible}
+        onHide={() => setDialogPaymentMethodVisible(false)}
+        cartState={cartState}
+        selectedMethod={paymentMethod}
+        handleSelectMethod={handleSelectMethod}
+      />
     </View>
   );
 };
 
-const OrderListView = ({ status, orders, loading, onItemPress }) => (
+const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelectedOrder }) => (
   <View style={styles.scene}>
     {loading ? (
       <NormalLoading visible={loading} />
@@ -89,7 +93,7 @@ const OrderListView = ({ status, orders, loading, onItemPress }) => (
         data={orders}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <OrderItem order={item} onPress={onItemPress} />
+          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder = {setSelectedOrder}/>
         )}
         contentContainerStyle={{ gap: 5 }}
       />
@@ -99,7 +103,7 @@ const OrderListView = ({ status, orders, loading, onItemPress }) => (
   </View>
 );
 
-const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
+const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
   // console.log('order', JSON.stringify(order, null, 2))
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
@@ -114,43 +118,75 @@ const OrderItem = ({ order, onPress, handleRepeatOrder }) => {
   if (!order) return null
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => onPress(order)} // Truyền order vào onPress
-      style={styles.orderItem}>
-      <ItemOrderType deliveryMethod={order?.deliveryMethod} />
-      <Column style={styles.orderColumn}>
-        <Text numberOfLines={2} style={styles.orderName}>
-          {getOrderItemsText()}
-        </Text>
+    >
+      <Column style={styles.itemContainer} >
 
-        <Text style={styles.orderTime}>
-          {order?.createdAt
-            ? moment(order.createdAt)
-              .utcOffset(7)
-              .format('HH:mm - DD/MM/YYYY')
-            : 'Chưa có thời gian'}
-        </Text>
+        <Row style={styles.orderItem}>
+          <ItemOrderType deliveryMethod={order?.deliveryMethod} />
+          <Column style={styles.orderColumn}>
+            <Text numberOfLines={2} style={styles.orderName}>
+              {getOrderItemsText()}
+            </Text>
 
-        <NormalText
-          style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.green500 }}
-          text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
-      </Column>
-      <Column style={styles.orderColumnEnd}>
-        <Text style={styles.orderTotal}>
-          {order?.totalPrice
-            ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
-            : '0₫'}
-        </Text>
+            <Text style={styles.orderTime}>
+              {order?.createdAt
+                ? moment(order.createdAt)
+                  .utcOffset(7)
+                  .format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'}
+            </Text>
+
+            <NormalText
+              style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.teal700 }}
+              text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
+          </Column>
+          <Column style={styles.orderColumnEnd}>
+            {
+              ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
+              <StatusText status={order?.status} />
+            }
+
+            <Text style={styles.orderTotal}>
+              {order?.totalPrice
+                ? `${order.totalPrice.toLocaleString('vi-VN')}₫`
+                : '0₫'}
+            </Text>
+          </Column>
+
+        </Row>
+
         {
-          ![OrderStatus.CANCELLED.value, OrderStatus.COMPLETED.value].includes(order?.status) &&
-          <StatusText status={order?.status} />
+          order?.status === OrderStatus.AWAITING_PAYMENT.value &&
+          <Row style={styles.buttonRow}>
+            <Pressable 
+            onPress={() => Toaster.show('Tính năng đang phát triển')}
+            style={styles.changeMethodBtn}>
+              <NormalText text='Đổi sang thanh toán khi nhận hàng' style={styles.changeMethodText} />
+
+            </Pressable>
+
+            <Pressable
+              onPress={() => {
+                console.log('orderDetail', JSON.stringify(order, null, 2))
+                setSelectedOrder(order)
+                onPay()
+              }}
+              style={styles.payBtn}>
+              <NormalText text='Thanh toán' style={styles.payText} />
+            </Pressable>
+          </Row>
         }
 
-
       </Column>
-    </TouchableOpacity>
+
+
+    </Pressable>
   );
 };
+
+
 
 const ItemOrderType = ({ deliveryMethod }) => {
   const imageMap = {
@@ -191,9 +227,13 @@ const styles = StyleSheet.create({
   },
   emptyContainer: { justifyContent: 'center', alignItems: 'center' },
   emptyImage: { width: width / 2, height: width / 2 },
+
+  itemContainer: {
+    backgroundColor: colors.white,
+    paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+  },
   orderItem: {
     backgroundColor: colors.white,
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
     paddingHorizontal: 16,
     flexDirection: 'row',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
@@ -219,18 +259,49 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     paddingVertical: 4,
-    // paddingHorizontal: 10
   },
   buttonText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.white,
-    // fontWeight: '500',
   },
   orderTypeIcon: {
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     resizeMode: 'cover',
-  }
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 16,
+  },
+  changeMethodBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.fbBg,
+    backgroundColor: colors.white,
+    marginRight: 5,
+    elevation: 1
+  },
+  changeMethodText: {
+    color: colors.black,
+    textAlign: 'center',
+    fontWeight: '400',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
+  },
+  payBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    backgroundColor: colors.primary,
+    marginLeft: 8,
+  },
+  payText: {
+    color: colors.white,
+    textAlign: 'center',
+    fontWeight: '600',
+  },
 });
 
 export default OrderHistoryScreen;

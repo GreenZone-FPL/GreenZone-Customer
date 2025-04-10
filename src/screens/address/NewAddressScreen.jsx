@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -8,19 +8,24 @@ import {
   View,
   TextInput,
   ScrollView,
-  ToastAndroid
+  ToastAndroid,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {
   FlatInput,
   LightStatusBar,
   NormalHeader,
+  NormalText,
   PrimaryButton,
 } from '../../components';
-import {Icon} from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import SelectLocation from './locations/SelectLocation';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import axios from 'axios';
-import {postAddress} from '../../axios';
+import { postAddress } from '../../axios';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
@@ -29,7 +34,7 @@ const RESULT_LIMIT = 10;
 const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
 const NewAddressScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [consigneeName, setConsigneeName] = useState('');
   const [consigneePhone, setConsigneePhone] = useState('');
   const [specificAddress, setSpecificAddress] = useState('');
@@ -66,7 +71,7 @@ const NewAddressScreen = props => {
   };
 
   const handleConfirmAddress = () => {
-    const {selectedProvince, selectedDistrict, selectedWard} = selectedAddress;
+    const { selectedProvince, selectedDistrict, selectedWard } = selectedAddress;
     const fullAddressText = [
       specificAddress,
       selectedWard || '',
@@ -95,8 +100,8 @@ const NewAddressScreen = props => {
       console.log('Toạ độ đã chọn:', JSON.stringify(response, null, 2));
       const address = response.data.result.compound;
       setWard(address.commune),
-      setDistrict(address.district),
-      setProvince(address.province)
+        setDistrict(address.district),
+        setProvince(address.province)
 
     } catch (error) {
       console.error('Lỗi lấy tọa độ:', error);
@@ -170,8 +175,10 @@ const NewAddressScreen = props => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LightStatusBar />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
       <NormalHeader
         title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
         onLeftPress={() => {
@@ -187,85 +194,91 @@ const NewAddressScreen = props => {
         enableRightIcon={true}
         onRightPress={() => setIsSearching(!isSearching)}
       />
+      <ScrollView style={styles.container}>
+        <LightStatusBar />
 
-      {isSearching && (
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Nhập địa chỉ..."
-          value={searchText}
-          onChangeText={handleSearch}
-        />
-      )}
 
-      {isSearching && searchText.length > 2 && searchResults.length > 0 && (
-        <ScrollView style={styles.content}>
-          {searchResults.map(result => (
-            <CardSearch
-              key={result.place_id}
-              address={{
-                place_id: result.place_id,
-                specificAddress: [
-                  result.terms[1]?.value,
-                  result.terms[0]?.value,
-                ].join(' '),
-                ward: result.terms[2]?.value || '',
-                district: result.terms[3]?.value || '',
-                province: result.terms[4]?.value || '',
-              }}
-              isSelected={searchText === result.description}
-              onPress={() => {
-                setIsSearching(false);
-                setSearchText(result.description);
-                setSelectedAddress({
-                  selectedProvince: result.terms[4]?.value || '',
-                  selectedDistrict: result.terms[3]?.value || '',
-                  selectedWard: result.terms[2]?.value || '',
-                });
-                setSpecificAddress(
-                  [result.terms[1]?.value, result.terms[0]?.value].join(' '),
-                );
-                fetchPlaceDetails(result.place_id);
-              }}
-            />
-          ))}
-        </ScrollView>
-      )}
+        {isSearching && (
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Nhập địa chỉ..."
+            value={searchText}
+            onChangeText={handleSearch}
+          />
+        )}
 
-      <View style={styles.formContainer}>
+        {isSearching && searchText.length > 2 && searchResults.length > 0 && (
+          <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
+            {searchResults.map(result => (
+              <CardSearch
+                key={result.place_id}
+                address={{
+                  place_id: result.place_id,
+                  specificAddress: [
+                    result.terms[1]?.value,
+                    result.terms[0]?.value,
+                  ].join(' '),
+                  ward: result.terms[2]?.value || '',
+                  district: result.terms[3]?.value || '',
+                  province: result.terms[4]?.value || '',
+                }}
+                isSelected={searchText === result.description}
+                onPress={() => {
+                  setIsSearching(false);
+                  setSearchText(result.description);
+                  setSelectedAddress({
+                    selectedProvince: result.terms[4]?.value || '',
+                    selectedDistrict: result.terms[3]?.value || '',
+                    selectedWard: result.terms[2]?.value || '',
+                  });
+                  setSpecificAddress(
+                    [result.terms[1]?.value, result.terms[0]?.value].join(' '),
+                  );
+                  fetchPlaceDetails(result.place_id);
+                }}
+              />
+            ))}
+          </ScrollView>
+        )}
+
+
         <SelectLocation onAddressChange={handleAddressChange} />
         <FlatInput
           label="Nhập địa chỉ cụ thể"
           setValue={setSpecificAddress}
           value={specificAddress}
           placeholder="Ngõ/ngách/..."
-          style={{marginBottom: 32}}
+          style={{ marginBottom: 32 }}
         />
         <TouchableOpacity
           style={styles.btnConfirm}
           onPress={handleConfirmAddress}>
-          <Text style={{color: colors.primary}}>Xác nhận địa chỉ</Text>
+          <NormalText text='Xác nhận địa chỉ' />
+
         </TouchableOpacity>
         <FlatInput
           label="Người nhận"
           setValue={setConsigneeName}
           value={consigneeName}
           placeholder="Họ tên"
-          style={{marginBottom: 32}}
+          style={{ marginBottom: 32 }}
         />
         <FlatInput
           label="Số điện thoại"
           setValue={setConsigneePhone}
           value={consigneePhone}
           placeholder="(+84)"
-          style={{marginBottom: 32}}
+          style={{ marginBottom: 32 }}
         />
         <PrimaryButton title="Lưu" onPress={handleSaveAddress} />
-      </View>
-    </SafeAreaView>
+
+      </ScrollView>
+
+    </KeyboardAvoidingView>
   );
 };
 
-const CardSearch = ({address, isSelected, onPress}) => (
+const CardSearch = ({ address, isSelected, onPress }) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
     onPress={() => onPress(address)}>
@@ -290,6 +303,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.white,
+    padding: 16
   },
   formContainer: {
     flex: 1,
@@ -300,7 +314,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     elevation: 4,
     shadowColor: colors.primary,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
@@ -331,7 +345,7 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     shadowColor: colors.primary,
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     borderBottomColor: colors.primary,
@@ -355,7 +369,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: 8,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 4,

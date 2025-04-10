@@ -19,20 +19,43 @@ import {changeBeans} from '../../axios';
 
 const {width} = Dimensions.get('window');
 
-export const VoucherVertical = ({route, vouchers, type}) => {
+export const VoucherVertical = ({
+  route,
+  vouchers,
+  type,
+  setChangePoint = false,
+}) => {
   const navigation = useNavigation();
   const {cartDispatch} = useAppContext();
   const {isUpdateOrderInfo} = route.params || false;
   const {isChangeBeans} = route.params || false;
-
+  const [validVouchers, setValidVouchers] = useState([]);
   // PERCENTAGE = 'percentage',
   // FIXED_AMOUNT = 'fixedAmount',
 
-  const changeBean = async id => {
+  // check voucher
+  useEffect(() => {
+    const checkVoucher = () => {
+      const now = new Date();
+
+      const isVouchers = vouchers.filter(voucher => {
+        const start = new Date(voucher.startDate);
+        const end = new Date(voucher.endDate);
+
+        return start <= now && end >= now;
+      });
+
+      return setValidVouchers(isVouchers);
+    };
+
+    checkVoucher();
+  }, [vouchers]);
+
+  const changeBean = async item => {
     // Hiển thị alert xác nhận
     Alert.alert(
       'Xác nhận đổi Bean',
-      'Bạn có chắc chắn muốn đổi Bean không?',
+      `Bạn có chắc muốn đổi "${item.requiredPoints}" Bean lấy mã giảm giá "${item.name}" không?`,
       [
         {
           text: 'Hủy',
@@ -43,9 +66,10 @@ export const VoucherVertical = ({route, vouchers, type}) => {
           text: 'Đồng ý',
           onPress: async () => {
             try {
-              const response = await changeBeans(id);
-              if (response === true) {
+              const response = await changeBeans(item._id);
+              if (response) {
                 Toaster.show('Đổi thành công mã giảm giá');
+                setChangePoint(prev => !prev);
               } else {
                 Toaster.show('Bạn không đủ Bean');
               }
@@ -68,11 +92,10 @@ export const VoucherVertical = ({route, vouchers, type}) => {
     const discountType = discountTypeMap[type];
 
     if (!discountType) {
-      console.warn('Loại discountType không hợp lệ!');
-      return [];
+      return validVouchers;
     }
 
-    const filtered = vouchers.filter(
+    const filtered = validVouchers.filter(
       voucher => voucher.discountType === discountType,
     );
     return filtered;
@@ -80,7 +103,7 @@ export const VoucherVertical = ({route, vouchers, type}) => {
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      console.log('item Vouher = ', item);
+      // console.log('item Vouher = ', item);
       if (cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
           voucher: item._id,
@@ -90,7 +113,7 @@ export const VoucherVertical = ({route, vouchers, type}) => {
 
       navigation.goBack();
     } else if (isChangeBeans) {
-      changeBean(item._id);
+      changeBean(item);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }
@@ -117,12 +140,12 @@ const ItemVoucher = ({onPress, item}) => {
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
       <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
-        <View style={{maxWidth: width / 2}}>
-          <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
-            {`${item.name}`}
-          </Text>
-        </View>
-
+        <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
+          {`${item.name}`}
+        </Text>
+        {item?.voucherType === 'seed' && (
+          <Text>{item?.requiredPoints} Bean</Text>
+        )}
         <NormalText
           text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
         />

@@ -36,8 +36,6 @@ export const NormalInput: React.FC<NormalInputProps> = ({
   return (
     <Column style={[styles.container, style]}>
       <LabelInput label={label} required={required} style={{fontSize: 14}}/>
-
-
       <TextInput
         value={value}
         onChangeText={setValue}
@@ -52,7 +50,8 @@ export const NormalInput: React.FC<NormalInputProps> = ({
         style={styles.input}
       />
 
-      {!!invalidMessage && <Text style={styles.errorText}>{invalidMessage}</Text>}
+      {invalidMessage && <Text style={styles.errorText}>{invalidMessage}</Text>}
+      
     </Column>
   );
 };

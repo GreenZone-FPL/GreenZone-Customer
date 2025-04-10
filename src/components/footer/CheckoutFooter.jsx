@@ -67,11 +67,13 @@ export const CheckoutFooter = ({
                     keyboardType="numeric"
                     value={String(quantity)}
                     onChangeText={(value) => {
+    
+            
                         // Nếu người dùng xóa hết, cho phép để rỗng
                         if (value === "") {
                             setQuantity("");
-                        } 
-                        else if(value >= 99){
+                        }
+                        else if (value >= 99) {
                             setQuantity(99)
                             Toaster.show('Số lượng không vượt quá 99')
                         }

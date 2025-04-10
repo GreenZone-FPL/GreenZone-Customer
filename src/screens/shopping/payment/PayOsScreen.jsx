@@ -1,28 +1,27 @@
 import {
-  View,
-  Text,
-  ScrollView,
-  Alert,
-  Button,
-  StyleSheet,
-  BackHandler,
-} from 'react-native';
-import React, {useState, useEffect, useCallback} from 'react';
-import axios from 'axios';
-import WebView from 'react-native-webview';
-import {
-  useRoute,
-  useNavigation,
   useFocusEffect,
+  useNavigation,
+  useRoute,
 } from '@react-navigation/native';
-import {hmacSHA256} from 'react-native-hmac';
-import {updatePaymentStatus, updateOrderStatus} from '../../../axios';
-import {colors} from '../../../constants';
-import {NormalLoading} from '../../../components';
-import {MainGraph} from '../../../layouts/graphs';
+import axios from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Alert,
+  BackHandler,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from 'react-native';
+import { hmacSHA256 } from 'react-native-hmac';
+import WebView from 'react-native-webview';
+import { updatePaymentStatus } from '../../../axios';
+import { NormalLoading } from '../../../components';
 import ToastDialog from '../../../components/dialogs/ToastDialog';
-import {AppAsyncStorage} from '../../../utils';
-import {useAppContext} from '../../../context/appContext';
+import { colors } from '../../../constants';
+import { useAppContext } from '../../../context/appContext';
+import { MainGraph } from '../../../layouts/graphs';
+import { AppAsyncStorage, CartManager, Toaster } from '../../../utils';
 
 const PayOsScreen = () => {
   const clientID = 'fe4d0414-d208-41a0-9f57-6de694aac3e6';
@@ -40,30 +39,23 @@ const PayOsScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [paymentLinkId, setPaymentLinkId] = useState('');
-  const {orderId, totalPrice} = route.params || {};
+  const { orderId, totalPrice } = route.params || {};
 
-  const {awaitingPayments, setAwaitingPayments} = useAppContext() || {};
+  const { awaitingPayments, setAwaitingPayments, cartDispatch } = useAppContext()
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
       const backAction = () => {
         Alert.alert('Thông báo', 'Bạn có muốn quay lại không?', [
-          {text: 'Không', style: 'cancel'},
+          { text: 'Không', style: 'cancel' },
           {
             text: 'Có',
             onPress: () => {
-              navigation.reset({
-                index: 1,
-                routes: [
-                  // { name: 'OrderDetailScreen'},
-                  // { name: MainGraph.graphName},
-                  {name: 'OrderDetailScreen', params: {orderId}},
-                ], // Chỉ quay về MainGraph
-              });
+              navigation.goBack()
             },
           },
         ]);
-        return true; // Chặn Back mặc định
+        return true;
       };
 
       const backHandler = BackHandler.addEventListener(
@@ -71,7 +63,7 @@ const PayOsScreen = () => {
         backAction,
       );
 
-      return () => backHandler.remove(); // Xóa sự kiện khi rời khỏi màn hình
+      return () => backHandler.remove();
     }, [navigation]),
   );
 
@@ -132,21 +124,21 @@ const PayOsScreen = () => {
       }
     } catch (error) {
       console.error('Lỗi thanh toán:', error);
-      setToast({visible: true, message: 'Lỗi thanh toán', type: 'error'});
+      setToast({ visible: true, message: 'Lỗi thanh toán', type: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
   const handleNavigationChange = async navState => {
-    const {url} = navState;
+    const { url } = navState;
     console.log('Current URL:', url);
     console.log('link id:', paymentLinkId)
 
     if (url.includes('/success')) {
       try {
         await updatePaymentStatus(orderId, 'success', paymentLinkId);
-        
+
         setToast({
           visible: true,
           message: 'Thanh toán thành công',
@@ -163,61 +155,43 @@ const PayOsScreen = () => {
         AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
         null,
       );
+      await CartManager.clearOrderItems(cartDispatch);
       setAwaitingPayments(null);
       navigation.reset({
-        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
+        index: 1,
         routes: [
-          {name: MainGraph.graphName},
-          {name: 'OrderDetailScreen', params: {orderId}},
+          { name: MainGraph.graphName },
+          { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });
     } else if (url.includes('status=CANCELLED')) {
-      try {
-        await updatePaymentStatus(orderId, 'canceled', paymentLinkId);
-        await updateOrderStatus(orderId, OrderStatus.CANCELLED.value);
-        setToast({
-          visible: true,
-          message: 'Bạn đã hủy thanh toán.',
-          type: 'warning',
-        });
-       
-      } catch (error) {
-        console.log('Không cập nhật');
-      }
-      const response = await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-        null,
-      );
-      setAwaitingPayments(null);
-      console.log('datapayment:' , response)
-      navigation.reset({
-        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-        routes: [
-          {name: MainGraph.graphName},
-          {name: 'OrderDetailScreen', params: {orderId}},
-        ],
-      });
+
+      // call API delete order
+      Toaster.show('Bạn đã hủy giao dịch')
+      navigation.goBack()
+
+
     }
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
 
       {loading && <NormalLoading visible={loading} />}
       {toast.visible && (
         <ToastDialog
           isVisible={toast.visible}
-          onHide={() => setToast({...toast, visible: false})}
+          onHide={() => setToast({ ...toast, visible: false })}
           title={toast.message}
           icon="alert"
           iconColor="red"
         />
       )}
       {paymentLink ? (
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           <WebView
-            source={{uri: paymentLink}}
-            style={{width: '100%', height: 600}}
+            source={{ uri: paymentLink }}
+            style={{ width: '100%', height: 600 }}
             javaScriptEnabled
             domStorageEnabled
             onNavigationStateChange={handleNavigationChange}

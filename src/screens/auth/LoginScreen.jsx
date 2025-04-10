@@ -4,6 +4,7 @@ import {
   BackHandler,
   Dimensions,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -26,8 +27,7 @@ import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
 
 const LoginScreen = ({ route, navigation }) => {
-  const [phoneNumber, setPhoneNumber] = useState('0123456723');
-  const [phoneNumberError, setPhoneNumberError] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const { authState, authDispatch } = useAppContext();
@@ -71,13 +71,15 @@ const LoginScreen = ({ route, navigation }) => {
   // };
 
   // const handleSendOTP = async () => {
-  //   if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
-  //     setPhoneNumberError(true);
-  //     setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
-  //     return;
-  //   }
+  // const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
 
-  //   setLoading(true);
+  // if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
+  //   setPhoneNumberError(true);
+  //   setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
+  //   return;
+  // }
+
+  // setLoading(true);
   //   const otp = generateOtp(); // Tạo mã OTP
 
   //   try {
@@ -131,14 +133,16 @@ const LoginScreen = ({ route, navigation }) => {
   }, [authDispatch, authState.message, fadeAnim]);
 
   const handleSendOTP = async () => {
-    if (phoneNumber.trim().length !== 10 || !/^[0-9]+$/.test(phoneNumber)) {
-      setPhoneNumberError(true);
-      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số)');
+    const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+
+    if (phoneNumber.trim() === '' || !phoneRegex.test(phoneNumber.trim())) {
+      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
       return;
     }
 
-    setLoading(true);
+
     try {
+      setLoading(true);
       const response = await sendOTP(phoneNumber);
       if (response) {
         console.log('otp = ', response.code);
@@ -151,14 +155,17 @@ const LoginScreen = ({ route, navigation }) => {
         Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       }
     } catch (error) {
+      Toaster.show('Không thể gửi OTP, vui lòng thử lại sau');
       console.log('error', error);
     } finally {
       setLoading(false);
     }
   };
 
+
   return (
     <Column style={styles.container}>
+      <NormalLoading visible={loading} />
       {authState.message ? (
         <Animated.View style={[styles.toast, { opacity: fadeAnim }]}>
           <Icon source="information" size={20} color={colors.primary} />
@@ -168,10 +175,10 @@ const LoginScreen = ({ route, navigation }) => {
 
       <LightStatusBar />
       <Image
-            source={require('../../assets/images/logo.png')}
-            style={styles.logo}
-          />
-      
+        source={require('../../assets/images/logo.png')}
+        style={styles.logo}
+      />
+
       <TitleText text="Chào mừng đến với" style={{ textAlign: 'center' }} />
       <TitleText text="GREEN ZONE" style={styles.title} />
 
@@ -182,21 +189,19 @@ const LoginScreen = ({ route, navigation }) => {
         placeholder="Nhập số điện thoại của bạn..."
         style={styles.input}
         setValue={text => {
-          setPhoneNumberError(false);
           setPhoneNumberMessage('');
           setPhoneNumber(text);
         }}
-        error={phoneNumberError}
+
         invalidMessage={phoneNumberMessage}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleSendOTP}>
-       
+      <Pressable style={styles.button}  onPress={handleSendOTP}>
         <Text style={styles.buttonText}>Đăng nhập</Text>
-      
-      </TouchableOpacity>
+      </Pressable>
+    
 
-      <NormalLoading visible={loading} />
+
     </Column>
   );
 };
@@ -211,6 +216,8 @@ const styles = StyleSheet.create({
     gap: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+
   },
   toast: {
     position: 'absolute',
@@ -242,16 +249,13 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: colors.primary,
     textAlign: 'center',
-    marginBottom: 20,
   },
   logo: {
-    width: Dimensions.get('window').width / 1.5,
-    height: Dimensions.get('window').width / 1.5,
-    alignSelf: 'center',
+    width: Dimensions.get('window').width / 1.8,
+    height: Dimensions.get('window').width / 1.8
   },
   input: {
     width: '100%',
-    height: 50,
   },
   button: {
     flexDirection: 'row',
@@ -262,58 +266,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    marginTop: 16
   },
   buttonText: {
-    color: 'white',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: 'bold',
-  },
-
-  separator: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.gray300,
-  },
-  socialButton: {
-    flexDirection: 'row',
-    backgroundColor: colors.blue600,
-    paddingVertical: 16,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  socialText: {
-    color: colors.white,
-    fontWeight: '500',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    marginLeft: 10,
-  },
-  googleButton: {
-    backgroundColor: colors.white,
-    borderColor: colors.gray200,
-    borderWidth: 1,
-  },
-  googleText: {
-    color: colors.black,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: colors.gray200,
-    padding: 40,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 14,
-    fontWeight: '400',
-    color: colors.black,
-  },
+    color: colors.white
+  }
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
 import { NormalText } from '../../../components';
-import { colors } from "../../../constants";
+import { colors, GLOBAL_KEYS } from "../../../constants";
 import { AppAsyncStorage, CartManager } from "../../../utils";
 
 interface RecipientInfoProps {
@@ -59,13 +59,15 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         paddingHorizontal: 16,
         marginBottom: 8,
-        borderRightColor: colors.gray200,
-        borderRightWidth: 1,
+        borderRightColor: colors.primary,
+        borderRightWidth: 5,
     },
     phoneText: {
         color: colors.gray700,
     },
     consigneeName: {
-        fontWeight: '500'
+        fontWeight: '500',
+        color: colors.green500,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
     }
 });
