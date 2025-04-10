@@ -53,5 +53,6 @@ const styles = StyleSheet.create({
     listContentContainer: {
         gap: 2,
         marginHorizontal: 0,
+        backgroundColor: colors.fbBg
     },
 });

@@ -112,9 +112,6 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     backgroundColor: colors.white,
-    borderBottomColor: colors.fbBg,
-    borderBottomWidth: 1,
-    marginBottom: 8,
   },
   itemImage: {
     width: 50,
