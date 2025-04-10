@@ -4,27 +4,32 @@ import {
   Column,
   LightStatusBar,
   NormalHeader,
+  NormalLoading,
   Row,
   VoucherVertical,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {getAllVoucher, getProfile} from '../../axios';
-import {AppAsyncStorage} from '../../utils';
+import {AppAsyncStorage, TextFormatter} from '../../utils';
 
-const BeanScreen = ({navigation}) => {
+const SeedScreen = ({navigation}) => {
   const [user, setUser] = useState(null);
   const [vouchers, setVouchers] = useState([]);
   const [changePoint, setChangePoint] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
+        setLoading(true);
         if (await AppAsyncStorage.isTokenValid()) {
           const response = await getAllVoucher();
           if (response) setVouchers(response);
         }
       } catch (error) {
         console.log('Lỗi khi gọi API Voucher:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -33,11 +38,15 @@ const BeanScreen = ({navigation}) => {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
+
       try {
         const response = await getProfile();
         if (response) setUser(response);
       } catch (error) {
         console.error('Lỗi khi lấy profile:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -47,17 +56,18 @@ const BeanScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <LightStatusBar />
-      <NormalHeader title="Đổi Bean" onLeftPress={() => navigation.goBack()} />
+      <NormalHeader title="Đổi Seed" onLeftPress={() => navigation.goBack()} />
 
       <Row style={styles.headerRow}>
         <Image
           style={styles.iconBean}
-          source={require('../../assets/bean/icon_bean.png')}
+          source={require('../../assets/seed/icon_seed.png')}
         />
         <Column>
-          <Text style={styles.headerText}>Số bean hiện tại của bạn</Text>
+          <Text style={styles.headerText}>Số Seed hiện tại của bạn</Text>
           <Text style={styles.beanAmount}>
-            {user?.seed ?? 0} <Text style={styles.beanText}>BEAN</Text>
+            {TextFormatter.formatted(user?.seed) || 0}{' '}
+            <Text style={styles.beanText}>Seed</Text>
           </Text>
         </Column>
       </Row>
@@ -71,13 +81,14 @@ const BeanScreen = ({navigation}) => {
           setChangePoint={setChangePoint}
         />
       </View>
+      {loading && <NormalLoading visible={loading} />}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.gray200,
+    backgroundColor: colors.white,
     flex: 1,
   },
   headerRow: {
@@ -85,12 +96,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.white,
     borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: colors.gray200,
     padding: 16,
   },
   iconBean: {
     width: 48,
     height: 48,
+    borderRadius: 48,
   },
   headerText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -104,7 +117,7 @@ const styles = StyleSheet.create({
   beanText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
-    color: colors.gray300,
+    color: colors.primary,
   },
   section: {
     margin: 16,
@@ -118,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BeanScreen;
+export default SeedScreen;

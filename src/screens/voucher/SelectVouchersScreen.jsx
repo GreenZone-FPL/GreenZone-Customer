@@ -26,7 +26,7 @@ import {black} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
 
 const {width} = Dimensions.get('window');
 
-const VouchersMerchantScreen = ({navigation, route}) => {
+const SelectVouchersScreen = ({navigation, route}) => {
   const [storeVouchers, setStoreVouchers] = useState([]);
   const [myExchangedVouchers, setMyExchangedVouchers] = useState([]);
   const [validStoreVouchers, setValidStoreVouchers] = useState([]);
@@ -46,16 +46,14 @@ const VouchersMerchantScreen = ({navigation, route}) => {
         }
 
         if (myResponse) {
-          const exchanged = myResponse.map(item => item.voucher);
-
-          // Lọc các voucher không trùng ID
           const uniqueVouchers = Object.values(
-            exchanged.reduce((acc, voucher) => {
-              acc[voucher._id] = voucher;
+            myResponse.reduce((acc, item) => {
+              if (item?.voucher) {
+                acc[item.voucher._id] = item.voucher;
+              }
               return acc;
             }, {}),
           );
-
           setMyExchangedVouchers(uniqueVouchers);
         }
       } catch (error) {
@@ -87,18 +85,18 @@ const VouchersMerchantScreen = ({navigation, route}) => {
 
   const filterByDiscountType = type => {
     const discountMap = {
-      1: 'percentage',
-      2: 'fixedAmount',
+      1: 'global',
+      2: 'seed',
     };
 
-    const discountType = discountMap[type];
-    if (!discountType) {
+    const voucherType = discountMap[type];
+    if (!voucherType) {
       console.warn('Loại discountType không hợp lệ!');
       return [];
     }
 
     return validStoreVouchers.filter(
-      voucher => voucher.discountType === discountType,
+      voucher => voucher.voucherType === voucherType,
     );
   };
 
@@ -122,13 +120,13 @@ const VouchersMerchantScreen = ({navigation, route}) => {
     <Column style={styles.container}>
       <LightStatusBar />
       <NormalHeader
-        title="Phiếu ưu đãi của tôi"
+        title="Chọn phiếu ưu đãi"
         onLeftPress={() => navigation.goBack()}
       />
       <ScrollView>
         {myExchangedVouchers.length > 0 && (
           <>
-            <TitleText text="Voucher đổi Bean" style={styles.title} />
+            <TitleText text="Phiếu ưu đãi của tôi" style={styles.title} />
             <FlatList
               data={myExchangedVouchers}
               // data={validMyVouchers}
@@ -144,7 +142,7 @@ const VouchersMerchantScreen = ({navigation, route}) => {
 
         {validStoreVouchers.length > 0 && (
           <>
-            <TitleText text="Voucher cửa hàng" style={styles.title} />
+            <TitleText text="Phiếu ưu đãi cửa hàng" style={styles.title} />
             <FlatList
               data={filterByDiscountType(1)}
               keyExtractor={item => item._id.toString()}
@@ -185,7 +183,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.fbBg,
   },
   title: {
-    margin: 16,
+    marginHorizontal: 16,
+    marginVertical: 8,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '600',
   },
@@ -215,4 +214,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VouchersMerchantScreen;
+export default SelectVouchersScreen;

@@ -1,5 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import { useAppContext } from '../../context/appContext';
+import {useNavigation} from '@react-navigation/native';
+import {useAppContext} from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
@@ -8,15 +8,15 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import { useAppContainer } from '../useAppContainer';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts } from '../../axios';
-import { DeliveryMethod } from '../../constants';
+import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import {useAppContainer} from '../useAppContainer';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {getAllProducts} from '../../axios';
+import {DeliveryMethod} from '../../constants';
 
 export const useHomeContainer = () => {
-  const { authState, cartState, cartDispatch } = useAppContext();
-  const { onNavigateLogin } = useAppContainer();
+  const {authState, cartState, cartDispatch} = useAppContext();
+  const {onNavigateLogin} = useAppContainer();
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
   const [user, setUser] = useState(null);
@@ -28,7 +28,7 @@ export const useHomeContainer = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
   const onNavigateProductDetailSheet = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 
   const onClickAddToCart = async productId => {
@@ -38,7 +38,7 @@ export const useHomeContainer = () => {
       );
 
       if (isTokenValid && authState.lastName) {
-        navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+        navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
       } else {
         onNavigateLogin();
       }
@@ -63,7 +63,7 @@ export const useHomeContainer = () => {
 
   useEffect(() => {
     if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts).then(r => { });
+      fetchData(getAllProducts, setAllProducts).then(r => {});
     }
   }, [allProducts.length]);
 
@@ -158,12 +158,12 @@ export const useHomeContainer = () => {
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
   const navigatePayOS = awaitingPayments => {
-    console.log('navigate')
+    console.log('navigate');
     navigation.navigate(ShoppingGraph.PayOsScreen, awaitingPayments);
   };
 
@@ -181,8 +181,8 @@ export const useHomeContainer = () => {
   const navigateAdvertising = () => {
     navigation.navigate(AppGraph.AdvertisingScreen);
   };
-  const navigateBeanScreen = () => {
-    navigation.navigate(VoucherGraph.BeanScreen);
+  const navigateSeedScreen = () => {
+    navigation.navigate(VoucherGraph.SeedScreen);
   };
 
   return {
@@ -214,6 +214,6 @@ export const useHomeContainer = () => {
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
-    navigateBeanScreen,
+    navigateSeedScreen,
   };
 };
