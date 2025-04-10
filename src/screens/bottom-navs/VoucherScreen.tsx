@@ -56,10 +56,8 @@ const VoucherScreen = ({ navigation }) => {
         resizeMode="cover"
         style={styles.imageBg}>
         <Column style={{ padding: 16, gap: 16 }}>
-          <TitleText text='Ưu đãi' style={styles.title} />
           {!authState.lastName && (
             <AuthContainer onPress={onNavigateLogin} />)
-
           }
           {authState.lastName && (
             <Column style={{ gap: 16 }}>
@@ -73,12 +71,13 @@ const VoucherScreen = ({ navigation }) => {
                   size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                   color={colors.primary}
                 />
-                <Text style={styles.textVoucher}>Voucher của tôi</Text>
+                <Text style={styles.textVoucher}>Phiếu ưu đãi của tôi</Text>
               </Pressable>
 
               <BarcodeUser
                 user={user}
-                hasBackground={false}
+                hasBackground={true}
+                showPoints={true}
                 style={{ width: Dimensions.get('window').width }}
               />
             </Column>
@@ -96,7 +95,7 @@ const VoucherScreen = ({ navigation }) => {
               title="Quyền lợi của bạn"
               onPress={() => { Toaster.show('Tính năng đang phát triển') }}
             />
-            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.BeanScreen) }} />
+            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.SeedScreen) }} />
           </Row> :
 
           <Image
@@ -153,13 +152,14 @@ const styles = StyleSheet.create({
   myTicket: {
     alignSelf: 'flex-end',
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     paddingVertical: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     width: 150,
+    alignItems:'center', justifyContent:'center'
+
   },
   textVoucher: {
     color: colors.primary,

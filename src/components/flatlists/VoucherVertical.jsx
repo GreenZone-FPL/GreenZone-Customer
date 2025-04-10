@@ -85,18 +85,18 @@ export const VoucherVertical = ({
 
   const filterByDiscountType = type => {
     const discountTypeMap = {
-      1: 'percentage',
-      2: 'fixedAmount',
+      1: 'global',
+      2: 'seed',
     };
 
-    const discountType = discountTypeMap[type];
+    const voucherType = discountTypeMap[type];
 
-    if (!discountType) {
+    if (!voucherType) {
       return validVouchers;
     }
 
     const filtered = validVouchers.filter(
-      voucher => voucher.discountType === discountType,
+      voucher => voucher.voucherType === voucherType,
     );
     return filtered;
   };
@@ -144,7 +144,7 @@ const ItemVoucher = ({onPress, item}) => {
           {`${item.name}`}
         </Text>
         {item?.voucherType === 'seed' && (
-          <Text>{item?.requiredPoints} Bean</Text>
+          <Text>{item?.requiredPoints} seed</Text>
         )}
         <NormalText
           text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
@@ -166,14 +166,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
     gap: 16,
     borderWidth: 1,
     borderColor: colors.gray200,
-    resizeMode: 'cover',
   },
   itemImage: {
     width: width / 4.5,

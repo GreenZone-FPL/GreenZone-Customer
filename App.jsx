@@ -40,14 +40,14 @@ import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import {PaperProvider} from 'react-native-paper';
-import VouchersMerchantScreen from './src/screens/voucher/VouchersMerchantScreen';
+import SelectVouchersScreen from './src/screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import FlashMessage from 'react-native-flash-message';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
-import BeanScreen from './src/screens/voucher/BeanScreen';
+import SeedScreen from './src/screens/voucher/SeedScreen';
 
 import {useAppContainer} from './src/containers/useAppContainer';
 
@@ -161,8 +161,8 @@ function AppNavigator() {
             component={MerchantScreen}
           />
           <BaseStack.Screen
-            name={VoucherGraph.VouchersMerchantScreen}
-            component={VouchersMerchantScreen}
+            name={VoucherGraph.SelectVouchersScreen}
+            component={SelectVouchersScreen}
           />
 
           <BaseStack.Screen
@@ -170,8 +170,8 @@ function AppNavigator() {
             component={MyVouchersScreen}
           />
           <BaseStack.Screen
-            name={VoucherGraph.BeanScreen}
-            component={BeanScreen}
+            name={VoucherGraph.SeedScreen}
+            component={SeedScreen}
           />
           <BaseStack.Screen
             name={UserGraph.AddressMerchantScreen}

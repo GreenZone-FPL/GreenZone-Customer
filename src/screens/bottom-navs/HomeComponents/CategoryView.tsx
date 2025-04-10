@@ -49,7 +49,7 @@ export const CategoryView: React.FC = () => {
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
-          onPress={() => navigation.navigate(VoucherGraph.VouchersMerchantScreen)}
+          onPress={() => navigation.navigate(VoucherGraph.SelectVouchersScreen)}
         />
 
         <Item
@@ -72,8 +72,8 @@ export const CategoryView: React.FC = () => {
           IconComponent={() => (
             <Coffee size="50" color={colors.yellow700} variant="Bulk" />
           )}
-          title="Đổi Bean"
-          onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}}
+          title="Đổi Seed"
+          onPress={()=>{navigation.navigate(VoucherGraph.SeedScreen)}}
         />
 
         <Item

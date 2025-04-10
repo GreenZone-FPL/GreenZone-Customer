@@ -1,7 +1,12 @@
 import {View, Text} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {getMyVouchers} from '../../axios';
-import {LightStatusBar, NormalHeader, VoucherVertical} from '../../components';
+import {
+  LightStatusBar,
+  NormalHeader,
+  NormalLoading,
+  VoucherVertical,
+} from '../../components';
 import {GLOBAL_KEYS} from '../../constants';
 
 const MyVouchersScreen = ({navigation}) => {
@@ -14,11 +19,11 @@ const MyVouchersScreen = ({navigation}) => {
         setLoading(true);
         const response = await getMyVouchers();
         if (response) {
-          const filteredVouchers = response.map(item => item.voucher);
-
           const uniqueVouchers = Object.values(
-            filteredVouchers.reduce((acc, voucher) => {
-              acc[voucher._id] = voucher;
+            response.reduce((acc, item) => {
+              if (item?.voucher) {
+                acc[item.voucher._id] = item.voucher;
+              }
               return acc;
             }, {}),
           );
@@ -37,7 +42,7 @@ const MyVouchersScreen = ({navigation}) => {
     <View style={{flex: 1}}>
       <LightStatusBar />
       <NormalHeader
-        title="Phiếu giảm giá của tôi"
+        title="Phiếu ưu đãi của tôi"
         onLeftPress={() => {
           navigation.goBack();
         }}
@@ -47,7 +52,7 @@ const MyVouchersScreen = ({navigation}) => {
           <VoucherVertical
             vouchers={vouchers}
             route={{params: {isUpdateOrderInfo: false, isChangeBeans: false}}}
-            type={3}
+            type={0}
           />
         ) : (
           <Text
@@ -59,10 +64,11 @@ const MyVouchersScreen = ({navigation}) => {
               fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
             }}>
             Bạn chưa đổi phiếu giảm giá nào, hãy đổi phiếu giảm giá ở mục Đổi
-            Bean nhé!
+            Seed nhé!
           </Text>
         )}
       </View>
+      {loading && <NormalLoading visible={loading} />}
     </View>
   );
 };
