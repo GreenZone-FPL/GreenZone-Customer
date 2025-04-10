@@ -22,8 +22,7 @@ export const AuthContainer: React.FC<AuthContainerProps> = ({ onPress }) => {
                 <TitleText text='Đăng nhập' style={styles.title} />
                 <NormalText
                     style={styles.description}
-                    text={`Đăng nhập app để tích điểm và đổi những ưu đãi 
-    chỉ dành riêng cho thành viên bạn nhé`} />
+                    text={`Đăng nhập app để tích điểm và đổi những ưu đãi chỉ dành riêng cho thành viên bạn nhé`} />
 
                 <AuthButton title='Đăng nhập' onPress={onPress} />
             </ImageBackground>

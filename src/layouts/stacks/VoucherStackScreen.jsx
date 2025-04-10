@@ -20,12 +20,6 @@ const VoucherStackScreen = () => {
         name={VoucherGraph.SelectVouchersScreen}
         component={SelectVouchersScreen}
       />
-
-      <VoucherStack.Screen
-        name={VoucherGraph.MyVouchersScreen}
-        component={MyVouchersScreen}
-      />
-
       <VoucherStack.Screen
         name={AppGraph.VoucherDetailSheet}
         component={VoucherDetailSheet}

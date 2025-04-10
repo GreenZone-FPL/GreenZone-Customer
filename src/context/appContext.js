@@ -32,7 +32,6 @@ export const AppContextProvider = ({children}) => {
   });
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
-
   const [awaitingPayments, setAwaitingPayments] = useState(null);
 
   useEffect(() => {

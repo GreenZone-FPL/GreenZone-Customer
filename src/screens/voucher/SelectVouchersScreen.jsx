@@ -1,39 +1,39 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Text,
   Dimensions,
   FlatList,
   Image,
-  TouchableOpacity,
-  StyleSheet,
-  View,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {getAllVoucher, getMyVouchers} from '../../axios/index';
+import { getAllVoucher, getMyVouchers } from '../../axios/index';
 import {
   Column,
   LightStatusBar,
   NormalHeader,
   NormalText,
+  Row,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {VoucherGraph} from '../../layouts/graphs';
-import {CartManager, TextFormatter} from '../../utils';
-import {CartActionTypes} from '../../reducers';
-import {black} from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { VoucherGraph } from '../../layouts/graphs';
+import { CartActionTypes } from '../../reducers';
+import { TextFormatter } from '../../utils';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const SelectVouchersScreen = ({navigation, route}) => {
+const SelectVouchersScreen = ({ navigation, route }) => {
   const [storeVouchers, setStoreVouchers] = useState([]);
   const [myExchangedVouchers, setMyExchangedVouchers] = useState([]);
   const [validStoreVouchers, setValidStoreVouchers] = useState([]);
   const [validMyVouchers, setValidMyVouchers] = useState([]);
 
-  const {cartDispatch} = useAppContext();
-  const {isUpdateOrderInfo} = route.params || false;
+  const { cartDispatch } = useAppContext();
+  const { isUpdateOrderInfo } = route.params || false;
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -112,7 +112,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
 
       navigation.goBack();
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
 
@@ -131,7 +131,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
               data={myExchangedVouchers}
               // data={validMyVouchers}
               keyExtractor={item => item._id.toString()}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <ItemVoucher onPress={() => onItemPress(item)} item={item} />
               )}
               showsVerticalScrollIndicator={false}
@@ -146,11 +146,12 @@ const SelectVouchersScreen = ({navigation, route}) => {
             <FlatList
               data={filterByDiscountType(1)}
               keyExtractor={item => item._id.toString()}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <ItemVoucher onPress={() => onItemPress(item)} item={item} />
               )}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
+              contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
             />
           </>
         )}
@@ -159,19 +160,28 @@ const SelectVouchersScreen = ({navigation, route}) => {
   );
 };
 
-const ItemVoucher = ({onPress, item}) => {
+const ItemVoucher = ({ onPress, item }) => {
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
-      <Image source={{uri: item.image}} style={styles.itemImage} />
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
-        <View style={{maxWidth: width / 2}}>
+        <View style={{ maxWidth: width / 2 }}>
           <Text numberOfLines={2} style={styles.voucherName}>
             {`Voucher ${item.name}`}
           </Text>
         </View>
-        <NormalText
-          text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
-        />
+
+
+        <Row>
+          <NormalText text={`Hết hạn:`} style={{ color: colors.gray850 }} />
+
+          <NormalText
+            style={{ color: colors.black }}
+            text={`${TextFormatter.formatDateSimple(item.endDate)}`}
+          />
+
+        </Row>
+
       </Column>
     </TouchableOpacity>
   );
@@ -180,7 +190,7 @@ const ItemVoucher = ({onPress, item}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
   },
   title: {
     marginHorizontal: 16,
@@ -191,25 +201,18 @@ const styles = StyleSheet.create({
   itemVoucher: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    backgroundColor: colors.white,
     gap: 16,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemImage: {
     width: width / 4.5,
     height: width / 4.5,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: width / 1.5,
     resizeMode: 'cover',
   },
   voucherName: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });

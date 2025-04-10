@@ -188,6 +188,7 @@ const LoginScreen = ({ route, navigation }) => {
         label="Số điện thoại"
         placeholder="Nhập số điện thoại của bạn..."
         style={styles.input}
+        keyboardType='numeric'
         setValue={text => {
           setPhoneNumberMessage('');
           setPhoneNumber(text);
@@ -196,10 +197,10 @@ const LoginScreen = ({ route, navigation }) => {
         invalidMessage={phoneNumberMessage}
       />
 
-      <Pressable style={styles.button}  onPress={handleSendOTP}>
+      <Pressable style={styles.button} onPress={handleSendOTP}>
         <Text style={styles.buttonText}>Đăng nhập</Text>
       </Pressable>
-    
+
 
 
     </Column>

@@ -1,14 +1,14 @@
-import {useEffect} from 'react';
-import {navigationRef} from '../../App';
-import {Alert, BackHandler} from 'react-native';
+import { useEffect } from 'react';
+import { navigationRef } from '../../App';
+import { Alert, BackHandler } from 'react-native';
 import socketService from '../services/socketService';
-import {useAppContext} from '../context/appContext';
-import {OrderStatus} from '../constants';
-import {showMessage} from 'react-native-flash-message';
-import {MainGraph, OrderGraph} from '../layouts/graphs';
-import {useNavigation} from '@react-navigation/native';
-import {AppAsyncStorage, CartManager} from '../utils';
-import {AuthActionTypes, cartInitialState} from '../reducers';
+import { useAppContext } from '../context/appContext';
+import { OrderStatus } from '../constants';
+import { showMessage } from 'react-native-flash-message';
+import { MainGraph, OrderGraph } from '../layouts/graphs';
+import { useNavigation } from '@react-navigation/native';
+import { AppAsyncStorage, CartManager } from '../utils';
+import { AuthActionTypes, cartInitialState } from '../reducers';
 
 export const useAppContainer = () => {
   const {
@@ -27,7 +27,7 @@ export const useAppContainer = () => {
       if (authState.needLogin) {
         console.log('Showing alert...'); // Kiểm tra log trước khi gọi Alert.alert
         Alert.alert('Xác nhận', 'Bạn muốn quay lại?', [
-          {text: 'Đóng', style: 'cancel'},
+          { text: 'Đóng', style: 'cancel' },
           {
             text: 'Vẫn quay lại',
             onPress: () =>
@@ -46,7 +46,7 @@ export const useAppContainer = () => {
       if (authState.needRegister) {
         console.log('Showing alert...'); // Kiểm tra log trước khi gọi Alert.alert
         Alert.alert('Xác nhận', 'Quay lại sẽ hủy bỏ quá trình tạo tài khoản', [
-          {text: 'Đóng', style: 'cancel'},
+          { text: 'Đóng', style: 'cancel' },
           {
             text: 'Vẫn quay lại',
             onPress: async () => {
@@ -80,8 +80,8 @@ export const useAppContainer = () => {
         navigationRef.current.goBack();
       } else {
         Alert.alert('Thoát ứng dụng', 'Bạn có chắc chắn muốn thoát không?', [
-          {text: 'Hủy', style: 'cancel'},
-          {text: 'Thoát', onPress: () => BackHandler.exitApp()},
+          { text: 'Hủy', style: 'cancel' },
+          { text: 'Thoát', onPress: () => BackHandler.exitApp() },
         ]);
       }
       return true;
@@ -97,12 +97,13 @@ export const useAppContainer = () => {
 
   useEffect(() => {
     if (updateOrderMessage.visible) {
-      const {type, icon} = OrderStatus.getMessageInfoByStatus(
+      const { type, icon } = OrderStatus.getMessageInfoByStatus(
         updateOrderMessage.status,
       );
 
-      const duration = 4000; // Thời gian hiển thị message
+      const duration = 2000; // Thời gian hiển thị message
 
+    
       showMessage({
         message: updateOrderMessage.message,
         type,
@@ -117,7 +118,7 @@ export const useAppContainer = () => {
 
       // Sau khi message ẩn đi, cập nhật visible thành false
       const timer = setTimeout(() => {
-        setUpdateOrderMessage(prev => ({...prev, visible: false}));
+        setUpdateOrderMessage(prev => ({ ...prev, visible: false }));
       }, duration);
 
       return () => clearTimeout(timer);
@@ -145,7 +146,7 @@ export const useAppContainer = () => {
       }
     };
 
-    initializeSocket().then(r => {});
+    initializeSocket().then(r => { });
 
     return () => {
       // Ngắt kết nối socket khi component bị unmount
@@ -160,25 +161,25 @@ export const useAppContainer = () => {
     await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
     authDispatch({
       type: AuthActionTypes.LOGOUT,
-      payload: {isLoggedIn: false, lastName: null},
+      payload: { isLoggedIn: false, lastName: null },
     });
     navigation.reset({
       index: 0,
-      routes: [{name: MainGraph.graphName}],
+      routes: [{ name: MainGraph.graphName }],
     });
   };
 
   const onNavigateLogin = () => {
     authDispatch({
       type: AuthActionTypes.LOGIN,
-      payload: {needLogin: true, needAuthen: true, needRegister: false},
+      payload: { needLogin: true, needAuthen: true, needRegister: false },
     });
   };
 
   const onNavigateRegister = () => {
     authDispatch({
       type: AuthActionTypes.LOGIN,
-      payload: {needLogin: false, needAuthen: true, needRegister: true},
+      payload: { needLogin: false, needAuthen: true, needRegister: true },
     });
   };
 

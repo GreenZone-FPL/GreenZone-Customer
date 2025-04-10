@@ -60,6 +60,7 @@ export const useHomeContainer = () => {
 
     fetchProfile();
   }, []);
+  // user.code?
 
   useEffect(() => {
     if (allProducts.length === 0) {
