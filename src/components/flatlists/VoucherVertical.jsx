@@ -149,25 +149,28 @@ const ItemVoucher = ({ onPress, item }) => {
         </Text>
 
 
-        <Row >
-
-          <Image
-            style={styles.iconSeed}
-            source={require('../../assets/seed/icon_seed.png')}
-          />
 
 
-          {item?.voucherType === 'seed' && (
+
+
+
+        {item?.voucherType === 'seed' && (
+          <Row >
+            <Image
+              style={styles.iconSeed}
+              source={require('../../assets/seed/icon_seed.png')}
+            />
             <Text
               style={{ fontSize: 14, fontWeight: '500', color: colors.primary }}
             >
               {TextFormatter.formatted(item?.requiredPoints)}
             </Text>
-          )}
+          </Row>
+        )}
 
 
 
-        </Row>
+
 
 
         <Row>
