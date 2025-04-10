@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
+import moment from 'moment/moment';
 import {
   Alert,
   Dimensions,
@@ -9,15 +10,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Column, NormalText} from '../index';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {VoucherGraph} from '../../layouts/graphs';
-import {CartManager, TextFormatter, Toaster} from '../../utils';
-import {useNavigation} from '@react-navigation/native';
-import {changeBeans} from '../../axios';
+import { Column, NormalText, Row, TitleText } from '../index';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { VoucherGraph } from '../../layouts/graphs';
+import { CartManager, TextFormatter, Toaster } from '../../utils';
+import { useNavigation } from '@react-navigation/native';
+import { changeBeans } from '../../axios';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export const VoucherVertical = ({
   route,
@@ -26,9 +27,9 @@ export const VoucherVertical = ({
   setChangePoint = false,
 }) => {
   const navigation = useNavigation();
-  const {cartDispatch} = useAppContext();
-  const {isUpdateOrderInfo} = route.params || false;
-  const {isChangeBeans} = route.params || false;
+  const { cartDispatch } = useAppContext();
+  const { isUpdateOrderInfo } = route.params || false;
+  const { isChangeBeans } = route.params || false;
   const [validVouchers, setValidVouchers] = useState([]);
   // PERCENTAGE = 'percentage',
   // FIXED_AMOUNT = 'fixedAmount',
@@ -79,7 +80,7 @@ export const VoucherVertical = ({
           },
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
@@ -115,44 +116,67 @@ export const VoucherVertical = ({
     } else if (isChangeBeans) {
       changeBean(item);
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
 
   return (
     <Column style={styles.container}>
+      <TitleText text="Phiếu ưu đãi" style={{ marginHorizontal: 16, fontSize: 16 }} />
       <FlatList
         data={filterByDiscountType(type)}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemVoucher onPress={() => onItemPress(item)} item={item} />
         )}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
-        contentContainerStyle={{gap: 16}}
+        contentContainerStyle={{ gap: 2, backgroundColor: colors.fbBg }}
       />
     </Column>
   );
 };
 
-const ItemVoucher = ({onPress, item}) => {
+const ItemVoucher = ({ onPress, item }) => {
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
-      <Image source={{uri: item.image}} style={styles.itemImage} />
+      <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
-        <Text numberOfLines={2} style={{fontSize: 14, fontWeight: '500'}}>
-          {`${item.name}`}
+        {/* Tên voucher: màu đậm, dễ đọc */}
+        <Text numberOfLines={2} style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
+          {item.name}
         </Text>
+
+        {/* Điểm Bean: màu nổi bật nhẹ nếu có */}
         {item?.voucherType === 'seed' && (
-          <Text>{item?.requiredPoints} Bean</Text>
+          <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '500' }}>
+            {item.requiredPoints} Bean
+          </Text>
         )}
-        <NormalText
-          text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
-        />
+
+
+        <Row>
+          <NormalText text={`Hết hạn:`} style={{color: colors.gray850}}/>
+
+          <NormalText
+            style={{
+              color: moment(item.endDate).isBefore(moment())
+                ? colors.invalid
+                : colors.black,
+            }}
+            text={`${item.endDate
+                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'
+              }`}
+          />
+
+        </Row>
+
       </Column>
     </TouchableOpacity>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
@@ -165,15 +189,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     gap: 16,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    resizeMode: 'cover',
   },
   itemImage: {
     width: width / 4.5,

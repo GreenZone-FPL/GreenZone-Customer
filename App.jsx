@@ -4,7 +4,7 @@ import React from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {AppContextProvider, useAppContext} from './src/context/appContext';
-
+import Toast from 'react-native-toast-message';
 import {
   AppGraph,
   AuthGraph,
@@ -81,6 +81,7 @@ export default function App() {
               </BaseStack.Navigator>
             </NavigationContainer>
             <FlashMessage position="top" />
+            <Toast />
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PaperProvider>

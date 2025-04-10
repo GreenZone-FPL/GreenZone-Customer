@@ -2,16 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
+  Image,
   ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  Image
+  Text
 } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { getAllVoucher } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   BarcodeUser,
   Column,
@@ -19,13 +19,12 @@ import {
   NormalText,
   Row,
   TitleText,
-  VoucherVertical,
+  VoucherVertical
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useVoucherContainer } from '../../containers';
-import { AppAsyncStorage, Toaster } from '../../utils';
-import { getAllVoucher } from '../../axios';
 import { VoucherGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../utils';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
@@ -55,7 +54,7 @@ const VoucherScreen = ({ navigation }) => {
         source={require('../../assets/images/bgvoucher.png')}
         resizeMode="cover"
         style={styles.imageBg}>
-        <Column style={{ padding: 16, gap: 16 }}>
+        <Column style={{ paddingVertical: 16, gap: 16 }}>
           <TitleText text='Ưu đãi' style={styles.title} />
           {!authState.lastName && (
             <AuthContainer onPress={onNavigateLogin} />)
@@ -106,11 +105,9 @@ const VoucherScreen = ({ navigation }) => {
 
       }
       {authState.lastName && (
-        <Column style={{ marginHorizontal: 16 }}>
-          <TitleText text="Phiếu ưu đãi" />
-
+        <>
           <VoucherVertical vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
-        </Column>
+        </>
       )}
     </ScrollView>
   );
@@ -135,17 +132,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
-
-
   },
   imageBg: {
-    width: '100%',
     height: width / 1.5,
-    justifyContent: 'center'
+    padding: 16
   },
 
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: 20,
     fontWeight: 'bold',
     color: colors.white,
   },
@@ -160,6 +154,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     width: 150,
+    justifyContent: 'center'
   },
   textVoucher: {
     color: colors.primary,
