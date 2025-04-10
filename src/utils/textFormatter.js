@@ -31,11 +31,15 @@ export const TextFormatter = {
   // Định dạng ngày/tháng/năm giờ:phút
   formatDateSimple(dateString) {
     const date = new Date(dateString);
-    return `${date.getDate()}-${
-      date.getMonth() + 1
-    }-${date.getFullYear()}-${date.getHours()}:${date.getMinutes()}`;
-  },
 
+    const padZero = n => (n < 10 ? '0' + n : n);
+
+    return `${padZero(date.getDate())}-${padZero(
+      date.getMonth() + 1,
+    )}-${date.getFullYear()} - ${padZero(date.getHours())} giờ ${padZero(
+      date.getMinutes(),
+    )} phút`;
+  },
   formatted(value) {
     if (value == null || isNaN(value)) return '0';
     return value.toLocaleString('vi-VN');

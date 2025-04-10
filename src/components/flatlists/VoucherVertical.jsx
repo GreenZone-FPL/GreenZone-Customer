@@ -144,7 +144,7 @@ const ItemVoucher = ({onPress, item}) => {
           {`${item.name}`}
         </Text>
         {item?.voucherType === 'seed' && (
-          <Text>{item?.requiredPoints} seed</Text>
+          <Text>{TextFormatter.formatted(item?.requiredPoints)} seed</Text>
         )}
         <NormalText
           text={`Hết hạn ${TextFormatter.formatDateSimple(item.endDate)}`}
