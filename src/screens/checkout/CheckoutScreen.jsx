@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, {useEffect} from 'react';
+import {Dimensions, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -11,21 +11,17 @@ import {
   Row,
 } from '../../components';
 
-import {
-  DeliveryMethod,
-  GLOBAL_KEYS,
-  colors
-} from '../../constants';
-import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
-import { useAppContext } from '../../context/appContext';
+import {DeliveryMethod, GLOBAL_KEYS, colors} from '../../constants';
+import {useCheckoutContainer} from '../../containers/checkout/useCheckoutContainer';
+import {useAppContext} from '../../context/appContext';
 import {
   BottomGraph,
   ShoppingGraph,
   UserGraph,
-  VoucherGraph
+  VoucherGraph,
 } from '../../layouts/graphs';
-import { CartActionTypes } from '../../reducers';
-import { CartManager } from '../../utils';
+import {CartActionTypes} from '../../reducers';
+import {CartManager} from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -42,10 +38,7 @@ import {
 
 const {width} = Dimensions.get('window');
 const CheckoutScreen = () => {
-  const {
-    cartState,
-    cartDispatch,
-  } = useAppContext();
+  const {cartState, cartDispatch} = useAppContext();
 
   const {
     navigation,
@@ -193,7 +186,7 @@ const CheckoutScreen = () => {
               <PaymentDetailsView
                 cartState={cartState}
                 onSelectVoucher={() =>
-                  navigation.navigate(VoucherGraph.VouchersMerchantScreen, {
+                  navigation.navigate(VoucherGraph.SelectVouchersScreen, {
                     isUpdateOrderInfo: true,
                   })
                 }

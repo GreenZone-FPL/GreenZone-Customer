@@ -11,16 +11,13 @@ import {
 } from 'react-native';
 import {
   Column,
-  CustomFlatInput,
   LightStatusBar,
   NormalInput,
   NormalLoading,
   NormalText,
-  OverlayStatusBar,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import LabelInput from '../../components/inputs/LabelInput';
 import { useRegisterContainer } from '../../containers';
 
 const RegisterScreen: React.FC = () => {

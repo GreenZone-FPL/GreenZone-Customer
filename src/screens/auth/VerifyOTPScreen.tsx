@@ -11,8 +11,10 @@ import {
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {IconButton} from 'react-native-paper';
 import {useVerifyOTPContainer} from '../../containers';
+import { useRoute } from '@react-navigation/native';
 
-const VerifyOTPScreen: React.FC = ({route}) => {
+const VerifyOTPScreen: React.FC = () => {
+  const route = useRoute()
   const {expired, phoneNumber} = route.params;
   const {navigation, setCode, timeLeft, loading, formatTime} =
     useVerifyOTPContainer(expired, phoneNumber);

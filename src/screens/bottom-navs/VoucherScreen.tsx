@@ -2,16 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
-  Image,
   ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text
+  Text,
+  Image
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getAllVoucher } from '../../axios';
 import {
+  AuthButton,
   AuthContainer,
   BarcodeUser,
   Column,
@@ -19,12 +19,13 @@ import {
   NormalText,
   Row,
   TitleText,
-  VoucherVertical
+  VoucherVertical,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useVoucherContainer } from '../../containers';
-import { VoucherGraph } from '../../layouts/graphs';
 import { AppAsyncStorage, Toaster } from '../../utils';
+import { getAllVoucher } from '../../axios';
+import { VoucherGraph } from '../../layouts/graphs';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
@@ -50,53 +51,63 @@ const VoucherScreen = ({ navigation }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
-      <ImageBackground
-        source={require('../../assets/images/bgvoucher.png')}
-        resizeMode="cover"
-        style={styles.imageBg}>
-        <Column style={{ paddingVertical: 16, gap: 16 }}>
-          <TitleText text='Ưu đãi' style={styles.title} />
-          {!authState.lastName && (
-            <AuthContainer onPress={onNavigateLogin} />)
+      
+      {!authState.lastName ?
 
-          }
-          {authState.lastName && (
-            <Column style={{ gap: 16 }}>
-              <Pressable
-                style={styles.myTicket}
-                onPress={() => {
-                  navigation.navigate(VoucherGraph.MyVouchersScreen)
-                }}>
-                <Icon
-                  source="ticket-confirmation-outline"
-                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  color={colors.primary}
-                />
-                <Text style={styles.textVoucher}>Voucher của tôi</Text>
-              </Pressable>
+        <ImageBackground
+          source={require('../../assets/images/bgvoucher.png')}
+          resizeMode="cover"
+          style={styles.imageBg}>
+          <Column style={{ padding: 16, gap: 16 }}>
+            <AuthContainer onPress={onNavigateLogin} />
+          </Column>
+        </ImageBackground>
+        :
 
-              <BarcodeUser
-                user={user}
-                hasBackground={false}
-                style={{ width: Dimensions.get('window').width }}
+        <ImageBackground
+          source={require('../../assets/images/bgvoucher.png')}
+          resizeMode="cover"
+          style={styles.imageBg}>
+          <Column style={{ padding: 16, gap: 16 }}>
+            <Pressable
+              style={styles.myTicket}
+              onPress={() => {
+                navigation.navigate(VoucherGraph.MyVouchersScreen)
+              }}>
+              <Icon
+                source="ticket-confirmation-outline"
+                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                color={colors.primary}
               />
-            </Column>
-          )}
-        </Column>
-      </ImageBackground>
+              <Text style={styles.textVoucher}>Phiếu ưu đãi của tôi</Text>
+            </Pressable>
 
+            <BarcodeUser
+              user={user}
+              hasBackground={true}
+              showPoints={true}
+              style={{ width: Dimensions.get('window').width }}
+            />
+          </Column>
+        </ImageBackground>
+      }
 
       {
         authState.lastName ?
-          <Row style={{ margin: 16 }}>
-            <Card
-              iconName="shield-check"
-              color={colors.orange700}
-              title="Quyền lợi của bạn"
-              onPress={() => { Toaster.show('Tính năng đang phát triển') }}
-            />
-            <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.BeanScreen) }} />
-          </Row> :
+          <Column>
+            <Row style={{ margin: 16 }}>
+              <Card
+                iconName="shield-check"
+                color={colors.orange700}
+                title="Quyền lợi của bạn"
+                onPress={() => { Toaster.show('Tính năng đang phát triển') }}
+              />
+              <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.SeedScreen) }} />
+            </Row>
+            <VoucherVertical vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
+
+          </Column>
+          :
 
           <Image
             source={require('../../assets/images/logo.png')}
@@ -104,11 +115,7 @@ const VoucherScreen = ({ navigation }) => {
           />
 
       }
-      {authState.lastName && (
-        <>
-          <VoucherVertical vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
-        </>
-      )}
+
     </ScrollView>
   );
 };
@@ -132,14 +139,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
+
+
   },
   imageBg: {
+    width: '100%',
     height: width / 1.5,
-    padding: 16
+    justifyContent: 'center'
   },
 
   title: {
-    fontSize: 20,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: 'bold',
     color: colors.white,
   },
@@ -147,14 +157,14 @@ const styles = StyleSheet.create({
   myTicket: {
     alignSelf: 'flex-end',
     flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: colors.white,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     paddingVertical: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     width: 150,
-    justifyContent: 'center'
+    alignItems: 'center', justifyContent: 'center'
+
   },
   textVoucher: {
     color: colors.primary,

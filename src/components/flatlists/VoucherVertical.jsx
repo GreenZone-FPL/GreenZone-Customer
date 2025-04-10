@@ -17,6 +17,7 @@ import { VoucherGraph } from '../../layouts/graphs';
 import { CartManager, TextFormatter, Toaster } from '../../utils';
 import { useNavigation } from '@react-navigation/native';
 import { changeBeans } from '../../axios';
+import { Judge } from 'iconsax-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -86,18 +87,18 @@ export const VoucherVertical = ({
 
   const filterByDiscountType = type => {
     const discountTypeMap = {
-      1: 'percentage',
-      2: 'fixedAmount',
+      1: 'global',
+      2: 'seed',
     };
 
-    const discountType = discountTypeMap[type];
+    const voucherType = discountTypeMap[type];
 
-    if (!discountType) {
+    if (!voucherType) {
       return validVouchers;
     }
 
     const filtered = validVouchers.filter(
-      voucher => voucher.discountType === discountType,
+      voucher => voucher.voucherType === voucherType,
     );
     return filtered;
   };
@@ -143,30 +144,42 @@ const ItemVoucher = ({ onPress, item }) => {
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
         {/* Tên voucher: màu đậm, dễ đọc */}
-        <Text numberOfLines={2} style={{ fontSize: 14, fontWeight: '600', color: colors.textPrimary }}>
+        <Text numberOfLines={2} style={{ fontSize: 14, fontWeight: '600', color: colors.black }}>
           {item.name}
         </Text>
 
-        {/* Điểm Bean: màu nổi bật nhẹ nếu có */}
-        {item?.voucherType === 'seed' && (
-          <Text style={{ color: colors.primary, fontSize: 13, fontWeight: '500' }}>
-            {item.requiredPoints} Bean
-          </Text>
-        )}
+
+        <Row >
+
+          <Image
+            style={styles.iconSeed}
+            source={require('../../assets/seed/icon_seed.png')}
+          />
+
+
+          {item?.voucherType === 'seed' && (
+            <Text
+              style={{ fontSize: 14, fontWeight: '500', color: colors.primary }}
+            >
+              {TextFormatter.formatted(item?.requiredPoints)}
+            </Text>
+          )}
+
+
+
+        </Row>
 
 
         <Row>
-          <NormalText text={`Hết hạn:`} style={{color: colors.gray850}}/>
+          <NormalText text={`Hết hạn:`} style={{ color: colors.gray850 }} />
 
           <NormalText
             style={{
-              color: moment(item.endDate).isBefore(moment())
-                ? colors.invalid
-                : colors.black,
+              color: colors.orange700,
             }}
             text={`${item.endDate
-                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
-                : 'Chưa có thời gian'
+              ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+              : 'Chưa có thời gian'
               }`}
           />
 
@@ -182,6 +195,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: 16,
+    backgroundColor: colors.white
   },
 
   itemVoucher: {
@@ -196,7 +210,12 @@ const styles = StyleSheet.create({
   itemImage: {
     width: width / 4.5,
     height: width / 4.5,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: width / 1.5,
     resizeMode: 'cover',
+  },
+  iconSeed: {
+    width: 24,
+    height: 24,
+    borderRadius: 48,
   },
 });

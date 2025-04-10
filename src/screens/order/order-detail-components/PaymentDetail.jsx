@@ -27,8 +27,8 @@ export const PaymentDetails = ({ detail }) => {
 
     const discount = voucher
         ? voucher.discountType === 'percentage'
-            ? (subTotal * voucher.discountValue) / 100
-            : voucher.discountValue
+            ? (subTotal * voucher.value) / 100
+            : voucher.value
         : 0;
 
     const getPaymentStatus = () => {

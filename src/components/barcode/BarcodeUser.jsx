@@ -10,6 +10,7 @@ import {
 import {SvgXml} from 'react-native-svg';
 import bwipjs from '@bwip-js/react-native';
 import {colors, GLOBAL_KEYS} from '../../constants';
+import {TextFormatter} from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -18,7 +19,7 @@ export const BarcodeUser = ({
   showPoints = false,
   user,
   style,
-  onPress = {},
+  onPress = () => {},
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
 
@@ -50,18 +51,27 @@ export const BarcodeUser = ({
   const BarcodeContent = () => {
     return (
       <View style={styles.barCodeContainer}>
-        <Text style={[styles.text]}>
+        <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">
           {user?.firstName} {user?.lastName}
         </Text>
+
         {showPoints && (
-          <Pressable style={styles.content} onPress={onPress}>
-            <Text style={[styles.contentText]}>Đổi {user?.seed || 0} Bean</Text>
+          <Pressable style={styles.pointsBadge} onPress={onPress}>
+            <Text
+              style={styles.pointsText}
+              numberOfLines={1}
+              ellipsizeMode="tail">
+              {TextFormatter.formatted(user?.seed)}{' '}
+            </Text>
+            <Text style={styles.pointsText}>Seed</Text>
           </Pressable>
         )}
 
-        {barcodeSVG ? (
-          <SvgXml xml={barcodeSVG} width="100%" height="100%" />
-        ) : null}
+        {barcodeSVG && (
+          <View style={styles.barcodeWrapper}>
+            <SvgXml xml={barcodeSVG} width="100%" height="100%" />
+          </View>
+        )}
       </View>
     );
   };
@@ -87,6 +97,8 @@ export const BarcodeUser = ({
       </View>
     );
   }
+
+  return null;
 };
 
 const styles = StyleSheet.create({
@@ -101,47 +113,45 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    resizeMode: 'cover',
     overflow: 'hidden',
   },
   barCodeContainer: {
+    backgroundColor: colors.white,
+    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    margin: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    flexDirection: 'column',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    backgroundColor: colors.white,
-    maxHeight: 120,
-    margin: 16,
-    padding: 16,
+    gap: 12, // Optional: if RN version supports
   },
-  content: {
-    position: 'absolute',
-    end: 0,
-    top: 8,
-  },
-  contentText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '500',
-    alignSelf: 'flex-start',
-    color: colors.yellow700,
-
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-    // borderLeftWidth: 1,
-
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
-    borderColor: colors.primary,
-    backgroundColor: colors.brown700,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-
-  text: {
+  nameText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
-    alignSelf: 'flex-start',
     color: colors.black,
-    marginTop: 16,
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  pointsBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 0,
+    backgroundColor: colors.fbBg,
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+  },
+  pointsText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '500',
+    color: colors.primary,
+    maxWidth: 80,
+  },
+  barcodeWrapper: {
+    width: '100%',
+    height: 50,
+    marginTop: 12,
   },
 });
