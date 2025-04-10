@@ -76,19 +76,27 @@ const handlePlus = (itemToPlus, selectedGroup, setSelectedGroup) => {
   const existingItem = selectedGroup.find(item => item._id === itemToPlus._id);
 
   if (existingItem) {
-    // Nếu item đã tồn tại, chỉ cập nhật quantity
-    setSelectedGroup(prevGroup =>
-      prevGroup.map(item =>
-        item._id === itemToPlus._id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item,
-      ),
-    );
-  } else if (selectedGroup.length < 3) {
-    // Nếu chưa đủ 3 items, có thể thêm mới
-    setSelectedGroup(prevGroup => [...prevGroup, { ...itemToPlus, quantity: 1 }]);
+    // Nếu item đã tồn tại, tăng số lượng nếu chưa vượt quá 3
+    if (existingItem.quantity < 3) {
+      setSelectedGroup(prevGroup =>
+        prevGroup.map(item =>
+          item._id === itemToPlus._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    }
+  } else {
+    // Nếu chưa đủ 3 loại topping thì thêm mới
+    if (selectedGroup.length < 3) {
+      setSelectedGroup(prevGroup => [
+        ...prevGroup,
+        { ...itemToPlus, quantity: 1 },
+      ]);
+    }
   }
 };
+
 
 // Hàm xử lý giảm số lượng
 const handleMinus = (itemToMinus, selectedGroup, setSelectedGroup) => {

@@ -4,67 +4,57 @@ import { GLOBAL_KEYS, colors } from '../../constants';
 import PropTypes from 'prop-types';
 
 const DualTextRowPropTypes = {
-    leftText: PropTypes.string,
-    rightText: PropTypes.string,
-    leftTextStyle: PropTypes.object,
-    rightTextStyle: PropTypes.object,
-    onRightPress: PropTypes.func,
-    onLeftPress: PropTypes.func,
-    style: PropTypes.object
+  leftText: PropTypes.string,
+  rightText: PropTypes.string,
+  leftTextStyle: PropTypes.object,
+  rightTextStyle: PropTypes.object,
+  onRightPress: PropTypes.func,
+  onLeftPress: PropTypes.func,
+  style: PropTypes.object,
 };
 
-
 /**
- *
  * Component DualTextRow hiển thị 2 đoạn text (trái và phải) trong một hàng ngang.
- * Usage Example:
- *
- *  <DualTextRow
-        leftText={'GIAO HÀNG'}
-        rightText={'Thay đổi'}
-        leftTextStyle={{color: colors.primary, fontWeight: '700'}}
-        rightTextStyle={{color: colors.primary}}
-        onRightPress={() => setIsVisibleModal(true)}
-    />
  */
 export const DualTextRow = ({
-    leftText,  // Text bên trái
-    rightText, // Text bên phải
-    leftTextStyle = {},  // Style của text trái
-    rightTextStyle = {}, // Style của text phải
-    onRightPress, // Hàm xử lý khi nhấn vào text phải
-    onLeftPress,
-    style, // Style của container
+  leftText,
+  rightText,
+  leftTextStyle = {},
+  rightTextStyle = {},
+  onRightPress,
+  onLeftPress,
+  style,
 }) => {
-    return (
-        <View style={[styles.row, style]}>
-            <Pressable onPress={onLeftPress}>
-                <Text style={[styles.normalText, leftTextStyle]}>{leftText}</Text>
-            </Pressable>
+  return (
+    <View style={[styles.row, style]}>
+      <Pressable onPress={onLeftPress} style={{ flex: 1 }}>
+        <Text style={[styles.normalText, { textAlign: 'left' }, leftTextStyle]}>
+          {leftText}
+        </Text>
+      </Pressable>
 
-            <Pressable onPress={onRightPress}>
-                <Text style={[styles.normalText, rightTextStyle]}>{rightText}</Text>
-            </Pressable>
-        </View>
-    );
+      <Pressable onPress={onRightPress} style={{ flex: 1 }}>
+        <Text style={[styles.normalText, { textAlign: 'right' }, rightTextStyle]}>
+          {rightText}
+        </Text>
+      </Pressable>
+    </View>
+  );
 };
 
 DualTextRow.propTypes = DualTextRowPropTypes;
 
-
-
 const styles = StyleSheet.create({
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginVertical: 6,
-    },
-    normalText: {
-        textAlign: 'justify',
-        lineHeight: 20,
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.black,
-        fontWeight: '400'
-    },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 6,
+  },
+  normalText: {
+    lineHeight: 20,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
+    fontWeight: '400',
+  },
 });
