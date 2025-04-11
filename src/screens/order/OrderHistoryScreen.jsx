@@ -206,7 +206,7 @@ const ItemOrderType = ({ deliveryMethod }) => {
 };
 
 
-const EmptyView = () => (
+export const EmptyView = () => (
   <View style={styles.emptyContainer}>
     <Image
       style={styles.emptyImage}
