@@ -38,16 +38,16 @@ export const AppContextProvider = ({children}) => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
 
-      const user = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.user,
+      const lastName = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.lastName,
       );
-      if (isValid && user.lastName) {
+      if (isValid && lastName) {
         authDispatch({
           type: AuthActionTypes.LOGIN,
           payload: {
             needLogin: false,
             isLoggedIn: true,
-            lastName: user.lastName,
+            lastName,
             needRegister: false,
           },
         });

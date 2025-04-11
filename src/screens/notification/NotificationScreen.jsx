@@ -1,38 +1,53 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, FlatList, Image, Dimensions, Modal, TouchableOpacity } from 'react-native';
+import moment from 'moment/moment';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { getNotifications } from '../../axios';
+import { Column, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
-import { NormalHeader, LightStatusBar, NormalText, PrimaryButton, DualTextRow } from '../../components';
-
+import { Toaster } from '../../utils';
 const { height, width } = Dimensions.get('window');
 
 const NotificationScreen = (props) => {
   const navigation = props.navigation;
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true)
+        const response = await getNotifications()
+        console.log('noti', JSON.stringify(response, null, 2))
+        if (response) {
+          setNotifications(response)
+        }
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
+
 
   const handleItemPress = (item) => {
-    setSelectedItem(item);
-    setModalVisible(true); 
+
   };
 
-  const closeModal = () => {
-    setSelectedItem(null); 
-    setModalVisible(false); 
-  };
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+      <NormalLoading visible={loading} />
       <NormalHeader
         title="Thông báo"
-        rightIcon="check-all"
-        enableRightIcon={true}
         onLeftPress={() => navigation.goBack()}
       />
       <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
+        data={notifications}
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <Card
             item={item}
@@ -41,24 +56,6 @@ const NotificationScreen = (props) => {
         )}
         contentContainerStyle={styles.listContainer}
       />
-
-      {selectedItem && (
-        <Modal
-          visible={modalVisible}
-          animationType="fade"
-          transparent={true}
-          onRequestClose={closeModal}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Image source={{ uri: selectedItem.image }} style={styles.modalImage} />
-              <Text style={styles.modalTitle}>{selectedItem.title}</Text>
-              <NormalText text={selectedItem.message}/>
-              <PrimaryButton title="Đã xem" onPress={closeModal} />
-            </View>
-          </View>
-        </Modal>
-      )}
     </SafeAreaView>
   );
 };
@@ -68,31 +65,38 @@ const Card = ({ item, handleItemPress }) => {
     <TouchableOpacity
       onPress={() => handleItemPress(item)}
       style={styles.itemContainer}>
+
       <Image source={{ uri: item.image }} style={styles.image} />
-      <View style={styles.textContainer}>
-        <DualTextRow leftText={item.title} rightText={item.date} leftTextStyle={styles.title} />
-        <NormalText text={item.message} />
-      </View>
+
+      <Column style={styles.textContainer}>
+        <NormalText text={item.title} style={styles.title} />
+        <Row>
+          {
+            item.type === 'points' ?
+
+              <Image
+                style={styles.icon}
+                source={require('../../assets/seed/icon_seed.png')}
+              /> :
+              <Image
+                style={styles.icon}
+                source={require('../../assets/images/ic_order.png')}
+              />
+          }
+
+          <NormalText
+            style={styles.date}
+            text={moment(item.createdAt).utcOffset(7).format('HH:mm - DD/MM/YYYY')} />
+
+        </Row>
+
+
+
+        <NormalText text={item.content} />
+      </Column>
     </TouchableOpacity>
   );
 };
-
-const data = [
-  {
-    id: '1',
-    title: 'Chào bạn mới',
-    date: '14/1',
-    message: 'Lần đầu đến với GreenZone, mong bạn có thật nhiều niềm vui nhé!',
-    image: 'https://retaildesignblog.net/wp-content/uploads/2018/04/The-Coffee-House-Signature-by-BODC-Ho-Chi-Minh-City-Vietnam-720x480.jpg',
-  },
-  {
-    id: '2',
-    title: 'Ưu đãi khi sử dụng voucher',
-    date: '16/1',
-    message: 'Voucher Greenzone, Mã Giảm Giá The Coffee House 2025',
-    image: 'https://voucherbox.vn/wp-content/uploads/2023/07/Voucher-The-Coffee-House-Mua-1-Tang-1-1.jpg',
-  },
-];
 
 export default NotificationScreen;
 
@@ -114,40 +118,25 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   image: {
-    width: width / 8,
-    height: width / 8,
+    width: width / 6,
+    height: width / 6,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    alignSelf: 'flex-start'
   },
   textContainer: {
     flex: 1,
   },
   title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: 'bold',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '500',
   },
   date: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.gray850,
+    color: colors.pink500,
   },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    width: '100%',
-    backgroundColor: colors.white,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_SMALL,
-  },
-  modalImage: {
-    width: '100%',
-    height: height / 4,
-    resizeMode: 'cover',
-  },
-  modalTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '700',
+  icon: {
+    width: 24,
+    height: 24,
+    borderRadius: 48,
+    marginRight: 4
   },
 });

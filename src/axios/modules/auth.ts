@@ -27,13 +27,10 @@ export const register = async (request: RegisterRequest) => {
       AppAsyncStorage.STORAGE_KEYS.refreshToken,
       data.token.refreshToken.token,
     );
+   
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.userId,
-      data.user._id,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.user,
-      data.user,
+      AppAsyncStorage.STORAGE_KEYS.lastName,
+      data.user.lastName,
     );
 
     return data;
@@ -71,8 +68,8 @@ export const verifyOTP = async ({phoneNumber, code}) => {
     );
 
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.user,
-      data.user,
+      AppAsyncStorage.STORAGE_KEYS.lastName,
+      data.user.lastName,
     );
 
     return data;

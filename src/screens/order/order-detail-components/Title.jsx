@@ -14,7 +14,7 @@ export const Title = ({
         <View style={styles.titleContainer}>
             {icon && <Icon source={icon} color={iconColor} size={iconSize} />}
 
-            <Text style={[styles.greenText, titleStyle]}>{title}</Text>
+            <Text style={[styles.title, titleStyle]}>{title}</Text>
         </View>
     );
 };
@@ -26,9 +26,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: GLOBAL_KEYS.GAP_SMALL,
     },
-    greenText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-        color: colors.primary,
-        fontWeight: '600',
+    title: {
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+        color: colors.lemon,
+        fontWeight: '500',
     }
 })

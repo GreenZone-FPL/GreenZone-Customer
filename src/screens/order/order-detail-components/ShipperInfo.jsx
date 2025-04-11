@@ -14,6 +14,8 @@ export const ShipperInfo = ({ messageClick, shipper }) => {
     );
   };
 
+  console.log('shipper', JSON.stringify(shipper, null, 2))
+
   return (
     <Row style={styles.container}>
       <Image

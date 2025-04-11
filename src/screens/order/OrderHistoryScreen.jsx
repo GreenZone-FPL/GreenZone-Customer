@@ -1,7 +1,7 @@
 import moment from 'moment/moment';
 import React from 'react';
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
+import { Column, CustomTabView, DeliveryMethodText, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
@@ -16,7 +16,7 @@ const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = () => {
-  const {cartState } = useAppContext();
+  const { cartState } = useAppContext();
 
   const {
     navigation,
@@ -93,7 +93,7 @@ const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelecte
         data={orders}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder = {setSelectedOrder}/>
+          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder={setSelectedOrder} />
         )}
         contentContainerStyle={{ gap: 5 }}
       />
@@ -138,9 +138,8 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
                 : 'Chưa có thời gian'}
             </Text>
 
-            <NormalText
-              style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.teal700 }}
-              text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
+            <DeliveryMethodText deliveryMethod={order.deliveryMethod} />
+
           </Column>
           <Column style={styles.orderColumnEnd}>
             {
@@ -160,13 +159,6 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&
           <Row style={styles.buttonRow}>
-            <Pressable 
-            onPress={() => Toaster.show('Tính năng đang phát triển')}
-            style={styles.changeMethodBtn}>
-              <NormalText text='Đổi sang thanh toán khi nhận hàng' style={styles.changeMethodText} />
-
-            </Pressable>
-
             <Pressable
               onPress={() => {
                 console.log('orderDetail', JSON.stringify(order, null, 2))
@@ -178,6 +170,7 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
             </Pressable>
           </Row>
         }
+
 
       </Column>
 
@@ -274,28 +267,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingHorizontal: 16,
   },
-  changeMethodBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.fbBg,
-    backgroundColor: colors.white,
-    marginRight: 5,
-    elevation: 1
-  },
-  changeMethodText: {
-    color: colors.black,
-    textAlign: 'center',
-    fontWeight: '400',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
-  },
   payBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: colors.primary,
-    marginLeft: 8,
+    alignSelf: 'flex-end'
   },
   payText: {
     color: colors.white,

@@ -19,9 +19,12 @@ import { getAllMerchants } from '../../axios/modules/merchant';
 import {
   AuthButton,
   AuthContainer,
+  Column,
   CustomSearchBar,
   HeaderWithBadge,
   Indicator,
+  NormalText,
+  TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
@@ -268,17 +271,14 @@ const MerchantScreen = ({ navigation, route }) => {
             )}
           </View>
 
-          <TouchableOpacity onPress={toggleView}>
-            <View style={styles.map}>
-              <Icon
-                source={isMapView ? 'store' : 'google-maps'}
-                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                color={colors.primary}
-              />
-              <Text style={styles.normalText}>
-                {isMapView ? 'Cửa hàng' : 'Bản đồ'}
-              </Text>
-            </View>
+          <TouchableOpacity style={styles.map} onPress={toggleView}>
+            <Icon
+              source={isMapView ? 'store' : 'google-maps'}
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              color={colors.primary}
+            />
+            <NormalText text={isMapView ? 'Cửa hàng' : 'Bản đồ'} />
+
           </TouchableOpacity>
         </View>
 
@@ -341,7 +341,7 @@ const MerchantScreen = ({ navigation, route }) => {
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.mechant1}>
-              <Text style={styles.tittle}>Cửa hàng gần bạn</Text>
+              <Text style={styles.title}>Cửa hàng gần bạn</Text>
 
               {sortedMerchants.length == 0 ? (
                 <Indicator
@@ -364,7 +364,7 @@ const MerchantScreen = ({ navigation, route }) => {
                 />
               )}
             </View>
-            <Text style={styles.tittle}>Cửa hàng khác</Text>
+            <Text style={styles.title}>Cửa hàng khác</Text>
             {sortedMerchants.length == 0 ? (
               <Indicator
                 size={GLOBAL_KEYS.ICON_SIZE_LARGE}
@@ -382,6 +382,7 @@ const MerchantScreen = ({ navigation, route }) => {
                   RenderItem({ handleMerchant, item, haversineDistance })
                 }
                 keyExtractor={item => item._id}
+                contentContainerStyle={{ gap: 3, backgroundColor: colors.fbBg }}
               />
             )}
           </ScrollView>
@@ -394,15 +395,20 @@ const MerchantScreen = ({ navigation, route }) => {
 const RenderItem = ({ item, handleMerchant, haversineDistance }) => (
   <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
     <Image source={{ uri: item.images[0] }} style={styles.imageItem} />
-    <View style={styles.infoItem}>
-      <Text style={styles.textNamelocation}>{item.name}</Text>
-      <Text style={styles.location}>
-        {item.specificAddress}, {item.ward}, {item.district}, {item.province}
-      </Text>
-      <Text style={styles.distance}>
-        {haversineDistance(item.latitude, item.longitude)} km
-      </Text>
-    </View>
+
+    <Column style={styles.infoItem}>
+
+      <TitleText text={item.name} />
+
+      <NormalText text={`${item.specificAddress}, ${item.ward}, ${item.district}, ${item.province}`} />
+
+
+      <NormalText
+        style={styles.distance}
+        text={`${haversineDistance(item.latitude, item.longitude)} km`}
+      />
+
+    </Column>
   </TouchableOpacity>
 );
 
@@ -448,10 +454,11 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'flex-end',
   },
-  tittle: {
+  title: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginVertical: 10,
+    color: colors.lemon,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   mapView: {
@@ -474,20 +481,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginBottom: 8,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 1,
-    borderWidth: 1,
     borderColor: colors.fbBg,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+
   },
-  infoItem: { flex: 1, gap: 4 },
+  infoItem: { flex: 1 },
   imageItem: {
     width: 80,
     height: 80,
@@ -499,7 +497,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   distance: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.earthYellow
   },
   modalOverlay: {
     flex: 1,

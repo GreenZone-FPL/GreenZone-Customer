@@ -18,12 +18,12 @@ export const Footer: React.FC<FooterProps> = ({ cartState, showDialog, timeInfo,
 
     return (
         <Row style={styles.container}>
-            <Column>
+            <Column style={{ gap: 0 }}>
                 <TitleText
                     style={styles.totalText}
                     text={`${TextFormatter.formatCurrency(paymentDetails.paymentTotal)}`}
                 />
-                <NormalText text={`${cartState.orderItems.length} sản phẩm`} />
+                {/* <NormalText text={`${cartState.orderItems.length} sản phẩm`} /> */}
                 {cartState?.voucher && (
                     <NormalText
                         text={`Bạn tiết kiệm ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`}

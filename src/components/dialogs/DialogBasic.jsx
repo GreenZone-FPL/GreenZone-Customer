@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   titleText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '600',
     color: colors.black,
     textAlign: 'center',

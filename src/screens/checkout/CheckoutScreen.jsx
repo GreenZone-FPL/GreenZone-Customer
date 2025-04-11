@@ -65,10 +65,8 @@ const CheckoutScreen = () => {
     onApproveCreateOrder,
   } = useCheckoutContainer();
 
-  useEffect(() => {
-    console.log('cartState', JSON.stringify(cartState, null, 2));
-  }, [cartState]);
-
+  
+  console.log('cartState', JSON.stringify(cartState, null, 2));
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -87,7 +85,7 @@ const CheckoutScreen = () => {
                 style={{
                   paddingVertical: 16,
                   backgroundColor: colors.white,
-                  marginVertical: 8,
+                  marginVertical: 5,
                 }}>
                 <DualTextRow
                   style={{

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, ViewStyle } from "react-native";
 import { NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from "../../../constants";
 import { AppAsyncStorage, CartManager } from "../../../utils";
+import { getProfile } from "../../../axios";
 
 interface RecipientInfoProps {
     cartState: any,
@@ -22,7 +23,8 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
     useEffect(() => {
         const handleUserData = async () => {
             try {
-                const userData = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
+                const userData: any = await getProfile();
+                console.log('userData', JSON.stringify(userData, null, 2))
                 if (userData) {
                     setUser(userData);
                     if (!cartState?.consigneeName) {
@@ -47,7 +49,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
 
     return (
         <Pressable onPress={onChangeRecipientInfo} style={[styles.container, style]}>
-            <NormalText text={`${consigneeName}`} style={styles.consigneeName}/>
+            <NormalText text={`${consigneeName}`} style={styles.consigneeName} />
             <NormalText text={`${consigneePhone}`} style={styles.phoneText} />
         </Pressable>
     );

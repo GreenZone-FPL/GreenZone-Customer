@@ -64,21 +64,21 @@ const SeedScreen = ({ navigation }) => {
           style={styles.iconSeed}
           source={require('../../assets/seed/icon_seed.png')}
         />
-        <Column>
-          <Row style={{ gap: 4 }}>
-            <Text style={styles.headerText}>Số</Text>
-            <Text style={[styles.headerText, { color: colors.primary, fontWeight: '500' }]}>Seed</Text>
-            <Text style={styles.headerText}>của bạn</Text>
-          </Row>
+        
+        <Column >
+          <Text style={styles.headerText}>Số seed của bạn</Text>
 
           <Text style={styles.beanAmount}>
             {TextFormatter.formatted(user?.seed) || 0}{' '}
+            <Text style={[styles.beanAmount, { color: colors.gray700, fontSize: 14 }]}>
+              seed
+            </Text>
           </Text>
         </Column>
+
+        
       </Row>
 
-
-      {/* <Text style={styles.sectionTitle}>Từ Green Zone</Text> */}
       <VoucherVertical
         vouchers={vouchers}
         type={2}
@@ -98,16 +98,14 @@ const styles = StyleSheet.create({
     gap: 16
   },
   headerRow: {
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderWidth: 1,
     borderRadius: 16,
-    borderColor: colors.yellow700,
-    padding: 8,
-    margin: 16
+    marginHorizontal: 16,
+    gap: 16,
+    marginBottom: 16,
+
   },
   iconSeed: {
     width: 70,
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
   beanAmount: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.primary,
+    color: colors.orange700,
   },
   beanText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,

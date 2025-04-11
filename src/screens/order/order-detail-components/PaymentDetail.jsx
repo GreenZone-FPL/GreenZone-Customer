@@ -3,7 +3,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon, Snackbar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { DualTextRow, Row, StatusText } from '../../../components';
+import { DeliveryMethodText, DualTextRow, NormalText, Row, StatusText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 
 export const PaymentDetails = ({ detail }) => {
@@ -34,17 +34,16 @@ export const PaymentDetails = ({ detail }) => {
     const getPaymentStatus = () => {
         if (status === 'completed') {
             return { text: 'Đã thanh toán', color: colors.primary };
-        }
-        if (paymentMethod === 'cod') {
-            return { text: 'Chưa thanh toán', color: colors.orange700 };
-        }
-        if (status === 'awaitingPayment') {
+        } else if (paymentMethod === 'online' && status !== 'awatingPayment') {
+            return { text: 'Đã thanh toán', color: colors.primary };
+        } else if (status === 'awaitingPayment') {
             return { text: 'Chờ thanh toán', color: colors.pink500 };
         }
-        if (status === 'cancelled') {
+        else {
             return { text: 'Chưa thanh toán', color: colors.orange700 };
         }
-        return { text: 'Đã thanh toán', color: colors.primary };
+
+
     };
 
     const paymentStatus = getPaymentStatus();
@@ -77,15 +76,25 @@ export const PaymentDetails = ({ detail }) => {
                 backgroundColor: colors.white,
             }}>
             <DualTextRow
-                leftText="Chi tiết thanh toán"
+                leftText="Chi tiết đơn hàng"
                 leftTextStyle={{
-                    color: colors.primary,
+                    color: colors.lemon,
                     fontWeight: 'bold',
                     fontSize: 16,
                     marginBottom: 8,
                 }}
             />
             <OrderId _id={_id} />
+            <Row
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 6,
+                }}>
+                <NormalText text='Phương thức giao hàng' />
+                <DeliveryMethodText deliveryMethod={detail?.deliveryMethod} style={{ textAlign: 'right' }} />
+            </Row>
+          
 
             <Row
                 style={{
@@ -160,7 +169,7 @@ export const PaymentDetails = ({ detail }) => {
 
             {detail?.completedAt && (
                 <DualTextRow
-                    leftText="Thời gian hoàn thành"
+                    leftText="Thời gian nhận hàng"
                     rightText={new Date(detail?.completedAt).toLocaleString('vi-VN')}
                 />
             )}
