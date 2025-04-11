@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     flatListContentContainer: {
-        backgroundColor: colors.white,
+        backgroundColor: colors.fbBg,
+        gap: 2
     },
 })

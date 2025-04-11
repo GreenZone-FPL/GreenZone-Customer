@@ -26,7 +26,7 @@ export const QuantityButton = ({
     iconName,
     onPress,
     iconColor,
-    iconSize = 18,
+    iconSize = 16,
     style,
     backgroundColor = colors.fbBg
 }) => (

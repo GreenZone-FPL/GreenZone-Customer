@@ -1,7 +1,7 @@
 import React from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {TitleText} from '../../../components';
-import {useNavigation} from '@react-navigation/native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TitleText } from '../../../components';
+import { useNavigation } from '@react-navigation/native';
 import {
   Coin1,
   MessageFavorite,
@@ -16,16 +16,16 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../../layouts/graphs';
-import {colors, GLOBAL_KEYS} from '../../../constants';
+import { colors, GLOBAL_KEYS } from '../../../constants';
 
-type NavigationProps = {navigate: (screen: string) => void};
+type NavigationProps = { navigate: (screen: string) => void };
 type ItemProps = {
   IconComponent: React.FC;
   title: string;
   onPress?: () => void;
 };
 
-const Item: React.FC<ItemProps> = ({IconComponent, title, onPress}) => {
+const Item: React.FC<ItemProps> = ({ IconComponent, title, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.item}>
       <IconComponent />
@@ -42,27 +42,21 @@ export const CategoryView: React.FC = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{gap: 22}}>
+        contentContainerStyle={{ gap: 22 }}>
         <Item
-        
+
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
-          onPress={() => navigation.navigate(VoucherGraph.VouchersMerchantScreen)}
+          onPress={() => navigation.navigate(VoucherGraph.SelectVouchersScreen)}
         />
+
+
 
         <Item
           IconComponent={() => (
-            <Rank size="50" color={colors.pink500} variant="Bulk" />
-          )}
-          title="Hạng thành viên"
-          onPress={() => navigation.navigate(AppGraph.MembershipScreen)}
-        />
-
-        <Item
-          IconComponent={() => (
-            <TaskSquare size="50" color={colors.orange700} variant="Bulk" />
+            <TaskSquare size="50" color={colors.pink500} variant="Bulk" />
           )}
           title="Đơn Hàng"
           onPress={() => navigation.navigate(OrderGraph.OrderHistoryScreen)}
@@ -72,16 +66,23 @@ export const CategoryView: React.FC = () => {
           IconComponent={() => (
             <Coffee size="50" color={colors.yellow700} variant="Bulk" />
           )}
-          title="Đổi Bean"
-          onPress={()=>{navigation.navigate(VoucherGraph.BeanScreen)}}
+          title="Đổi Seed"
+          onPress={()=>{navigation.navigate(VoucherGraph.SeedScreen)}}
         />
 
         <Item
           IconComponent={() => (
-            <MessageFavorite size="50" color={colors.primary} variant="Bulk" />
+            <MessageFavorite size="50" color={colors.orange700} variant="Bulk" />
           )}
           title="Góp ý"
           onPress={() => navigation.navigate(UserGraph.ContactScreen)}
+        />
+        <Item
+          IconComponent={() => (
+            <Rank size="50" color={colors.teal900} variant="Bulk" />
+          )}
+          title="Hạng thành viên"
+          onPress={() => navigation.navigate(AppGraph.MembershipScreen)}
         />
       </ScrollView>
     </View>

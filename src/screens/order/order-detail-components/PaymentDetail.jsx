@@ -10,6 +10,7 @@ export const PaymentDetails = ({ detail }) => {
     const {
         _id,
         shippingFee,
+        cancelReason,
         voucher,
         paymentMethod,
         orderItems,
@@ -18,6 +19,7 @@ export const PaymentDetails = ({ detail }) => {
         createdAt,
     } = detail;
 
+
     const subTotal = orderItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
@@ -25,8 +27,8 @@ export const PaymentDetails = ({ detail }) => {
 
     const discount = voucher
         ? voucher.discountType === 'percentage'
-            ? (subTotal * voucher.discountValue) / 100
-            : voucher.discountValue
+            ? (subTotal * voucher.value) / 100
+            : voucher.value
         : 0;
 
     const getPaymentStatus = () => {
@@ -119,6 +121,14 @@ export const PaymentDetails = ({ detail }) => {
                 rightText={paymentStatus.text}
                 rightTextStyle={{ color: paymentStatus.color }}
             />
+            {
+                cancelReason &&
+                <DualTextRow
+                    leftText="Lý do hủy đơn"
+                    rightText={cancelReason}
+                    rightTextStyle={styles.normalText}
+                />
+            }
 
             {createdAt && (
                 <DualTextRow
@@ -159,6 +169,7 @@ export const PaymentDetails = ({ detail }) => {
                 <DualTextRow
                     leftText="Thời gian hủy đơn"
                     rightText={new Date(detail?.cancelledAt).toLocaleString('vi-VN')}
+
                 />
             )}
 
@@ -246,10 +257,8 @@ const styles = StyleSheet.create({
     },
 
     normalText: {
-        lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
-        marginRight: 4,
     },
     row: {
         flexDirection: 'row',
