@@ -24,5 +24,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
+    lineHeight: 20
   },
 });

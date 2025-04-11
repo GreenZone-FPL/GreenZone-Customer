@@ -7,3 +7,4 @@ export * from './modules/address';
 export * from './modules/voucher';
 export * from './modules/order';
 export * from './modules/user';
+export * from './modules/notification';
