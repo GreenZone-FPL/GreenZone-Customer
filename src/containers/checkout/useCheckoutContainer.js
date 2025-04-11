@@ -156,6 +156,8 @@ export const useCheckoutContainer = () => {
 
                 response = await createOrder(deliveryOrder);
             }
+            
+            setDialogCreateOrderVisible(false);
             const newActiveOrder = {
                 visible: response?.data.status !== 'awaitingPayment',
                 orderId: response?.data?._id,
@@ -177,6 +179,7 @@ export const useCheckoutContainer = () => {
                     });
                 },
             );
+
 
             console.log('order data =', JSON.stringify(response, null, 2));
             if (response?.data.status !== OrderStatus.AWAITING_PAYMENT.value) {
@@ -219,7 +222,7 @@ export const useCheckoutContainer = () => {
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
         } finally {
             setLoading(false)
-            setDialogCreateOrderVisible(false);
+           
         }
     }
 

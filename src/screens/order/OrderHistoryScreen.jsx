@@ -1,7 +1,7 @@
 import moment from 'moment/moment';
 import React from 'react';
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Column, CustomTabView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
+import { Column, CustomTabView, DeliveryMethodText, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
@@ -138,9 +138,8 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
                 : 'Chưa có thời gian'}
             </Text>
 
-            <NormalText
-              style={{ color: order.deliveryMethod === 'pickup' ? colors.orange700 : colors.teal700 }}
-              text={order.deliveryMethod === 'pickup' ? 'Mang đi' : 'Giao tận nơi'} />
+            <DeliveryMethodText deliveryMethod={order.deliveryMethod} />
+
           </Column>
           <Column style={styles.orderColumnEnd}>
             {
@@ -159,17 +158,19 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
 
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&
-          <Pressable
-            onPress={() => {
-              console.log('orderDetail', JSON.stringify(order, null, 2))
-              setSelectedOrder(order)
-              onPay()
-            }}
-            style={styles.payBtn}>
-            <NormalText text='Thanh toán' style={styles.payText} />
-          </Pressable>
-
+          <Row style={styles.buttonRow}>
+            <Pressable
+              onPress={() => {
+                console.log('orderDetail', JSON.stringify(order, null, 2))
+                setSelectedOrder(order)
+                onPay()
+              }}
+              style={styles.payBtn}>
+              <NormalText text='Thanh toán' style={styles.payText} />
+            </Pressable>
+          </Row>
         }
+
 
       </Column>
 
@@ -266,28 +267,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     paddingHorizontal: 16,
   },
-  changeMethodBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.fbBg,
-    backgroundColor: colors.white,
-    marginRight: 5,
-    elevation: 1
-  },
-  changeMethodText: {
-    color: colors.black,
-    textAlign: 'center',
-    fontWeight: '400',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
-  },
   payBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 20,
     borderRadius: 20,
     backgroundColor: colors.primary,
-    marginLeft: 8,
+    alignSelf: 'flex-end'
   },
   payText: {
     color: colors.white,

@@ -43,7 +43,8 @@ export const ProductsInfo: React.FC<ProductsInfoProps> = ({ items, onEditItem, c
 const styles = StyleSheet.create({
     titleText: {
         color: colors.primary,
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
         backgroundColor: colors.white,
     },
     productItemContainer: {

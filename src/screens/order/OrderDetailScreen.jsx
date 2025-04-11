@@ -6,8 +6,8 @@ import {
   Text,
   View
 } from 'react-native';
-import { Icon } from 'react-native-paper';
 import {
+  DeliveryMethodText,
   LightStatusBar,
   NormalHeader,
   NormalLoading,
@@ -20,7 +20,6 @@ import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constant
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -74,16 +73,13 @@ const OrderDetailScreen = ({ route }) => {
           style={styles.containerContent}
         >
           <Row style={styles.statusRow}>
-            <Text style={styles.statusText}>
-              {orderDetail?.deliveryMethod === 'pickup'
-                ? 'Tự đến lấy hàng'
-                : 'Giao hàng tận nơi'}
-            </Text>
+          
+            <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
           </Row>
 
-      
+
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo
               messageClick={() =>
@@ -113,7 +109,7 @@ const OrderDetailScreen = ({ route }) => {
             createdAt={orderDetail.createdAt}
           />
 
-        
+
 
 
           <Row style={styles.buttonRow}>
@@ -187,6 +183,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flex: 1,
+    backgroundColor: colors.white
   },
   payTitle: {
     fontSize: 12,
@@ -194,6 +191,7 @@ const styles = StyleSheet.create({
   payButton: {
     marginHorizontal: 16,
     flex: 1,
+    padding: 13
   },
   codButton: {
     backgroundColor: colors.white,
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: colors.white,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
     margin: 16,

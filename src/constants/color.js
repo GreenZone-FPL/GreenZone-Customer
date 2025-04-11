@@ -40,5 +40,9 @@ export const colors = Object.freeze({
   invalid: '#D32F2F',
   disabledBg: '#E3E3E5',
   disabledText: '#ACACAE',
-  borderInput: '#D9D9D9'
+  borderInput: '#D9D9D9',
+  magenta: '#FF00FF',
+  violet: '#c300ff',
+  earthYellow: '#bd9e02',
+  lemon: '#50ad03'
 });

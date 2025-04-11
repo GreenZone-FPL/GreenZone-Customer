@@ -3,9 +3,8 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon, Snackbar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { DualTextRow, Row, StatusText } from '../../../components';
+import { DeliveryMethodText, DualTextRow, NormalText, Row, StatusText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
-import { stat } from 'react-native-fs';
 
 export const PaymentDetails = ({ detail }) => {
     const {
@@ -44,7 +43,7 @@ export const PaymentDetails = ({ detail }) => {
             return { text: 'Chưa thanh toán', color: colors.orange700 };
         }
 
-       
+
     };
 
     const paymentStatus = getPaymentStatus();
@@ -79,19 +78,23 @@ export const PaymentDetails = ({ detail }) => {
             <DualTextRow
                 leftText="Chi tiết đơn hàng"
                 leftTextStyle={{
-                    color: colors.primary,
+                    color: colors.lemon,
                     fontWeight: 'bold',
                     fontSize: 16,
                     marginBottom: 8,
                 }}
             />
             <OrderId _id={_id} />
-            <DualTextRow
-                leftText="Phương thức giao hàng"
-                rightText={detail?.deliveryMethod === 'pickup'
-                    ? 'Tự đến lấy hàng'
-                    : 'Giao hàng tận nơi'}
-            />
+            <Row
+                style={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginVertical: 6,
+                }}>
+                <NormalText text='Phương thức giao hàng' />
+                <DeliveryMethodText deliveryMethod={detail?.deliveryMethod} style={{ textAlign: 'right' }} />
+            </Row>
+          
 
             <Row
                 style={{
