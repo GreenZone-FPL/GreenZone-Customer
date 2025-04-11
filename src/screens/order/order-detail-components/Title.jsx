@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
         gap: GLOBAL_KEYS.GAP_SMALL,
     },
     greenText: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
         color: colors.primary,
-        fontWeight: '600',
+        fontWeight: '500',
     }
 })

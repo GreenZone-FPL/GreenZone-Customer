@@ -5,6 +5,7 @@ import { Icon, Snackbar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import { DualTextRow, Row, StatusText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
+import { stat } from 'react-native-fs';
 
 export const PaymentDetails = ({ detail }) => {
     const {
@@ -34,17 +35,16 @@ export const PaymentDetails = ({ detail }) => {
     const getPaymentStatus = () => {
         if (status === 'completed') {
             return { text: 'Đã thanh toán', color: colors.primary };
-        }
-        if (paymentMethod === 'cod') {
-            return { text: 'Chưa thanh toán', color: colors.orange700 };
-        }
-        if (status === 'awaitingPayment') {
+        } else if (paymentMethod === 'online' && status !== 'awatingPayment') {
+            return { text: 'Đã thanh toán', color: colors.primary };
+        } else if (status === 'awaitingPayment') {
             return { text: 'Chờ thanh toán', color: colors.pink500 };
         }
-        if (status === 'cancelled') {
+        else {
             return { text: 'Chưa thanh toán', color: colors.orange700 };
         }
-        return { text: 'Đã thanh toán', color: colors.primary };
+
+       
     };
 
     const paymentStatus = getPaymentStatus();
@@ -77,7 +77,7 @@ export const PaymentDetails = ({ detail }) => {
                 backgroundColor: colors.white,
             }}>
             <DualTextRow
-                leftText="Chi tiết thanh toán"
+                leftText="Chi tiết đơn hàng"
                 leftTextStyle={{
                     color: colors.primary,
                     fontWeight: 'bold',
@@ -86,6 +86,12 @@ export const PaymentDetails = ({ detail }) => {
                 }}
             />
             <OrderId _id={_id} />
+            <DualTextRow
+                leftText="Phương thức giao hàng"
+                rightText={detail?.deliveryMethod === 'pickup'
+                    ? 'Tự đến lấy hàng'
+                    : 'Giao hàng tận nơi'}
+            />
 
             <Row
                 style={{
@@ -160,7 +166,7 @@ export const PaymentDetails = ({ detail }) => {
 
             {detail?.completedAt && (
                 <DualTextRow
-                    leftText="Thời gian hoàn thành"
+                    leftText="Thời gian nhận hàng"
                     rightText={new Date(detail?.completedAt).toLocaleString('vi-VN')}
                 />
             )}

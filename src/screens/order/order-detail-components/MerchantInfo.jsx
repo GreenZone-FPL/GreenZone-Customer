@@ -2,12 +2,13 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
+import { Column, NormalText } from '../../../components';
 
 export const MerchantInfo = ({ store }) => {
   return (
-    <View style={styles.areaContainer}>
-      <Title title="Cửa hàng" icon="store-outline" />
-      <Title title={store.name} titleStyle={{ color: colors.black }} />
+    <Column style={styles.areaContainer}>
+      <Title title="Cửa hàng" />
+      <NormalText text={store.name} style={{ fontWeight: '500' }} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
@@ -16,7 +17,7 @@ export const MerchantInfo = ({ store }) => {
           store.province,
         ].join(' ')}
       </Text>
-    </View>
+    </Column>
   );
 };
 

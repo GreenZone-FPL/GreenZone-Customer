@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, FlatList, Image, Dimensions, Modal, TouchableOpacity } from 'react-native';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { NormalHeader, LightStatusBar, NormalText, PrimaryButton, DualTextRow, NormalLoading, Column, Row } from '../../components';
-import { Toaster } from '../../utils';
-import { getNotifications } from '../../axios';
 import moment from 'moment/moment';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { getNotifications } from '../../axios';
+import { Column, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Toaster } from '../../utils';
 const { height, width } = Dimensions.get('window');
 
 const NotificationScreen = (props) => {

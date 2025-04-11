@@ -39,5 +39,6 @@ export const colors = Object.freeze({
   lightBlue: '#F1F9FC', // Xanh nhạt
   invalid: '#D32F2F',
   disabledBg: '#E3E3E5',
-  disabledText: '#ACACAE'
+  disabledText: '#ACACAE',
+  borderInput: '#D9D9D9'
 });

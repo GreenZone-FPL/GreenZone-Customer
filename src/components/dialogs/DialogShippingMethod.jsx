@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Modal,
@@ -9,11 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {OverlayStatusBar} from '../status-bars/OverlayStatusBar';
-import {AppAsyncStorage} from '../../utils';
-import {useAppContext} from '../../context/appContext';
+import { Icon } from 'react-native-paper';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
+import { AppAsyncStorage } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { getProfile } from '../../axios';
 
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -31,15 +32,17 @@ export const DialogShippingMethod = ({
   onOptionSelect,
 }) => {
   const [user, setUser] = useState([]);
-  const {cartState} = useAppContext();
+  const { cartState } = useAppContext();
 
   // Lấy vị trí người dùng
   useEffect(() => {
     const getUserAndCurrentLocation = async () => {
       try {
-        setUser(
-          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
-        );
+        const response = await getProfile()
+        if(response){
+          setUser(response)
+        }
+
       } catch (error) {
         console.log('error', error);
       }
@@ -99,7 +102,7 @@ export const DialogShippingMethod = ({
                         source={option.image}
                         style={[
                           option.label == 'Mang đi'
-                            ? {width: 40, height: 40}
+                            ? { width: 40, height: 40 }
                             : styles.icon,
                         ]}
                       />
@@ -122,10 +125,10 @@ export const DialogShippingMethod = ({
                   <Text style={styles.phoneText}>
                     {user?.firstName
                       ? user?.firstName +
-                        ' ' +
-                        user?.lastName +
-                        ' - ' +
-                        user?.phoneNumber
+                      ' ' +
+                      user?.lastName +
+                      ' - ' +
+                      user?.phoneNumber
                       : null}
                   </Text>
                 ) : (
@@ -155,7 +158,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 4,

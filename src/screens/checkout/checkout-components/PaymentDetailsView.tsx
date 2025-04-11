@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { DualTextRow } from '../../../components';
+import { DualTextRow, TitleText } from '../../../components';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from "../../../constants";
 import { CartManager, TextFormatter } from "../../../utils";
 
@@ -18,11 +18,8 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
 
     return (
         <View style={styles.containerItem}>
-            <DualTextRow
-                style={styles.dualTextRow}
-                leftText="Chi tiết thanh toán"
-                leftTextStyle={styles.leftText}
-            />
+          
+            <TitleText text="Chi tiết thanh toán" style={styles.leftText}/>
 
             <DualTextRow
                 style={styles.dualTextRow}
@@ -70,22 +67,21 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
 
 const styles = StyleSheet.create({
     containerItem: {
-        backgroundColor: colors.fbBg,
-        gap: 2,
-        marginBottom: 2
+        backgroundColor: colors.white,
+        marginTop: 5,
     },
     dualTextRow: {
         marginVertical: 0,
-        paddingVertical: 12,
+        paddingVertical: 8,
         backgroundColor: colors.white,
         paddingHorizontal: 16,
-
     },
     leftText: {
         color: colors.primary,
         fontWeight: 'bold',
         fontSize: 16,
-        paddingVertical: 8,
+        marginHorizontal: 16,
+        marginTop: 10
     },
     voucherSelected: {
         color: colors.primary,

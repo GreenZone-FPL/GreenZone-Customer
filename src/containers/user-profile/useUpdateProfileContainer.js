@@ -109,8 +109,8 @@ export const useUpdateProfileContainer = (profile) => {
             if (result?._id) {
                 setHasImageChanged(false);
                 await AppAsyncStorage.storeData(
-                    AppAsyncStorage.STORAGE_KEYS.user,
-                    result,
+                    AppAsyncStorage.STORAGE_KEYS.lastName,
+                    result.lastName,
                 );
                 await authDispatch({
                     type: AuthActionTypes.LOGIN,

@@ -35,12 +35,12 @@ export const RecipientInfo = ({ detail }) => {
           styles.areaContainer,
           { paddingHorizontal: 16, paddingVertical: 8, gap: 8 },
         ]}>
-        <Title title="Người nhận" icon="map-marker-outline" />
+        <Title title="Người nhận"  />
         <NormalText
           text={[recipientName, recipientPhone].join(' - ')}
           style={{ color: colors.black, fontWeight: '500' }}
         />
-        {/* Hiển thị địa chỉ nếu có */}
+     
         {deliveryMethod !== 'pickup' && (
           <Text style={styles.normalText}>{recipientAddress}</Text>
         )}

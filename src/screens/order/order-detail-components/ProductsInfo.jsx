@@ -8,7 +8,7 @@ export const ProductsInfo = ({ orderItems }) => {
     return (
         <View style={[styles.areaContainer, { borderBottomWidth: 0 }]}>
             <View style={{ marginHorizontal: 16 }}>
-                <Title title={'Danh sách sản phẩm'} icon="clipboard-list" />
+                <Title title={'Danh sách sản phẩm'}/>
             </View>
 
             <FlatList

@@ -59,12 +59,6 @@ export const useCheckoutContainer = () => {
                     },
                 });
 
-                // {
-                //     label: 'Thanh toán khi nhận hàng',
-                //     image: require('../../../assets/images/logo_vnd.png'),
-                //     value: 'cash',
-                //     paymentMethod: PaymentMethod.COD.value,
-                // },
             }
             setDialogPaymentMethodVisible(false);
         } else {
@@ -94,6 +88,7 @@ export const useCheckoutContainer = () => {
                     type: CartActionTypes.UPDATE_ORDER_INFO,
                     payload: {
                         paymentMethod: selectedPayment.paymentMethod,
+                        onlineMethod: selectedPayment.value
                     },
                 });
             } else {
@@ -139,7 +134,7 @@ export const useCheckoutContainer = () => {
     }, []);
 
 
-    const onApproveCreateOrder =  async () => {
+    const onApproveCreateOrder = async () => {
         try {
             setLoading(true)
             let response = null;
@@ -184,11 +179,11 @@ export const useCheckoutContainer = () => {
             );
 
             console.log('order data =', JSON.stringify(response, null, 2));
-            if(response?.data.status !== OrderStatus.AWAITING_PAYMENT.value){
+            if (response?.data.status !== OrderStatus.AWAITING_PAYMENT.value) {
                 await CartManager.clearOrderItems(cartDispatch);
             }
-           
-           
+
+
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
                     orderId: response.data._id,

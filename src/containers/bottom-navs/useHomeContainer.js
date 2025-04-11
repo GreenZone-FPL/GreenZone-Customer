@@ -1,4 +1,7 @@
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { getAllProducts, getProfile } from '../../axios';
+import { DeliveryMethod } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
   AppGraph,
@@ -10,9 +13,6 @@ import {
 } from '../../layouts/graphs';
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
 import { useAppContainer } from '../useAppContainer';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts } from '../../axios';
-import { DeliveryMethod } from '../../constants';
 
 export const useHomeContainer = () => {
   const { authState, cartState, cartDispatch } = useAppContext();
@@ -28,7 +28,7 @@ export const useHomeContainer = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
 
-  
+
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
@@ -49,20 +49,25 @@ export const useHomeContainer = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setUser(
-          await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user),
-        );
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-  // user.code?
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Màn hình được focus và useFocusEffect chạy');
+  
+      const fetchProfile = async () => {
+        try {
+          const response = await getProfile();
+          if (response) {
+            setUser(response);
+          }
+        } catch (error) {
+          console.log('error', error);
+        }
+      };
+  
+      fetchProfile();
+  
+    }, [])
+  );
 
   useEffect(() => {
     if (allProducts.length === 0) {
@@ -165,7 +170,7 @@ export const useHomeContainer = () => {
     });
   };
 
-  
+
   const navigateNotification = () => {
     navigation.navigate(AppGraph.NotificationScreen);
   };

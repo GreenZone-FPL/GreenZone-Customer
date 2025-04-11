@@ -16,7 +16,7 @@ import {
   Row,
   StatusText,
 } from '../../components';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
+import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
 import { ShoppingGraph } from '../../layouts/graphs';
@@ -83,7 +83,8 @@ const OrderDetailScreen = ({ route }) => {
             <StatusText status={orderDetail.status} />
           </Row>
 
-          {['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
+      
+          {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo
               messageClick={() =>
                 navigation.navigate(ShoppingGraph.ChatScreen)
@@ -112,16 +113,7 @@ const OrderDetailScreen = ({ route }) => {
             createdAt={orderDetail.createdAt}
           />
 
-          {
-            orderDetail.status === OrderStatus.AWAITING_PAYMENT.value &&
-            <Pressable
-              style={[styles.codButton]}
-              onPress={() => Toaster.show('Tính năng đang phát triển')}
-            >
-              <NormalText text="Đổi sang thanh toán khi nhận hàng" style={styles.codTitle} />
-              <Icon source='chevron-right' size={18} color={colors.primary} />
-            </Pressable>
-          }
+        
 
 
           <Row style={styles.buttonRow}>

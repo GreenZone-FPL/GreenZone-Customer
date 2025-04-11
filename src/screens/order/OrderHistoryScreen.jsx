@@ -16,7 +16,7 @@ const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = () => {
-  const {cartState } = useAppContext();
+  const { cartState } = useAppContext();
 
   const {
     navigation,
@@ -93,7 +93,7 @@ const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelecte
         data={orders}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder = {setSelectedOrder}/>
+          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder={setSelectedOrder} />
         )}
         contentContainerStyle={{ gap: 5 }}
       />
@@ -159,24 +159,16 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
 
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&
-          <Row style={styles.buttonRow}>
-            <Pressable 
-            onPress={() => Toaster.show('Tính năng đang phát triển')}
-            style={styles.changeMethodBtn}>
-              <NormalText text='Đổi sang thanh toán khi nhận hàng' style={styles.changeMethodText} />
+          <Pressable
+            onPress={() => {
+              console.log('orderDetail', JSON.stringify(order, null, 2))
+              setSelectedOrder(order)
+              onPay()
+            }}
+            style={styles.payBtn}>
+            <NormalText text='Thanh toán' style={styles.payText} />
+          </Pressable>
 
-            </Pressable>
-
-            <Pressable
-              onPress={() => {
-                console.log('orderDetail', JSON.stringify(order, null, 2))
-                setSelectedOrder(order)
-                onPay()
-              }}
-              style={styles.payBtn}>
-              <NormalText text='Thanh toán' style={styles.payText} />
-            </Pressable>
-          </Row>
         }
 
       </Column>

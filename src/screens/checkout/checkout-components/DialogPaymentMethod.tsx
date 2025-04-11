@@ -27,7 +27,7 @@ export const onlineMethods: PaymentMethodItem[] = [
 // Định nghĩa các phương thức thanh toán
 export const paymentMethods: PaymentMethodItem[] = [
     {
-        label: 'Thanh toán khi nhận hàng',
+        label: 'Thanh toán tiền mặt',
         image: require('../../../assets/images/logo_vnd.png'),
         value: 'cash',
         paymentMethod: PaymentMethod.COD.value,

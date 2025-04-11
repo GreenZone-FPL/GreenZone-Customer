@@ -14,6 +14,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { Icon } from 'react-native-paper';
 import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker';
 import {
+  Column,
   DialogBasic,
   NormalHeader,
   NormalInput,
@@ -106,42 +107,44 @@ const UpdateProfileScreen = ({ navigation, route }) => {
 
 
 
-          <LabelInput label="Ngày sinh" style={{ fontSize: 14 }} />
-          <Pressable
-            style={styles.dropdown}
-            onPress={() => setOpen(true)}
-          >
-            <NormalText text={dob.toLocaleDateString('vi-VN')} style={{ fontSize: 14 }} />
-          </Pressable>
+          <Column>
+            <LabelInput label="Ngày sinh" style={{ fontSize: 14 }} />
+            <Pressable
+              style={styles.dropdown}
+              onPress={() => setOpen(true)}
+            >
+              <NormalText text={dob.toLocaleDateString('vi-VN')} style={{ fontSize: 14 }} />
+            </Pressable>
+          </Column>
 
 
 
+          <Column>
+            <LabelInput label='Giới tính' style={{ fontSize: 14 }} />
+            <Dropdown
+              data={genderOptions}
+              labelField="label"
+              valueField="value"
+              value={gender}
+              placeholder="Chọn giới tính"
+              placeholderStyle={styles.placeholderText}
+              style={styles.dropdown}
+              selectedTextStyle={styles.placeholderText}
+              selectedTextProps={styles.placeholderText}
+              itemTextStyle={styles.placeholderText}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setGender(item.value);
+                setIsFocus(false);
+              }}
+            />
+          </Column>
 
 
-
-
-          <LabelInput label='Giới tính' style={{ fontSize: 14 }} />
-          <Dropdown
-            data={genderOptions}
-            labelField="label"
-            valueField="value"
-            value={gender}
-            placeholder="Chọn giới tính"
-            placeholderStyle={styles.placeholderText}
-            style={styles.dropdown}
-            selectedTextStyle={styles.placeholderText}
-            selectedTextProps={styles.placeholderText}
-            itemTextStyle={styles.placeholderText}
-            onFocus={() => setIsFocus(true)}
-            onBlur={() => setIsFocus(false)}
-            onChange={item => {
-              setGender(item.value);
-              setIsFocus(false);
-            }}
-          />
 
           <PrimaryButton
-            style={{ backgroundColor: (loading || !!lastNameMessage) ? colors.disabledBg : colors.primary }}
+            style={{ backgroundColor: (loading || !!lastNameMessage) ? colors.disabledBg : colors.primary, marginVertical: 8 }}
             disabled={loading || !!lastNameMessage}
             title="Cập nhật tài khoản"
             onPress={handleUpdateProfile}
@@ -233,18 +236,19 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.ICON_SIZE_DEFAULT / 2,
     padding: 4,
   },
- 
+
   formContainer: {
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_SMALL,
+    gap: 20,
   },
   dropdown: {
+    fontSize: 14,
+    color: colors.black,
     borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: 6,
+    borderColor: colors.borderInput,
+    borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 14,
-    fontSize: 14
   },
 
   placeholderText: {

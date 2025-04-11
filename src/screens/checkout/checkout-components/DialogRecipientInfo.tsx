@@ -73,13 +73,11 @@ export const DialogRecipientInfo: React.FC<DialogRecipientInfoProps> = ({
                     required
                     value={name}
                     setValue={setName}
-                    placeholder="Nguyễn Văn A"
                     invalidMessage={nameError}
                 />
                 <NormalInput
                     label="Số điện thoại"
                     required
-                    placeholder="0123456789"
                     value={phoneNumber}
                     setValue={setPhoneNumber}
                     invalidMessage={phoneError}
