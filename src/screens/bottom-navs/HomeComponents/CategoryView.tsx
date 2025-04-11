@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { TitleText } from '../../../components';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Image, Pressable } from 'react-native';
+import { Column, TitleText } from '../../../components';
 import { useNavigation } from '@react-navigation/native';
 import {
   Coin1,
@@ -44,15 +44,12 @@ export const CategoryView: React.FC = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 22 }}>
         <Item
-
           IconComponent={() => (
             <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
           )}
           title="Voucher"
           onPress={() => navigation.navigate(VoucherGraph.SelectVouchersScreen)}
         />
-
-
 
         <Item
           IconComponent={() => (
@@ -61,14 +58,15 @@ export const CategoryView: React.FC = () => {
           title="Đơn Hàng"
           onPress={() => navigation.navigate(OrderGraph.OrderHistoryScreen)}
         />
-
-        <Item
-          IconComponent={() => (
-            <Coffee size="50" color={colors.yellow700} variant="Bulk" />
-          )}
-          title="Đổi Seed"
-          onPress={()=>{navigation.navigate(VoucherGraph.SeedScreen)}}
-        />
+        <Pressable
+          onPress={() => { navigation.navigate(VoucherGraph.SeedScreen) }}
+          style={styles.seedContainer}>
+          <Image
+            style={styles.iconSeed}
+            source={require('../../../assets/seed/icon_seed.png')}
+          />
+          <TitleText text='Đổi Seed' />
+        </Pressable>
 
         <Item
           IconComponent={() => (
@@ -79,7 +77,7 @@ export const CategoryView: React.FC = () => {
         />
         <Item
           IconComponent={() => (
-            <Rank size="50" color={colors.teal900} variant="Bulk" />
+            <Rank size="50" color={colors.green500} variant="Bulk" />
           )}
           title="Hạng thành viên"
           onPress={() => navigation.navigate(AppGraph.MembershipScreen)}
@@ -101,5 +99,16 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  seedContainer: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: 6
+
+  },
+  iconSeed: {
+    width: 44,
+    height: 44,
+    borderRadius: 48
   },
 });

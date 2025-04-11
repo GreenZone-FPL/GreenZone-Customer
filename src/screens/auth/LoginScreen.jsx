@@ -6,19 +6,16 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  Text
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { sendOTP } from '../../axios';
 import {
   Column,
-  FlatInput,
   LightStatusBar,
   NormalInput,
   NormalLoading,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';

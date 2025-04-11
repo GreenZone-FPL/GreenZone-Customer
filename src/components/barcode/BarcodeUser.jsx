@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -7,10 +7,11 @@ import {
   Text,
   View,
 } from 'react-native';
-import {SvgXml} from 'react-native-svg';
+import { SvgXml } from 'react-native-svg';
 import bwipjs from '@bwip-js/react-native';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { SeedText } from '../texts/SeedText';
 
 const width = Dimensions.get('window').width;
 
@@ -19,7 +20,7 @@ export const BarcodeUser = ({
   showPoints = false,
   user,
   style,
-  onPress = () => {},
+  onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
 
@@ -57,13 +58,7 @@ export const BarcodeUser = ({
 
         {showPoints && (
           <Pressable style={styles.pointsBadge} onPress={onPress}>
-            <Text
-              style={styles.pointsText}
-              numberOfLines={1}
-              ellipsizeMode="tail">
-              {TextFormatter.formatted(user?.seed)}{' '}
-            </Text>
-            <Text style={styles.pointsText}>Seed</Text>
+            <SeedText point={user?.seed} textStyle={{color: colors.white}} enableImage={true}/>
           </Pressable>
         )}
 
@@ -81,7 +76,7 @@ export const BarcodeUser = ({
       <View
         style={[
           styles.container,
-          {maxHeight: hasBackground ? 160 : 120},
+          { maxHeight: hasBackground ? 160 : 120 },
           style,
         ]}>
         {hasBackground ? (
@@ -134,11 +129,15 @@ const styles = StyleSheet.create({
   },
   pointsBadge: {
     position: 'absolute',
-    top: 8,
+    top: 0,
     right: 0,
-    backgroundColor: colors.fbBg,
-    borderTopLeftRadius: 8,
-    borderBottomLeftRadius: 8,
+    backgroundColor: colors.green500,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 16,
+    // borderTopWidth: 1,
+    // borderBottomWidth: 1,
+    // borderLeftWidth: 1,
+    // borderColor: colors.orange700,
     paddingVertical: 6,
     paddingHorizontal: 12,
     flexDirection: 'row',

@@ -118,9 +118,9 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
   },
   beanAmount: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
-    fontWeight: '500',
-    color: colors.black,
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primary,
   },
   beanText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,

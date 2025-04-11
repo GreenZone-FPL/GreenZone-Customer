@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment/moment';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -7,17 +8,14 @@ import {
   Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  TouchableOpacity
 } from 'react-native';
-import { Column, NormalText, Row, TitleText } from '../index';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { changeBeans } from '../../axios';
+import { colors } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { VoucherGraph } from '../../layouts/graphs';
-import { CartManager, TextFormatter, Toaster } from '../../utils';
-import { useNavigation } from '@react-navigation/native';
-import { changeBeans } from '../../axios';
-import { Judge } from 'iconsax-react-native';
+import { CartManager, Toaster } from '../../utils';
+import { Column, NormalText, Row, SeedText, TitleText } from '../index';
 
 const { width } = Dimensions.get('window');
 
@@ -148,30 +146,9 @@ const ItemVoucher = ({ onPress, item }) => {
           {item.name}
         </Text>
 
-
-
-
-
-
-
         {item?.voucherType === 'seed' && (
-          <Row >
-            <Image
-              style={styles.iconSeed}
-              source={require('../../assets/seed/icon_seed.png')}
-            />
-            <Text
-              style={{ fontSize: 14, fontWeight: '500', color: colors.primary }}
-            >
-              {TextFormatter.formatted(item?.requiredPoints)}
-            </Text>
-          </Row>
+          <SeedText point={item?.requiredPoints} />
         )}
-
-
-
-
-
 
         <Row>
           <NormalText text={`Hết hạn:`} style={{ color: colors.gray850 }} />
@@ -215,10 +192,5 @@ const styles = StyleSheet.create({
     height: width / 4.5,
     borderRadius: width / 1.5,
     resizeMode: 'cover',
-  },
-  iconSeed: {
-    width: 24,
-    height: 24,
-    borderRadius: 48,
   },
 });
