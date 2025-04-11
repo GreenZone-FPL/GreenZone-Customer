@@ -10,6 +10,10 @@ export * from './barcode/BarcodeUser';
 
 // bottom-sheets
 
+//background
+export * from './background/EmptyView'
+
+
 // buttons
 export * from './buttons/DeliveryButton';
 export * from './buttons/PrimaryButton';

@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   TextInput,
-  ScrollView,
   ToastAndroid,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
+  Modal,
+  FlatList,
+  Dimensions,
 } from 'react-native';
 import {
   FlatInput,
@@ -20,73 +17,154 @@ import {
   NormalHeader,
   NormalText,
   PrimaryButton,
+  CustomSearchBar,
+  OverlayStatusBar,
+  EmptyView,
+  NormalInput,
 } from '../../components';
-import { Icon } from 'react-native-paper';
-import SelectLocation from './locations/SelectLocation';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import {Icon} from 'react-native-paper';
+import {colors, GLOBAL_KEYS} from '../../constants';
 import axios from 'axios';
-import { postAddress } from '../../axios';
+import {postAddress} from '../../axios';
+import LabelInput from '../../components/inputs/LabelInput';
+import { Toaster } from '../../utils';
+const {width, height} = Dimensions.get('window');
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
 const SEARCH_RADIUS = 2000;
-const RESULT_LIMIT = 10;
+const RESULT_LIMIT = 8;
 const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
 const NewAddressScreen = props => {
-  const { navigation } = props;
+  const {navigation} = props;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState('');
+  const [locationDetail, setLocationDetail] = useState({});
+  const [loading, setLoading] = useState(false);
+  
+
   const [consigneeName, setConsigneeName] = useState('');
+   const [nameMessage, setNameMessage] = useState('');
   const [consigneePhone, setConsigneePhone] = useState('');
-  const [specificAddress, setSpecificAddress] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchText, setSearchText] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
+
+   const [addressMessage, setAddressMessage] = useState('');
+  // console.log(locationDetail);
+  const validateForm = () => {
+    const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
+    let valid = true
+    if (selectedAddress.trim() === '') {
+      setAddressMessage('Trường này không được để trống');
+      valid = false
+    }
+    if (consigneeName.trim() === '') {
+      setNameMessage('Trường này không được để trống');
+      valid = false
+    }
+    if (consigneePhone.trim() === '' || !phoneRegex.test(consigneePhone.trim())) {
+      setPhoneNumberMessage('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)');
+      valid = false
+    }
+
+    return valid;
+  }
+
+  const handleSaveAddress = async () => {
+    console.log('bam nut')
+    if (validateForm()) {
+      const payload = {
+        specificAddress: locationDetail.specificAddress,
+          ward: locationDetail.commune,
+          district: locationDetail.district,
+          province: locationDetail.province,
+          consigneePhone: consigneeName ,
+        consigneeName : consigneePhone,
+        latitude: String(locationDetail.lat),
+        longitude: String(locationDetail.lng),
+      };
+      console.log('Tạo địa chỉ thành công:', JSON.stringify(payload, null, 2));
+      try {
+        setLoading(true)
+        const response = await postAddress(payload);
+        Toaster.show('Lưu thành công!');
+        navigation.goBack();
+      } catch (error) {
+        console.error('Lỗi khi tạo địa chỉ:', error);
+        Toaster.show('Vui lòng điền đầy đủ thông tin!');
+
+      }
+      finally{setLoading(false)}
+    }
+  };
+  return (
+    <View style={{backgroundColor: colors.white}}>
+      <LightStatusBar />
+      <NormalHeader
+        title="Thêm địa chỉ mới"
+        onLeftPress={() => navigation.goBack()}
+      />
+      <View style={{margin: 16, gap: 16}}>
+        <LabelInput label={'Địa chỉ của bạn'} required={true} style={{fontSize: 14}}/>
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          style={styles.btnAddress} disabled={loading}>
+          <Text style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT}}>
+            {selectedAddress}
+          </Text>
+        </TouchableOpacity>
+        {addressMessage && <Text style={styles.errorText}>{addressMessage}</Text>}
+        <NormalInput
+          required
+          label="Người nhận"
+          setValue={text => {
+            if (nameMessage) {
+              setNameMessage('')
+            }
+            setConsigneeName(text);
+          }}
+          value={consigneeName}
+          placeholder=""
+          invalidMessage={nameMessage}
+          
+        />
+        <NormalInput
+          required
+          label="Số điện thoại"
+          setValue={text => {
+            if (phoneNumberMessage) {
+              setPhoneNumberMessage('');
+            }
+            setConsigneePhone(text);
+          }}
+          value={consigneePhone}
+          placeholder=""
+          invalidMessage={phoneNumberMessage}
+        />
+
+        <PrimaryButton title="Lưu" onPress={handleSaveAddress} />
+      </View>
+
+      <ModalAddress
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSelectAddress={(addressText, detail) => {
+          setSelectedAddress(addressText);
+          setLocationDetail(detail);
+          setModalVisible(false);
+          setAddressMessage('')
+        }}
+      />
+    </View>
+  );
+};
+
+const ModalAddress = ({visible, onClose, onSelectAddress}) => {
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const searchTimeout = useRef(null);
 
-  const [ward, setWard] = useState(null);
-  const [district, setDistrict] = useState(null);
-  const [province, setProvince] = useState(null);
-
-  const [selectedAddress, setSelectedAddress] = useState({
-    selectedProvince: null,
-    selectedDistrict: null,
-    selectedWard: null,
-  });
-  const [selectedAddressAPI, setSelectedAddressAPI] = useState({
-    selectedProvince: null,
-    selectedDistrict: null,
-    selectedWard: null,
-  });
-  const handleAddressChange = address => {
-    setSelectedAddress(prev => ({
-      ...prev,
-      ...address,
-    }));
-    setSelectedAddressAPI(prev => ({
-      ...prev,
-      ...address,
-    }));
-  };
-
-  const handleConfirmAddress = () => {
-    const { selectedProvince, selectedDistrict, selectedWard } = selectedAddress;
-    const fullAddressText = [
-      specificAddress,
-      selectedWard || '',
-      selectedDistrict || '',
-      selectedProvince || '',
-    ]
-      .filter(Boolean)
-      .join(', ');
-
-    setSearchText(fullAddressText);
-    setIsSearching(true);
-    handleSearch(fullAddressText);
-  };
-
-  const fetchPlaceDetails = async placeId => {
+  const fetchPlaceDetails = async (placeId, description) => {
     try {
       const response = await axios.get(GOONG_DETAIL_API, {
         params: {
@@ -95,21 +173,24 @@ const NewAddressScreen = props => {
         },
       });
       const location = response.data.result.geometry.location;
-      setLatitude(String(location.lat));
-      setLongitude(String(location.lng));
-      console.log('Toạ độ đã chọn:', JSON.stringify(response, null, 2));
       const address = response.data.result.compound;
-      setWard(address.commune),
-        setDistrict(address.district),
-        setProvince(address.province)
-
+      const specificAddress = response.data.result.name
+      const detail = {
+        specificAddress: specificAddress,
+        commune: address.commune,
+        district: address.district,
+        province: address.province,
+        lat: location.lat,
+        lng: location.lng,
+      };
+      onSelectAddress(description, detail);
     } catch (error) {
       console.error('Lỗi lấy tọa độ:', error);
     }
   };
 
   const handleSearch = text => {
-    setSearchText(text);
+    setQuery(text);
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
@@ -124,173 +205,132 @@ const NewAddressScreen = props => {
               limit: RESULT_LIMIT,
             },
           });
-          setSearchResults(response.data.predictions || []);
+          setSuggestions(response.data.predictions || []);
         } catch (error) {
           console.error('Lỗi tìm kiếm địa chỉ:', error);
         }
       }, 500);
     } else {
-      setSearchResults([]);
-    }
-  };
-
-  const isValidPhoneNumber = phone => {
-    const phoneRegex = /^(\+84|0)[3-9][0-9]{8}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const handleSaveAddress = async () => {
-    if (!specificAddress.trim()) {
-      ToastAndroid.show('Vui lòng nhập địa chỉ chi tiết!', ToastAndroid.SHORT);
-      return;
-    }
-    if (!consigneeName.trim()) {
-      ToastAndroid.show('Vui lòng nhập tên người nhận!', ToastAndroid.SHORT);
-      return;
-    }
-    if (!isValidPhoneNumber(consigneePhone)) {
-      ToastAndroid.show('Số điện thoại không hợp lệ!', ToastAndroid.SHORT);
-      return;
-    }
-
-    const payload = {
-      specificAddress,
-      ward: ward || selectedAddressAPI.selectedWard,
-      district: district || selectedAddressAPI.selectedDistrict,
-      province: province || selectedAddressAPI.selectedProvince,
-      consigneePhone,
-      consigneeName,
-      latitude: String(latitude),
-      longitude: String(longitude),
-    };
-    console.log('Tạo địa chỉ thành công:', JSON.stringify(payload, null, 2));
-    try {
-      const response = await postAddress(payload);
-      ToastAndroid.show('Lưu thành công!', ToastAndroid.SHORT);
-      navigation.goBack();
-    } catch (error) {
-      console.error('Lỗi khi tạo địa chỉ:', error);
-      ToastAndroid.show('Vui lòng điền đầy đủ thông tin!', ToastAndroid.SHORT);
+      setSuggestions([]);
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
-      <NormalHeader
-        title={isSearching ? 'Tìm kiếm địa chỉ' : 'Chọn địa chỉ'}
-        onLeftPress={() => {
-          if (isSearching) {
-            setIsSearching(false);
-            setSearchText('');
-            setSearchResults([]);
-          } else {
-            navigation.goBack();
-          }
-        }}
-        rightIcon={isSearching ? 'close' : 'magnify'}
-        onRightPress={() => setIsSearching(!isSearching)}
-      />
-      <ScrollView style={styles.container}>
-        <LightStatusBar />
+    <Modal visible={visible} animationType="none" transparent={true}>
+      <OverlayStatusBar />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.overlay,
+          justifyContent: 'center',
+        }}>
+        <View
+          style={{
+            padding: 20,
+            backgroundColor: 'white',
+            borderRadius: 10,
+            height: height / 1.5,
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: colors.green100,
+              borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+              paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+              height: 50,
+            }}>
+            <Icon
+              source="magnify"
+              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+              color={colors.primary}
+            />
+            <TextInput
+              placeholder="Tìm kiếm địa chỉ"
+              value={query}
+              onChangeText={handleSearch}
+              style={{flex: 1}}
+            />
+            {query.length > 0 && (
+              <TouchableOpacity onPress={() => handleSearch('')}>
+                <Icon
+                  source="close"
+                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                  color={colors.primary}
+                />
+              </TouchableOpacity>
+            )}
+          </View>
 
+          {suggestions.length > 0 ? (
+            <FlatList
+              data={suggestions}
+              keyExtractor={item => item.place_id}
+              renderItem={({item}) => (
+                <CardSearch
+                  description={item.description}
+                  secondaryText={item.structured_formatting?.secondary_text}
+                  onPress={() =>
+                    fetchPlaceDetails(item.place_id, item.description)
 
-        {isSearching && (
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Nhập địa chỉ..."
-            value={searchText}
-            onChangeText={handleSearch}
-          />
-        )}
+                  }
+                />
+              )}
+            />
+          ) : (
+            <View style={{flex: 1, justifyContent: 'center'}}>
+              <EmptyView />
+            </View>
+          )}
 
-        {isSearching && searchText.length > 2 && searchResults.length > 0 && (
-          <ScrollView style={styles.content} keyboardShouldPersistTaps="handled">
-            {searchResults.map(result => (
-              <CardSearch
-                key={result.place_id}
-                address={{
-                  place_id: result.place_id,
-                  specificAddress: [
-                    result.terms[1]?.value,
-                    result.terms[0]?.value,
-                  ].join(' '),
-                  ward: result.terms[2]?.value || '',
-                  district: result.terms[3]?.value || '',
-                  province: result.terms[4]?.value || '',
-                }}
-                isSelected={searchText === result.description}
-                onPress={() => {
-                  setIsSearching(false);
-                  setSearchText(result.description);
-                  setSelectedAddress({
-                    selectedProvince: result.terms[4]?.value || '',
-                    selectedDistrict: result.terms[3]?.value || '',
-                    selectedWard: result.terms[2]?.value || '',
-                  });
-                  setSpecificAddress(
-                    [result.terms[1]?.value, result.terms[0]?.value].join(' '),
-                  );
-                  fetchPlaceDetails(result.place_id);
-                }}
-              />
-            ))}
-          </ScrollView>
-        )}
-
-
-        {/* <SelectLocation onAddressChange={handleAddressChange} /> */}
-        <FlatInput
-          label="Nhập địa chỉ cụ thể"
-          setValue={setSpecificAddress}
-          value={specificAddress}
-          placeholder="Ngõ/ngách/..."
-          style={{ marginBottom: 32 }}
-        />
-        <TouchableOpacity
-          style={styles.btnConfirm}
-          onPress={handleConfirmAddress}>
-          <NormalText text='Xác nhận địa chỉ' />
-
-        </TouchableOpacity>
-        <FlatInput
-          label="Người nhận"
-          setValue={setConsigneeName}
-          value={consigneeName}
-          placeholder="Họ tên"
-          style={{ marginBottom: 32 }}
-        />
-        <FlatInput
-          label="Số điện thoại"
-          setValue={setConsigneePhone}
-          value={consigneePhone}
-          placeholder="(+84)"
-          style={{ marginBottom: 32 }}
-        />
-        <PrimaryButton title="Lưu" onPress={handleSaveAddress} />
-
-      </ScrollView>
-
-    </KeyboardAvoidingView>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{
+              marginTop: 10,
+              backgroundColor: colors.white,
+              padding: 16,
+              borderRadius: 8,
+              elevation: 1.5,
+              borderColor: colors.fbBg,
+              borderWidth: 1,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                color: colors.primary,
+              }}>
+              Đóng
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
   );
 };
 
-const CardSearch = ({ address, isSelected, onPress }) => (
+const CardSearch = ({description, secondaryText, onPress}) => (
   <Pressable
-    style={[styles.card, isSelected && styles.selectedCard]}
-    onPress={() => onPress(address)}>
+    onPress={onPress}
+    style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16}}>
     <Icon
       source="google-maps"
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
       color={colors.primary}
     />
-    <View style={styles.textContainer}>
-      <Text>
-        Địa chỉ:{' '}
-        {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
+    <View style={{marginHorizontal: 10}}>
+      <Text style={{fontWeight: '500', fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}}>
+        {description}
       </Text>
+      {secondaryText && (
+        <Text
+          style={{
+            color: colors.gray400,
+            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+          }}>
+          {secondaryText}
+        </Text>
+      )}
     </View>
   </Pressable>
 );
@@ -298,95 +338,18 @@ const CardSearch = ({ address, isSelected, onPress }) => (
 export default NewAddressScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: colors.white,
-    padding: 16
-  },
-  formContainer: {
-    flex: 1,
-    marginHorizontal: GLOBAL_KEYS.GAP_DEFAULT,
-    marginBottom: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  location: {
-    backgroundColor: colors.white,
-    elevation: 4,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderBottomColor: colors.primary,
-    borderBottomWidth: 1,
-  },
-  normalText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+  btnAddress: {
+    fontSize: 14,
     color: colors.black,
-  },
-  btnConfirm: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.primary,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    justifyContent: 'center',
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    marginBottom: 32,
-  },
-  dropdown: {
-    marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.gray200,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingHorizontal: 16,
-    height: 50,
-    justifyContent: 'center',
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    borderBottomColor: colors.primary,
-    borderBottomWidth: 3,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 14,
   },
-  placeholderText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.black,
-  },
-  dropdownText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.black,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-    marginBottom: 16,
-    gap: 12,
-    marginHorizontal: 16,
-  },
-  selectedCard: {
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  searchInput: {
-    height: 40,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    paddingHorizontal: 16,
-    marginBottom: 16,
-  },
+    errorText: {
+      marginTop: 4,
+      color: colors.red800,
+      fontSize: 12,
+    },
 });
