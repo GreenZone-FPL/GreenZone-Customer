@@ -53,6 +53,7 @@ import { useAppContainer } from './src/containers/useAppContainer';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import { LogBox } from 'react-native';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
 
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
@@ -130,6 +131,10 @@ function AppNavigator() {
             options={slideFromBottomOption}
             component={RecipientInfoSheet}
           />
+          <BaseStack.Screen
+            name={AppGraph.NotificationScreen}
+            component={NotificationScreen}
+          />
 
           <BaseStack.Screen
             name={VoucherGraph.MyVouchersScreen}
@@ -169,7 +174,7 @@ function AppNavigator() {
             component={SelectVouchersScreen}
           />
 
-      
+
           <BaseStack.Screen
             name={VoucherGraph.SeedScreen}
             component={SeedScreen}

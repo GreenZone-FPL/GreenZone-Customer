@@ -44,8 +44,7 @@ const HomeScreen = () => {
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
-    navigatePayOS,
-    navigateZaloPay,
+    navigateNotification,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
@@ -65,8 +64,8 @@ const HomeScreen = () => {
               : 'Xin chào'
             : 'Chào bạn mới'
         }
-        onBadgePress={() => {}}
         isHome={false}
+        onBadgePress={navigateNotification}
       />
 
       <ScrollView

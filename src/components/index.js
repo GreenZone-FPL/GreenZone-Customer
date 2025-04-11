@@ -94,6 +94,7 @@ export * from './texts/PaymentMethodRow';
 export * from './texts/NormalText';
 export * from './texts/TitleText';
 export * from './texts/StatusText';
+export * from './texts/SeedText';
 
 // modals
 export * from './modal/ToppingModal';
