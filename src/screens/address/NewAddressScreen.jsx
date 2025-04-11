@@ -191,7 +191,6 @@ const NewAddressScreen = props => {
           }
         }}
         rightIcon={isSearching ? 'close' : 'magnify'}
-        enableRightIcon={true}
         onRightPress={() => setIsSearching(!isSearching)}
       />
       <ScrollView style={styles.container}>
@@ -242,7 +241,7 @@ const NewAddressScreen = props => {
         )}
 
 
-        <SelectLocation onAddressChange={handleAddressChange} />
+        {/* <SelectLocation onAddressChange={handleAddressChange} /> */}
         <FlatInput
           label="Nhập địa chỉ cụ thể"
           setValue={setSpecificAddress}
