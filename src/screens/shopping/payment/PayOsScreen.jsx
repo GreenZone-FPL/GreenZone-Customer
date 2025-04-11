@@ -165,12 +165,9 @@ const PayOsScreen = () => {
         ],
       });
     } else if (url.includes('status=CANCELLED')) {
-
       // call API delete order
       Toaster.show('Bạn đã hủy giao dịch')
       navigation.goBack()
-
-
     }
   };
 

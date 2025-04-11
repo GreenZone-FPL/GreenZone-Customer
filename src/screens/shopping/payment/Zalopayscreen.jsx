@@ -15,7 +15,7 @@ import { WebView } from 'react-native-webview';
 import { updatePaymentStatus } from '../../../axios';
 import { useAppContext } from '../../../context/appContext';
 import { MainGraph, OrderGraph } from '../../../layouts/graphs';
-import { AppAsyncStorage, Toaster } from '../../../utils';
+import { AppAsyncStorage, Toaster, CartManager } from '../../../utils';
 
 const generateMac = (
   appid,
@@ -152,32 +152,25 @@ const ZalopayScreen = () => {
     console.log('WebView URL:', navState.url);
     console.log('linkid', paymentLinkId)
     if (navState.url.includes('returncode=1')) {
-      Alert.alert('Thông báo', 'Thanh toán thành công!');
+      navigation.reset({
+              index: 1,
+              routes: [
+                { name: MainGraph.graphName },
+                { name: 'OrderDetailScreen', params: { orderId } },
+              ],
+            });
+      Toaster.show('Thanh toán thành công')
       await updatePaymentStatus(orderId, 'success', paymentLinkId);
-
-      setToast({
-        visible: true,
-        message: 'Thanh toán thành công',
-        type: 'success',
-      });
-
       await AppAsyncStorage.storeData(
         AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
         null,
       );
       await CartManager.clearOrderItems(cartDispatch);
       setAwaitingPayments(null);
-      navigation.reset({
-        index: 1, // Chỉ mục màn hình sẽ được chọn sau reset
-        routes: [
-          { name: MainGraph.graphName },
-          { name: 'OrderDetailScreen', params: { orderId } },
-        ],
-      });
     } else if (navState.url.includes('returncode=-6012') || navState.url.includes('status=-49')) {
       // call API delete order
       Toaster.show('Bạn đã hủy giao dịch')
-      navigation.navigate(OrderGraph.OrderDetailScreen, {orderId})
+      navigation.goBack()
     }
   };
 
