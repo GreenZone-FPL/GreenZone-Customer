@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon, Snackbar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import { DeliveryMethodText, DualTextRow, NormalText, Row, StatusText } from '../../../components';
-import { colors, GLOBAL_KEYS } from '../../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../../constants';
 
 export const PaymentDetails = ({ detail }) => {
     const {
@@ -25,6 +25,8 @@ export const PaymentDetails = ({ detail }) => {
         0
     );
 
+    console.log('detail', JSON.stringify(detail, null, 3))
+
     const discount = voucher
         ? voucher.discountType === 'percentage'
             ? (subTotal * voucher.value) / 100
@@ -34,7 +36,7 @@ export const PaymentDetails = ({ detail }) => {
     const getPaymentStatus = () => {
         if (status === 'completed') {
             return { text: 'Đã thanh toán', color: colors.primary };
-        } else if (paymentMethod === 'online' && status !== 'awatingPayment') {
+        } else if (paymentMethod === 'online' && status !== OrderStatus.AWAITING_PAYMENT.value) {
             return { text: 'Đã thanh toán', color: colors.primary };
         } else if (status === 'awaitingPayment') {
             return { text: 'Chờ thanh toán', color: colors.pink500 };
@@ -48,23 +50,14 @@ export const PaymentDetails = ({ detail }) => {
 
     const paymentStatus = getPaymentStatus();
 
-    const calculateTotalOrderPrice = orderItems => {
+    const calculateTotalOrderPrice = (orderItems) => {
         if (!Array.isArray(orderItems)) return 0;
-
+    
         return orderItems.reduce((total, item) => {
-            const productAndToppingTotal =
-                item.price +
-                item.toppingItems?.reduce((sum, topping) => {
-                    if (topping?.price && topping?.quantity) {
-                        return sum + topping.price * topping.quantity;
-                    }
-                    return sum;
-                }, 0) || 0;
-
-            const totalItemPrice = productAndToppingTotal * item.quantity;
-            return total + totalItemPrice;
+            return total + item.price * item.quantity;
         }, 0);
     };
+    
 
     return (
         <View
