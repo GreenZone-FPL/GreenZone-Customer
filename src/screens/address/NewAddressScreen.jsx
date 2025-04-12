@@ -1,34 +1,34 @@
-import React, {useState, useEffect, useRef} from 'react';
+import axios from 'axios';
+import React, { useRef, useState } from 'react';
 import {
+  Dimensions,
+  FlatList,
+  Modal,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
+  KeyboardAvoidingView,
   View,
-  TextInput,
-  ToastAndroid,
-  Modal,
-  FlatList,
-  Dimensions,
+  ScrollView
 } from 'react-native';
+import { Icon } from 'react-native-paper';
+import { postAddress } from '../../axios';
 import {
-  FlatInput,
+  CustomSearchBar,
+  EmptyView,
   LightStatusBar,
   NormalHeader,
-  NormalText,
-  PrimaryButton,
-  CustomSearchBar,
-  OverlayStatusBar,
-  EmptyView,
   NormalInput,
+  NormalText,
+  OverlayStatusBar,
+  PrimaryButton,
+  Row
 } from '../../components';
-import {Icon} from 'react-native-paper';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import axios from 'axios';
-import {postAddress} from '../../axios';
 import LabelInput from '../../components/inputs/LabelInput';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { Toaster } from '../../utils';
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
@@ -37,19 +37,19 @@ const RESULT_LIMIT = 8;
 const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
 const NewAddressScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [locationDetail, setLocationDetail] = useState({});
   const [loading, setLoading] = useState(false);
-  
+
 
   const [consigneeName, setConsigneeName] = useState('');
-   const [nameMessage, setNameMessage] = useState('');
+  const [nameMessage, setNameMessage] = useState('');
   const [consigneePhone, setConsigneePhone] = useState('');
-   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
+  const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
 
-   const [addressMessage, setAddressMessage] = useState('');
+  const [addressMessage, setAddressMessage] = useState('');
   // console.log(locationDetail);
   const validateForm = () => {
     const phoneRegex = /^(03|05|07|08|09)[0-9]{8}$/;
@@ -75,11 +75,11 @@ const NewAddressScreen = props => {
     if (validateForm()) {
       const payload = {
         specificAddress: locationDetail.specificAddress,
-          ward: locationDetail.commune,
-          district: locationDetail.district,
-          province: locationDetail.province,
-          consigneePhone: consigneeName ,
-        consigneeName : consigneePhone,
+        ward: locationDetail.commune,
+        district: locationDetail.district,
+        province: locationDetail.province,
+        consigneePhone: consigneeName,
+        consigneeName: consigneePhone,
         latitude: String(locationDetail.lat),
         longitude: String(locationDetail.lng),
       };
@@ -94,22 +94,22 @@ const NewAddressScreen = props => {
         Toaster.show('Vui lòng điền đầy đủ thông tin!');
 
       }
-      finally{setLoading(false)}
+      finally { setLoading(false) }
     }
   };
   return (
-    <View style={{backgroundColor: colors.white}}>
+    <View style={{ backgroundColor: colors.white, flex: 1 }}>
       <LightStatusBar />
       <NormalHeader
         title="Thêm địa chỉ mới"
         onLeftPress={() => navigation.goBack()}
       />
-      <View style={{margin: 16, gap: 16}}>
-        <LabelInput label={'Địa chỉ của bạn'} required={true} style={{fontSize: 14}}/>
+      <View style={{ margin: 16, gap: 16 }}>
+        <LabelInput label={'Địa chỉ của bạn'} required={true} style={{ fontSize: 14 }} />
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
           style={styles.btnAddress} disabled={loading}>
-          <Text style={{fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT}}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}>
             {selectedAddress}
           </Text>
         </TouchableOpacity>
@@ -126,7 +126,7 @@ const NewAddressScreen = props => {
           value={consigneeName}
           placeholder=""
           invalidMessage={nameMessage}
-          
+
         />
         <NormalInput
           required
@@ -159,7 +159,7 @@ const NewAddressScreen = props => {
   );
 };
 
-const ModalAddress = ({visible, onClose, onSelectAddress}) => {
+const ModalAddress = ({ visible, onClose, onSelectAddress }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const searchTimeout = useRef(null);
@@ -218,118 +218,75 @@ const ModalAddress = ({visible, onClose, onSelectAddress}) => {
   return (
     <Modal visible={visible} animationType="none" transparent={true}>
       <OverlayStatusBar />
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.overlay,
-          justifyContent: 'center',
-        }}>
-        <View
-          style={{
-            padding: 20,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            height: height / 1.5,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: colors.green100,
-              borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-              paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
-              height: 50,
-            }}>
-            <Icon
-              source="magnify"
-              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-              color={colors.primary}
-            />
-            <TextInput
-              placeholder="Tìm kiếm địa chỉ"
-              value={query}
-              onChangeText={handleSearch}
-              style={{flex: 1}}
-            />
-            {query.length > 0 && (
-              <TouchableOpacity onPress={() => handleSearch('')}>
-                <Icon
-                  source="close"
-                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  color={colors.primary}
+      <Pressable style={styles.overlayContainer} onPress={onClose}>
+        <Pressable style={styles.modalContent} onPress={() => { }}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          >
+
+            <Row style={styles.searchHeader}>
+              <CustomSearchBar
+                placeholder="Tìm kiếm địa chỉ"
+                searchQuery={query}
+                setSearchQuery={handleSearch}
+                onClearIconPress={() => handleSearch('')}
+                leftIcon="magnify"
+                rightIcon="close"
+                style={{ flex: 1 }}
+              />
+              <TouchableOpacity onPress={onClose}>
+                <NormalText
+                  text="Đóng"
+                  style={styles.closeBtnText}
                 />
               </TouchableOpacity>
+            </Row>
+
+            {suggestions.length > 0 ? (
+              <FlatList
+                data={suggestions}
+                keyExtractor={item => item.place_id}
+                renderItem={({ item }) => (
+                  <CardSearch
+                    description={item.description}
+                    secondaryText={item.structured_formatting?.secondary_text}
+                    onPress={() =>
+                      fetchPlaceDetails(item.place_id, item.description)
+                    }
+                  />
+                )}
+                keyboardShouldPersistTaps="handled"
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
+                style={{ maxHeight: 400 }}
+              />
+            ) : (
+              <View style={styles.emptyWrapper}>
+                <EmptyView />
+              </View>
             )}
-          </View>
 
-          {suggestions.length > 0 ? (
-            <FlatList
-              data={suggestions}
-              keyExtractor={item => item.place_id}
-              renderItem={({item}) => (
-                <CardSearch
-                  description={item.description}
-                  secondaryText={item.structured_formatting?.secondary_text}
-                  onPress={() =>
-                    fetchPlaceDetails(item.place_id, item.description)
-
-                  }
-                />
-              )}
-            />
-          ) : (
-            <View style={{flex: 1, justifyContent: 'center'}}>
-              <EmptyView />
-            </View>
-          )}
-
-          <TouchableOpacity
-            onPress={onClose}
-            style={{
-              marginTop: 10,
-              backgroundColor: colors.white,
-              padding: 16,
-              borderRadius: 8,
-              elevation: 1.5,
-              borderColor: colors.fbBg,
-              borderWidth: 1,
-            }}>
-            <Text
-              style={{
-                textAlign: 'center',
-                fontWeight: 'bold',
-                color: colors.primary,
-              }}>
-              Đóng
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+          </KeyboardAvoidingView>
+        </Pressable>
+      </Pressable>
     </Modal>
-  );
+
+  )
 };
 
-const CardSearch = ({description, secondaryText, onPress}) => (
-  <Pressable
-    onPress={onPress}
-    style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 16}}>
+const CardSearch = ({ description, secondaryText, onPress }) => (
+  <Pressable onPress={onPress} style={styles.cardItem}>
     <Icon
       source="google-maps"
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-      color={colors.primary}
+      color={colors.earthYellow}
     />
-    <View style={{marginHorizontal: 10}}>
-      <Text style={{fontWeight: '500', fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}}>
-        {description}
-      </Text>
+    <View style={styles.cardTextWrapper}>
+      <Text style={styles.cardTitle}>{description}</Text>
       {secondaryText && (
-        <Text
-          style={{
-            color: colors.gray400,
-            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-          }}>
-          {secondaryText}
-        </Text>
+        <Text style={styles.cardSubtitle}>{secondaryText}</Text>
       )}
     </View>
   </Pressable>
@@ -338,6 +295,45 @@ const CardSearch = ({description, secondaryText, onPress}) => (
 export default NewAddressScreen;
 
 const styles = StyleSheet.create({
+  overlayContainer: {
+    flex: 1,
+    backgroundColor: colors.overlay,
+    justifyContent: 'center',
+  },
+  modalContent: {
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    height: height / 2,
+  },
+  emptyWrapper: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  cardItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  cardTextWrapper: {
+    marginHorizontal: 10,
+  },
+  cardTitle: {
+    fontWeight: '500',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+  },
+  cardSubtitle: {
+    color: colors.gray400,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+  },
+  closeBtnText: {
+    color: colors.orange700,
+    fontWeight: '500'
+  },
+  searchHeader: {
+    marginBottom: 8
+  },
+
   btnAddress: {
     fontSize: 14,
     color: colors.black,
@@ -347,9 +343,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 14,
   },
-    errorText: {
-      marginTop: 4,
-      color: colors.red800,
-      fontSize: 12,
-    },
+  errorText: {
+    marginTop: 4,
+    color: colors.red800,
+    fontSize: 12,
+  },
 });

@@ -18,7 +18,7 @@ const CustomSearchBarPropTypes = {
   rightIconColor: PropTypes.string,
   onLeftIconPress: PropTypes.func,
   leftIconColor: PropTypes.string,
-  
+  inputStyle: PropTypes.object
 };
 
 /**
@@ -45,7 +45,8 @@ export const CustomSearchBar = ({
   rightIcon = "close",
   rightIconColor = colors.primary,
   onLeftIconPress,
-  leftIconColor = colors.primary
+  leftIconColor = colors.primary,
+  inputStyle
 }) => {
   return (
     <View style={[styles.container, style]}>
@@ -56,7 +57,7 @@ export const CustomSearchBar = ({
 
       {/* Input */}
       <TextInput
-        style={styles.input}
+        style={[styles.input, inputStyle]}
         placeholder={placeholder}
         placeholderTextColor={colors.gray}
         value={searchQuery}

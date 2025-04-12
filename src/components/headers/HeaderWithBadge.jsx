@@ -11,6 +11,8 @@ import {Icon} from 'react-native-paper';
 import {IconWithBadge} from './IconWithBadge';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import PropTypes from 'prop-types';
+import { useNavigation } from '@react-navigation/native';
+import { AppGraph } from '../../layouts/graphs';
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
@@ -29,6 +31,7 @@ export const HeaderWithBadge = ({
   enableLeftIcon = false,
   onLeftPress,
 }) => {
+  const navigation = useNavigation()
   return (
     <View style={styles.header}>
       {enableLeftIcon && (
@@ -69,7 +72,7 @@ export const HeaderWithBadge = ({
       }
 
       <TouchableOpacity style={styles.right}>
-        <IconWithBadge onPress={onBadgePress} />
+        <IconWithBadge onPress={() => navigation.navigate(AppGraph.NotificationScreen)} />
       </TouchableOpacity>
     </View>
   );

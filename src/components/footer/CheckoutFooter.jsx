@@ -67,29 +67,25 @@ export const CheckoutFooter = ({
                     keyboardType="numeric"
                     value={String(quantity)}
                     onChangeText={(value) => {
-    
-            
-                        // Nếu người dùng xóa hết, cho phép để rỗng
-                        if (value === "") {
-                            setQuantity("");
+                        // Chỉ giữ lại ký tự số
+                        const cleanedValue = value.replace(/[^0-9]/g, '');
+                
+                        if (cleanedValue === '') {
+                            setQuantity('');
+                            return;
                         }
-                        else if (value >= 99) {
-                            setQuantity(99)
-                            Toaster.show('Số lượng không vượt quá 99')
+                
+                        const parsed = parseInt(cleanedValue, 10);
+                
+                        if (isNaN(parsed)) {
+                            return;
                         }
-                        else {
-                            // Chặn ký tự không hợp lệ (dấu chấm, dấu phẩy)
-                            const cleanedValue = value.replace(/[^0-9]/g, '');
-
-                            // Chỉ cập nhật khi giá trị thay đổi
-                            if (cleanedValue !== value) {
-                                setQuantity(parseInt(cleanedValue, 10)); // Chỉ cho phép số nguyên
-                            } else {
-                                const parsed = parseInt(value, 10);
-                                if (!isNaN(parsed)) {
-                                    setQuantity(parsed);
-                                }
-                            }
+                
+                        if (parsed > 99) {
+                            setQuantity(99);
+                            Toaster.show('Số lượng không vượt quá 99');
+                        } else {
+                            setQuantity(parsed);
                         }
                     }}
                     onBlur={() => {

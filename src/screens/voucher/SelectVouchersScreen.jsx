@@ -136,13 +136,14 @@ const SelectVouchersScreen = ({ navigation, route }) => {
               )}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
+              contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
             />
           </>
         )}
 
         {validStoreVouchers.length > 0 && (
           <>
-            <TitleText text="Phiếu ưu đãi cửa hàng" style={styles.title} />
+            <TitleText text="Phiếu ưu đãi GreenZone" style={styles.title} />
             <FlatList
               data={filterByDiscountType(1)}
               keyExtractor={item => item._id.toString()}
@@ -167,16 +168,16 @@ const ItemVoucher = ({ onPress, item }) => {
       <Column>
         <View style={{ maxWidth: width / 2 }}>
           <Text numberOfLines={2} style={styles.voucherName}>
-            {`Voucher ${item.name}`}
+            {`${item.name}`}
           </Text>
         </View>
 
 
         <Row>
-          <NormalText text={`Hết hạn:`} style={{ color: colors.gray850 }} />
+          <NormalText text={`Hết hạn:`} />
 
           <NormalText
-            style={{ color: colors.black }}
+            style={{ color: colors.orange700 }}
             text={`${TextFormatter.formatDateSimple(item.endDate)}`}
           />
 
@@ -190,13 +191,14 @@ const ItemVoucher = ({ onPress, item }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.white,
+    backgroundColor: colors.fbBg,
   },
   title: {
     marginHorizontal: 16,
-    marginVertical: 8,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '600',
+    marginVertical: 10,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontWeight: '700',
+    color: colors.lemon
   },
   itemVoucher: {
     flexDirection: 'row',
@@ -206,14 +208,14 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   itemImage: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 5,
+    height: width / 5,
     borderRadius: width / 1.5,
     resizeMode: 'cover',
   },
   voucherName: {
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontWeight: '500',
   },
 });
 
