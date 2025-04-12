@@ -24,7 +24,6 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
         const handleUserData = async () => {
             try {
                 const userData: any = await getProfile();
-                console.log('userData', JSON.stringify(userData, null, 2))
                 if (userData) {
                     setUser(userData);
                     if (!cartState?.consigneeName) {

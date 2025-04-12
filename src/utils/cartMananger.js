@@ -211,7 +211,7 @@ export const CartManager = (() => {
 
       await AppAsyncStorage.storeData('CART', cart);
       cartDispatch({type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart});
-      Toaster.show('Thêm vào giỏ hàng thành công');
+      // Toaster.show('Thêm vào giỏ hàng thành công');
       return cart;
     } catch (error) {
       console.log('Error addToCart', error);

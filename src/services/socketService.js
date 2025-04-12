@@ -49,6 +49,7 @@ class SocketService {
         return;
       }
   
+
       this.socket.emit("order.join", orderId, () => {
         // console.log(`Đã tham gia order ${orderId}`);
       });

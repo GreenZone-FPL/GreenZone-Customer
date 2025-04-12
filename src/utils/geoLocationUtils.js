@@ -47,7 +47,7 @@ const fetchUserLocation = async (setCurrentLocation, setLoading) => {
   setLoading(true);
 
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
+    // await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
 
     const location = await getCurrentLocation();
 

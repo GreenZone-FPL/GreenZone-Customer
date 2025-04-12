@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ViewProps } from "react-native";
 import { DualTextRow, TitleText } from '../../../components';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from "../../../constants";
 import { CartManager, TextFormatter } from "../../../utils";
@@ -8,16 +8,18 @@ import { CartManager, TextFormatter } from "../../../utils";
 interface PaymentDetailsViewProps {
     onSelectVoucher: () => void;
     cartState: any;
+    style: ViewProps
 }
 
 export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
     onSelectVoucher,
     cartState,
+    style
 }) => {
     const paymentDetails = CartManager.getPaymentDetails(cartState);
 
     return (
-        <View style={styles.containerItem}>
+        <View style={[styles.containerItem, style]}>
           
             <TitleText text="Chi tiết thanh toán" style={styles.leftText}/>
 

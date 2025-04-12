@@ -20,15 +20,15 @@ import {
   ProductsListHorizontal,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
+import { TextFormatter } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
-import {CategoryView} from './HomeComponents/CategoryView';
+import { CategoryView } from './HomeComponents/CategoryView';
 
 const HomeScreen = () => {
-  const {cartState, authState, awaitingPayments} = useAppContext();
+  const { cartState, authState, awaitingPayments } = useAppContext();
 
   const {
     isModalVisible,
@@ -51,7 +51,7 @@ const HomeScreen = () => {
     navigateSeedScreen,
   } = useHomeContainer();
 
-  const {onNavigateLogin} = useAppContainer();
+  const { onNavigateLogin } = useAppContainer();
   useSaveLocation();
   return (
     <SafeAreaView style={styles.container}>
@@ -124,7 +124,7 @@ const HomeScreen = () => {
           nestedScrollEnabled
           initialNumToRender={10} // Chỉ render 10 item đầu tiên
           removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
@@ -147,10 +147,10 @@ const HomeScreen = () => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-            ? cartState?.shippingAddressInfo?.location
-            : cartState
-            ? cartState?.address?.label
-            : 'Đang xác định vị trí...'
+              ? cartState?.shippingAddressInfo?.location
+              : cartState
+                ? cartState?.address?.label
+                : 'Đang xác định vị trí...'
         }
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
