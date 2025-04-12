@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { createOrder } from '../../axios';
 import {
     DeliveryMethod,
     OnlineMethod,
@@ -7,17 +8,15 @@ import {
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
 import {
     AppAsyncStorage,
     CartManager,
-    Toaster,
-    fetchUserLocation
+    Toaster
 } from '../../utils';
-import { MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
-import { createOrder } from '../../axios';
 
 export const useCheckoutContainer = () => {
     const navigation = useNavigation()
@@ -35,10 +34,10 @@ export const useCheckoutContainer = () => {
     const [actionDialogVisible, setActionDialogVisible] = useState(false);
 
     const [loading, setLoading] = useState(false);
-    const [currentLocation, setCurrentLocation] = useState('');
-    const { cartState, cartDispatch, setUpdateOrderMessage, awaitingPayments, setAwaitingPayments } = useAppContext();
+ 
+    const { cartState, cartDispatch, setUpdateOrderMessage, setAwaitingPayments } = useAppContext();
 
-    const [timeInfo, setTimeInfo] = React.useState({
+    const [timeInfo, setTimeInfo] = useState({
         selectedDay: 'Hôm nay',
         selectedTime: 'Sớm nhất có thể',
     });
@@ -100,16 +99,6 @@ export const useCheckoutContainer = () => {
     }, [cartState.deliveryMethod]);
 
     useEffect(() => {
-        const initSocket = async () => {
-            await socketService.initialize();
-        };
-        initSocket();
-
-        return () => { };
-    }, []);
-
-
-    useEffect(() => {
         if (timeInfo?.fulfillmentDateTime) {
             const fulfillmentTimeISO = new Date(
                 timeInfo.fulfillmentDateTime,
@@ -128,11 +117,6 @@ export const useCheckoutContainer = () => {
         await CartManager.removeFromCart(id, cartDispatch);
         setActionDialogVisible(false);
     };
-
-    useEffect(() => {
-        fetchUserLocation(setCurrentLocation, setLoading);
-    }, []);
-
 
     const onApproveCreateOrder = async () => {
         try {
@@ -242,8 +226,6 @@ export const useCheckoutContainer = () => {
         setActionDialogVisible,
         loading,
         setLoading,
-        currentLocation,
-        setCurrentLocation,
         timeInfo,
         setTimeInfo,
         selectedProduct,

@@ -44,13 +44,13 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         justifyContent: 'center',
         alignItems: 'center',
-        elevation: 2,
+        elevation: 1,
         shadowColor: colors.black,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
         borderWidth: 1,
-        borderColor: colors.gray200
+        borderColor: colors.fbBg
     },
     icon: {
         fontSize: GLOBAL_KEYS.ICON_SIZE_DEFAULT,

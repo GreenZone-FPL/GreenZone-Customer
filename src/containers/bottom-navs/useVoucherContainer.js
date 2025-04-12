@@ -8,7 +8,6 @@ export const useVoucherContainer = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('Màn hình được focus và useFocusEffect chạy');
       const fetchProfile = async () => {
         try {
           const response = await getProfile();

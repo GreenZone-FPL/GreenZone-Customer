@@ -218,8 +218,8 @@ const OrderScreen = props => {
         onPress={() => setIsModalVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={async () => {
-          await navigation.navigate(ShoppingGraph.CheckoutScreen);
+        onPressCart={() => {
+          navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
 
