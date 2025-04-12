@@ -190,7 +190,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
 
       <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()}>
-          <Icon source="chevron-left" size={36} color={colors.black} />
+          <Icon source="arrow-left" size={24} color={colors.black} />
         </Pressable>
         <View style={{ flex: 1 }}>
           <CustomSearchBar
@@ -205,7 +205,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
             }}
             leftIcon="magnify"
             rightIcon="close"
-            style={{ backgroundColor: colors.fbBg }}
+            style={{ backgroundColor: colors.fbBg}}
             onFocus={() => setIsSearching(true)} />
         </View>
       </View>

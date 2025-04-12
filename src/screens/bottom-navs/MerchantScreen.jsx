@@ -400,7 +400,10 @@ const RenderItem = ({ item, handleMerchant, haversineDistance }) => (
 
       <TitleText text={item.name} />
 
-      <NormalText text={`${item.specificAddress}, ${item.ward}, ${item.district}, ${item.province}`} />
+      <NormalText
+        style={styles.location}
+        text={`${item.specificAddress}, ${item.ward}, ${item.district}, ${item.province}`}
+      />
 
 
       {
@@ -497,12 +500,13 @@ const styles = StyleSheet.create({
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   location: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '500',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontWeight: '400',
+    color: colors.gray700
   },
   distance: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.earthYellow
+    color: colors.orange700
   },
   modalOverlay: {
     flex: 1,

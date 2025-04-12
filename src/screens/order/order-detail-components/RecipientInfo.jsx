@@ -47,7 +47,7 @@ export const RecipientInfo = ({ detail }) => {
   
         <DualTextRow
           style={{ marginVertical: 0 }}
-          leftText={`Thời gian mong muốn nhận hàng`}
+          leftText={`Thời gian dự kiến nhận hàng`}
           rightText={new Date(detail.fulfillmentDateTime).toLocaleString('vi-VN')}
         />
       </View>

@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.green100,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: 12,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     height: 50,
   },
