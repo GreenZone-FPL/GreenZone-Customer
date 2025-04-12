@@ -403,10 +403,14 @@ const RenderItem = ({ item, handleMerchant, haversineDistance }) => (
       <NormalText text={`${item.specificAddress}, ${item.ward}, ${item.district}, ${item.province}`} />
 
 
-      <NormalText
-        style={styles.distance}
-        text={`${haversineDistance(item.latitude, item.longitude)} km`}
-      />
+      {
+        haversineDistance(item.latitude, item.longitude) &&
+        <NormalText
+          style={styles.distance}
+          text={`${haversineDistance(item.latitude, item.longitude)} km`}
+        />
+      }
+
 
     </Column>
   </TouchableOpacity>

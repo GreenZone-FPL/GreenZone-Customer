@@ -51,7 +51,7 @@ const VoucherScreen = ({ navigation }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
-      
+
       {!authState.lastName ?
 
         <ImageBackground
@@ -75,7 +75,7 @@ const VoucherScreen = ({ navigation }) => {
                 navigation.navigate(VoucherGraph.MyVouchersScreen)
               }}>
               <Icon
-                source="ticket-confirmation-outline"
+                source="ticket"
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                 color={colors.primary}
               />

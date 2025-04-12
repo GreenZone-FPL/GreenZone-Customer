@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
+        padding: 8,
     },
     button: {
         padding: GLOBAL_KEYS.PADDING_SMALL,
