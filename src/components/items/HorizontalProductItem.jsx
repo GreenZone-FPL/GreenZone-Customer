@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
     borderWidth: 2,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    width: 20,
+    minWidth: 20,
     height: 20,
     justifyContent: 'center',
     alignItems: 'center',

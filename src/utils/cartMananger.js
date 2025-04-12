@@ -169,11 +169,7 @@ export const CartManager = (() => {
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
 
-      const cartLength = cart.orderItems.reduce(
-        (total, item) => total + item.quantity,
-        0,
-      );
-      if (cartLength > 10) {
+      if (cart.orderItems.length >= 10) {
         Toaster.show('Giỏ hàng tối đa 10 sản phẩm');
         return;
       }
@@ -211,7 +207,7 @@ export const CartManager = (() => {
 
       await AppAsyncStorage.storeData('CART', cart);
       cartDispatch({type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart});
-      // Toaster.show('Thêm vào giỏ hàng thành công');
+      Toaster.show('Thêm vào giỏ hàng thành công');
       return cart;
     } catch (error) {
       console.log('Error addToCart', error);
@@ -264,7 +260,7 @@ export const CartManager = (() => {
   const updateCartItem = async (itemId, updatedProductData, cartDispatch) => {
     try {
       let cart = await AppAsyncStorage.readData('CART', {});
-
+    
       const itemIndex = cart.orderItems.findIndex(
         item => item.itemId === itemId,
       );
