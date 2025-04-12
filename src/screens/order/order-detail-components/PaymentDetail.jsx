@@ -199,7 +199,7 @@ export const PaymentDetails = ({ detail }) => {
                 leftText="Tổng tiền"
                 rightText={`${totalPrice.toLocaleString('vi-VN')}đ`}
                 rightTextStyle={{
-                    color: colors.primary,
+                    color: colors.orange700,
                     fontWeight: '700',
                     fontSize: 18,
                 }}

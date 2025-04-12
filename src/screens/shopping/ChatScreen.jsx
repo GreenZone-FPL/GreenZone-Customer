@@ -44,10 +44,7 @@ const ChatScreen = ({ navigation }) => {
     socket.on('connect', () => {
       console.log('socket Id', socket.id)
     })
-    socket.on("thuthao", (data) => {
-      console.log("thuthao message", data);
-    });
-
+    
 
 
     return () => {
@@ -55,31 +52,31 @@ const ChatScreen = ({ navigation }) => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   socket.on('receive message', data => {
-  //     addMessage(data.userName, data.message, data.image);
+  useEffect(() => {
+    socket.on('receive message', data => {
+      addMessage(data.userName, data.message, data.image);
 
-  //     // Gửi thông báo khi nhận tin nhắn
-  //     if (data.userName !== userName) {
-  //       // Nếu tin nhắn không phải của chính bạn
-  //       Notifications.postLocalNotification({
-  //         title: `${data.userName} gửi tin nhắn mới`,
-  //         body: data.message,
-  //         extra: 'Dữ liệu thêm', // Bạn có thể thêm dữ liệu thêm nếu cần
-  //       });
-  //     }
-  //   });
+      // Gửi thông báo khi nhận tin nhắn
+      if (data.userName !== userName) {
+        // Nếu tin nhắn không phải của chính bạn
+        Notifications.postLocalNotification({
+          title: `${data.userName} gửi tin nhắn mới`,
+          body: data.message,
+          extra: 'Dữ liệu thêm', // Bạn có thể thêm dữ liệu thêm nếu cần
+        });
+      }
+    });
 
-  //   socket.on('user typing', data => {
-  //     setTypingStatus(`${data.userName} đang soạn tin...`);
-  //     setTimeout(() => setTypingStatus(''), 3000);
-  //   });
+    socket.on('user typing', data => {
+      setTypingStatus(`${data.userName} đang soạn tin...`);
+      setTimeout(() => setTypingStatus(''), 3000);
+    });
 
-  //   return () => {
-  //     socket.off('receive message');
-  //     socket.off('user typing');
-  //   };
-  // }, []);
+    return () => {
+      socket.off('receive message');
+      socket.off('user typing');
+    };
+  }, []);
 
   const joinChat = () => {
     if (userName.trim()) {
