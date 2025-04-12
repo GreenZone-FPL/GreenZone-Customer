@@ -1,22 +1,19 @@
-import React from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Image, Pressable } from 'react-native';
-import { Column, TitleText } from '../../../components';
 import { useNavigation } from '@react-navigation/native';
 import {
-  Coin1,
   MessageFavorite,
   Rank,
-  TaskSquare,
-  TicketDiscount,
-  Coffee
+  TaskSquare
 } from 'iconsax-react-native';
+import React from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TitleText } from '../../../components';
+import { colors, GLOBAL_KEYS } from '../../../constants';
 import {
   AppGraph,
   OrderGraph,
   UserGraph,
   VoucherGraph,
 } from '../../../layouts/graphs';
-import { colors, GLOBAL_KEYS } from '../../../constants';
 
 type NavigationProps = { navigate: (screen: string) => void };
 type ItemProps = {
@@ -43,13 +40,6 @@ export const CategoryView: React.FC = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 22 }}>
-        <Item
-          IconComponent={() => (
-            <TicketDiscount size="50" color={colors.primary} variant="Bulk" />
-          )}
-          title="Voucher"
-          onPress={() => navigation.navigate(VoucherGraph.SelectVouchersScreen)}
-        />
 
         <Item
           IconComponent={() => (
@@ -70,7 +60,7 @@ export const CategoryView: React.FC = () => {
 
         <Item
           IconComponent={() => (
-            <MessageFavorite size="50" color={colors.orange700} variant="Bulk" />
+            <MessageFavorite size="50" color={colors.yellow700} variant="Bulk" />
           )}
           title="Góp ý"
           onPress={() => navigation.navigate(UserGraph.ContactScreen)}
