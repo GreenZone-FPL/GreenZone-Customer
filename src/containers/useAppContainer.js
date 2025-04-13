@@ -103,7 +103,7 @@ export const useAppContainer = () => {
 
       const duration = 2000; // Thời gian hiển thị message
 
-    
+
       showMessage({
         message: updateOrderMessage.message,
         type,
@@ -155,18 +155,22 @@ export const useAppContainer = () => {
   }, [setUpdateOrderMessage]);
 
   const onLogout = async () => {
-    // Xóa token khỏi AsyncStorage
-    await AppAsyncStorage.clearAll();
-    setAwaitingPayments(null);
-    await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
-    authDispatch({
-      type: AuthActionTypes.LOGOUT,
-      payload: { isLoggedIn: false, lastName: null },
-    });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: MainGraph.graphName }],
-    });
+    try {
+      await AppAsyncStorage.clearAll();
+      setAwaitingPayments(null);
+      await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
+      authDispatch({
+        type: AuthActionTypes.LOGOUT,
+        payload: { isLoggedIn: false, lastName: null },
+      });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: MainGraph.graphName }],
+      });
+    } catch (error) {
+      throw error
+    }
+
   };
 
   const onNavigateLogin = () => {

@@ -1,6 +1,7 @@
 import axiosInstance from '../axiosInstance';
 import {AppAsyncStorage} from '../../utils';
 import {RegisterRequest} from '../../type/register';
+import { onUserLoginZego } from '../../zego/common';
 
 export const getProfile = async (): Promise<void> => {
   try {
@@ -8,7 +9,7 @@ export const getProfile = async (): Promise<void> => {
 
     return response.data;
   } catch (error) {
-    console.log('error:', error); // debug
+    console.log('error:', error); 
     throw error;
   }
 };
@@ -32,6 +33,11 @@ export const register = async (request: RegisterRequest) => {
       AppAsyncStorage.STORAGE_KEYS.lastName,
       data.user.lastName,
     );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.phoneNumber,
+      data.user.phoneNumber,
+    );
+    
 
     return data;
   } catch (error) {
@@ -71,6 +77,12 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       AppAsyncStorage.STORAGE_KEYS.lastName,
       data.user.lastName,
     );
+    await AppAsyncStorage.storeData(
+      AppAsyncStorage.STORAGE_KEYS.phoneNumber,
+      data.user.phoneNumber,
+    );
+
+    await onUserLoginZego(data.user.phoneNumber, data.user.lastName)
 
     return data;
   } catch (error) {

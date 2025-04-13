@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {Icon} from 'react-native-paper';
-import {getProfile} from '../../axios';
+import React, { useState } from 'react';
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-paper';
+import { getProfile } from '../../axios';
 import {
   AuthButton,
   AuthContainer,
@@ -14,23 +14,24 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import {OrderGraph, UserGraph} from '../../layouts/graphs';
-import ButtonBackground from '../../components/background/ButtonBackground';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContainer } from '../../containers';
+import { useAppContext } from '../../context/appContext';
+import { OrderGraph, UserGraph } from '../../layouts/graphs';
+import { Toaster } from '../../utils';
 
-const ProfileScreen = ({navigation}) => {
+
+const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const {authState, authDispatch, cartDispatch} = useAppContext();
-  const {onLogout, onNavigateLogin} = useAppContainer();
+  const { authState, authDispatch, cartDispatch } = useAppContext();
+  const { onLogout, onNavigateLogin } = useAppContainer();
 
   const handleProfile = async () => {
     setLoading(true);
     try {
       if (authState.lastName) {
         const reponse = await getProfile();
-        navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
+        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
       } else {
         onNavigateLogin();
       }
@@ -41,6 +42,17 @@ const ProfileScreen = ({navigation}) => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      setLoading(true)
+      await onLogout()
+    } catch (error) {
+      Toaster.show(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const navigateIfLoggedIn = screen => {
     authState.lastName ? navigation.navigate(screen) : onNavigateLogin();
   };
@@ -48,12 +60,13 @@ const ProfileScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+      <NormalLoading visible={loading} />
       <HeaderWithBadge title="Cá nhân" />
       {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
       <ScrollView>
         <Column style={styles.body}>
           <TitleText text="Tài khoản" />
-          <NormalLoading visible={loading} />
+          
           <Column>
             <Row style={styles.accountContainer}>
               <CardAccount
@@ -106,7 +119,7 @@ const ProfileScreen = ({navigation}) => {
 
             <View style={styles.separator} />
             {authState.lastName && (
-              <CardUtiliti icon="logout" title="Đăng xuất" onPress={onLogout} />
+              <CardUtiliti icon="logout" title="Đăng xuất" onPress={handleLogout} />
             )}
           </View>
         </Column>
@@ -117,18 +130,18 @@ const ProfileScreen = ({navigation}) => {
 
 export default ProfileScreen;
 
-const CardAccount = ({icon, color, title, onPress}) => (
+const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={30} color={color} />
     <Text style={styles.cardText}>{title}</Text>
   </Pressable>
 );
 
-const CardUtiliti = ({icon, title, onPress}) => (
+const CardUtiliti = ({ icon, title, onPress }) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon source={icon} size={26} color={colors.gray700} />
-      <NormalText text={title} style={{fontSize: 14}} />
+      <NormalText text={title} style={{ fontSize: 14 }} />
       {/* <Text style={styles.itemText}>{title}</Text> */}
     </View>
   </Pressable>

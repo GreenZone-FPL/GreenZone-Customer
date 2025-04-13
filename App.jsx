@@ -51,16 +51,21 @@ import SeedScreen from './src/screens/voucher/SeedScreen';
 import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 import { useAppContainer } from './src/containers/useAppContainer';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
+import InviteCallScreen from './src/zego/InviteCallScreen';
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import { LogBox } from 'react-native';
 import NotificationScreen from './src/screens/notification/NotificationScreen';
-
-
+import {
+  ZegoUIKitPrebuiltCallWaitingScreen,
+  ZegoUIKitPrebuiltCallInCallScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import ZegoCallUI from './src/zego/ZegoCallUI';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 export const navigationRef = React.createRef();
+
 
 export default function App() {
   return (
@@ -68,18 +73,7 @@ export default function App() {
       <PaperProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            <NavigationContainer ref={navigationRef}>
-              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-                <BaseStack.Screen
-                  name="AppNavigator"
-                  component={AppNavigator}
-                />
-                <BaseStack.Screen
-                  name={OrderGraph.OrderDetailScreen}
-                  component={OrderDetailScreen}
-                />
-              </BaseStack.Navigator>
-            </NavigationContainer>
+            <AppNavigator />
             <FlashMessage position="top" />
             <Toast />
           </SafeAreaProvider>
@@ -90,13 +84,37 @@ export default function App() {
 }
 
 function AppNavigator() {
-  const { authState } = useAppContext();
+  const { showCallUI } = useAppContext();
+  return (
+    <NavigationContainer ref={navigationRef}>
+
+      <RootNavigator />
+      {showCallUI && <ZegoCallUI />}
+
+    </NavigationContainer>
+  )
+}
+
+
+function RootNavigator() {
+  return (
+    <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+      <BaseStack.Screen name="MainNavigator" component={MainNavigator} />
+      <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+    </BaseStack.Navigator>
+  );
+}
+
+function MainNavigator() {
+  const { authState, showCallUI } = useAppContext();
+  console.log('showCallUI', showCallUI)
   useAppContainer();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
     presentation: 'transparentModal',
     headerShown: false,
   };
+
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
       {authState.needAuthen === false ? (
@@ -111,6 +129,32 @@ function AppNavigator() {
             name={MainGraph.graphName}
             component={MainNavigation}
           />
+
+
+          {
+            showCallUI &&
+            <>
+
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name 
+                name="ZegoUIKitPrebuiltCallWaitingScreen"
+                component={ZegoUIKitPrebuiltCallWaitingScreen}
+              />
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name
+                name="ZegoUIKitPrebuiltCallInCallScreen"
+                component={ZegoUIKitPrebuiltCallInCallScreen}
+              />
+            </>
+          }
+
+          <BaseStack.Screen
+            name={AppGraph.InviteCallScreen}
+            component={InviteCallScreen}
+          />
+
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
@@ -173,7 +217,6 @@ function AppNavigator() {
             name={VoucherGraph.SelectVouchersScreen}
             component={SelectVouchersScreen}
           />
-
 
           <BaseStack.Screen
             name={VoucherGraph.SeedScreen}

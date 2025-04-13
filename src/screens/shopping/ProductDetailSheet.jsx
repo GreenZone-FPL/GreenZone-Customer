@@ -260,7 +260,7 @@ const ProductInfo = ({
 const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -271,7 +271,7 @@ const FavoriteButton = ({ productId }) => {
         setIsFavorite(found);
       } catch (err) {
         Toaster.show('Lỗi khi lấy danh sách yêu thích')
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -280,11 +280,13 @@ const FavoriteButton = ({ productId }) => {
 
   const toggleFavorite = async () => {
     try {
-      setLoading(true);
+
       if (isFavorite) {
+        setLoading(true);
         await deleteFavoriteProduct({ productId });
         Toaster.show('Đã xóa khỏi danh sách yêu thích')
       } else {
+        setLoading(true);
         await postFavoriteProduct({ productId });
         Toaster.show('Đã thêm vào danh sách yêu thích')
       }
@@ -297,19 +299,13 @@ const FavoriteButton = ({ productId }) => {
     }
   };
 
-  const handlePress = async () => {
-    console.log('Loading:', loading);
-   
-    await toggleFavorite();
-  };
-
   return (
     <>
       <IconButton
         icon={isFavorite ? 'heart' : 'heart-outline'}
         iconColor={isFavorite ? colors.red800 : colors.gray300}
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        onPress={handlePress}
+        onPress={toggleFavorite}
       />
     </>
   );
