@@ -4,13 +4,13 @@ import ZegoUIKit, { ZegoToast, ZegoToastType } from '@zegocloud/zego-uikit-rn';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, Text } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
-import { IconButton } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
+import { useAppContainer } from '../../../containers';
 import { AppAsyncStorage } from '../../../utils';
 import { onUserLoginZego } from '../../../zego/common';
-import { useAppContext } from '../../../context/appContext';
-import { useAppContainer } from '../../../containers';
+import { Pressable } from 'react-native';
 
 export const ShipperInfo = (props) => {
   const { messageClick, shipper } = props;
@@ -112,15 +112,14 @@ export const ShipperInfo = (props) => {
           onPressed={handleCallInvitationPress}
         />
 
-        <IconButton
-          icon="message"
-          iconColor={colors.blue600}
-          size={20}
-          containerColor={colors.fbBg}
-          style={{ padding: 8 }}
-          onPress={messageClick}
-          // loading={true}
-        />
+        <Pressable style={styles.iconButton} onPress={messageClick}>
+          <Icon
+            source="message"
+            color={colors.blue600}
+            size={20}
+          />
+        </Pressable>
+
       </Row>
 
       <ZegoToast
@@ -158,5 +157,14 @@ const styles = StyleSheet.create({
   },
   iconRow: {
     gap: 24,
+  },
+  iconButton: {
+    padding: 11,
+    borderRadius: 24,
+    backgroundColor: colors.fbBg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8
+
   },
 });
