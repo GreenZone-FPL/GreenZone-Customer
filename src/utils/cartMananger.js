@@ -221,7 +221,7 @@ export const CartManager = (() => {
       cart.orderItems = cart.orderItems.filter(item => item.itemId !== itemId);
 
       await AppAsyncStorage.storeData('CART', cart);
-      cartDispatch({type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart});
+      cartDispatch({type: CartActionTypes.UPDATE_ORDER_INFO, payload: {orderItems: cart.orderItems}});
       return cart;
     } catch (error) {
       console.log('Error removeFromCart:', error);

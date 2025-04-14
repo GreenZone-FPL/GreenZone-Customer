@@ -30,7 +30,7 @@ export const AppContextProvider = ({ children }) => {
     visible: false,
     order: null,
   });
-  const [showCallUI, setShowCallUI] = useState(false);
+  const [showCallUI, setShowCallUI] = useState(true);
 
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);

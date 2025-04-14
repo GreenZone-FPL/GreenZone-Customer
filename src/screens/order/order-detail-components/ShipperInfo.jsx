@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
 import ZegoUIKit, { ZegoToast, ZegoToastType } from '@zegocloud/zego-uikit-rn';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, StyleSheet, Text } from 'react-native';
+import { Image, StyleSheet, Text, Pressable } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row } from '../../../components';
@@ -10,7 +10,7 @@ import { colors, GLOBAL_KEYS } from '../../../constants';
 import { useAppContainer } from '../../../containers';
 import { AppAsyncStorage } from '../../../utils';
 import { onUserLoginZego } from '../../../zego/common';
-import { Pressable } from 'react-native';
+
 
 export const ShipperInfo = (props) => {
   const { messageClick, shipper } = props;
@@ -21,7 +21,7 @@ export const ShipperInfo = (props) => {
   const toastInvisableTimeoutRef = useRef(null);
   const { onLogout } = useAppContainer()
 
-  console.log('📦 Shipper Info:', JSON.stringify(shipper, null, 2));
+  // console.log('📦 Shipper Info:', JSON.stringify(shipper, null, 2));
 
   const getUserInfo = async () => {
     try {

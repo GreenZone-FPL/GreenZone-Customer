@@ -173,7 +173,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
                 }
 
                 if (quantity > 99) {
-                  console.log('quantity', quantity)
                   setQuantity(99)
                   Toaster.show('Số lượng không vượt quá 99')
                   return
