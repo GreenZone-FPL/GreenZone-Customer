@@ -63,17 +63,18 @@ export const CategoryMenu = props => {
 };
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.white, justifyContent: 'center' },
+  container: { backgroundColor: colors.white, justifyContent: 'center', marginHorizontal: 16 },
   itemContainer: {
     alignItems: 'center',
-    marginBottom: GLOBAL_KEYS.GAP_SMALL,
+    marginBottom: 8,
     // maxWidth: width / 4.5,
-    width: width / 4.7,
-    borderRadius: 6
+    borderRadius: 6,
+    backgroundColor: colors.white,
+    marginRight: 28
     // flex: 1,
+
   },
   flatlistContainer: {
-    marginHorizontal: 16,
     justifyContent: "center",
     backgroundColor: colors.white,
   },

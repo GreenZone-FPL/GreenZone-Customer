@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
-import { getProductDetail } from '../../axios';
 import {
   CheckoutFooter,
   OverlayStatusBar,
@@ -20,6 +19,12 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
+import {
+  deleteFavoriteProduct,
+  getFavoriteProducts,
+  getProductDetail,
+  postFavoriteProduct,
+} from '../../axios';
 
 const EditCartItemScreen = ({route, navigation}) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -30,7 +35,7 @@ const EditCartItemScreen = ({route, navigation}) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const {updateItem} = route.params;
-  const {cartDispatch} = useAppContext();
+  const { cartDispatch, authState } = useAppContext();
 
   useEffect(() => {
     if (product) {
@@ -107,11 +112,12 @@ const EditCartItemScreen = ({route, navigation}) => {
             <ProductImage product={product} />
 
             <ProductInfo
-              product={product}
-              showFullDescription={showFullDescription}
-              toggleDescription={() => {
-                setShowFullDescription(!showFullDescription);
-              }}
+             authState={authState}
+             product={product}
+             showFullDescription={showFullDescription}
+             toggleDescription={() => {
+               setShowFullDescription(!showFullDescription);
+             }}
             />
 
             {product.variant.length > 1 && selectedVariant && (
@@ -228,20 +234,14 @@ const ProductImage = ({product}) => {
   );
 };
 
-const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
+const ProductInfo = ({product, showFullDescription, toggleDescription,  authState}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>
         <Text style={styles.productName} numberOfLines={2} ellipsizeMode="tail">
           {product.name}
         </Text>
-        <Pressable>
-          <Icon
-            source={'heart-outline'}
-            color={colors.pink500}
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-          />
-        </Pressable>
+        {authState?.isLoggedIn && <FavoriteButton productId={product._id} />}
       </View>
 
       {/* Product Description */}
@@ -259,6 +259,64 @@ const ProductInfo = ({product, showFullDescription, toggleDescription}) => {
         </Pressable>
       </View>
     </View>
+  );
+};
+
+const FavoriteButton = ({ productId }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
+
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      try {
+        setLoading(true)
+        const favorites = await getFavoriteProducts();
+        const found = favorites.some(item => item.product._id === productId);
+        setIsFavorite(found);
+      } catch (err) {
+        Toaster.show('Lỗi khi lấy danh sách yêu thích')
+      }finally{
+        setLoading(false)
+      }
+    };
+    fetchFavoriteStatus();
+  }, [productId]);
+
+  const toggleFavorite = async () => {
+    try {
+      setLoading(true);
+      if (isFavorite) {
+        await deleteFavoriteProduct({ productId });
+        Toaster.show('Đã xóa khỏi danh sách yêu thích')
+      } else {
+        await postFavoriteProduct({ productId });
+        Toaster.show('Đã thêm vào danh sách yêu thích')
+      }
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      Toaster.show('Lỗi khi cập nhật yêu thích')
+    } finally {
+      setIsToastVisible(true);
+      setLoading(false);
+    }
+  };
+
+  const handlePress = async () => {
+    console.log('Loading:', loading);
+   
+    await toggleFavorite();
+  };
+
+  return (
+    <>
+      <IconButton
+        icon={isFavorite ? 'heart' : 'heart-outline'}
+        iconColor={isFavorite ? colors.red800 : colors.gray300}
+        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+        onPress={handlePress}
+      />
+    </>
   );
 };
 
