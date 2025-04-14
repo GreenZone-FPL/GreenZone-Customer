@@ -61,12 +61,14 @@ const ProfileScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
       <NormalLoading visible={loading} />
-      <HeaderWithBadge title="Cá nhân" />
-      {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
+      <HeaderWithBadge title="Cá nhân" enableBadge={!!authState.lastName} />
+
       <ScrollView>
+        {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
         <Column style={styles.body}>
+
           <TitleText text="Tài khoản" />
-          
+
           <Column>
             <Row style={styles.accountContainer}>
               <CardAccount

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Image,
   Pressable,
@@ -7,31 +7,56 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {IconWithBadge} from './IconWithBadge';
-import {colors, GLOBAL_KEYS} from '../../constants';
+import { Icon } from 'react-native-paper';
+import { IconWithBadge } from './IconWithBadge';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import PropTypes from 'prop-types';
 import { useNavigation } from '@react-navigation/native';
 import { AppGraph } from '../../layouts/graphs';
+import { getNotifications } from '../../axios';
+import { AppAsyncStorage } from '../../utils';
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
-  onBadgePress: PropTypes.func,
   isHome: PropTypes.bool,
   leftIcon: PropTypes.string,
   enableLeftIcon: PropTypes.bool,
   onLeftPress: PropTypes.func,
+  enableBadge: PropTypes.bool
 };
 
 export const HeaderWithBadge = ({
   title,
-  onBadgePress,
   isHome,
   leftIcon = 'arrow-left',
   enableLeftIcon = false,
   onLeftPress,
+  enableBadge = false
 }) => {
   const navigation = useNavigation()
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (await AppAsyncStorage.isTokenValid()) {
+          setLoading(true)
+          const response = await getNotifications()
+          if (response) {
+            setNotifications(response)
+          }
+        }
+
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
   return (
     <View style={styles.header}>
       {enableLeftIcon && (
@@ -55,7 +80,7 @@ export const HeaderWithBadge = ({
               style={styles.image}
             />
             <Text
-              style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>
+              style={[styles.title, { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }]}>
               {title}
             </Text>
             <Icon
@@ -70,10 +95,16 @@ export const HeaderWithBadge = ({
           </View>
         )
       }
+      {
+        enableBadge && !loading &&
+        <TouchableOpacity
+          disabled={loading}
+          onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
+          style={styles.right}>
+          <IconWithBadge quantity={notifications.length} />
+        </TouchableOpacity>
+      }
 
-      <TouchableOpacity style={styles.right}>
-        <IconWithBadge onPress={() => navigation.navigate(AppGraph.NotificationScreen)} />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -97,6 +128,7 @@ const styles = StyleSheet.create({
   right: {
     flexDirection: 'row',
     alignItems: 'center',
+    // backgroundColor: colors.primary
   },
   title: {
     fontSize: 20,

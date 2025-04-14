@@ -1,22 +1,22 @@
-// @ts-ignore
+
 import React from 'react';
-import {StatusBar, StyleSheet, Text} from 'react-native';
-import {OtpInput} from 'react-native-otp-entry';
+import { StatusBar, StyleSheet, Text } from 'react-native';
+import { OtpInput } from 'react-native-otp-entry';
 import {
   Column,
   NormalLoading,
   NormalText,
   OverlayStatusBar,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {IconButton} from 'react-native-paper';
-import {useVerifyOTPContainer} from '../../containers';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { IconButton } from 'react-native-paper';
+import { useVerifyOTPContainer } from '../../containers';
 import { useRoute } from '@react-navigation/native';
 
-const VerifyOTPScreen: React.FC = () => {
+const VerifyOTPScreen = () => {
   const route = useRoute()
-  const {expired, phoneNumber} = route.params;
-  const {navigation, setCode, timeLeft, loading, formatTime} =
+  const { expired, phoneNumber } = route.params;
+  const { navigation, setCode, timeLeft, loading, formatTime } =
     useVerifyOTPContainer(expired, phoneNumber);
 
   return (
@@ -39,7 +39,7 @@ const VerifyOTPScreen: React.FC = () => {
         {timeLeft > 0 ? (
           <NormalText text={`  Mã OTP hết hạn sau ${formatTime(timeLeft)}`} />
         ) : (
-          <NormalText text="OTP đã hết hạn" style={{color: colors.red900}} />
+          <NormalText text="OTP đã hết hạn" style={{ color: colors.red900 }} />
         )}
       </Column>
     </Column>
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 20,
     flex: 1,
   },
-  title: {fontSize: 28, fontWeight: 'bold', color: colors.black},
+  title: { fontSize: 28, fontWeight: 'bold', color: colors.black },
 });
 
 export default VerifyOTPScreen;

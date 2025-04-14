@@ -110,7 +110,7 @@ function RootNavigator() {
 function MainNavigator() {
   const navigation = useNavigation()
   const { authState, showCallUI } = useAppContext();
-  console.log('showCallUI', showCallUI)
+
   useAppContainer();
   const slideFromBottomOption = {
     animation: 'slide_from_bottom',
@@ -128,11 +128,11 @@ function MainNavigator() {
       await onUserLoginZego(phoneNumber, lastName, navigation);
     }
   }
-  console.log('authState', authState)
+
   useEffect(() => {
-    
+
     if (authState.lastName) {
-     
+
       console.log('initZego')
       initZego()
     } else {

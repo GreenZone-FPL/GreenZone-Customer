@@ -14,6 +14,8 @@ import { getProfile } from '../../axios';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { SeedText } from '../texts/SeedText';
 import { AppAsyncStorage } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+
 
 const width = Dimensions.get('window').width;
 
@@ -25,26 +27,30 @@ export const BarcodeUser = ({
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
   const [user, setUser] = useState(null);
+  const { updateOrderMessage } = useAppContext()
 
+  const fetchProfile = async () => {
+    try {
+      const isTokenValid = await AppAsyncStorage.isTokenValid()
+      if (isTokenValid) {
+        const response = await getProfile();
+        if (response) {
+          setUser(response);
+        }
+      }
+
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+  useEffect(() => {
+    fetchProfile()
+  }, [updateOrderMessage])
+
+  
   useFocusEffect(
     useCallback(() => {
-      const fetchProfile = async () => {
-        try {
-          const isTokenValid = await AppAsyncStorage.isTokenValid()
-          if (isTokenValid) {
-            const response = await getProfile();
-            if (response) {
-              setUser(response);
-            }
-          }
-
-        } catch (error) {
-          console.log('error', error);
-        }
-      };
-
       fetchProfile();
-
     }, [])
   );
 

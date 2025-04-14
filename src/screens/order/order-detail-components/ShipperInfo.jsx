@@ -1,56 +1,36 @@
-import { useNavigation } from '@react-navigation/native';
 import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import ZegoUIKit, { ZegoToastType } from '@zegocloud/zego-uikit-rn';
-import React, { useEffect, useRef, useState } from 'react';
+import ZegoUIKit from '@zegocloud/zego-uikit-rn';
+import React, { useEffect } from 'react';
 import { Image, Pressable, StyleSheet, Text } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
-import { useAppContainer } from '../../../containers';
-
 
 export const ShipperInfo = (props) => {
   const { messageClick, shipper } = props;
-  const navigation = useNavigation();
-  const [userPhoneNumber, setUserPhoneNumber] = useState('');
-  const [isToastVisable, setIsToastVisable] = useState(false);
-  const [toastExtendedData, setToastExtendedData] = useState({});
-  const toastInvisableTimeoutRef = useRef(null);
-  const { onLogout } = useAppContainer()
-
-  const resetToastInvisableTimeout = () => {
-    clearTimeout(toastInvisableTimeoutRef.current);
-    toastInvisableTimeoutRef.current = setTimeout(() => {
-      setIsToastVisable(false);
-    }, 3000);
-  };
 
   useEffect(() => {
-    Orientation.addOrientationListener((orientation) => {
+    const handleOrientationChange = (orientation) => {
       let orientationValue = 0;
-      if (orientation === 'PORTRAIT') orientationValue = 0;
-      else if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
+      if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
       else if (orientation === 'LANDSCAPE-RIGHT') orientationValue = 3;
       console.log('📱 Orientation:', orientation, orientationValue);
       ZegoUIKit.setAppOrientation(orientationValue);
-    });
+    };
 
+    Orientation.addOrientationListener(handleOrientationChange);
+    return () => {
+      Orientation.removeOrientationListener(handleOrientationChange);
+    };
   }, []);
 
+
   const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
-    console.log('📞 invitees used in call:', [shipper?.phoneNumber]);
-    if (errorCode === 0) {
-      clearTimeout(toastInvisableTimeoutRef.current);
-      setIsToastVisable(false);
-    } else {
+    if (errorCode !== 0) {
       console.log('🚨 Zego call error:', { errorCode, errorMessage, errorInvitees });
-      setIsToastVisable(true);
-      setToastExtendedData({
-        type: ZegoToastType.error,
-        text: `error: ${errorCode}\n\n${errorMessage}`,
-      });
-      resetToastInvisableTimeout();
+    } else {
+      console.log('📞 Call invitation sent successfully.');
     }
   };
 
@@ -79,8 +59,8 @@ export const ShipperInfo = (props) => {
         <ZegoSendCallInvitationButton
           invitees={[
             {
-              userID: shipper?.phoneNumber,
-              userName: 'user_' + shipper?.phoneNumber
+              userID: shipper?.phoneNumber ?? '',
+              userName: `${shipper?.firstName ?? ''} ${shipper?.lastName ?? ''}`.trim()
             }
           ]}
           isVideoCall={false}
@@ -98,16 +78,9 @@ export const ShipperInfo = (props) => {
         </Pressable>
 
       </Row>
-
-      {/* <ZegoToast
-        visable={isToastVisable}
-        type={toastExtendedData.type}
-        text={toastExtendedData.text}
-      /> */}
     </Row>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

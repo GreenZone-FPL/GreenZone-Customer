@@ -64,7 +64,7 @@ const HomeScreen = () => {
             : 'Chào bạn mới'
         }
         isHome={false}
-        onBadgePress={navigateNotification}
+        enableBadge={!!authState.lastName}
       />
 
       <ScrollView

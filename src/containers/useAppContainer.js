@@ -101,7 +101,7 @@ export const useAppContainer = () => {
         updateOrderMessage.status,
       );
 
-      const duration = 2000; // Thời gian hiển thị message
+      const duration = 1500; // Thời gian hiển thị message
 
 
       showMessage({

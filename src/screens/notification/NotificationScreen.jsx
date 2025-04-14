@@ -17,7 +17,6 @@ const NotificationScreen = (props) => {
       try {
         setLoading(true)
         const response = await getNotifications()
-        console.log('noti', JSON.stringify(response, null, 2))
         if (response) {
           setNotifications(response)
         }
