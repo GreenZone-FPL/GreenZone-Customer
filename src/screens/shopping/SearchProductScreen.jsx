@@ -67,7 +67,10 @@ const SearchProductScreen = props => {
   const onIconClick = productId => {
     onClickAddToCart(productId);
   };
-
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setFilteredProducts(allProducts);
+  };
   return (
     <View style={styles.content}>
       <LightStatusBar />
@@ -76,7 +79,7 @@ const SearchProductScreen = props => {
           placeholder="Tìm kiếm..."
           searchQuery={searchQuery}
           setSearchQuery={handleSearch}
-          onClearIconPress={() => setSearchQuery('')}
+          onClearIconPress={handleClearSearch}
           leftIcon="magnify"
           rightIcon="close"
           style={{flex: 1, elevation: 3, backgroundColor: colors.fbBg}}
