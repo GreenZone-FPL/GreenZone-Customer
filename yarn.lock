@@ -9023,6 +9023,11 @@ react-native-tab-view@^4.0.5:
   dependencies:
     use-latest-callback "^0.2.1"
 
+react-native-timeline-flatlist@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.npmjs.org/react-native-timeline-flatlist/-/react-native-timeline-flatlist-0.8.0.tgz"
+  integrity sha512-IVfCOxYx7Js84CaUJmtuxq2eyLvoQ1nRO5GG0mri14NH2NbMUwL9VhX19/yI8LpU2bnarlo7kjR6GLUP3DM/iQ==
+
 react-native-toast-message@^2.2.1:
   version "2.2.1"
   resolved "https://registry.npmjs.org/react-native-toast-message/-/react-native-toast-message-2.2.1.tgz"
@@ -9105,7 +9110,7 @@ react-native-windows@^0.75.0:
     ws "^6.2.2"
     yargs "^17.6.2"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.42.0, react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.57, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.73.0:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@^0.0.0-0 || >=0.65 <1.0", react-native@^0.76.3, "react-native@>= 0.58.2", "react-native@>= 0.62", "react-native@>= 0.64.3", react-native@>=0.42.0, react-native@>=0.46, react-native@>=0.47.1, react-native@>=0.50.0, react-native@>=0.57, react-native@>=0.59.9, react-native@>=0.60.0, react-native@>=0.65.0, react-native@>=0.70.0, react-native@>=0.70.3, react-native@>=0.73.0:
   version "0.76.3"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.76.3.tgz"
   integrity sha512-0TUhgmlouRNf6yuDIIAdbQl0g1VsONgCMsLs7Et64hjj5VLMCA7np+4dMrZvGZ3wRNqzgeyT9oWJsUm49AcwSQ==
