@@ -1,15 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import ZegoUIKit, { ZegoToast, ZegoToastType } from '@zegocloud/zego-uikit-rn';
+import ZegoUIKit, { ZegoToastType } from '@zegocloud/zego-uikit-rn';
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, StyleSheet, Text, Pressable } from 'react-native';
+import { Image, Pressable, StyleSheet, Text } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { useAppContainer } from '../../../containers';
-import { AppAsyncStorage } from '../../../utils';
-import { onUserLoginZego } from '../../../zego/common';
 
 
 export const ShipperInfo = (props) => {
@@ -20,19 +18,6 @@ export const ShipperInfo = (props) => {
   const [toastExtendedData, setToastExtendedData] = useState({});
   const toastInvisableTimeoutRef = useRef(null);
   const { onLogout } = useAppContainer()
-
-  // console.log('📦 Shipper Info:', JSON.stringify(shipper, null, 2));
-
-  const getUserInfo = async () => {
-    try {
-      const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
-      const lastName = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.lastName);
-      if (!phoneNumber) return undefined;
-      return { phoneNumber, lastName };
-    } catch (e) {
-      return undefined;
-    }
-  };
 
   const resetToastInvisableTimeout = () => {
     clearTimeout(toastInvisableTimeoutRef.current);
@@ -51,14 +36,6 @@ export const ShipperInfo = (props) => {
       ZegoUIKit.setAppOrientation(orientationValue);
     });
 
-    getUserInfo().then((info) => {
-      if (info) {
-        setUserPhoneNumber(info.phoneNumber);
-        onUserLoginZego(info.phoneNumber, info.lastName, props);
-      } else {
-        onLogout()
-      }
-    });
   }, []);
 
   const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
@@ -122,11 +99,11 @@ export const ShipperInfo = (props) => {
 
       </Row>
 
-      <ZegoToast
+      {/* <ZegoToast
         visable={isToastVisable}
         type={toastExtendedData.type}
         text={toastExtendedData.text}
-      />
+      /> */}
     </Row>
   );
 };

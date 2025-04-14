@@ -161,7 +161,7 @@ export const useAppContainer = () => {
       await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
       authDispatch({
         type: AuthActionTypes.LOGOUT,
-        payload: { isLoggedIn: false, lastName: null },
+        payload: { isLoggedIn: false, lastName: null, needLogin: false, needRegister: false },
       });
       navigation.reset({
         index: 0,

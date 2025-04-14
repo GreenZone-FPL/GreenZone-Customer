@@ -128,11 +128,11 @@ export default function InviteCallScreen(props) {
 
         </Row>
 
-        <ZegoToast
+        {/* <ZegoToast
           visable={isToastVisable}
           type={toastExtendedData.type}
           text={toastExtendedData.text}
-        />
+        /> */}
       </Column>
     </SafeAreaView>
   );

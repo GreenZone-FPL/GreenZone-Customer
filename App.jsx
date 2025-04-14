@@ -1,6 +1,6 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
@@ -60,6 +60,8 @@ import {
   ZegoUIKitPrebuiltCallInCallScreen,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
 import ZegoCallUI from './src/zego/ZegoCallUI';
+import { onUserLoginZego } from './src/zego/common';
+import { AppAsyncStorage } from './src/utils';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -106,6 +108,7 @@ function RootNavigator() {
 }
 
 function MainNavigator() {
+  const navigation = useNavigation()
   const { authState, showCallUI } = useAppContext();
   console.log('showCallUI', showCallUI)
   useAppContainer();
@@ -114,6 +117,28 @@ function MainNavigator() {
     presentation: 'transparentModal',
     headerShown: false,
   };
+  const initZego = async () => {
+    const lastName = await AppAsyncStorage.readData(
+      AppAsyncStorage.STORAGE_KEYS.lastName,
+    );
+    const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
+
+    if (phoneNumber && lastName) {
+      console.log('loginZego')
+      await onUserLoginZego(phoneNumber, lastName, navigation);
+    }
+  }
+  console.log('authState', authState)
+  useEffect(() => {
+    
+    if (authState.lastName) {
+     
+      console.log('initZego')
+      initZego()
+    } else {
+      console.log('Khong the init Zego')
+    }
+  }, [authState.lastName])
 
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
@@ -192,7 +217,7 @@ function MainNavigator() {
 
           <BaseStack.Screen
             name={'MerchantDetailSheet'}
-            options={slideFromBottomOption}
+            // options={slideFromBottomOption}
             component={MerchantDetailSheet}
           />
 

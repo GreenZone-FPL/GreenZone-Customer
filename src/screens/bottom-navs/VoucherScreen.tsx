@@ -2,40 +2,38 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
+  Image,
   ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  Image
+  Text
 } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { getAllVoucher } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   BarcodeUser,
   Column,
   LightStatusBar,
   NormalText,
   Row,
-  TitleText,
-  VoucherVertical,
+  VoucherVertical
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useVoucherContainer } from '../../containers';
-import { AppAsyncStorage, Toaster } from '../../utils';
-import { getAllVoucher } from '../../axios';
 import { VoucherGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../utils';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
-  const { authState, user } = useVoucherContainer();
+  const { authState } = useVoucherContainer();
   const { onNavigateLogin } = useAppContainer();
 
   const [vouchers, setVouchers] = useState([]);
   useEffect(() => {
     const fetchVouchers = async () => {
-      console.log(await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken))
+     
       try {
         if (await AppAsyncStorage.isTokenValid()) {
           const response = await getAllVoucher();
@@ -56,11 +54,11 @@ const VoucherScreen = ({ navigation }) => {
 
         <ImageBackground
           source={require('../../assets/images/bgvoucher.png')}
-          resizeMode="cover"
+          resizeMode='stretch'
           style={styles.imageBg}>
-          <Column style={{ padding: 16, gap: 16 }}>
+       
             <AuthContainer onPress={onNavigateLogin} />
-          </Column>
+      
         </ImageBackground>
         :
 
@@ -83,7 +81,6 @@ const VoucherScreen = ({ navigation }) => {
             </Pressable>
 
             <BarcodeUser
-              user={user}
               hasBackground={true}
               showPoints={true}
               style={{ width: Dimensions.get('window').width }}

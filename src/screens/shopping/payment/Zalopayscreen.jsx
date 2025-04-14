@@ -62,7 +62,13 @@ const ZalopayScreen = () => {
           {
             text: 'Có',
             onPress: () => {
-              navigation.goBack()
+              navigation.reset({
+                index: 1,
+                routes: [
+                  { name: MainGraph.graphName },
+                  { name: 'OrderDetailScreen', params: { orderId } },
+                ],
+              });
             },
           },
         ]);
@@ -153,24 +159,30 @@ const ZalopayScreen = () => {
     console.log('linkid', paymentLinkId)
     if (navState.url.includes('returncode=1')) {
       navigation.reset({
-              index: 1,
-              routes: [
-                { name: MainGraph.graphName },
-                { name: 'OrderDetailScreen', params: { orderId } },
-              ],
-            });
+        index: 1,
+        routes: [
+          { name: MainGraph.graphName },
+          { name: 'OrderDetailScreen', params: { orderId } },
+        ],
+      });
       Toaster.show('Thanh toán thành công')
       await updatePaymentStatus(orderId, 'success', paymentLinkId);
       await AppAsyncStorage.storeData(
         AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
         null,
       );
-      await CartManager.clearOrderItems(cartDispatch);
       setAwaitingPayments(null);
     } else if (navState.url.includes('returncode=-6012') || navState.url.includes('status=-49')) {
       // call API delete order
+       navigation.reset({
+                      index: 1,
+                      routes: [
+                        { name: MainGraph.graphName },
+                        { name: 'OrderDetailScreen', params: { orderId } },
+                      ],
+                    });
       Toaster.show('Bạn đã hủy giao dịch')
-      navigation.goBack()
+      // navigation.goBack()
     }
   };
 

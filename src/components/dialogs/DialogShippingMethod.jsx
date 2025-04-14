@@ -38,11 +38,13 @@ export const DialogShippingMethod = ({
   useEffect(() => {
     const getUserAndCurrentLocation = async () => {
       try {
-        const response = await getProfile()
-        if(response){
-          setUser(response)
+        const isTokenValid = await AppAsyncStorage.isTokenValid()
+        if (isTokenValid) {
+          const response = await getProfile();
+          if (response) {
+            setUser(response);
+          }
         }
-
       } catch (error) {
         console.log('error', error);
       }

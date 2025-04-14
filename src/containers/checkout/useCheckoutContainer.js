@@ -34,7 +34,7 @@ export const useCheckoutContainer = () => {
     const [actionDialogVisible, setActionDialogVisible] = useState(false);
 
     const [loading, setLoading] = useState(false);
- 
+
     const { cartState, cartDispatch, setUpdateOrderMessage, setAwaitingPayments } = useAppContext();
 
     const [timeInfo, setTimeInfo] = useState({
@@ -140,7 +140,7 @@ export const useCheckoutContainer = () => {
 
                 response = await createOrder(deliveryOrder);
             }
-            
+
             setDialogCreateOrderVisible(false);
             const newActiveOrder = {
                 visible: response?.data.status !== 'awaitingPayment',
@@ -166,9 +166,8 @@ export const useCheckoutContainer = () => {
 
 
             console.log('order data =', JSON.stringify(response, null, 2));
-            if (response?.data.status !== OrderStatus.AWAITING_PAYMENT.value) {
-                await CartManager.clearOrderItems(cartDispatch);
-            }
+
+
 
 
             if (response?.data?.status === 'awaitingPayment') {
@@ -201,12 +200,13 @@ export const useCheckoutContainer = () => {
                     ],
                 });
             }
+            await CartManager.clearOrderItems(cartDispatch);
         } catch (error) {
             console.log('error', error);
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
         } finally {
             setLoading(false)
-           
+
         }
     }
 

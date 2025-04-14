@@ -51,12 +51,20 @@ const PayOsScreen = () => {
           {
             text: 'Có',
             onPress: () => {
-              navigation.goBack()
+              navigation.reset({
+                index: 1,
+                routes: [
+                  { name: MainGraph.graphName },
+                  { name: 'OrderDetailScreen', params: { orderId } },
+                ],
+              });
+              // navigation.goBack()
             },
           },
         ]);
         return true;
       };
+
 
       const backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
@@ -155,7 +163,6 @@ const PayOsScreen = () => {
         AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
         null,
       );
-      await CartManager.clearOrderItems(cartDispatch);
       setAwaitingPayments(null);
       navigation.reset({
         index: 1,
@@ -165,9 +172,15 @@ const PayOsScreen = () => {
         ],
       });
     } else if (url.includes('status=CANCELLED')) {
-      // call API delete order
       Toaster.show('Bạn đã hủy giao dịch')
-      navigation.goBack()
+      navigation.reset({
+        index: 1,
+        routes: [
+          { name: MainGraph.graphName },
+          { name: 'OrderDetailScreen', params: { orderId } },
+        ],
+      });
+      // navigation.goBack()
     }
   };
 

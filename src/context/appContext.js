@@ -17,6 +17,7 @@ import {
   CartActionTypes,
 } from '../reducers/cartReducer';
 import { CartManager } from '../utils';
+import { onUserLoginZego } from '../zego/common';
 
 export const AppContext = createContext();
 
@@ -44,6 +45,8 @@ export const AppContextProvider = ({ children }) => {
         AppAsyncStorage.STORAGE_KEYS.lastName,
       );
       if (isValid && lastName) {
+
+
         authDispatch({
           type: AuthActionTypes.LOGIN,
           payload: {
@@ -53,6 +56,7 @@ export const AppContextProvider = ({ children }) => {
             needRegister: false,
           },
         });
+
       } else {
         // Không có accessToken, chưa đăng ký
         authDispatch({
@@ -71,6 +75,8 @@ export const AppContextProvider = ({ children }) => {
       globalAuthDispatch = null;
     };
   }, [authState]);
+
+ 
 
   useEffect(() => {
     const readCart = async () => {

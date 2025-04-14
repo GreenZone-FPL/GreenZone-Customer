@@ -19,7 +19,7 @@ export const useHomeContainer = () => {
   const { onNavigateLogin } = useAppContainer();
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
-  const [user, setUser] = useState(null);
+  
   const [editOption, setEditOption] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -49,23 +49,9 @@ export const useHomeContainer = () => {
     }
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchProfile = async () => {
-        try {
-          const response = await getProfile();
-          if (response) {
-            setUser(response);
-          }
-        } catch (error) {
-          console.log('error', error);
-        }
-      };
   
-      fetchProfile();
-  
-    }, [])
-  );
+
+ 
 
   useEffect(() => {
     if (allProducts.length === 0) {
@@ -201,8 +187,6 @@ export const useHomeContainer = () => {
     setCurrentCategory,
     lastCategoryRef,
     handleScroll,
-    user,
-    setUser,
     allProducts,
     setAllProducts,
     handleEditOption,

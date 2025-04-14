@@ -36,7 +36,6 @@ const HomeScreen = () => {
     selectedOption,
     currentCategory,
     handleScroll,
-    user,
     allProducts,
     handleEditOption,
     handleOptionSelect,
@@ -74,13 +73,12 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && (
-            <BarcodeUser
-              user={user}
-              showPoints={true}
-              onPress={navigateSeedScreen}
-            />
-          )
+
+          <BarcodeUser
+            showPoints={true}
+            onPress={navigateSeedScreen}
+          />
+
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
