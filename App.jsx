@@ -50,8 +50,7 @@ import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import SeedScreen from './src/screens/voucher/SeedScreen';
 import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 import { useAppContainer } from './src/containers/useAppContainer';
-import SplashScreen2 from './src/screens/auth/SplashScreen2';
-import InviteCallScreen from './src/zego/InviteCallScreen';
+
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import { LogBox } from 'react-native';
 import NotificationScreen from './src/screens/notification/NotificationScreen';
@@ -62,6 +61,7 @@ import {
 import ZegoCallUI from './src/zego/ZegoCallUI';
 import { onUserLoginZego } from './src/zego/common';
 import { AppAsyncStorage } from './src/utils';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -174,11 +174,6 @@ function MainNavigator() {
               />
             </>
           }
-
-          <BaseStack.Screen
-            name={AppGraph.InviteCallScreen}
-            component={InviteCallScreen}
-          />
 
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}

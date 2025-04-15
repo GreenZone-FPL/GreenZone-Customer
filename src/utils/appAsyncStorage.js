@@ -8,6 +8,7 @@ export class AppAsyncStorage {
     refreshToken: 'refreshToken',
     phoneNumber: 'phoneNumber',
     lastName: 'lastName',
+    avatar: 'avatar',
     activeOrders: 'activeOrders',
     currentLocation: 'currentLocation',
     merchantLocation: 'merchantLocation',

@@ -82,7 +82,7 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       data.user.phoneNumber,
     );
 
-    await onUserLoginZego(data.user.phoneNumber, data.user.lastName)
+    
 
     return data;
   } catch (error) {

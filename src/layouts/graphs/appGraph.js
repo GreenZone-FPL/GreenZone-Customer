@@ -16,6 +16,5 @@ export const AppGraph = Object.freeze({
     MyFavoriteProducts: 'MyFavoriteProducts',
     FavoriteScreen: 'FavoriteScreen',
     UpdateProfileScreen: 'UpdateProfileScreen',
-    NotificationScreen: 'NotificationScreen',
-    InviteCallScreen: 'InviteCallScreen'
+    NotificationScreen: 'NotificationScreen'
 });
