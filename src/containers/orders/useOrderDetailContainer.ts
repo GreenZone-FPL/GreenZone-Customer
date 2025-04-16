@@ -100,11 +100,10 @@ export const useOrderDetailContainer = (orderId: string) => {
         setUpdateOrderMessage({
             visible: true,
             orderId: orderId,
-            message: 'Hủy đơn hàng thành công',
-            status: OrderStatus.COMPLETED.value,
+            message: 'Đơn hàng đã bị hủy',
+            status: OrderStatus.CANCELLED.value,
         })
         await fetchOrderDetail()
-       
     }
 
     return {

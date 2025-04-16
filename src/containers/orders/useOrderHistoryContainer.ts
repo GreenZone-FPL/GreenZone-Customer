@@ -1,7 +1,7 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { getOrdersByStatus } from '../../axios';
-import { OnlineMethod } from '../../constants';
+import { OnlineMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { onlineMethods } from '../../screens/checkout/checkout-components';
 import { PaymentMethodItem } from "../../type/checkout";
@@ -26,9 +26,12 @@ export const useOrderHistoryContainer = () => {
     const [orders, setOrders] = useState({}); 
     const [loading, setLoading] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethodItem>(onlineMethods[0]);
-    const { updateOrderMessage } = useAppContext();
+   
     const [dialogPaymentMethodVisible, setDialogPaymentMethodVisible] = useState(false);
+    const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
     const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
+    const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
+
 
     const fetchOrders = async (status: string) => {
         try {
@@ -62,6 +65,15 @@ export const useOrderHistoryContainer = () => {
         }
         setDialogPaymentMethodVisible(false);
     };
+      const callBackAfterCancel = async () => {
+            setUpdateOrderMessage({
+                visible: true,
+                orderId: selectedOrder?._id,
+                message: 'Đơn hàng đã bị hủy',
+                status: OrderStatus.CANCELLED.value,
+            })
+           
+        }
 
 
     return {
@@ -78,6 +90,9 @@ export const useOrderHistoryContainer = () => {
         setPaymentMethod,
         dialogPaymentMethodVisible,
         setDialogPaymentMethodVisible,
+        cancelDialogVisible,
+        setCancelDialogVisible,
         handleSelectMethod,
+        callBackAfterCancel
     };
 };

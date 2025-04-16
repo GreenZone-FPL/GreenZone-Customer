@@ -25,8 +25,8 @@ export const CustomCallButton = ({ userID, userName, navigation }) => {
             console.log('📞 Call result:', result);
 
         } catch (err) {
-            if (err === 6000281) {
-                Toaster.show('Shipper offline quá lâu. Không thể gọi')
+            if (err == 6000281) {
+                Toaster.show('Nhân viên giao hàng offline quá lâu. Không thể gọi')
             } else {
                 Toaster.show(err || err.message)
             }
