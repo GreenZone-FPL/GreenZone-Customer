@@ -21,6 +21,7 @@ export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
 export * from './buttons/ButtonGroup';
 export * from './buttons/AuthButton';
+export * from './buttons/CustomCallButton';
 
 // carousel
 export * from './carousel/CarouselBanner';
