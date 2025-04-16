@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { IconWithBadge } from './IconWithBadge';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import PropTypes from 'prop-types';
-import { useNavigation } from '@react-navigation/native';
-import { AppGraph } from '../../layouts/graphs';
 import { getNotifications } from '../../axios';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { AppGraph } from '../../layouts/graphs';
 import { AppAsyncStorage } from '../../utils';
+import { Row } from '../containers/Row';
+import { IconWithBadge } from './IconWithBadge';
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
@@ -74,7 +74,7 @@ export const HeaderWithBadge = ({
         // 1. Nếu là trang Home thì đổi Header Chào user
         // 2. Nếu không phải Home thì chỉ hiển thị Header Title
         isHome ? (
-          <View style={styles.left}>
+          <Row >
             <Image
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
@@ -88,21 +88,19 @@ export const HeaderWithBadge = ({
               color={colors.yellow700}
               size={GLOBAL_KEYS.ICON_SIZE_SMALL}
             />
-          </View>
-        ) : (
-          <View style={styles.left}>
-            <Text style={styles.title}>{title}</Text>
-          </View>
-        )
+          </Row>
+        ) :
+          <Text style={styles.title}>{title}</Text>
+
       }
       {
         enableBadge && !loading &&
-        <TouchableOpacity
-          disabled={loading}
+
+        <IconWithBadge
+          quantity={notifications.length}
           onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
-          style={styles.right}>
-          <IconWithBadge quantity={notifications.length} />
-        </TouchableOpacity>
+        />
+
       }
 
     </View>
@@ -124,11 +122,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: GLOBAL_KEYS.GAP_SMALL,
     alignItems: 'center',
-  },
-  right: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // backgroundColor: colors.primary
   },
   title: {
     fontSize: 20,

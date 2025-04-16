@@ -1,15 +1,14 @@
-import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import { useNavigation } from '@react-navigation/native';
 import ZegoUIKit from '@zegocloud/zego-uikit-rn';
 import React, { useEffect } from 'react';
-import { Image, Pressable, StyleSheet, Text } from 'react-native';
+import { Image, Linking, Pressable, StyleSheet, Text } from 'react-native';
 import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, CustomCallButton, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
-import { useNavigation } from '@react-navigation/native';
 
 export const ShipperInfo = (props) => {
-  const { messageClick, shipper } = props;
+  const { shipper } = props;
   console.log('shipper', JSON.stringify(shipper, null, 3))
   const navigation = useNavigation()
   useEffect(() => {
@@ -35,6 +34,14 @@ export const ShipperInfo = (props) => {
       console.log('📞 Call invitation sent successfully.');
     }
   };
+
+  const handleSend = () => {
+    if (!shipper?.phoneNumber) return;
+
+    const message = `sms:${shipper.phoneNumber}`;
+
+    Linking.openURL(message).catch((err) => console.error("Failed to open SMS app:", err));
+};
 
   return (
     <Row style={styles.container}>
@@ -76,7 +83,7 @@ export const ShipperInfo = (props) => {
           onPressed={handleCallInvitationPress}
         /> */}
 
-        <Pressable style={styles.iconButton} onPress={messageClick}>
+        <Pressable style={styles.iconButton} onPress={handleSend}>
           <Icon
             source="message"
             color={colors.blue600}

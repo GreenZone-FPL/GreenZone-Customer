@@ -154,7 +154,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
             backgroundColor={colors.white}
             quantity={quantity}
             handlePlus={() => {
-              if (quantity < 10) {
+              if (quantity < 99) {
                 setQuantity(quantity + 1);
               }
             }}

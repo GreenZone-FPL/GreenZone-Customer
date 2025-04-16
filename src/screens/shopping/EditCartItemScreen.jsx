@@ -35,7 +35,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const { updateItem } = route.params;
-  const { cartDispatch } = useAppContext();
+  const { cartDispatch, authState } = useAppContext();
 
   useEffect(() => {
     if (product) {
@@ -112,12 +112,12 @@ const EditCartItemScreen = ({ route, navigation }) => {
             <ProductImage product={product} />
 
             <ProductInfo
-             authState={authState}
-             product={product}
-             showFullDescription={showFullDescription}
-             toggleDescription={() => {
-               setShowFullDescription(!showFullDescription);
-             }}
+              authState={authState}
+              product={product}
+              showFullDescription={showFullDescription}
+              toggleDescription={() => {
+                setShowFullDescription(!showFullDescription);
+              }}
             />
 
             {product.variant.length > 1 && selectedVariant && (
@@ -244,7 +244,7 @@ const ProductImage = ({ product }) => {
   );
 };
 
-const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
+const ProductInfo = ({ authState, product, showFullDescription, toggleDescription }) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>
@@ -275,7 +275,7 @@ const ProductInfo = ({ product, showFullDescription, toggleDescription }) => {
 const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -286,7 +286,7 @@ const FavoriteButton = ({ productId }) => {
         setIsFavorite(found);
       } catch (err) {
         Toaster.show('Lỗi khi lấy danh sách yêu thích')
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -314,7 +314,7 @@ const FavoriteButton = ({ productId }) => {
 
   const handlePress = async () => {
     console.log('Loading:', loading);
-   
+
     await toggleFavorite();
   };
 

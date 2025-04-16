@@ -73,7 +73,7 @@ const OrderDetailScreen = ({ route }) => {
           style={styles.containerContent}
         >
           <Row style={styles.statusRow}>
-          
+
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
@@ -81,12 +81,7 @@ const OrderDetailScreen = ({ route }) => {
 
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
-            <ShipperInfo
-              messageClick={() =>
-                navigation.navigate(ShoppingGraph.ChatScreen)
-              }
-              shipper={orderDetail.shipper}
-            />
+            <ShipperInfo shipper={orderDetail.shipper} />
           )}
 
           {orderDetail.store && <MerchantInfo store={orderDetail.store} />}

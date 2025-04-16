@@ -216,7 +216,7 @@ export const PaymentDetails = ({detail}) => {
             />
           ) : (
             <Image
-              source={require('../../../assets/images/cod.jpg')}
+              source={require('../../../assets/images/logo_vnd.png')}
               style={{width: 22, height: 22}}
             />
           )}
