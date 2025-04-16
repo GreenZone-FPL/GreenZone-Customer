@@ -26,6 +26,7 @@ import {
   DialogPaymentMethod,
   DialogRecipientInfo,
   DialogSelectTime,
+  EmptyView,
   Footer,
   PaymentDetailsView,
   PaymentMethodView,
@@ -66,6 +67,11 @@ const CheckoutScreen = () => {
     onApproveCreateOrder,
   } = useCheckoutContainer();
 
+  if (cartState.orderItems.length === 0) {
+    return (
+      <EmptyView />
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -80,8 +86,6 @@ const CheckoutScreen = () => {
         loading &&
         <NormalLoading visible={loading} />
       }
-
-
 
       <ScrollView style={styles.containerContent}>
         <Column
@@ -226,7 +230,7 @@ const CheckoutScreen = () => {
           onClose={() => setDialogSelectTimeVisible(false)}
           onConfirm={data => {
             setTimeInfo(data);
-            
+
             setTimeout(() => {
               cartDispatch({
                 type: CartActionTypes.UPDATE_ORDER_INFO,
@@ -304,7 +308,6 @@ const CheckoutScreen = () => {
           }}
         />
       }
-
 
     </SafeAreaView>
   );
