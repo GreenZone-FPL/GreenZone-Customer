@@ -225,12 +225,16 @@ const CheckoutScreen = () => {
           visible={dialogSelecTimeVisible}
           onClose={() => setDialogSelectTimeVisible(false)}
           onConfirm={data => {
-            // console.log('timeInfo', data);
             setTimeInfo(data);
-            cartDispatch({
-              type: CartActionTypes.UPDATE_ORDER_INFO,
-              payload: { fulfillmentDateTime: data.fulfillmentDateTime },
-            });
+            
+            setTimeout(() => {
+              cartDispatch({
+                type: CartActionTypes.UPDATE_ORDER_INFO,
+                payload: { fulfillmentDateTime: data.fulfillmentDateTime },
+              });
+            }, 0)
+
+
             setDialogSelectTimeVisible(false);
           }}
         />
@@ -270,10 +274,13 @@ const CheckoutScreen = () => {
           visible={dialogRecipientInforVisible}
           onHide={() => setDialogRecipientInfoVisible(false)}
           onConfirm={data => {
-            CartManager.updateOrderInfo(cartDispatch, {
-              consigneeName: data.name,
-              consigneePhone: data.phoneNumber,
-            });
+            setTimeout(() => {
+              CartManager.updateOrderInfo(cartDispatch, {
+                consigneeName: data.name,
+                consigneePhone: data.phoneNumber,
+              });
+            }, 0)
+
             setDialogRecipientInfoVisible(false);
           }}
         />

@@ -187,8 +187,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                   updatedToppings,
                   productPrice,
                   quantity,
-                  cartDispatch,
-                  cartState
+                  cartDispatch
                 );
 
                 navigation.goBack();

@@ -115,12 +115,14 @@ const SelectAddressScreen = ({ navigation, route }) => {
         longitude: String(updatedAddress.longitude),
       };
       if (isUpdateOrderInfo && cartDispatch) {
+
         CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: addressFinish,
         });
+        navigation.goBack();
       }
 
-      navigation.goBack();
+     
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }

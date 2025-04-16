@@ -102,15 +102,18 @@ const SelectVouchersScreen = ({ navigation, route }) => {
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      cartDispatch({
-        type: CartActionTypes.UPDATE_ORDER_INFO,
-        payload: {
-          voucher: item._id,
-          voucherInfo: item,
-        },
-      });
-
       navigation.goBack();
+      setTimeout(() => {
+        cartDispatch({
+          type: CartActionTypes.UPDATE_VOUCHER,
+          payload: item._id
+        })
+
+        cartDispatch({
+          type: CartActionTypes.UPDATE_VOUCHER_INFO,
+          payload: item
+        })
+      }, 0)
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }

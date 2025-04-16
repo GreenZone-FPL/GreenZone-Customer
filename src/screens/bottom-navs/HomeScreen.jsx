@@ -43,7 +43,6 @@ const HomeScreen = (props) => {
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
-    navigateNotification,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
@@ -51,7 +50,7 @@ const HomeScreen = (props) => {
     needToPay
   } = useHomeContainer();
 
-  console.log('needToPay', needToPay)
+
   const { onNavigateLogin } = useAppContainer();
   useSaveLocation();
   return (

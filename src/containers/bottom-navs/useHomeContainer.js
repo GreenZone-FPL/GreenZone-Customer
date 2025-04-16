@@ -56,7 +56,7 @@ export const useHomeContainer = () => {
       if (isTokenValid) {
         const response = await getOrdersByStatus();
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
-        console.log('awaitingPayments', awaitingPayments)
+
         if (awaitingPayments.length > 0) {
           setNeedToPay(true);
         }

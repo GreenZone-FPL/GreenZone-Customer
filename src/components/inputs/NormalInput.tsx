@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderInput,
     borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   errorText: {
     marginTop: 4,

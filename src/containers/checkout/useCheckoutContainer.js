@@ -48,17 +48,19 @@ export const useCheckoutContainer = () => {
 
     const handleSelectMethod = (method, disabled) => {
         if (!disabled) {
-            setPaymentMethod(method);
-            if (cartState.paymentMethod !== method.paymentMethod || cartState.onlineMethod !== method.value) {
-                cartDispatch({
-                    type: CartActionTypes.UPDATE_ORDER_INFO,
-                    payload: {
-                        paymentMethod: method.paymentMethod,
-                        onlineMethod: method.value,
-                    },
-                });
+            setPaymentMethod(method); // 1. Cập nhật UI ngay, phản hồi nhanh
 
-            }
+            setTimeout(() => {
+              cartDispatch({
+                type: CartActionTypes.UPDATE_PAYMENT_METHOD,
+                payload: method.paymentMethod
+              });
+              cartDispatch({
+                type: CartActionTypes.UPDATE_ONLINE_METHOD,
+                payload: method.value
+              });
+            }, 0); // 2. Cập nhật state toàn cục sau một tick event loop
+
             setDialogPaymentMethodVisible(false);
         } else {
             Toaster.show(
@@ -67,7 +69,7 @@ export const useCheckoutContainer = () => {
         }
     };
     useEffect(() => {
-      
+
         const setUpPaymentMethod = () => {
             let selectedPayment
 
@@ -167,7 +169,7 @@ export const useCheckoutContainer = () => {
                 await AppAsyncStorage.storeData(
                     AppAsyncStorage.STORAGE_KEYS.awaitingPayments, paymentParams);
 
-         
+
 
                 if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
                     navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
