@@ -11,8 +11,7 @@ export * from './barcode/BarcodeUser';
 // bottom-sheets
 
 //background
-export * from './background/EmptyView'
-
+export * from './background/EmptyView';
 
 // buttons
 export * from './buttons/DeliveryButton';
@@ -41,7 +40,6 @@ export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
 export * from './dialogs/DialogReviewOder';
 export * from './dialogs/DialogNotification';
-
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';
@@ -99,3 +97,4 @@ export * from './texts/DeliveryMethodText';
 
 // modals
 export * from './modal/ToppingModal';
+export * from './modal/VoucherPopup';
