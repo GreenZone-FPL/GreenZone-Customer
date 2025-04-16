@@ -30,7 +30,7 @@ export const useOrderHistoryContainer = () => {
     const [dialogPaymentMethodVisible, setDialogPaymentMethodVisible] = useState(false);
     const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
     const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
-    const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
+    const { updateOrderMessage } = useAppContext();
 
 
     const fetchOrders = async (status: string) => {
@@ -65,17 +65,7 @@ export const useOrderHistoryContainer = () => {
         }
         setDialogPaymentMethodVisible(false);
     };
-      const callBackAfterCancel = async () => {
-            setUpdateOrderMessage({
-                visible: true,
-                orderId: selectedOrder?._id,
-                message: 'Đơn hàng đã bị hủy',
-                status: OrderStatus.CANCELLED.value,
-            })
-           
-        }
-
-
+ 
     return {
         navigation,
         tabIndex,
@@ -92,7 +82,6 @@ export const useOrderHistoryContainer = () => {
         setDialogPaymentMethodVisible,
         cancelDialogVisible,
         setCancelDialogVisible,
-        handleSelectMethod,
-        callBackAfterCancel
+        handleSelectMethod
     };
 };

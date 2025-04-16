@@ -1,7 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getProfile } from '../../axios';
-import { DeliveryMethod } from '../../constants';
+import { getAllProducts, getOrdersByStatus, getProfile } from '../../axios';
+import { DeliveryMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
   AppGraph,
@@ -19,7 +19,7 @@ export const useHomeContainer = () => {
   const { onNavigateLogin } = useAppContainer();
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
-  
+
   const [editOption, setEditOption] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [merchantLocal, setMerchantLocal] = useState(null);
@@ -28,6 +28,7 @@ export const useHomeContainer = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
 
+  const [needToPay, setNeedToPay] = useState(false)
 
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -49,9 +50,29 @@ export const useHomeContainer = () => {
     }
   };
 
-  
+  const fetchOrderHistory = async () => {
+    try {
+      const isTokenValid = await AppAsyncStorage.isTokenValid()
+      if (isTokenValid) {
+        const response = await getOrdersByStatus();
+        const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
+        console.log('awaitingPayments', awaitingPayments)
+        if (awaitingPayments.length > 0) {
+          setNeedToPay(true);
+        }
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrderHistory();
+    }, [])
+  );
 
- 
+
+
 
   useEffect(() => {
     if (allProducts.length === 0) {
@@ -201,5 +222,6 @@ export const useHomeContainer = () => {
     navigateOrderHistory,
     navigateAdvertising,
     navigateSeedScreen,
+    needToPay
   };
 };

@@ -35,13 +35,14 @@ import {
   StoreAddress,
   TimeSection,
 } from './checkout-components';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useAppContext();
+  const navigation = useNavigation()
 
   const {
-    navigation,
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,
     dialogRecipientInforVisible,
@@ -75,7 +76,11 @@ const CheckoutScreen = () => {
 
 
 
-      <NormalLoading visible={loading} />
+      {
+        loading &&
+        <NormalLoading visible={loading} />
+      }
+
 
 
       <ScrollView style={styles.containerContent}>
@@ -108,7 +113,7 @@ const CheckoutScreen = () => {
             onRightPress={() => setDialogShippingMethodVisible(true)}
           />
 
-          {cartState?.deliveryMethod === DeliveryMethod.PICK_UP.value && (
+          {cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
             <StoreAddress
               storeInfo={cartState?.storeInfo}
               chooseMerchant={() => {
@@ -203,75 +208,97 @@ const CheckoutScreen = () => {
         cartState={cartState}
       />
 
+      {
+        dialogPaymentMethodVisible &&
+        <DialogPaymentMethod
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
+        />
+      }
 
-      <DialogPaymentMethod
-        visible={dialogPaymentMethodVisible}
-        onHide={() => setDialogPaymentMethodVisible(false)}
-        cartState={cartState}
-        selectedMethod={paymentMethod}
-        handleSelectMethod={handleSelectMethod}
-      />
+      {
+        dialogSelecTimeVisible &&
+        <DialogSelectTime
+          visible={dialogSelecTimeVisible}
+          onClose={() => setDialogSelectTimeVisible(false)}
+          onConfirm={data => {
+            // console.log('timeInfo', data);
+            setTimeInfo(data);
+            cartDispatch({
+              type: CartActionTypes.UPDATE_ORDER_INFO,
+              payload: { fulfillmentDateTime: data.fulfillmentDateTime },
+            });
+            setDialogSelectTimeVisible(false);
+          }}
+        />
+      }
 
-      <DialogSelectTime
-        visible={dialogSelecTimeVisible}
-        onClose={() => setDialogSelectTimeVisible(false)}
-        onConfirm={data => {
-          // console.log('timeInfo', data);
-          setTimeInfo(data);
-          cartDispatch({
-            type: CartActionTypes.UPDATE_ORDER_INFO,
-            payload: { fulfillmentDateTime: data.fulfillmentDateTime },
-          });
-          setDialogSelectTimeVisible(false);
-        }}
-      />
 
-      <ActionDialog
-        visible={dialogCreateOrderVisible}
-        title="Xác nhận"
-        content={`Bạn xác nhận đặt đơn hàng?`}
-        cancelText="Hủy"
-        approveText="Đồng ý"
-        onCancel={() => setDialogCreateOrderVisible(false)}
-        onApprove={onApproveCreateOrder}
-      />
-      <ActionDialog
-        visible={actionDialogVisible}
-        title="Xác nhận"
-        content={`Bạn có chắc chắn muốn xóa "${selectedProduct?.productName}"?`}
-        cancelText="Hủy"
-        approveText="Xóa"
-        onCancel={() => setActionDialogVisible(false)}
-        onApprove={() => deleteProduct(selectedProduct.itemId)}
-      />
+      {
+        dialogCreateOrderVisible &&
+        <ActionDialog
+          visible={dialogCreateOrderVisible}
+          title="Xác nhận"
+          content={`Bạn xác nhận đặt đơn hàng?`}
+          cancelText="Hủy"
+          approveText="Đồng ý"
+          onCancel={() => setDialogCreateOrderVisible(false)}
+          onApprove={onApproveCreateOrder}
+        />
+      }
 
-      <DialogRecipientInfo
-        visible={dialogRecipientInforVisible}
-        onHide={() => setDialogRecipientInfoVisible(false)}
-        onConfirm={data => {
-          CartManager.updateOrderInfo(cartDispatch, {
-            consigneeName: data.name,
-            consigneePhone: data.phoneNumber,
-          });
-          setDialogRecipientInfoVisible(false);
-        }}
-      />
+      {
+        actionDialogVisible &&
+        <ActionDialog
+          visible={actionDialogVisible}
+          title="Xác nhận"
+          content={`Bạn có chắc chắn muốn xóa "${selectedProduct?.productName}"?`}
+          cancelText="Hủy"
+          approveText="Xóa"
+          onCancel={() => setActionDialogVisible(false)}
+          onApprove={() => deleteProduct(selectedProduct.itemId)}
+        />
+      }
 
-      <DeliveryMethodSheet
-        visible={dialogShippingMethodVisible}
-        selectedOption={
-          cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
-            ? DeliveryMethod.PICK_UP
-            : DeliveryMethod.DELIVERY
-        }
-        onClose={() => setDialogShippingMethodVisible(false)}
-        onSelect={async option => {
-          await CartManager.updateOrderInfo(cartDispatch, {
-            deliveryMethod: option.value,
-          });
-          setDialogShippingMethodVisible(false);
-        }}
-      />
+
+      {
+        dialogRecipientInforVisible &&
+        <DialogRecipientInfo
+          visible={dialogRecipientInforVisible}
+          onHide={() => setDialogRecipientInfoVisible(false)}
+          onConfirm={data => {
+            CartManager.updateOrderInfo(cartDispatch, {
+              consigneeName: data.name,
+              consigneePhone: data.phoneNumber,
+            });
+            setDialogRecipientInfoVisible(false);
+          }}
+        />
+      }
+
+      {
+        dialogShippingMethodVisible &&
+        <DeliveryMethodSheet
+          visible={dialogShippingMethodVisible}
+          selectedOption={
+            cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
+              ? DeliveryMethod.PICK_UP
+              : DeliveryMethod.DELIVERY
+          }
+          onClose={() => setDialogShippingMethodVisible(false)}
+          onSelect={async option => {
+            await CartManager.updateOrderInfo(cartDispatch, {
+              deliveryMethod: option.value,
+            });
+            setDialogShippingMethodVisible(false);
+          }}
+        />
+      }
+
+
     </SafeAreaView>
   );
 };

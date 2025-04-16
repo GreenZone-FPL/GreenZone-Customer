@@ -19,8 +19,6 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
   try {
     const profile = await getProfile();
     const avatar = profile.avatar;
-
-
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
@@ -114,7 +112,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 : false,
             layout: {
               mode:
-                callInvitationData.invitees &&
+                Array.isArray(callInvitationData.invitees) &&
                   callInvitationData.invitees.length > 1
                   ? ZegoLayoutMode.gallery
                   : ZegoLayoutMode.pictureInPicture,
@@ -126,8 +124,11 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 reason,
                 duration,
               );
-              //  navigation.navigate(OrderGraph.OrderHistoryScreen);
+              ZegoUIKitPrebuiltCallService.hangUp();
+            
+              navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
+
             timingConfig: {
               isDurationVisible: true,
               onDurationUpdate: duration => {
@@ -154,10 +155,10 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
               ],
             },
 
-            onWindowMinimized: () => {
-              console.log('[Demo]CallInvitation onWindowMinimized');
-              navigation.navigate(OrderGraph.OrderHistoryScreen);
-            },
+            // onWindowMinimized: () => {
+            //   console.log('[Demo]CallInvitation onWindowMinimized');
+            //   navigation.navigate(OrderGraph.OrderHistoryScreen);
+            // },
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
               navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');

@@ -35,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
 
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
-  const [awaitingPayments, setAwaitingPayments] = useState(null);
+ 
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -92,21 +92,7 @@ export const AppContextProvider = ({ children }) => {
     return () => { };
   }, []);
 
-  useEffect(() => {
-    const getAwaitingPayments = async () => {
-      try {
-        const awaitingPayments = await AppAsyncStorage.readData(
-          AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-        );
-        if (awaitingPayments) {
-          setAwaitingPayments(awaitingPayments);
-        }
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-    getAwaitingPayments();
-  }, []);
+ 
 
   return (
     <AppContext.Provider
@@ -121,8 +107,6 @@ export const AppContextProvider = ({ children }) => {
         setActiveOrders,
         merchantLocation,
         setMerchantLocation,
-        awaitingPayments,
-        setAwaitingPayments,
         showCallUI,
         setShowCallUI
       }}>

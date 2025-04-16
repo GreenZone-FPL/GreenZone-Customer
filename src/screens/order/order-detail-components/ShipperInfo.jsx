@@ -7,10 +7,12 @@ import { Icon } from 'react-native-paper';
 import { Column, CustomCallButton, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 
+
 export const ShipperInfo = (props) => {
   const { shipper } = props;
   console.log('shipper', JSON.stringify(shipper, null, 3))
   const navigation = useNavigation()
+
   useEffect(() => {
     const handleOrientationChange = (orientation) => {
       let orientationValue = 0;
@@ -19,6 +21,8 @@ export const ShipperInfo = (props) => {
       console.log('📱 Orientation:', orientation, orientationValue);
       ZegoUIKit.setAppOrientation(orientationValue);
     };
+
+
 
     Orientation.addOrientationListener(handleOrientationChange);
     return () => {
@@ -41,7 +45,7 @@ export const ShipperInfo = (props) => {
     const message = `sms:${shipper.phoneNumber}`;
 
     Linking.openURL(message).catch((err) => console.error("Failed to open SMS app:", err));
-};
+  };
 
   return (
     <Row style={styles.container}>

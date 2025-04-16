@@ -168,7 +168,6 @@ export const CartManager = (() => {
   ) => {
     try {
       const cart = await AppAsyncStorage.readData('CART', cartInitialState);
-
       if (cart.orderItems.length >= 10) {
         Toaster.show('Giỏ hàng tối đa 10 sản phẩm');
         return;

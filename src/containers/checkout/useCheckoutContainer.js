@@ -35,7 +35,7 @@ export const useCheckoutContainer = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const { cartState, cartDispatch, setUpdateOrderMessage, setAwaitingPayments } = useAppContext();
+    const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext();
 
     const [timeInfo, setTimeInfo] = useState({
         selectedDay: 'Hôm nay',
@@ -67,6 +67,7 @@ export const useCheckoutContainer = () => {
         }
     };
     useEffect(() => {
+      
         const setUpPaymentMethod = () => {
             let selectedPayment
 
@@ -121,24 +122,11 @@ export const useCheckoutContainer = () => {
     const onApproveCreateOrder = async () => {
         try {
             setLoading(true)
-            let response = null;
+            let response;
             if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-                const pickupOrder = CartManager.setUpPickupOrder(cartState);
-                console.log(
-                    'pickupOrder =',
-                    JSON.stringify(pickupOrder, null, 2),
-                );
-                response = await createOrder(pickupOrder);
-            } else if (
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value
-            ) {
-                const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
-                console.log(
-                    'deliveryOrder =',
-                    JSON.stringify(deliveryOrder, null, 2),
-                );
-
-                response = await createOrder(deliveryOrder);
+                response = await createPickupOrder();
+            } else {
+                response = await createDeliveryOrder();
             }
 
             setDialogCreateOrderVisible(false);
@@ -169,7 +157,6 @@ export const useCheckoutContainer = () => {
 
 
 
-
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
                     orderId: response.data._id,
@@ -180,7 +167,7 @@ export const useCheckoutContainer = () => {
                 await AppAsyncStorage.storeData(
                     AppAsyncStorage.STORAGE_KEYS.awaitingPayments, paymentParams);
 
-                setAwaitingPayments(paymentParams)
+         
 
                 if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
                     navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
@@ -210,8 +197,18 @@ export const useCheckoutContainer = () => {
         }
     }
 
+    const createPickupOrder = async () => {
+        const pickupOrder = CartManager.setUpPickupOrder(cartState);
+        return await createOrder(pickupOrder);
+    };
+
+    const createDeliveryOrder = async () => {
+        const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
+        return await createOrder(deliveryOrder);
+    };
+
+
     return {
-        navigation,
         dialogCreateOrderVisible,
         setDialogCreateOrderVisible,
         dialogRecipientInforVisible,

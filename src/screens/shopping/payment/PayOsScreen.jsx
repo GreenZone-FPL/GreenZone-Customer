@@ -41,7 +41,6 @@ const PayOsScreen = () => {
   const [paymentLinkId, setPaymentLinkId] = useState('');
   const { orderId, totalPrice } = route.params || {};
 
-  const { awaitingPayments, setAwaitingPayments, cartDispatch } = useAppContext()
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
@@ -159,11 +158,7 @@ const PayOsScreen = () => {
           type: 'error',
         });
       }
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-        null,
-      );
-      setAwaitingPayments(null);
+
       navigation.reset({
         index: 1,
         routes: [

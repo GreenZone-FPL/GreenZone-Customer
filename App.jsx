@@ -107,16 +107,16 @@ function RootNavigator() {
   );
 }
 
+const slideFromBottomOption = {
+  animation: 'slide_from_bottom',
+  presentation: 'transparentModal',
+  headerShown: false,
+};
 function MainNavigator() {
   const navigation = useNavigation()
   const { authState, showCallUI } = useAppContext();
 
   useAppContainer();
-  const slideFromBottomOption = {
-    animation: 'slide_from_bottom',
-    presentation: 'transparentModal',
-    headerShown: false,
-  };
   const initZego = async () => {
     const lastName = await AppAsyncStorage.readData(
       AppAsyncStorage.STORAGE_KEYS.lastName,
@@ -129,10 +129,9 @@ function MainNavigator() {
     }
   }
 
+
   useEffect(() => {
-
     if (authState.lastName) {
-
       console.log('initZego')
       initZego()
     } else {
@@ -175,6 +174,10 @@ function MainNavigator() {
             </>
           }
 
+          <BaseStack.Screen
+            name={OrderGraph.OrderHistoryScreen}
+            component={OrderHistoryScreen}
+          />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
@@ -290,10 +293,7 @@ function MainNavigator() {
             name={UserGraph.ContactScreen}
             component={ContactScreen}
           />
-          <BaseStack.Screen
-            name={OrderGraph.OrderHistoryScreen}
-            component={OrderHistoryScreen}
-          />
+
           <BaseStack.Screen
             name={OrderGraph.OrderDetailScreen}
             component={OrderDetailScreen}

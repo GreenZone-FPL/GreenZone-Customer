@@ -17,7 +17,6 @@ export const useAppContainer = () => {
     cartDispatch,
     authDispatch,
     authState,
-    setAwaitingPayments,
   } = useAppContext();
 
   const navigation = useNavigation();
@@ -157,7 +156,6 @@ export const useAppContainer = () => {
   const onLogout = async () => {
     try {
       await AppAsyncStorage.clearAll();
-      setAwaitingPayments(null);
       await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
       authDispatch({
         type: AuthActionTypes.LOGOUT,

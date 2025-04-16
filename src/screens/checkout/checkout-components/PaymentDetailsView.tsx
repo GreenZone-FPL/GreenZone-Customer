@@ -16,20 +16,26 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
     cartState,
     style
 }) => {
+    const {
+        orderItems = [],
+        deliveryMethod,
+        voucher,
+        voucherInfo
+    } = cartState;
+
     const paymentDetails = CartManager.getPaymentDetails(cartState);
 
     return (
         <View style={[styles.containerItem, style]}>
-          
-            <TitleText text="Chi tiết thanh toán" style={styles.leftText}/>
+            <TitleText text="Chi tiết thanh toán" style={styles.leftText} />
 
             <DualTextRow
                 style={styles.dualTextRow}
-                leftText={`Tạm tính (${cartState.orderItems.length} sản phẩm)`}
+                leftText={`Tạm tính (${orderItems.length} sản phẩm)`}
                 rightText={`${TextFormatter.formatCurrency(paymentDetails.cartTotal)}`}
             />
 
-            {cartState.deliveryMethod === DeliveryMethod.DELIVERY.value && (
+            {deliveryMethod === DeliveryMethod.DELIVERY.value && (
                 <DualTextRow
                     style={styles.dualTextRow}
                     leftText="Phí giao hàng"
@@ -39,19 +45,15 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
 
             <DualTextRow
                 style={styles.dualTextRow}
-                leftText={
-                    cartState.voucher
-                        ? `${cartState?.voucherInfo?.code}`
-                        : 'Chọn khuyến mãi'
-                }
-                leftTextStyle={cartState.voucher ? styles.voucherSelected : styles.voucherDefault}
+                leftText={voucher ? voucherInfo?.code : 'Chọn khuyến mãi'}
+                leftTextStyle={voucher ? styles.voucherSelected : styles.voucherDefault}
                 rightText={
                     paymentDetails.voucherAmount === 0
                         ? ''
                         : `- ${TextFormatter.formatCurrency(paymentDetails.voucherAmount)}`
                 }
                 rightTextStyle={styles.voucherAmount}
-                onLeftPress={() => onSelectVoucher()}
+                onLeftPress={onSelectVoucher}
             />
 
             <DualTextRow
@@ -61,11 +63,10 @@ export const PaymentDetailsView: React.FC<PaymentDetailsViewProps> = ({
                 leftTextStyle={styles.totalLeftText}
                 rightTextStyle={styles.totalRightText}
             />
-
-
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     containerItem: {

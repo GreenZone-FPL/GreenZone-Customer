@@ -52,7 +52,7 @@ const ZalopayScreen = () => {
     message: '',
     type: 'info',
   });
-  const { awaitingPayments, setAwaitingPayments, cartDispatch } = useAppContext()
+
   // Hàm back tại điện thoại
   useFocusEffect(
     useCallback(() => {
@@ -167,11 +167,7 @@ const ZalopayScreen = () => {
       });
       Toaster.show('Thanh toán thành công')
       await updatePaymentStatus(orderId, 'success', paymentLinkId);
-      await AppAsyncStorage.storeData(
-        AppAsyncStorage.STORAGE_KEYS.awaitingPayments,
-        null,
-      );
-      setAwaitingPayments(null);
+
     } else if (navState.url.includes('returncode=-6012') || navState.url.includes('status=-49')) {
       // call API delete order
        navigation.reset({

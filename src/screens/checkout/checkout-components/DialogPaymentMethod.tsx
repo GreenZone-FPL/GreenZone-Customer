@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import { Image, StyleSheet } from "react-native";
 import { RadioButton } from "react-native-paper";
 import {
@@ -56,56 +56,65 @@ interface DialogPaymentMethodProps {
 }
 
 export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
-    methods= paymentMethods,
+    methods = paymentMethods,
     visible,
     onHide,
     cartState,
     selectedMethod,
     handleSelectMethod
-}) => {
-
+  }) => {
+  
+    const methodOptions = useMemo(() => {
+      return methods.map(method => {
+        const disabled =
+          cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
+          method.paymentMethod === PaymentMethod.COD.value;
+  
+        return {
+          ...method,
+          disabled,
+        };
+      });
+    }, [methods, cartState.deliveryMethod]);
+  
     return (
+      <>
+      {
+        visible && 
         <DialogBasic
-            isVisible={visible}
-            onHide={onHide}
-            title="Chọn phương thức thanh toán">
-
-            <RadioButton.Group
-                onValueChange={(value) => {
-                    const method = paymentMethods.find(m => m.value === value);
-                    if (!method) return;
-
-                    const disabled =
-                        cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
-                        method.paymentMethod === PaymentMethod.COD.value;
-
-                    handleSelectMethod(method, disabled);
-                }}
-                value={selectedMethod?.value}
-            >
-                {methods.map(method => {
-                    const disabled =
-                        cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
-                        method.paymentMethod === PaymentMethod.COD.value;
-
-                    return (
-                        <Row key={method.value} style={styles.methodItem}>
-                            <RadioButton
-                                disabled={disabled}
-                                value={method.value}
-                                color={colors.primary}
-                            />
-                            <Image source={method.image} style={styles.image} />
-                            <NormalText text={method.label} style={disabled ? styles.disabledText : styles.text} />
-                        </Row>
-                    );
-                })}
-            </RadioButton.Group>
-
-
-        </DialogBasic>
+        isVisible={visible}
+        onHide={onHide}
+        title="Chọn phương thức thanh toán"
+      >
+        <RadioButton.Group
+          onValueChange={(value) => {
+            const method = methodOptions.find(m => m.value === value);
+            if (!method) return;
+            handleSelectMethod(method, method.disabled);
+          }}
+          value={selectedMethod?.value}
+        >
+          {methodOptions.map(method => (
+            <Row key={method.value} style={styles.methodItem}>
+              <RadioButton
+                disabled={method.disabled}
+                value={method.value}
+                color={colors.primary}
+              />
+              <Image source={method.image} style={styles.image} />
+              <NormalText
+                text={method.disabled ?  `${method.label} (Không khả dụng)` : method.label }
+                style={method.disabled ? styles.disabledText : styles.text}
+              />
+            </Row>
+          ))}
+        </RadioButton.Group>
+      </DialogBasic>
+      }
+      </>
+     
     );
-};
+  };
 
 
 const styles = StyleSheet.create({

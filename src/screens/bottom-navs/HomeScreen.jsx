@@ -23,13 +23,13 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { TextFormatter } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
 
-const HomeScreen = () => {
-  const { cartState, authState, awaitingPayments } = useAppContext();
+const HomeScreen = (props) => {
+  const { cartState, authState } = useAppContext();
 
+  
   const {
     isModalVisible,
     setIsModalVisible,
@@ -48,8 +48,10 @@ const HomeScreen = () => {
     navigateOrderHistory,
     navigateAdvertising,
     navigateSeedScreen,
+    needToPay
   } = useHomeContainer();
 
+  console.log('needToPay', needToPay)
   const { onNavigateLogin } = useAppContainer();
   useSaveLocation();
   return (
@@ -84,18 +86,20 @@ const HomeScreen = () => {
         )}
 
         <CategoryView />
-        {awaitingPayments && (
+
+        {
+          needToPay &&
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
             onPress={navigateOrderHistory}>
             <TitleText
-              text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
-                awaitingPayments.totalPrice,
-              )} cần thanh toán`}
+              text={`Bạn có đơn hàng cần thanh toán`}
             />
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
-        )}
+        }
+
+
 
         {allProducts.length > 0 && (
           <ProductsListHorizontal

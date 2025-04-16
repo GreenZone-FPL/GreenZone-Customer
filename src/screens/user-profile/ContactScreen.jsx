@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Linking, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { DialogFeedback, LightStatusBar, NormalHeader, Column } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 
-
+const {width} = Dimensions.get('window');
 const ContactScreen = props => {
   const navigation = props.navigation;
   const [isDialogVisible, setDialogVisible] = useState(false);
@@ -39,7 +39,11 @@ const ContactScreen = props => {
         title="Liên hệ và góp ý"
         onLeftPress={() => navigation.goBack()}
       />
-      <View style={styles.content}>
+      <Column style={styles.newRank}>
+        <Text style={styles.text}>Tính năng đang phát triển</Text>
+        <Icon source={'emoticon-sad'} size={44} color={colors.primary} />
+      </Column>
+      {/* <View style={styles.content}>
         <Card
           icon="phone"
           name="Tổng đài"
@@ -76,12 +80,12 @@ const ContactScreen = props => {
       <DialogFeedback
         isVisible={isDialogVisible}
         onHide={() => setDialogVisible(false)}
-      />
+      /> */}
     </SafeAreaView>
   );
 };
 
-const Card = ({icon, name, path, onPress}) => (
+const Card = ({ icon, name, path, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon
       source={icon}
@@ -109,6 +113,16 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     gap: 8
 
+  },
+  newRank: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: width,
+  },
+  text: {
+    fontSize: 18,
+    color: colors.gray700,
   },
   card: {
     flexDirection: 'row',

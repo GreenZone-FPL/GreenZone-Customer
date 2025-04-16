@@ -1,7 +1,7 @@
 import axiosInstance from '../axiosInstance';
 import {AppAsyncStorage} from '../../utils';
 import {RegisterRequest} from '../../type/register';
-import { onUserLoginZego } from '../../zego/common';
+
 
 export const getProfile = async (): Promise<void> => {
   try {

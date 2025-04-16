@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_LARGE,
     borderWidth: 1,
     borderColor: colors.gray200,
-    marginHorizontal: 16,
+    margin: 16,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-around',
   },

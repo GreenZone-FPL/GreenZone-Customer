@@ -9,6 +9,7 @@ import { MainGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 import { CancelDialog } from './order-detail-components';
+import { useNavigation } from '@react-navigation/native';
 
 
 const width = Dimensions.get('window').width;
@@ -18,9 +19,8 @@ const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = () => {
   const { cartState } = useAppContext();
-
+  const navigation = useNavigation()
   const {
-    navigation,
     tabIndex,
     setTabIndex,
     selectedOrder,
@@ -32,8 +32,7 @@ const OrderHistoryScreen = () => {
     setDialogPaymentMethodVisible,
     cancelDialogVisible,
     setCancelDialogVisible,
-    handleSelectMethod,
-    callBackAfterCancel
+    handleSelectMethod
   } = useOrderHistoryContainer()
   return (
     <View style={styles.container}>
@@ -71,11 +70,9 @@ const OrderHistoryScreen = () => {
               onPay={() =>
                 setDialogPaymentMethodVisible(true)
               }
-
               onCancel={() =>
                 setCancelDialogVisible(true)
               }
-
             />
           </View>
         ))}
@@ -85,7 +82,7 @@ const OrderHistoryScreen = () => {
         visible={cancelDialogVisible}
         onHide={() => setCancelDialogVisible(false)}
         orderId={selectedOrder?._id}
-        callBack={callBackAfterCancel}
+        callBack={() => {}}
       />
 
       <DialogPaymentMethod
@@ -172,7 +169,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
           </Column>
 
         </Row>
-      
+
 
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&

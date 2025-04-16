@@ -28,7 +28,10 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
     }, [selectedDay]);
 
     return (
-        <Modal visible={visible} animationType="fade" transparent>
+        <>
+        {
+            visible && 
+            <Modal visible={visible} animationType="fade" transparent>
             <Pressable style={styles.overlay} onPress={onClose}>
                 <Pressable style={styles.modalContainer} onPress={() => { }}>
                     <OverlayStatusBar />
@@ -89,6 +92,10 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
                 </Pressable>
             </Pressable>
         </Modal>
+        }
+        
+        </>
+       
     );
 };
 

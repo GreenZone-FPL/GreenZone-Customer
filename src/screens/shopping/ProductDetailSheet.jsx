@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Pressable,
   ScrollView,
   StatusBar,
@@ -22,7 +21,6 @@ import {
   RadioGroup,
   SelectableGroup
 } from '../../components';
-import ToastDialog from '../../components/dialogs/ToastDialog';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useProductDetailContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
@@ -35,15 +33,13 @@ const ProductDetailSheet = ({ route, navigation }) => {
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
-  const [selectedNotes, setSelectedNotes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const { productId } = route.params;
-  const [customNote, setCustomNote] = useState('');
-  const { cartDispatch, authState } = useAppContext();
-
+  const { cartDispatch, cartState, authState } = useAppContext();
   const { onClickAddToCart } = useProductDetailContainer();
 
+  
   useEffect(() => {
     if (product) {
       const newTotalAmount = calculateTotal(
@@ -192,6 +188,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                   productPrice,
                   quantity,
                   cartDispatch,
+                  cartState
                 );
 
                 navigation.goBack();
