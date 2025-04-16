@@ -25,11 +25,15 @@ const DialogBasicPropTypes = {
     PropTypes.object,
     PropTypes.array,
   ]),
+  styleBody: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array,
+  ]),
   titleStyle: PropTypes.object,
 };
 
 
-export const DialogBasic = ({ isVisible, onHide, title, children, style, titleStyle}) => {
+export const DialogBasic = ({ isVisible, onHide, title, children, style, titleStyle, styleBody}) => {
 
   return (
     <Modal
@@ -55,7 +59,7 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style, titleSt
                   />
                 </TouchableOpacity>
               </Row>
-              <Column style={styles.body}>
+              <Column style={[styles.body, styleBody]}>
                 {children}
               </Column>
             </KeyboardAvoidingView>

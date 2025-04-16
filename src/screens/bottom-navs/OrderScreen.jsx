@@ -233,7 +233,8 @@ const OrderScreen = props => {
       <DialogBasic
         isVisible={isDialogVisible}
         onHide={() => setDialogVisible(false)}
-        title="Danh mục">
+        title="Danh mục" 
+        styleBody={{marginTop: 16, margin: 0, marginStart: 6}}>
         <CategoryMenu
           categories={categories}
           loading={loading}

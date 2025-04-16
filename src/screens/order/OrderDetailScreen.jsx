@@ -31,6 +31,7 @@ import {
   ProductsInfo,
   RecipientInfo,
   ShipperInfo,
+  TimelineStatus
 } from './order-detail-components';
 
 const OrderDetailScreen = ({ route }) => {
@@ -78,7 +79,7 @@ const OrderDetailScreen = ({ route }) => {
 
             <StatusText status={orderDetail.status} />
           </Row>
-
+          <TimelineStatus detail={orderDetail}/>
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo
