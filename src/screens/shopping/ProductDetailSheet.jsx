@@ -17,7 +17,6 @@ import {
 } from '../../axios';
 import {
   CheckoutFooter,
-  NormalLoading,
   OverlayStatusBar,
   RadioGroup,
   SelectableGroup
@@ -26,11 +25,12 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useProductDetailContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
+import { ProductDetailSkeleton } from '../../skeletons';
 
 
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
@@ -90,7 +90,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
     fetchProductDetail();
   }, []);
 
-
   return (
     <Pressable style={styles.modalContainer}>
       <OverlayStatusBar />
@@ -101,11 +100,17 @@ const ProductDetailSheet = ({ route, navigation }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       />
+
+      {
+        loading &&
+        <ProductDetailSkeleton />
+      }
       {product && (
 
         <>
           <ScrollView style={styles.modalContent} removeClippedSubviews={true} showsVerticalScrollIndicator  >
             <ProductImage product={product} />
+
 
 
             <ProductInfo

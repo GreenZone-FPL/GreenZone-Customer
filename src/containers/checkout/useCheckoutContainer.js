@@ -51,14 +51,14 @@ export const useCheckoutContainer = () => {
             setPaymentMethod(method); // 1. Cập nhật UI ngay, phản hồi nhanh
 
             setTimeout(() => {
-              cartDispatch({
-                type: CartActionTypes.UPDATE_PAYMENT_METHOD,
-                payload: method.paymentMethod
-              });
-              cartDispatch({
-                type: CartActionTypes.UPDATE_ONLINE_METHOD,
-                payload: method.value
-              });
+                cartDispatch({
+                    type: CartActionTypes.UPDATE_PAYMENT_METHOD,
+                    payload: method.paymentMethod
+                });
+                cartDispatch({
+                    type: CartActionTypes.UPDATE_ONLINE_METHOD,
+                    payload: method.value
+                });
             }, 0); // 2. Cập nhật state toàn cục sau một tick event loop
 
             setDialogPaymentMethodVisible(false);
@@ -117,8 +117,13 @@ export const useCheckoutContainer = () => {
 
     // Xóa sản phẩm sau khi xác nhận
     const deleteProduct = async id => {
-        await CartManager.removeFromCart(id, cartDispatch);
         setActionDialogVisible(false);
+        try {
+            await CartManager.removeFromCart(id, cartDispatch);
+        } catch (error) {
+            Toaster.show('Có lỗi xảy ra khi xóa sản phẩm này')
+            console.log('Error', error || error.message)
+        }
     };
 
     const onApproveCreateOrder = async () => {
@@ -163,8 +168,8 @@ export const useCheckoutContainer = () => {
                     totalPrice: response.data.totalPrice,
                     paymentMethod: cartState.onlineMethod
                 };
-        
-               
+
+
                 if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
                     navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
                 }

@@ -1,3 +1,5 @@
+import 'react-native-reanimated'
+import 'react-native-gesture-handler'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
@@ -71,17 +73,22 @@ export const navigationRef = React.createRef();
 
 export default function App() {
   return (
-    <AppContextProvider>
-      <PaperProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <AppNavigator />
-            <FlashMessage position="top" />
-            <Toast />
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </PaperProvider>
-    </AppContextProvider>
+
+      <AppContextProvider>
+
+        <PaperProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <SafeAreaProvider>
+              <AppNavigator />
+              <FlashMessage position="top" />
+              <Toast />
+            </SafeAreaProvider>
+          </GestureHandlerRootView>
+        </PaperProvider>
+
+
+      </AppContextProvider>
+
   );
 }
 
@@ -118,7 +125,7 @@ function MainNavigator() {
 
   useAppContainer();
   const initZego = async () => {
-    
+
     const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
 
     if (user) {
@@ -182,13 +189,21 @@ function MainNavigator() {
           />
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailSheet}
-            options={slideFromBottomOption}
+            options={{
+              animation: 'slide_from_right',
+              presentation: 'transparentModal',
+              headerShown: false
+            }}
             component={ProductDetailSheet}
           />
 
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
-            options={slideFromBottomOption}
+            options={{
+              animation: 'slide_from_bottom',
+              presentation: 'transparentModal',
+              headerShown: false
+            }}
             component={ProductDetailShort}
           />
           <BaseStack.Screen
