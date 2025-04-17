@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { getAllVoucher, getMyVouchers } from '../../axios/index';
 import {
@@ -24,16 +24,16 @@ import { VoucherGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { TextFormatter } from '../../utils';
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
-const SelectVouchersScreen = ({ navigation, route }) => {
+const SelectVouchersScreen = ({navigation, route}) => {
   const [storeVouchers, setStoreVouchers] = useState([]);
   const [myExchangedVouchers, setMyExchangedVouchers] = useState([]);
   const [validStoreVouchers, setValidStoreVouchers] = useState([]);
   const [validMyVouchers, setValidMyVouchers] = useState([]);
 
-  const { cartDispatch } = useAppContext();
-  const { isUpdateOrderInfo } = route.params || false;
+  const {cartDispatch} = useAppContext();
+  const {isUpdateOrderInfo} = route.params || false;
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -46,8 +46,8 @@ const SelectVouchersScreen = ({ navigation, route }) => {
         }
 
         if (myResponse) {
-          const uniqueVouchers = Object.values(
-            myResponse.reduce((acc, item) => {
+          const uniqueVouchers: any = Object.values(
+            myResponse.reduce((acc: any, item: any) => {
               if (item?.voucher) {
                 acc[item.voucher._id] = item.voucher;
               }
@@ -96,26 +96,28 @@ const SelectVouchersScreen = ({ navigation, route }) => {
     }
 
     return validStoreVouchers.filter(
-      voucher => voucher.voucherType === voucherType,
+      (voucher: any) => voucher.voucherType === voucherType,
     );
   };
 
-  const onItemPress = item => {
+  const onItemPress = (item: any) => {
     if (isUpdateOrderInfo) {
       navigation.goBack();
-      setTimeout(() => {
+
+      const task = () => {
         cartDispatch({
           type: CartActionTypes.UPDATE_VOUCHER,
-          payload: item._id
-        })
+          payload: item._id,
+        });
 
         cartDispatch({
           type: CartActionTypes.UPDATE_VOUCHER_INFO,
-          payload: item
-        })
-      }, 0)
+          payload: item,
+        });
+      };
+      setTimeout(task, 0);
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }
   };
 
@@ -133,13 +135,13 @@ const SelectVouchersScreen = ({ navigation, route }) => {
             <FlatList
               data={myExchangedVouchers}
               // data={validMyVouchers}
-              keyExtractor={item => item._id.toString()}
-              renderItem={({ item }) => (
+              keyExtractor={(item: any) => item._id.toString()}
+              renderItem={({item}) => (
                 <ItemVoucher onPress={() => onItemPress(item)} item={item} />
               )}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
-              contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
+              contentContainerStyle={{gap: 5, backgroundColor: colors.fbBg}}
             />
           </>
         )}
@@ -149,13 +151,13 @@ const SelectVouchersScreen = ({ navigation, route }) => {
             <TitleText text="Phiếu ưu đãi GreenZone" style={styles.title} />
             <FlatList
               data={filterByDiscountType(1)}
-              keyExtractor={item => item._id.toString()}
-              renderItem={({ item }) => (
+              keyExtractor={(item: any) => item._id.toString()}
+              renderItem={({item}) => (
                 <ItemVoucher onPress={() => onItemPress(item)} item={item} />
               )}
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
-              contentContainerStyle={{ gap: 5, backgroundColor: colors.fbBg }}
+              contentContainerStyle={{gap: 5, backgroundColor: colors.fbBg}}
             />
           </>
         )}
@@ -164,28 +166,25 @@ const SelectVouchersScreen = ({ navigation, route }) => {
   );
 };
 
-const ItemVoucher = ({ onPress, item }) => {
+const ItemVoucher = ({onPress, item}) => {
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+      <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
-        <View style={{ maxWidth: width / 2 }}>
+        <View style={{maxWidth: width / 2}}>
           <Text numberOfLines={2} style={styles.voucherName}>
             {`${item.name}`}
           </Text>
         </View>
 
-
         <Row>
           <NormalText text={`Hết hạn:`} />
 
           <NormalText
-            style={{ color: colors.orange700 }}
+            style={{color: colors.orange700}}
             text={`${TextFormatter.formatDateSimple(item.endDate)}`}
           />
-
         </Row>
-
       </Column>
     </TouchableOpacity>
   );
@@ -201,7 +200,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '700',
-    color: colors.lemon
+    color: colors.lemon,
   },
   itemVoucher: {
     flexDirection: 'row',
@@ -219,7 +218,7 @@ const styles = StyleSheet.create({
   voucherName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
-    color: colors.black
+    color: colors.black,
   },
 });
 

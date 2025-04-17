@@ -41,10 +41,11 @@ export const AppContextProvider = ({ children }) => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
 
-      const lastName = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.lastName,
+     
+      const user = await AppAsyncStorage.readData(
+        AppAsyncStorage.STORAGE_KEYS.user,
       );
-      if (isValid && lastName) {
+      if (isValid && user) {
 
 
         authDispatch({
@@ -52,8 +53,10 @@ export const AppContextProvider = ({ children }) => {
           payload: {
             needLogin: false,
             isLoggedIn: true,
-            lastName,
+            lastName: user.lastName,
+            firstName: user.firstName,
             needRegister: false,
+            phoneNumber: user.phoneNumber
           },
         });
 

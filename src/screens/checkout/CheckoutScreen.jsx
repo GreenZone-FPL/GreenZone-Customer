@@ -296,15 +296,15 @@ const CheckoutScreen = () => {
           }
           onClose={() => setDialogShippingMethodVisible(false)}
           onSelect={async option => {
-            setTimeout(() => {
-              CartManager.updateOrderInfo(cartDispatch, {
-                deliveryMethod: option.value,
-              }).catch(error => {
-                console.log('Lỗi khi updateOrderInfo:', error);
-              });
-            }, 0);
-
             setDialogShippingMethodVisible(false);
+            try {
+              await CartManager.updateOrderInfo(cartDispatch, {
+                deliveryMethod: option.value,
+              })
+            } catch (error) {
+              console.log('Lỗi khi updateOrderInfo:', error);
+            }
+
           }}
         />
       }

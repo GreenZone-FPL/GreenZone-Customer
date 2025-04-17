@@ -1,8 +1,8 @@
 // @ts-ignore
 import React from 'react';
-import { Dimensions, TouchableOpacity, ViewStyle } from 'react-native';
-import { NormalText } from '../texts/NormalText';
+import { Dimensions, Pressable, ViewStyle } from 'react-native';
 import { colors } from '../../constants';
+import { NormalText } from '../texts/NormalText';
 
 const { width } = Dimensions.get('window');
 
@@ -14,7 +14,7 @@ interface AuthButtonProps {
 
 export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       style={[
         {
           width: width / 3,
@@ -36,6 +36,6 @@ export const AuthButton: React.FC<AuthButtonProps> = ({ title, onPress, style })
           { color: 'white', fontWeight: '600', textAlign: 'center' }
         }
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 };

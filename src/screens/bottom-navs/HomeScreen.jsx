@@ -29,10 +29,9 @@ import { CategoryView } from './HomeComponents/CategoryView';
 const HomeScreen = (props) => {
   const { cartState, authState } = useAppContext();
 
-  
   const {
-    isModalVisible,
-    setIsModalVisible,
+    dialogShippingVisible,
+    setDialogShippingVisible,
     selectedOption,
     currentCategory,
     handleScroll,
@@ -73,6 +72,7 @@ const HomeScreen = (props) => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
+
         {authState.lastName ? (
 
           <BarcodeUser
@@ -153,18 +153,22 @@ const HomeScreen = (props) => {
                 ? cartState?.address?.label
                 : 'Đang xác định vị trí...'
         }
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
         onPressCart={navigateCheckOut}
       />
-      <DialogShippingMethod
-        isVisible={isModalVisible}
-        selectedOption={selectedOption}
-        onHide={handleCloseDialog}
-        onOptionSelect={handleOptionSelect}
-        onEditOption={handleEditOption}
-      />
+      {
+        dialogShippingVisible &&
+        <DialogShippingMethod
+          isVisible={dialogShippingVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
+          onEditOption={handleEditOption}
+        />
+      }
+
     </SafeAreaView>
   );
 };

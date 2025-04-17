@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Image,
   Modal,
@@ -11,10 +11,8 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
-import { AppAsyncStorage } from '../../utils';
 import { useAppContext } from '../../context/appContext';
-import { getProfile } from '../../axios';
+import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
 
 const DialogShippingMethodPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -31,28 +29,9 @@ export const DialogShippingMethod = ({
   onEditOption,
   onOptionSelect,
 }) => {
-  const [user, setUser] = useState([]);
-  const { cartState } = useAppContext();
 
-  // Lấy vị trí người dùng
-  useEffect(() => {
-    const getUserAndCurrentLocation = async () => {
-      try {
-        const isTokenValid = await AppAsyncStorage.isTokenValid()
-        if (isTokenValid) {
-          const response = await getProfile();
-          if (response) {
-            setUser(response);
-          }
-        }
-      } catch (error) {
-        console.log('error', error);
-      }
-    };
-    getUserAndCurrentLocation();
-  }, [cartState.consigneeName]);
+  const { cartState, authState } = useAppContext();
 
-  // Dữ liệu mẫu
   const options = [
     {
       label: 'Giao hàng',
@@ -74,8 +53,8 @@ export const DialogShippingMethod = ({
       animationType="fade"
       transparent={true}
       onRequestClose={onHide}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
+      <Pressable style={styles.overlay} onPress={onHide}>
+        <Pressable style={styles.modalContainer} onPress={() => { }}>
           <OverlayStatusBar />
           <View style={styles.header}>
             <View style={styles.placeholderIcon} />
@@ -125,12 +104,12 @@ export const DialogShippingMethod = ({
                 </Text>
                 {option.label === 'Giao hàng' ? (
                   <Text style={styles.phoneText}>
-                    {user?.firstName
-                      ? user?.firstName +
+                    {authState?.firstName
+                      ? authState?.firstName +
                       ' ' +
-                      user?.lastName +
+                      authState?.lastName +
                       ' - ' +
-                      user?.phoneNumber
+                      authState?.phoneNumber
                       : null}
                   </Text>
                 ) : (
@@ -141,8 +120,8 @@ export const DialogShippingMethod = ({
               </Pressable>
             ))}
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };

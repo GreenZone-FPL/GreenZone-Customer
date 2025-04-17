@@ -20,6 +20,7 @@ export const register = async (request: RegisterRequest) => {
 
     const {data} = response;
 
+    console.log('data', JSON.stringify(data, null, 2))
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -30,12 +31,8 @@ export const register = async (request: RegisterRequest) => {
     );
    
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
-    );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.phoneNumber,
-      data.user.phoneNumber,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
     
 
@@ -63,7 +60,7 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       code,
     });
     const {data} = response;
-
+    console.log('data', JSON.stringify(data, null, 2))
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -74,16 +71,10 @@ export const verifyOTP = async ({phoneNumber, code}) => {
     );
 
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
-    await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.phoneNumber,
-      data.user.phoneNumber,
-    );
-
-    
-
+   
     return data;
   } catch (error) {
     console.log('error:', error);

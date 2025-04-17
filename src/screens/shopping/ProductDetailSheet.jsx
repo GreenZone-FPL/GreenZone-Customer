@@ -17,6 +17,7 @@ import {
 } from '../../axios';
 import {
   CheckoutFooter,
+  NormalLoading,
   OverlayStatusBar,
   RadioGroup,
   SelectableGroup
@@ -39,7 +40,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
   const { cartDispatch, cartState, authState } = useAppContext();
   const { onClickAddToCart } = useProductDetailContainer();
 
-  
+
   useEffect(() => {
     if (product) {
       const newTotalAmount = calculateTotal(
@@ -88,6 +89,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
     fetchProductDetail();
   }, []);
+
 
   return (
     <Pressable style={styles.modalContainer}>

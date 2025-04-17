@@ -45,7 +45,7 @@ export const getFavoriteProducts = async () => {
 export const updateUserProfile = async profileData => {
   try {
     const response = await axiosInstance.put(`/v1/user/profile`, profileData);
-    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.lastName, response.data.lastName)
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.user, response.data)
     return response.data;
   } catch (error) {
     console.log('Error', error);

@@ -118,14 +118,12 @@ function MainNavigator() {
 
   useAppContainer();
   const initZego = async () => {
-    const lastName = await AppAsyncStorage.readData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-    );
-    const phoneNumber = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.phoneNumber);
+    
+    const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
 
-    if (phoneNumber && lastName) {
+    if (user) {
       console.log('loginZego')
-      await onUserLoginZego(phoneNumber, lastName, navigation);
+      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
     }
   }
 
