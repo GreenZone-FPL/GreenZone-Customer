@@ -89,7 +89,7 @@ class SocketService {
                 ? { ...order, message: data.message, status: data.status }
                 : order
             )
-            .filter(order => !["completed", "canceled"].includes(order.status)); // Xóa đơn đã hoàn thành hoặc bị hủy
+            .filter(order => !["completed", "cancelled", "failedDelivery"].includes(order.status)); // Xóa đơn đã hoàn thành hoặc bị hủy
   
           await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.activeOrders, newActiveOrders);
           console.log('Cập nhật newActiveOrders =', JSON.stringify(newActiveOrders, null, 2));

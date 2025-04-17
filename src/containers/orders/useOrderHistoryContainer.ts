@@ -46,8 +46,9 @@ export const useOrderHistoryContainer = () => {
     };
 
     useEffect(() => {
+
         orderStatuses.forEach(status => fetchOrders(status));
-    }, [updateOrderMessage]);
+    }, [updateOrderMessage.status]);
 
     useEffect(() => {
         fetchOrders(orderStatuses[tabIndex]);

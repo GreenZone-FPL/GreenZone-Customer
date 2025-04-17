@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -11,6 +11,7 @@ import {
   Row,
 } from '../../components';
 
+import { useNavigation } from '@react-navigation/native';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
 import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
 import { useAppContext } from '../../context/appContext';
@@ -36,9 +37,8 @@ import {
   StoreAddress,
   TimeSection,
 } from './checkout-components';
-import { useNavigation } from '@react-navigation/native';
 
-const { width } = Dimensions.get('window');
+
 const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useAppContext();
   const navigation = useNavigation()
@@ -79,8 +79,6 @@ const CheckoutScreen = () => {
         title="Xác nhận đơn hàng"
         onLeftPress={() => navigation.goBack()}
       />
-
-
 
       {
         loading &&
@@ -174,20 +172,18 @@ const CheckoutScreen = () => {
           )}
         </Column>
 
-        {cartState.orderItems.length > 0 && (
-          <ProductsInfo
-            items={cartState.orderItems}
-            onEditItem={item =>
-              navigation.navigate(ShoppingGraph.EditCartItemScreen, {
-                updateItem: item,
-              })
-            }
-            confirmDelete={product => {
-              setSelectedProduct(product);
-              setActionDialogVisible(true);
-            }}
-          />
-        )}
+        <ProductsInfo
+          items={cartState.orderItems}
+          onEditItem={item =>
+            navigation.navigate(ShoppingGraph.EditCartItemScreen, {
+              updateItem: item,
+            })
+          }
+          confirmDelete={product => {
+            setSelectedProduct(product);
+            setActionDialogVisible(true);
+          }}
+        />
 
         <PaymentDetailsView
           cartState={cartState}
@@ -203,6 +199,7 @@ const CheckoutScreen = () => {
           selectedMethod={paymentMethod}
           openDialog={() => setDialogPaymentMethodVisible(true)}
         />
+
       </ScrollView>
 
       <Footer
@@ -237,13 +234,10 @@ const CheckoutScreen = () => {
                 payload: { fulfillmentDateTime: data.fulfillmentDateTime },
               });
             }, 0)
-
-
             setDialogSelectTimeVisible(false);
           }}
         />
       }
-
 
       {
         dialogCreateOrderVisible &&
@@ -271,7 +265,6 @@ const CheckoutScreen = () => {
         />
       }
 
-
       {
         dialogRecipientInforVisible &&
         <DialogRecipientInfo
@@ -282,6 +275,8 @@ const CheckoutScreen = () => {
               CartManager.updateOrderInfo(cartDispatch, {
                 consigneeName: data.name,
                 consigneePhone: data.phoneNumber,
+              }).catch(error => {
+                console.log('Lỗi khi updateOrderInfo:', error);
               });
             }, 0)
 
@@ -301,9 +296,14 @@ const CheckoutScreen = () => {
           }
           onClose={() => setDialogShippingMethodVisible(false)}
           onSelect={async option => {
-            await CartManager.updateOrderInfo(cartDispatch, {
-              deliveryMethod: option.value,
-            });
+            setTimeout(() => {
+              CartManager.updateOrderInfo(cartDispatch, {
+                deliveryMethod: option.value,
+              }).catch(error => {
+                console.log('Lỗi khi updateOrderInfo:', error);
+              });
+            }, 0);
+
             setDialogShippingMethodVisible(false);
           }}
         />

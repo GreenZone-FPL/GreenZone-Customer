@@ -133,12 +133,15 @@ export const useAppContainer = () => {
         // Gọi lại tất cả các đơn hàng đã có trong activeOrders
         await socketService.rejoinOrder(data => {
           // Cập nhật trạng thái đơn hàng khi join thành công
-          setUpdateOrderMessage({
-            visible: true,
-            orderId: data.orderId,
-            message: data.message,
-            status: data.status,
-          });
+          if (data.status != updateOrderMessage.status) {
+            setUpdateOrderMessage({
+              visible: true,
+              orderId: data.orderId,
+              message: data.message,
+              status: data.status,
+            });
+          }
+
         });
       } catch (error) {
         console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);

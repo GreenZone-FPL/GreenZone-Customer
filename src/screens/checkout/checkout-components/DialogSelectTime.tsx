@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, Modal, StyleSheet, TouchableOpacity, View, Pressable } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { Column, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../../components';
+import { Column, NormalText, OverlayStatusBar, PrimaryButton, Row, TitleText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { TimeInfo } from '../../../type/checkout';
 
@@ -44,19 +44,20 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
                     </Row>
 
                     <Column style={styles.body}>
+                    <NormalText text='Hãy chọn thời gian bạn muốn nhận hàng' style={{textAlign: 'center'}}/>
                         <Row >
                             <Column style={styles.dateColumn}>
                                 {dateOptions.map((item, index) => (
-                                    <TouchableOpacity
+                                    <Pressable
                                         key={index}
                                         style={[styles.dayItem, selectedDay === item && styles.selectedDayItem]}
                                         onPress={() => setSelectedDay(item)}
                                     >
-                                        <TitleText
+                                        <NormalText
                                             text={item}
-                                            style={{color: selectedDay === item ? colors.black : colors.gray400}}
+                                            style={ selectedDay === item ? styles.selectedText : styles.text}
                                         />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 ))}
                             </Column>
 
@@ -66,15 +67,15 @@ export const DialogSelectTime: React.FC<DialogSelectTimeProps> = ({
                                 showsVerticalScrollIndicator={false}
                                 style={styles.timeList}
                                 renderItem={({ item }) => (
-                                    <TouchableOpacity
+                                    <Pressable
                                         style={[styles.timeItem, selectedTime === item && styles.selectedTimeItem]}
                                         onPress={() => setSelectedTime(item)}
                                     >
-                                        <TitleText
+                                        <NormalText
                                             text={item}
-                                            style={{color: selectedTime === item ? colors.black : colors.gray400}}
+                                            style={ selectedTime === item ? styles.selectedText : styles.text}
                                         />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                     
                                 )}
                                 contentContainerStyle={styles.timeListContent}
@@ -207,13 +208,8 @@ const styles = StyleSheet.create({
     selectedDayItem: {
         backgroundColor: colors.white,
     },
-    dayText: {
-        color: colors.gray400,
-        textAlign: 'center',
-    },
-    selectedDayText: {
-        color: colors.black,
-    },
+   
+   
     timeList: {
         maxHeight: 150,
         flex: 1,
@@ -229,11 +225,11 @@ const styles = StyleSheet.create({
     selectedTimeItem: {
         backgroundColor: colors.white,
     },
-    timeText: {
+    text: {
         color: colors.gray400,
-        textAlign: 'center',
     },
-    selectedTimeText: {
+    selectedText: {
         color: colors.black,
+        fontWeight: '600'
     },
 });

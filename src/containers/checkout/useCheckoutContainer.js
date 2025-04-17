@@ -157,20 +157,14 @@ export const useCheckoutContainer = () => {
 
             console.log('order data =', JSON.stringify(response, null, 2));
 
-
-
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
                     orderId: response.data._id,
                     totalPrice: response.data.totalPrice,
                     paymentMethod: cartState.onlineMethod
                 };
-                console.log('paymentParams', paymentParams)
-                await AppAsyncStorage.storeData(
-                    AppAsyncStorage.STORAGE_KEYS.awaitingPayments, paymentParams);
-
-
-
+        
+               
                 if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
                     navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
                 }
