@@ -2,7 +2,7 @@ import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
 import { getNotifications } from '../../axios';
-import { Column, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
+import { Column, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { Toaster } from '../../utils';
 const { height, width } = Dimensions.get('window');
@@ -35,6 +35,7 @@ const NotificationScreen = (props) => {
 
   };
 
+ 
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,17 +45,24 @@ const NotificationScreen = (props) => {
         title="Thông báo"
         onLeftPress={() => navigation.goBack()}
       />
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <Card
-            item={item}
-            handleItemPress={handleItemPress}
+      {
+        notifications.length === 0 ?
+
+          <EmptyView  /> :
+          <FlatList
+            data={notifications}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <Card
+                item={item}
+                handleItemPress={handleItemPress}
+              />
+            )}
+            contentContainerStyle={styles.listContainer}
           />
-        )}
-        contentContainerStyle={styles.listContainer}
-      />
+
+      }
+
     </SafeAreaView>
   );
 };
@@ -104,16 +112,17 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.white,
+    gap: 16
   },
   listContainer: {
     flex: 1,
+    backgroundColor: colors.fbBg,
+    gap: 4
   },
   itemContainer: {
     flexDirection: 'row',
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray200,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
   image: {
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   date: {
-    color: colors.pink500,
+    color: colors.earthYellow,
   },
   icon: {
     width: 24,

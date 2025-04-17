@@ -135,7 +135,7 @@ export default ProfileScreen;
 const CardAccount = ({ icon, color, title, onPress }) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={30} color={color} />
-    <Text style={styles.cardText}>{title}</Text>
+    <TitleText text={title} />
   </Pressable>
 );
 
@@ -144,7 +144,7 @@ const CardUtiliti = ({ icon, title, onPress }) => (
     <View style={styles.leftSection}>
       <Icon source={icon} size={26} color={colors.gray700} />
       <NormalText text={title} style={{ fontSize: 14 }} />
-      {/* <Text style={styles.itemText}>{title}</Text> */}
+
     </View>
   </Pressable>
 );
@@ -180,9 +180,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cardText: {
-    fontSize: 14,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     color: colors.black,
-    fontWeight: '600',
+    fontWeight: '400',
   },
   utilities: {
     backgroundColor: colors.white,

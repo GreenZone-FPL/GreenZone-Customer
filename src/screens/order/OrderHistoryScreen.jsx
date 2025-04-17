@@ -1,18 +1,14 @@
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment/moment';
 import React from 'react';
-import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Column, CustomTabView, DeliveryMethodText, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Column, CustomTabView, DeliveryMethodText, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { MainGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 import { CancelDialog } from './order-detail-components';
-import { useNavigation } from '@react-navigation/native';
-
-
-const width = Dimensions.get('window').width;
 
 const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
@@ -112,13 +108,13 @@ const OrderListView = ({ status, orders, loading, onItemPress, onPay, onCancel, 
         contentContainerStyle={{ gap: 5 }}
       />
     ) : (
-      <EmptyView />
+      <EmptyView  message='Danh sách này trống'/>
     )}
   </View>
 );
 
 const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
-  // console.log('order', JSON.stringify(order, null, 2))
+
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
     if (items.length > 2) {
@@ -133,7 +129,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
 
   return (
     <Pressable
-      onPress={() => onPress(order)} // Truyền order vào onPress
+      onPress={() => onPress(order)} 
     >
       <Column style={styles.itemContainer} >
 
@@ -195,16 +191,10 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
             </Pressable>
           </Row>
         }
-
-
       </Column>
-
-
     </Pressable>
   );
 };
-
-
 
 const ItemOrderType = ({ deliveryMethod }) => {
   const imageMap = {
@@ -223,18 +213,6 @@ const ItemOrderType = ({ deliveryMethod }) => {
   );
 };
 
-
-export const EmptyView = () => (
-  <View style={styles.emptyContainer}>
-    <Image
-      style={styles.emptyImage}
-      resizeMode="cover"
-      source={require('../../assets/images/logo.png')}
-    />
-
-  </View>
-);
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
   scene: {
@@ -243,9 +221,6 @@ const styles = StyleSheet.create({
     paddingTop: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.fbBg
   },
-  emptyContainer: { justifyContent: 'center', alignItems: 'center' },
-  emptyImage: { width: width / 2, height: width / 2 },
-
   itemContainer: {
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,

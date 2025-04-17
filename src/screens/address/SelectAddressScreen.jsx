@@ -398,6 +398,6 @@ const styles = StyleSheet.create({
     margin: 16,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
-    color: colors.lemon
+    color: colors.gray850
   },
 });

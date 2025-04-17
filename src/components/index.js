@@ -3,6 +3,7 @@ export * from './animations/Ani_ModalLoading';
 export * from './animations/FillingJuiceLoading';
 export * from './animations/NormalLoading';
 export * from './animations/Ani_Success';
+export * from './animations/Feature';
 // activity-indicator
 export * from './indicators/Indicator';
 //barcode

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Linking, Pressable, SafeAreaView, StyleSheet, Text, View, Dimensions } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { DialogFeedback, LightStatusBar, NormalHeader, Column } from '../../components';
+import { DialogFeedback, LightStatusBar, NormalHeader, Column, Feature } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const ContactScreen = props => {
   const navigation = props.navigation;
   const [isDialogVisible, setDialogVisible] = useState(false);
@@ -39,10 +39,8 @@ const ContactScreen = props => {
         title="Liên hệ và góp ý"
         onLeftPress={() => navigation.goBack()}
       />
-      <Column style={styles.newRank}>
-        <Text style={styles.text}>Tính năng đang phát triển</Text>
-        <Icon source={'emoticon-sad'} size={44} color={colors.primary} />
-      </Column>
+      <Feature />
+     
       {/* <View style={styles.content}>
         <Card
           icon="phone"

@@ -1,16 +1,16 @@
-import {Tab, TabView} from '@rneui/themed';
-import {Bucket} from 'iconsax-react-native';
-import React, {useState} from 'react';
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import { Tab, TabView } from '@rneui/themed';
+import { Bucket } from 'iconsax-react-native';
+import React, { useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
-import {Column, NormalHeader, Row} from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {BronzeRank, DiamonRank, GoldRank, NewRank, SilverRank} from './ranks';
+import { Column, Feature, NormalHeader, Row } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { BronzeRank, DiamonRank, GoldRank, NewRank, SilverRank } from './ranks';
 
 const width = Dimensions.get('window').width;
 
 const MembershipScreen = props => {
-  const {navigation} = props;
+  const { navigation } = props;
   const progress = 0.5;
   const progressBarWidth = width - 4 * GLOBAL_KEYS.PADDING_DEFAULT;
   const [index, setIndex] = useState(0);
@@ -22,8 +22,9 @@ const MembershipScreen = props => {
         onLeftPress={() => navigation.goBack()}
       />
 
-      {/* Card container */}
-      <Column style={styles.cardContainer}>
+      <Feature />
+      
+      {/* <Column style={styles.cardContainer}>
         <CardHeader rank="MỚi" bean="0" />
         <ProgressSection
           progress={progress}
@@ -38,12 +39,12 @@ const MembershipScreen = props => {
         />
       </Column>
 
-      {/* TabView container */}
+
       <Tab
         value={index}
         onChange={e => setIndex(e)}
         indicatorStyle={styles.indicatorStyle}
-        containerStyle={[styles.tabContainer, {width: width}]}
+        containerStyle={[styles.tabContainer, { width: width }]}
         variant="primary"
         scrollable={true}>
         <Tab.Item
@@ -113,13 +114,13 @@ const MembershipScreen = props => {
         <TabView.Item style={styles.tabViewItem}>
           <DiamonRank />
         </TabView.Item>
-      </TabView>
+      </TabView> */}
     </View>
   );
 };
 
 // Component con cho Header của Card
-const CardHeader = ({rank, bean}) => (
+const CardHeader = ({ rank, bean }) => (
   <Row style={styles.headerContainer}>
     <Text style={styles.rankText}>{rank}</Text>
     <Text style={styles.beanText}>{bean} Bean</Text>
@@ -127,7 +128,7 @@ const CardHeader = ({rank, bean}) => (
 );
 
 // Component con cho ProgressBar và thông tin
-const ProgressSection = ({progress, progressBarWidth}) => (
+const ProgressSection = ({ progress, progressBarWidth }) => (
   <Column>
     <Row style={styles.rank}>
       <Text style={styles.progressText}>MỚi</Text>
@@ -147,7 +148,7 @@ const ProgressSection = ({progress, progressBarWidth}) => (
       <Column
         style={[
           styles.iconContainer,
-          {left: progress * (progressBarWidth - 16)},
+          { left: progress * (progressBarWidth - 16) },
         ]}>
         <Bucket size="24" color={colors.yellow500} variant="Bold" />
       </Column>
@@ -156,7 +157,7 @@ const ProgressSection = ({progress, progressBarWidth}) => (
 );
 
 // Component con cho các thông tin phía dưới
-const InfoContainer = ({messages}) => (
+const InfoContainer = ({ messages }) => (
   <View style={styles.infoContainer}>
     {messages.map((msg, index) => (
       <Text key={index} style={styles.infoText}>
@@ -232,7 +233,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
