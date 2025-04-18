@@ -74,20 +74,20 @@ export const navigationRef = React.createRef();
 export default function App() {
   return (
 
-      <AppContextProvider>
+    <AppContextProvider>
 
-        <PaperProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <SafeAreaProvider>
-              <AppNavigator />
-              <FlashMessage position="top" />
-              <Toast />
-            </SafeAreaProvider>
-          </GestureHandlerRootView>
-        </PaperProvider>
+      <PaperProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <AppNavigator />
+            <FlashMessage position="top" />
+            <Toast />
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      </PaperProvider>
 
 
-      </AppContextProvider>
+    </AppContextProvider>
 
   );
 }
@@ -119,6 +119,12 @@ const slideFromBottomOption = {
   presentation: 'transparentModal',
   headerShown: false,
 };
+
+const slideFromRightOption = {
+  animation: 'slide_from_right',
+  presentation: 'transparentModal',
+  headerShown: false
+}
 function MainNavigator() {
   const navigation = useNavigation()
   const { authState, showCallUI } = useAppContext();
@@ -189,21 +195,13 @@ function MainNavigator() {
           />
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailSheet}
-            options={{
-              animation: 'slide_from_right',
-              presentation: 'transparentModal',
-              headerShown: false
-            }}
+            options={slideFromRightOption}
             component={ProductDetailSheet}
           />
 
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
-            options={{
-              animation: 'slide_from_bottom',
-              presentation: 'transparentModal',
-              headerShown: false
-            }}
+            options={slideFromBottomOption}
             component={ProductDetailShort}
           />
           <BaseStack.Screen
@@ -234,7 +232,7 @@ function MainNavigator() {
 
           <BaseStack.Screen
             name={ShoppingGraph.EditCartItemScreen}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={EditCartItemScreen}
           />
           <BaseStack.Screen
