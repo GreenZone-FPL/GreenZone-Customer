@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-        color: colors.lemon,
+        color: colors.black,
         fontWeight: '500',
     }
 })
