@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,136 +7,53 @@ import {
   View,
 } from 'react-native';
 
-import { getAllCategories, getAllProducts, getAllToppings } from '../../axios';
 import {
   AuthContainer,
   CategoryMenu,
   DeliveryButton,
-  DialogBasic,
   DialogShippingMethod,
   HeaderOrder,
   LightStatusBar,
+  MyBottomSheet,
   ProductsListHorizontal,
   ProductsListVertical
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAppContainer, useOrderContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { AppGraph, ShoppingGraph, UserGraph } from '../../layouts/graphs';
-import { fetchData, fetchUserLocation } from '../../utils';
+import useSaveLocation from '../../utils/useSaveLocation';
 
-const OrderScreen = props => {
-  const { navigation } = props;
-  const [categories, setCategories] = useState([]);
-  const [toppings, setToppings] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [currentLocation, setCurrentLocation] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('');
-  const [editOption, setEditOption] = useState('');
-  const [isDialogVisible, setDialogVisible] = useState(false);
-  const scrollViewRef = useRef(null);
-  const [positions, setPositions] = useState({});
-  const [currentCategory, setCurrentCategory] = useState('Danh mục');
-  const { cartState, cartDispatch, authState, authDispatch } =
+const OrderScreen = () => {
+  const { cartState, authState } =
     useAppContext() || {};
 
-  const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer();
-  const { onNavigateLogin, onNavigateRegister } = useAppContainer();
-  // Hàm xử lý khi đóng dialog
-  const handleCloseDialog = () => {
-    setIsModalVisible(false);
-  };
+  const {
+    dialogShippingVisible,
+    selectedOption,
+    currentCategory,
+    allProducts,
+    loading,
+    categories,
+    dialogVisible,
+    scrollViewRef,
+    setDialogShippingVisible,
+    setDialogVisible,
+    handleEditOption,
+    handleOptionSelect,
+    handleCloseDialog,
+    onLayoutCategory,
+    onNavigateProductDetailSheet,
+    onClickAddToCart,
+    navigateCheckOut,
+    scrollToCategory,
+    handleScroll,
+    navigateFavorite,
+    navigateSearchProduct
+  } = useOrderContainer()
 
-  // Hàm xử lý khi chọn phương thức giao hàng
-  const handleOptionSelect = option => {
-    setSelectedOption(option);
-    setIsModalVisible(false); // Đóng dialog sau khi chọn
-  };
+  // useSaveLocation()
 
-  const handleEditOption = option => {
-    setEditOption(option);
-
-    if (option === 'Giao hàng') {
-      setIsModalVisible(false);
-    } else if (option === 'Mang đi') {
-      navigation.navigate(UserGraph.AddressMerchantScreen);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserLocation(setCurrentLocation, setLoading);
-  }, []);
-
-  useEffect(() => {
-    // Fetch categories
-    const fetchCategories = async () => {
-      try {
-        const data = await getAllCategories();
-        setCategories(data.docs);
-      } catch (error) {
-        console.log(`Error`, error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-
-    // Fetch toppings
-    fetchData(getAllToppings, setToppings);
-
-    // Fetch all products
-    fetchData(getAllProducts, setAllProducts);
-  }, []); // Chỉ gọi một lần khi component mount
-
-  const onLayoutCategory = (categoryId, event) => {
-    event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
-    });
-  };
-
-  const handleScroll = event => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-    let closestCategory = 'Danh mục';
-    let minDistance = Number.MAX_VALUE;
-
-    Object.entries(positions).forEach(([categoryId, posY]) => {
-      const distance = Math.abs(scrollY - posY);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestCategory =
-          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
-      }
-    });
-
-    if (closestCategory !== currentCategory) {
-      setCurrentCategory(closestCategory);
-    }
-  };
-
-  const scrollToCategory = categoryId => {
-    if (!scrollViewRef.current) {
-      console.log('scrollViewRef.current is null');
-      return;
-    }
-
-    if (positions[categoryId] !== undefined) {
-      console.log('Scrolling to:', positions[categoryId]);
-      scrollViewRef.current.scrollTo({
-        y: positions[categoryId],
-        animated: true,
-      });
-    } else {
-      console.log('Category position not found:', categoryId);
-    }
-    setDialogVisible(false);
-  };
-
-  const openDialogCategoryPress = () => {
-    setDialogVisible(true);
-  };
+  const { onNavigateLogin } = useAppContainer();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,17 +61,16 @@ const OrderScreen = props => {
 
       <HeaderOrder
         title={currentCategory}
-        onCategoryPress={openDialogCategoryPress}
-        onFavoritePress={() => navigation.navigate(AppGraph.FavoriteScreen)}
-        onSearchProduct={() =>
-          navigation.navigate(ShoppingGraph.SearchProductScreen)
-        }
+        onCategoryPress={() => setDialogVisible(true)}
+        onFavoritePress={navigateFavorite}
+        onSearchProduct={navigateSearchProduct}
       />
       <ScrollView
         style={styles.containerContent}
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}>
+
         {!authState.lastName && (
           <AuthContainer onPress={onNavigateLogin} />
         )}
@@ -180,7 +96,7 @@ const OrderScreen = props => {
         <FlatList
           data={allProducts}
           keyExtractor={item => item._id}
-          scrollEnabled={false} // Đảm bảo danh sách không bị ảnh hưởng bởi cuộn
+          scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
@@ -211,17 +127,16 @@ const OrderScreen = props => {
                 ? cartState?.address?.label
                 : 'Đang xác định vị trí...'
         }
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
-        onPressCart={() => {
-          navigation.navigate(ShoppingGraph.CheckoutScreen);
-        }}
+        onPressCart={navigateCheckOut}
       />
+
       {
-        isModalVisible &&
+        dialogShippingVisible &&
         <DialogShippingMethod
-          isVisible={isModalVisible}
+          isVisible={dialogShippingVisible}
           selectedOption={selectedOption}
           onHide={handleCloseDialog}
           onOptionSelect={handleOptionSelect}
@@ -231,9 +146,9 @@ const OrderScreen = props => {
 
 
       {
-        isDialogVisible &&
-        <DialogBasic
-          isVisible={isDialogVisible}
+        dialogVisible &&
+        <MyBottomSheet
+          visible={dialogVisible}
           onHide={() => setDialogVisible(false)}
           title="Danh mục">
           <CategoryMenu
@@ -243,7 +158,7 @@ const OrderScreen = props => {
               scrollToCategory(category._id);
             }}
           />
-        </DialogBasic>
+        </MyBottomSheet>
       }
 
     </SafeAreaView>

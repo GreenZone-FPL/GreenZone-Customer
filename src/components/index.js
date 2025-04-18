@@ -9,7 +9,13 @@ export * from './indicators/Indicator';
 //barcode
 export * from './barcode/BarcodeUser';
 
+
+
 // bottom-sheets
+export * from './bottom-sheets/DeliveryMethodSheet';
+export * from './bottom-sheets/MyBottomSheet';
+
+
 
 //background
 export * from './background/EmptyView'
@@ -37,7 +43,7 @@ export * from './containers/AuthContainer';
 
 // dialogs
 export * from './dialogs/ActionDialog';
-export * from './bottom-sheets/DeliveryMethodSheet';
+
 export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
