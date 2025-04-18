@@ -2,13 +2,14 @@ import axiosInstance from '../axiosInstance';
 import {AppAsyncStorage} from '../../utils';
 import {RegisterRequest} from '../../type/register';
 
+
 export const getProfile = async (): Promise<void> => {
   try {
     const response = await axiosInstance.get('/auth/profile');
 
     return response.data;
   } catch (error) {
-    console.log('error:', error); // debug
+    console.log('error:', error); 
     throw error;
   }
 };
@@ -19,6 +20,7 @@ export const register = async (request: RegisterRequest) => {
 
     const {data} = response;
 
+    console.log('data', JSON.stringify(data, null, 2))
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -29,9 +31,10 @@ export const register = async (request: RegisterRequest) => {
     );
    
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
+    
 
     return data;
   } catch (error) {
@@ -57,7 +60,7 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       code,
     });
     const {data} = response;
-
+    console.log('data', JSON.stringify(data, null, 2))
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -68,10 +71,10 @@ export const verifyOTP = async ({phoneNumber, code}) => {
     );
 
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
-
+   
     return data;
   } catch (error) {
     console.log('error:', error);

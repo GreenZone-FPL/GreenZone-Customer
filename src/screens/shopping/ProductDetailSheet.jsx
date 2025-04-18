@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Pressable,
   ScrollView,
   StatusBar,
@@ -22,27 +21,25 @@ import {
   RadioGroup,
   SelectableGroup
 } from '../../components';
-import ToastDialog from '../../components/dialogs/ToastDialog';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useProductDetailContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
+import { ProductDetailSkeleton } from '../../skeletons';
 
 
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [selectedToppings, setSelectedToppings] = useState([]);
-  const [selectedNotes, setSelectedNotes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const { productId } = route.params;
-  const [customNote, setCustomNote] = useState('');
-  const { cartDispatch, authState } = useAppContext();
-
+  const { cartDispatch, cartState, authState } = useAppContext();
   const { onClickAddToCart } = useProductDetailContainer();
+
 
   useEffect(() => {
     if (product) {
@@ -103,11 +100,17 @@ const ProductDetailSheet = ({ route, navigation }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       />
+
+      {
+        loading &&
+        <ProductDetailSkeleton />
+      }
       {product && (
 
         <>
           <ScrollView style={styles.modalContent} removeClippedSubviews={true} showsVerticalScrollIndicator  >
             <ProductImage product={product} />
+
 
 
             <ProductInfo
@@ -154,7 +157,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
             backgroundColor={colors.white}
             quantity={quantity}
             handlePlus={() => {
-              if (quantity < 10) {
+              if (quantity < 99) {
                 setQuantity(quantity + 1);
               }
             }}
@@ -173,7 +176,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
                 }
 
                 if (quantity > 99) {
-                  console.log('quantity', quantity)
                   setQuantity(99)
                   Toaster.show('Số lượng không vượt quá 99')
                   return
@@ -192,7 +194,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
                   updatedToppings,
                   productPrice,
                   quantity,
-                  cartDispatch,
+                  cartDispatch
                 );
 
                 navigation.goBack();
@@ -260,7 +262,7 @@ const ProductInfo = ({
 const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -271,7 +273,7 @@ const FavoriteButton = ({ productId }) => {
         setIsFavorite(found);
       } catch (err) {
         Toaster.show('Lỗi khi lấy danh sách yêu thích')
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -280,11 +282,13 @@ const FavoriteButton = ({ productId }) => {
 
   const toggleFavorite = async () => {
     try {
-      setLoading(true);
+
       if (isFavorite) {
+        setLoading(true);
         await deleteFavoriteProduct({ productId });
         Toaster.show('Đã xóa khỏi danh sách yêu thích')
       } else {
+        setLoading(true);
         await postFavoriteProduct({ productId });
         Toaster.show('Đã thêm vào danh sách yêu thích')
       }
@@ -297,19 +301,13 @@ const FavoriteButton = ({ productId }) => {
     }
   };
 
-  const handlePress = async () => {
-    console.log('Loading:', loading);
-   
-    await toggleFavorite();
-  };
-
   return (
     <>
       <IconButton
         icon={isFavorite ? 'heart' : 'heart-outline'}
         iconColor={isFavorite ? colors.red800 : colors.gray300}
         size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        onPress={handlePress}
+        onPress={toggleFavorite}
       />
     </>
   );

@@ -21,15 +21,7 @@ const MerchantStackScreen = () => {
         component={LoginScreen}
       />
 
-      <MerchantStack.Screen
-        name={AppGraph.MerchantDetailSheet}
-        component={MerchantDetailSheet}
-        options={{
-          animation: 'slide_from_bottom',
-          presentation: 'transparentModal',
-          headerShown: false,
-        }}
-      />
+     
     </MerchantStack.Navigator>
   );
 };

@@ -5,6 +5,7 @@ import {Keyboard} from 'react-native';
 import {verifyOTP} from '../../axios';
 import {Toaster} from '../../utils';
 import {AuthActionTypes} from '../../reducers';
+import { onUserLoginZego } from '../../zego/common';
 
 export const useVerifyOTPContainer = (expired: string, phoneNumber: string) => {
   const navigation = useNavigation();
@@ -35,10 +36,12 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string) => {
 
       if (userLastName) {
         Toaster.show('Đăng nhập thành công!');
+       
         authDispatch({
           type: AuthActionTypes.LOGIN,
           payload: {needLogin: false, isLoggedIn: true, lastName: userLastName},
         });
+        await onUserLoginZego(phoneNumber, userLastName, navigation)
       } else {
         authDispatch({
           type: AuthActionTypes.REGISTER,

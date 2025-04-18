@@ -1,9 +1,9 @@
+import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 import {
@@ -19,7 +19,6 @@ import {
 import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -33,14 +32,14 @@ import {
   ShipperInfo,
 } from './order-detail-components';
 
-const OrderDetailScreen = ({ route }) => {
+const OrderDetailScreen = () => {
+  const route = useRoute()
   const { orderId } = route.params;
   const { cartState } = useAppContext();
 
   const {
     cancelDialogVisible,
     setCancelDialogVisible,
-    navigation,
     orderDetail,
     loading,
     paymentMethod,
@@ -73,7 +72,7 @@ const OrderDetailScreen = ({ route }) => {
           style={styles.containerContent}
         >
           <Row style={styles.statusRow}>
-          
+
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
@@ -81,12 +80,7 @@ const OrderDetailScreen = ({ route }) => {
 
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
-            <ShipperInfo
-              messageClick={() =>
-                navigation.navigate(ShoppingGraph.ChatScreen)
-              }
-              shipper={orderDetail.shipper}
-            />
+            <ShipperInfo shipper={orderDetail.shipper} />
           )}
 
           {orderDetail.store && <MerchantInfo store={orderDetail.store} />}

@@ -34,8 +34,8 @@ export const useCheckoutContainer = () => {
     const [actionDialogVisible, setActionDialogVisible] = useState(false);
 
     const [loading, setLoading] = useState(false);
- 
-    const { cartState, cartDispatch, setUpdateOrderMessage, setAwaitingPayments } = useAppContext();
+
+    const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext();
 
     const [timeInfo, setTimeInfo] = useState({
         selectedDay: 'Hôm nay',
@@ -48,17 +48,19 @@ export const useCheckoutContainer = () => {
 
     const handleSelectMethod = (method, disabled) => {
         if (!disabled) {
-            setPaymentMethod(method);
-            if (cartState.paymentMethod !== method.paymentMethod || cartState.onlineMethod !== method.value) {
-                cartDispatch({
-                    type: CartActionTypes.UPDATE_ORDER_INFO,
-                    payload: {
-                        paymentMethod: method.paymentMethod,
-                        onlineMethod: method.value,
-                    },
-                });
+            setPaymentMethod(method); // 1. Cập nhật UI ngay, phản hồi nhanh
 
-            }
+            setTimeout(() => {
+                cartDispatch({
+                    type: CartActionTypes.UPDATE_PAYMENT_METHOD,
+                    payload: method.paymentMethod
+                });
+                cartDispatch({
+                    type: CartActionTypes.UPDATE_ONLINE_METHOD,
+                    payload: method.value
+                });
+            }, 0); // 2. Cập nhật state toàn cục sau một tick event loop
+
             setDialogPaymentMethodVisible(false);
         } else {
             Toaster.show(
@@ -67,6 +69,7 @@ export const useCheckoutContainer = () => {
         }
     };
     useEffect(() => {
+
         const setUpPaymentMethod = () => {
             let selectedPayment
 
@@ -114,33 +117,25 @@ export const useCheckoutContainer = () => {
 
     // Xóa sản phẩm sau khi xác nhận
     const deleteProduct = async id => {
-        await CartManager.removeFromCart(id, cartDispatch);
         setActionDialogVisible(false);
+        try {
+            await CartManager.removeFromCart(id, cartDispatch);
+        } catch (error) {
+            Toaster.show('Có lỗi xảy ra khi xóa sản phẩm này')
+            console.log('Error', error || error.message)
+        }
     };
 
     const onApproveCreateOrder = async () => {
         try {
             setLoading(true)
-            let response = null;
+            let response;
             if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-                const pickupOrder = CartManager.setUpPickupOrder(cartState);
-                console.log(
-                    'pickupOrder =',
-                    JSON.stringify(pickupOrder, null, 2),
-                );
-                response = await createOrder(pickupOrder);
-            } else if (
-                cartState.deliveryMethod === DeliveryMethod.DELIVERY.value
-            ) {
-                const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
-                console.log(
-                    'deliveryOrder =',
-                    JSON.stringify(deliveryOrder, null, 2),
-                );
-
-                response = await createOrder(deliveryOrder);
+                response = await createPickupOrder();
+            } else {
+                response = await createDeliveryOrder();
             }
-            
+
             setDialogCreateOrderVisible(false);
             const newActiveOrder = {
                 visible: response?.data.status !== 'awaitingPayment',
@@ -166,10 +161,6 @@ export const useCheckoutContainer = () => {
 
 
             console.log('order data =', JSON.stringify(response, null, 2));
-            if (response?.data.status !== OrderStatus.AWAITING_PAYMENT.value) {
-                await CartManager.clearOrderItems(cartDispatch);
-            }
-
 
             if (response?.data?.status === 'awaitingPayment') {
                 const paymentParams = {
@@ -177,11 +168,7 @@ export const useCheckoutContainer = () => {
                     totalPrice: response.data.totalPrice,
                     paymentMethod: cartState.onlineMethod
                 };
-                console.log('paymentParams', paymentParams)
-                await AppAsyncStorage.storeData(
-                    AppAsyncStorage.STORAGE_KEYS.awaitingPayments, paymentParams);
 
-                setAwaitingPayments(paymentParams)
 
                 if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
                     navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
@@ -201,17 +188,28 @@ export const useCheckoutContainer = () => {
                     ],
                 });
             }
+            await CartManager.clearOrderItems(cartDispatch);
         } catch (error) {
             console.log('error', error);
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
         } finally {
             setLoading(false)
-           
+
         }
     }
 
+    const createPickupOrder = async () => {
+        const pickupOrder = CartManager.setUpPickupOrder(cartState);
+        return await createOrder(pickupOrder);
+    };
+
+    const createDeliveryOrder = async () => {
+        const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
+        return await createOrder(deliveryOrder);
+    };
+
+
     return {
-        navigation,
         dialogCreateOrderVisible,
         setDialogCreateOrderVisible,
         dialogRecipientInforVisible,

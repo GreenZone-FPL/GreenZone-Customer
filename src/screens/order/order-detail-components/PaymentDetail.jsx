@@ -30,7 +30,7 @@ export const PaymentDetails = ({detail}) => {
     0,
   );
 
-  console.log('detail', JSON.stringify(detail, null, 3));
+  // console.log('detail', JSON.stringify(detail, null, 3));
 
   const discount = voucher
     ? voucher.discountType === 'percentage'
@@ -216,7 +216,7 @@ export const PaymentDetails = ({detail}) => {
             />
           ) : (
             <Image
-              source={require('../../../assets/images/cod.jpg')}
+              source={require('../../../assets/images/logo_vnd.png')}
               style={{width: 22, height: 22}}
             />
           )}

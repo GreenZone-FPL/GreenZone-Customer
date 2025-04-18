@@ -1,34 +1,34 @@
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment/moment';
 import React from 'react';
-import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Column, CustomTabView, DeliveryMethodText, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Column, CustomTabView, DeliveryMethodText, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { MainGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
-
-
-const width = Dimensions.get('window').width;
+import { CancelDialog } from './order-detail-components';
 
 const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = () => {
   const { cartState } = useAppContext();
-
+  const navigation = useNavigation()
   const {
-    navigation,
     tabIndex,
     setTabIndex,
+    selectedOrder,
     setSelectedOrder,
     orders,
     loading,
     paymentMethod,
     dialogPaymentMethodVisible,
     setDialogPaymentMethodVisible,
-    handleSelectMethod,
+    cancelDialogVisible,
+    setCancelDialogVisible,
+    handleSelectMethod
   } = useOrderHistoryContainer()
   return (
     <View style={styles.container}>
@@ -66,10 +66,20 @@ const OrderHistoryScreen = () => {
               onPay={() =>
                 setDialogPaymentMethodVisible(true)
               }
+              onCancel={() =>
+                setCancelDialogVisible(true)
+              }
             />
           </View>
         ))}
       </CustomTabView>
+
+      <CancelDialog
+        visible={cancelDialogVisible}
+        onHide={() => setCancelDialogVisible(false)}
+        orderId={selectedOrder?._id}
+        callBack={() => {}}
+      />
 
       <DialogPaymentMethod
         methods={onlineMethods}
@@ -83,7 +93,7 @@ const OrderHistoryScreen = () => {
   );
 };
 
-const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelectedOrder }) => (
+const OrderListView = ({ status, orders, loading, onItemPress, onPay, onCancel, setSelectedOrder }) => (
   <View style={styles.scene}>
     {loading ? (
       <NormalLoading visible={loading} />
@@ -93,18 +103,18 @@ const OrderListView = ({ status, orders, loading, onItemPress, onPay, setSelecte
         data={orders}
         keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <OrderItem order={item} onPress={onItemPress} onPay={onPay} setSelectedOrder={setSelectedOrder} />
+          <OrderItem order={item} onPress={onItemPress} onPay={onPay} onCancel={onCancel} setSelectedOrder={setSelectedOrder} />
         )}
         contentContainerStyle={{ gap: 5 }}
       />
     ) : (
-      <EmptyView />
+      <EmptyView  message='Danh sách này trống'/>
     )}
   </View>
 );
 
-const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
-  // console.log('order', JSON.stringify(order, null, 2))
+const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
+
   const getOrderItemsText = () => {
     const items = order?.orderItems || [];
     if (items.length > 2) {
@@ -119,7 +129,7 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
 
   return (
     <Pressable
-      onPress={() => onPress(order)} // Truyền order vào onPress
+      onPress={() => onPress(order)} 
     >
       <Column style={styles.itemContainer} >
 
@@ -156,9 +166,20 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
 
         </Row>
 
+
         {
           order?.status === OrderStatus.AWAITING_PAYMENT.value &&
           <Row style={styles.buttonRow}>
+
+            <Pressable
+              onPress={() => {
+                console.log('orderDetail', JSON.stringify(order, null, 2))
+                setSelectedOrder(order)
+                onCancel()
+              }}
+              style={styles.cancelBtn}>
+              <NormalText text='Hủy đơn hàng' style={styles.cancelText} />
+            </Pressable>
             <Pressable
               onPress={() => {
                 console.log('orderDetail', JSON.stringify(order, null, 2))
@@ -170,16 +191,10 @@ const OrderItem = ({ order, onPress, onPay, setSelectedOrder }) => {
             </Pressable>
           </Row>
         }
-
-
       </Column>
-
-
     </Pressable>
   );
 };
-
-
 
 const ItemOrderType = ({ deliveryMethod }) => {
   const imageMap = {
@@ -198,18 +213,6 @@ const ItemOrderType = ({ deliveryMethod }) => {
   );
 };
 
-
-export const EmptyView = () => (
-  <View style={styles.emptyContainer}>
-    <Image
-      style={styles.emptyImage}
-      resizeMode="cover"
-      source={require('../../assets/images/logo.png')}
-    />
-
-  </View>
-);
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.white },
   scene: {
@@ -218,9 +221,6 @@ const styles = StyleSheet.create({
     paddingTop: GLOBAL_KEYS.PADDING_SMALL,
     backgroundColor: colors.fbBg
   },
-  emptyContainer: { justifyContent: 'center', alignItems: 'center' },
-  emptyImage: { width: width / 2, height: width / 2 },
-
   itemContainer: {
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   orderColumnEnd: { justifyContent: 'center' },
-  orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500' },
-  orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray700 },
+  orderName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, fontWeight: '500', color: colors.black },
+  orderTime: { fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT, color: colors.gray850 },
   orderTotal: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '400',
-    color: colors.black,
+    fontWeight: '500',
+    color: colors.earthYellow,
     textAlign: 'right'
   },
   buttonContainer: {
@@ -275,10 +275,21 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   payText: {
-    color: colors.white,
-    textAlign: 'center',
-    fontWeight: '600',
+    color: colors.white
   },
+  cancelBtn: {
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    paddingVertical: 4,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: colors.red900,
+    borderWidth: 1
+  },
+  cancelText: {
+    color: colors.red900
+  }
 });
 
 export default OrderHistoryScreen;

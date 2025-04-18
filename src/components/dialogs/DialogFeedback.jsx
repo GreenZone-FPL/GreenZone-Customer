@@ -3,17 +3,14 @@ import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
-  KeyboardAvoidingView,
   Modal,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View
 } from 'react-native';
-import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
@@ -101,7 +98,7 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
                 source={{ uri: imageUri }}
                 resizeMode="cover"
               />
-              <TouchableOpacity
+              <Pressable
                 style={styles.removeButton}
                 onPress={() => removeImage(index)}>
                 <Icon
@@ -109,7 +106,7 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
                   size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                   color={colors.green750}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           ))}
         </View>
@@ -149,17 +146,17 @@ export const DialogFeedback = ({ isVisible, onHide }) => {
         transparent={true}>
         <View style={styles.imagePickerOverlay}>
           <View style={styles.imagePickerContainer}>
-            <TouchableOpacity style={styles.option} onPress={openCamera}>
+            <Pressable style={styles.option} onPress={openCamera}>
               <NormalText text="Chụp ảnh mới" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.option} onPress={openImageLibrary}>
+            </Pressable>
+            <Pressable style={styles.option} onPress={openImageLibrary}>
               <NormalText text="Chọn ảnh từ thư viện" />
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               style={styles.option}
               onPress={() => setImagePickerVisible(false)}>
               <NormalText text="Hủy bỏ" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </Modal>

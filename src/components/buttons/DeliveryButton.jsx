@@ -1,11 +1,10 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Image, Pressable, StyleSheet, Text } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { CartManager, TextFormatter } from '../../utils';
 import { Column } from '../containers/Column';
 import { Row } from '../containers/Row';
 import { NormalText } from '../texts/NormalText';
-import { Icon } from 'react-native-paper';
-import { CartManager, TextFormatter } from '../../utils';
 
 export const DeliveryButton = ({
   title,
@@ -17,7 +16,7 @@ export const DeliveryButton = ({
   deliveryMethod,
 }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+    <Pressable onPress={onPress} style={[styles.container, style]}>
       <Column style={{ flex: 1, gap: 8}}>
         <Row>
           {deliveryMethod === 'Mang đi' ? (
@@ -39,7 +38,7 @@ export const DeliveryButton = ({
       </Column>
 
       {cartState?.orderItems?.length > 0 && (
-        <TouchableOpacity style={styles.btnCart} onPress={onPressCart}>
+        <Pressable style={styles.btnCart} onPress={onPressCart}>
           <Text style={styles.quantity}>{cartState.orderItems.length}</Text>
           <NormalText
             text={TextFormatter.formatCurrency(
@@ -48,9 +47,9 @@ export const DeliveryButton = ({
             style={{ color: colors.white, fontWeight: '500' }}
           />
 
-        </TouchableOpacity>
+        </Pressable>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
   address: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
+    color: colors.black,
   },
   btnCart: {
     flexDirection: 'row',

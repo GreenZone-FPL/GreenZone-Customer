@@ -9,11 +9,12 @@ const {width} = Dimensions.get('window');
 export const NewRank = () => {
   return (
     <Column style={styles.newRank}>
-      <Text style={styles.text}>Bạn chưa có ưu đãi</Text>
+      <Text style={styles.text}>Tính năng đang phát triển</Text>
       <Icon source={'emoticon-sad'} size={44} color={colors.primary} />
     </Column>
   );
 };
+
 
 
 

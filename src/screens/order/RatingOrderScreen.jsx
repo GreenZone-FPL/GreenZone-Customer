@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Image, FlatList, Dimensions } from 'react-native';
-import { NormalHeader, LightStatusBar, DialogReviewOder, Row } from '../../components';
+import { NormalHeader, LightStatusBar, DialogReviewOder, Row, Feature } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 
 
@@ -25,7 +25,8 @@ const RatingOrderScreen = (props) => {
         <SafeAreaView style={styles.container}>
             <LightStatusBar />
             <NormalHeader title='Đánh giá đơn hàng' onLeftPress={() => navigation.goBack()} />
-            <FlatList
+            <Feature/>
+            {/* <FlatList
                 data={data}
                 renderItem={({ item }) => <Card item={item} onPress={() => handleItemPress(item)} />}
                 keyExtractor={(item) => item.id}
@@ -35,7 +36,7 @@ const RatingOrderScreen = (props) => {
                 isVisible={modalVisible}
                 onHide={closeModal}
                 item={selectedItem} 
-            />
+            /> */}
         </SafeAreaView>
     );
 };

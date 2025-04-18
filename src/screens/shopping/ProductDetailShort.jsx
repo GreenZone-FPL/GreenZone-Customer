@@ -21,7 +21,7 @@ const ProductDetailShort = ({ route, navigation }) => {
     const { productId } = route.params
     const [customNote, setCustomNote] = useState("");
 
-    const { cartDispatch } = useAppContext()
+    const { cartDispatch, cartState } = useAppContext()
 
 
     useEffect(() => {
@@ -73,7 +73,7 @@ const ProductDetailShort = ({ route, navigation }) => {
 
                 product &&
 
-                <Pressable style={styles.contentContainer} onPress={() => {}}>
+                <Pressable style={styles.contentContainer} onPress={() => { }}>
                     <ProductInfo
                         product={product}
                         showFullDescription={showFullDescription}
@@ -128,7 +128,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                         backgroundColor={colors.white}
                         quantity={quantity}
                         handlePlus={() => {
-                            if (quantity < 10) {
+                            if (quantity < 99) {
                                 setQuantity(quantity + 1)
                             }
                         }}
@@ -152,8 +152,14 @@ const ProductDetailShort = ({ route, navigation }) => {
 
 
                             const productPrice = totalAmount / quantity
-                            await CartManager
-                                .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
+                            await CartManager.addToCart(
+                                product,
+                                selectedVariant,
+                                updatedToppings,
+                                productPrice,
+                                quantity,
+                                cartDispatch
+                            )
 
 
                             navigation.goBack()

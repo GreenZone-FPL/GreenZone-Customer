@@ -232,6 +232,7 @@ const MerchantScreen = ({ navigation, route }) => {
       <HeaderWithBadge
         title={isMapView ? 'Bản đồ' : 'Cửa hàng'}
         enableLeftIcon={isUpdateOrderInfo}
+        enableBadge={!!authState.lastName}
         onLeftPress={() => navigation.goBack()}
       />
 

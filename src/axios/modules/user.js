@@ -1,7 +1,8 @@
+import { AppAsyncStorage } from '../../utils';
 import axiosInstance from '../axiosInstance';
 
 // Gửi sản phẩm yêu thích
-export const postFavoriteProduct = async ({productId}) => {
+export const postFavoriteProduct = async ({ productId }) => {
   try {
     const response = await axiosInstance.post(`/v1/user/favorite/${productId}`);
     return response.data;
@@ -14,7 +15,7 @@ export const postFavoriteProduct = async ({productId}) => {
   }
 };
 
-export const deleteFavoriteProduct = async ({productId}) => {
+export const deleteFavoriteProduct = async ({ productId }) => {
   try {
     const response = await axiosInstance.delete(
       `/v1/user/favorite/${productId}`,
@@ -40,18 +41,15 @@ export const getFavoriteProducts = async () => {
   }
 };
 
-// Cập nhật hồ sơ người dùng
+
 export const updateUserProfile = async profileData => {
   try {
     const response = await axiosInstance.put(`/v1/user/profile`, profileData);
-    // console.log('update thanh cong >>>>>>>>>>>>>');
+    await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.user, response.data)
     return response.data;
   } catch (error) {
-    console.error(
-      'Error updating user profile:',
-      error.response?.data || error.message,
-    );
-    throw new Error(error.response?.data?.message || 'Cập nhật hồ sơ thất bại');
+    console.log('Error', error);
+    throw error
   }
 };
 
@@ -65,7 +63,8 @@ export const changeBeans = async voucherId => {
     return false;
   } catch (error) {
     console.log('Đổi bean thất bại:', error);
-    return false;
+    
+    throw error
   }
 };
 

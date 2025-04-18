@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dimensions,
   Image,
@@ -9,16 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {OverlayStatusBar} from '../../components/status-bars/OverlayStatusBar';
-import {Linking} from 'react-native';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar';
+import { Linking } from 'react-native';
+import { NormalText, Row } from '../../components';
 
 const width = Dimensions.get('window').width;
 
 const MerchantDetailSheet = props => {
-  const {navigation, route} = props;
-  const {item} = route.params;
+  const { navigation, route } = props;
+  const { item } = route.params;
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -35,7 +36,7 @@ const MerchantDetailSheet = props => {
   );
 };
 
-const Slider = ({item, handleGoBack}) => {
+const Slider = ({ item, handleGoBack }) => {
   const [index, setIndex] = useState(0);
   const handelImage = () => {
     if (index < 1) {
@@ -48,13 +49,13 @@ const Slider = ({item, handleGoBack}) => {
     <View>
       <TouchableOpacity style={styles.buttonText} onPress={handelImage}>
         <Text
-          style={{color: colors.white, fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}}>
+          style={{ color: colors.white, fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}>
           Xem thêm
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handelImage} />
 
-      <Image source={{uri: item.images[index]}} style={styles.image} />
+      <Image source={{ uri: item.images[index] }} style={styles.image} />
       <TouchableOpacity
         style={styles.goBackButton}
         onPress={() => handleGoBack()}>
@@ -68,7 +69,7 @@ const Slider = ({item, handleGoBack}) => {
   );
 };
 
-const Body = ({item}) => {
+const Body = ({ item }) => {
   const openGoogleMaps = (latitude, longitude) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
     Linking.openURL(url).catch(err =>
@@ -103,6 +104,7 @@ const Body = ({item}) => {
             size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
             color={colors.primary}
           />
+
           <Text style={styles.infoText}>Số điện thoại: {item.phoneNumber}</Text>
         </View>
 
@@ -153,6 +155,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: colors.black
   },
   location: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
   },
   openingHours: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    // fontWeight: '500',
+    color: colors.black
   },
   infoContainer: {
     flexDirection: 'row',
@@ -170,6 +173,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '400',
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
+    color: colors.black
   },
   buttonText: {
     position: 'absolute',

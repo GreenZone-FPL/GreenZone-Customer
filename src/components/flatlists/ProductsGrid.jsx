@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
+    color: colors.black
   },
   productPrice: {
     marginTop: 4,

@@ -1,6 +1,8 @@
-import { NavigationContainer } from '@react-navigation/native';
+import 'react-native-reanimated'
+import 'react-native-gesture-handler'
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './src/context/appContext';
@@ -50,53 +52,104 @@ import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import SeedScreen from './src/screens/voucher/SeedScreen';
 import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 import { useAppContainer } from './src/containers/useAppContainer';
-import SplashScreen2 from './src/screens/auth/SplashScreen2';
+
 import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import { LogBox } from 'react-native';
 import NotificationScreen from './src/screens/notification/NotificationScreen';
-
-
+import {
+  ZegoUIKitPrebuiltCallWaitingScreen,
+  ZegoUIKitPrebuiltCallInCallScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import ZegoCallUI from './src/zego/ZegoCallUI';
+import { onUserLoginZego } from './src/zego/common';
+import { AppAsyncStorage } from './src/utils';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 export const navigationRef = React.createRef();
 
+
 export default function App() {
   return (
+
     <AppContextProvider>
+
       <PaperProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
-            <NavigationContainer ref={navigationRef}>
-              <BaseStack.Navigator screenOptions={{ headerShown: false }}>
-                <BaseStack.Screen
-                  name="AppNavigator"
-                  component={AppNavigator}
-                />
-                <BaseStack.Screen
-                  name={OrderGraph.OrderDetailScreen}
-                  component={OrderDetailScreen}
-                />
-              </BaseStack.Navigator>
-            </NavigationContainer>
+            <AppNavigator />
             <FlashMessage position="top" />
             <Toast />
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PaperProvider>
+
+
     </AppContextProvider>
+
   );
 }
 
 function AppNavigator() {
-  const { authState } = useAppContext();
+  const { showCallUI } = useAppContext();
+  return (
+    <NavigationContainer ref={navigationRef}>
+
+      <RootNavigator />
+      {showCallUI && <ZegoCallUI />}
+
+    </NavigationContainer>
+  )
+}
+
+
+function RootNavigator() {
+  return (
+    <BaseStack.Navigator screenOptions={{ headerShown: false }}>
+      <BaseStack.Screen name="MainNavigator" component={MainNavigator} />
+      <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+    </BaseStack.Navigator>
+  );
+}
+
+const slideFromBottomOption = {
+  animation: 'slide_from_bottom',
+  presentation: 'transparentModal',
+  headerShown: false,
+};
+
+const slideFromRightOption = {
+  animation: 'slide_from_right',
+  presentation: 'transparentModal',
+  headerShown: false
+}
+function MainNavigator() {
+  const navigation = useNavigation()
+  const { authState, showCallUI } = useAppContext();
+
   useAppContainer();
-  const slideFromBottomOption = {
-    animation: 'slide_from_bottom',
-    presentation: 'transparentModal',
-    headerShown: false,
-  };
+  const initZego = async () => {
+
+    const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
+
+    if (user) {
+      console.log('loginZego')
+      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
+    }
+  }
+
+
+  useEffect(() => {
+    if (authState.lastName) {
+      console.log('initZego')
+      initZego()
+    } else {
+      console.log('Khong the init Zego')
+    }
+  }, [authState.lastName])
+
   return (
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
       {authState.needAuthen === false ? (
@@ -111,13 +164,38 @@ function AppNavigator() {
             name={MainGraph.graphName}
             component={MainNavigation}
           />
+
+
+          {
+            showCallUI &&
+            <>
+
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name 
+                name="ZegoUIKitPrebuiltCallWaitingScreen"
+                component={ZegoUIKitPrebuiltCallWaitingScreen}
+              />
+              <BaseStack.Screen
+                options={{ headerShown: false }}
+                // DO NOT change the name
+                name="ZegoUIKitPrebuiltCallInCallScreen"
+                component={ZegoUIKitPrebuiltCallInCallScreen}
+              />
+            </>
+          }
+
+          <BaseStack.Screen
+            name={OrderGraph.OrderHistoryScreen}
+            component={OrderHistoryScreen}
+          />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
           />
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailSheet}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={ProductDetailSheet}
           />
 
@@ -148,13 +226,13 @@ function AppNavigator() {
 
           <BaseStack.Screen
             name={'MerchantDetailSheet'}
-            options={slideFromBottomOption}
+            // options={slideFromBottomOption}
             component={MerchantDetailSheet}
           />
 
           <BaseStack.Screen
             name={ShoppingGraph.EditCartItemScreen}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={EditCartItemScreen}
           />
           <BaseStack.Screen
@@ -173,7 +251,6 @@ function AppNavigator() {
             name={VoucherGraph.SelectVouchersScreen}
             component={SelectVouchersScreen}
           />
-
 
           <BaseStack.Screen
             name={VoucherGraph.SeedScreen}
@@ -227,10 +304,7 @@ function AppNavigator() {
             name={UserGraph.ContactScreen}
             component={ContactScreen}
           />
-          <BaseStack.Screen
-            name={OrderGraph.OrderHistoryScreen}
-            component={OrderHistoryScreen}
-          />
+
           <BaseStack.Screen
             name={OrderGraph.OrderDetailScreen}
             component={OrderDetailScreen}
