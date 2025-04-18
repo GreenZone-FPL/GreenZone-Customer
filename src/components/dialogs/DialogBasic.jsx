@@ -7,14 +7,13 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
-import {Column} from '../containers/Column'
-import {Row} from '../containers/Row'
 
 const DialogBasicPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -51,13 +50,13 @@ export const DialogBasic = ({ isVisible, onHide, title, children, style, titleSt
               <Row style={styles.header}>
                 <View style={styles.placeholderIcon} />
                 <Text style={[styles.titleText, titleStyle]}>{title}</Text>
-                <TouchableOpacity onPress={onHide}>
+                <Pressable onPress={onHide}>
                   <Icon
                     source="close"
                     size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                     color={colors.black}
                   />
-                </TouchableOpacity>
+                </Pressable>
               </Row>
               <Column style={[styles.body, styleBody]}>
                 {children}

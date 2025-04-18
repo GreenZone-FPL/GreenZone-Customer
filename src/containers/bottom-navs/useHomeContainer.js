@@ -1,7 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getProfile } from '../../axios';
-import { DeliveryMethod } from '../../constants';
+import { getAllProducts, getOrdersByStatus, getProfile } from '../../axios';
+import { DeliveryMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
   AppGraph,
@@ -11,6 +11,7 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
+import { InteractionManager } from 'react-native';
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
 import { useAppContainer } from '../useAppContainer';
 
@@ -19,15 +20,16 @@ export const useHomeContainer = () => {
   const { onNavigateLogin } = useAppContainer();
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
-  const [user, setUser] = useState(null);
+
   const [editOption, setEditOption] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
   const [merchantLocal, setMerchantLocal] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
 
+  const [needToPay, setNeedToPay] = useState(false)
 
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
@@ -49,23 +51,29 @@ export const useHomeContainer = () => {
     }
   };
 
+  const fetchOrderHistory = async () => {
+    try {
+      const isTokenValid = await AppAsyncStorage.isTokenValid()
+      if (isTokenValid) {
+        const response = await getOrdersByStatus();
+        const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
+
+        if (awaitingPayments.length > 0) {
+          setNeedToPay(true);
+        }
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
   useFocusEffect(
     useCallback(() => {
-      const fetchProfile = async () => {
-        try {
-          const response = await getProfile();
-          if (response) {
-            setUser(response);
-          }
-        } catch (error) {
-          console.log('error', error);
-        }
-      };
-  
-      fetchProfile();
-  
+      fetchOrderHistory();
     }, [])
   );
+
+
+
 
   useEffect(() => {
     if (allProducts.length === 0) {
@@ -96,6 +104,8 @@ export const useHomeContainer = () => {
   };
 
   const handleEditOption = option => {
+    setEditOption(option);
+    setDialogShippingVisible(false);
     if (option === 'Giao hàng') {
       navigation.navigate(UserGraph.SelectAddressScreen, {
         isUpdateOrderInfo: true,
@@ -106,33 +116,69 @@ export const useHomeContainer = () => {
         fromHome: true,
       });
     }
-    setEditOption(option);
-    setIsModalVisible(false);
+   
   };
 
   const handleOptionSelect = async option => {
-    if (option === 'Mang đi') {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        deliveryMethod: DeliveryMethod.PICK_UP.value,
-        store: cartState?.storeSelect,
-        storeInfo: {
-          storeName: cartState?.storeInfoSelect?.storeName,
-          storeAddress: cartState?.storeInfoSelect?.storeAddress,
-        },
-      });
-    } else if (option === 'Giao hàng') {
-      await CartManager.updateOrderInfo(cartDispatch, {
-        deliveryMethod: DeliveryMethod.DELIVERY.value,
-        store: merchantLocal?._id,
-        storeInfo: {
-          storeName: merchantLocal?.name,
-          storeAddress: merchantLocal?.storeAddress,
-        },
-      });
-    }
     setSelectedOption(option);
-    setIsModalVisible(false);
+    setDialogShippingVisible(false);
+    try {
+      if (option === 'Mang đi') {
+        await CartManager.updateOrderInfo(cartDispatch, {
+          deliveryMethod: DeliveryMethod.PICK_UP.value,
+          store: cartState?.storeSelect,
+          storeInfo: {
+            storeName: cartState?.storeInfoSelect?.storeName,
+            storeAddress: cartState?.storeInfoSelect?.storeAddress,
+          },
+        });
+      } else if (option === 'Giao hàng') {
+        await CartManager.updateOrderInfo(cartDispatch, {
+          deliveryMethod: DeliveryMethod.DELIVERY.value,
+          store: merchantLocal?._id,
+          storeInfo: {
+            storeName: merchantLocal?.name,
+            storeAddress: merchantLocal?.storeAddress,
+          },
+        });
+      }
+    } catch (error) {
+      console.log('Error', error)
+    }
+
+
   };
+
+  // const handleOptionSelect = option => {
+  //   setSelectedOption(option);
+  //   setDialogShippingVisible(false);
+  
+  //   InteractionManager.runAfterInteractions(() => {
+  //     const store = option === 'Mang đi' ? cartState?.storeSelect : merchantLocal?._id;
+  //     const storeInfo = option === 'Mang đi'
+  //       ? {
+  //           storeName: cartState?.storeInfoSelect?.storeName,
+  //           storeAddress: cartState?.storeInfoSelect?.storeAddress,
+  //         }
+  //       : {
+  //           storeName: merchantLocal?.name,
+  //           storeAddress: merchantLocal?.storeAddress,
+  //         };
+  
+  //     const deliveryMethod = option === 'Mang đi'
+  //       ? DeliveryMethod.PICK_UP.value
+  //       : DeliveryMethod.DELIVERY.value;
+  
+  //     CartManager.updateOrderInfo(cartDispatch, {
+  //       deliveryMethod,
+  //       store,
+  //       storeInfo,
+  //     }).catch(error => {
+  //       console.log('Error', error);
+  //     });
+  //   });
+  // };
+  
 
   const handleScroll = useCallback(
     event => {
@@ -159,7 +205,7 @@ export const useHomeContainer = () => {
   );
 
   const handleCloseDialog = () => {
-    setIsModalVisible(false);
+    setDialogShippingVisible(false);
   };
 
   const onLayoutCategory = (categoryId, event) => {
@@ -190,8 +236,8 @@ export const useHomeContainer = () => {
 
   return {
     navigation,
-    isModalVisible,
-    setIsModalVisible,
+    dialogShippingVisible,
+    setDialogShippingVisible,
     selectedOption,
     setSelectedOption,
     editOption,
@@ -201,8 +247,6 @@ export const useHomeContainer = () => {
     setCurrentCategory,
     lastCategoryRef,
     handleScroll,
-    user,
-    setUser,
     allProducts,
     setAllProducts,
     handleEditOption,
@@ -217,5 +261,6 @@ export const useHomeContainer = () => {
     navigateOrderHistory,
     navigateAdvertising,
     navigateSeedScreen,
+    needToPay
   };
 };

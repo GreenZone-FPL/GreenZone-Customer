@@ -29,14 +29,14 @@ PrimaryButton.propTypes = {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.primary,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: 12,
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
     color: colors.white,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: 'bold',
   },
 });

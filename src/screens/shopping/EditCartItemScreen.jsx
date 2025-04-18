@@ -26,7 +26,7 @@ import {
   postFavoriteProduct,
 } from '../../axios';
 
-const EditCartItemScreen = ({route, navigation}) => {
+const EditCartItemScreen = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
@@ -34,7 +34,7 @@ const EditCartItemScreen = ({route, navigation}) => {
   const [selectedToppings, setSelectedToppings] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
-  const {updateItem} = route.params;
+  const { updateItem } = route.params;
   const { cartDispatch, authState } = useAppContext();
 
   useEffect(() => {
@@ -112,12 +112,12 @@ const EditCartItemScreen = ({route, navigation}) => {
             <ProductImage product={product} />
 
             <ProductInfo
-             authState={authState}
-             product={product}
-             showFullDescription={showFullDescription}
-             toggleDescription={() => {
-               setShowFullDescription(!showFullDescription);
-             }}
+              authState={authState}
+              product={product}
+              showFullDescription={showFullDescription}
+              toggleDescription={() => {
+                setShowFullDescription(!showFullDescription);
+              }}
             />
 
             {product.variant.length > 1 && selectedVariant && (
@@ -162,34 +162,44 @@ const EditCartItemScreen = ({route, navigation}) => {
             }}
             totalPrice={totalAmount}
             onButtonPress={async () => {
-              if (quantity < 1) {
-                // Hiển thị cảnh báo khi số lượng sản phẩm nhỏ hơn 1
-                Alert.alert(
-                  'Xóa sản phẩm',
-                  'Bạn có chắc chắn muốn xóa sản phẩm này?',
-                  [
-                    {
-                      text: 'Đóng',
-                      onPress: () => {
-                        setQuantity(1);
-                      },
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'Xóa',
-                      onPress: async () => {
-                        await CartManager.removeFromCart(
-                          product._id,
-                          cartDispatch,
-                        );
-                        Toaster.show('Xóa thành công');
-                      },
-                    },
-                  ],
-                  {cancelable: false},
-                );
-                return;
+              if (!quantity && quantity !== 0) {
+                setQuantity(1)
+                Toaster.show('Vui lòng nhập số lượng hợp lệ')
+                return
               }
+              if (quantity > 99) {
+                setQuantity(99)
+                Toaster.show('Số lượng không vượt quá 99')
+                return
+              }
+              // if (quantity < 1) {
+              //   // Hiển thị cảnh báo khi số lượng sản phẩm nhỏ hơn 1
+              //   Alert.alert(
+              //     'Xóa sản phẩm',
+              //     'Bạn có chắc chắn muốn xóa sản phẩm này?',
+              //     [
+              //       {
+              //         text: 'Đóng',
+              //         onPress: () => {
+              //           setQuantity(1);
+              //         },
+              //         style: 'cancel',
+              //       },
+              //       {
+              //         text: 'Xóa',
+              //         onPress: async () => {
+              //           await CartManager.removeFromCart(
+              //             product._id,
+              //             cartDispatch,
+              //           );
+              //           Toaster.show('Xóa thành công');
+              //         },
+              //       },
+              //     ],
+              //     { cancelable: false },
+              //   );
+              //   return;
+              // }
               if (quantity >= 1 && !quantity) {
                 setQuantity(1);
                 Toaster.show('Vui lòng nhập số lượng hợp lệ');
@@ -198,8 +208,8 @@ const EditCartItemScreen = ({route, navigation}) => {
 
               const sortedToppings = selectedToppings?.length
                 ? [...selectedToppings].sort((a, b) =>
-                    a._id.localeCompare(b._id),
-                  )
+                  a._id.localeCompare(b._id),
+                )
                 : [];
 
               const newCart = await CartManager.updateCartItem(
@@ -226,15 +236,15 @@ const EditCartItemScreen = ({route, navigation}) => {
   );
 };
 
-const ProductImage = ({product}) => {
+const ProductImage = ({ product }) => {
   return (
     <Pressable style={styles.imageContainer}>
-      <Image source={{uri: product.image}} style={styles.productImage} />
+      <Image source={{ uri: product.image }} style={styles.productImage} />
     </Pressable>
   );
 };
 
-const ProductInfo = ({product, showFullDescription, toggleDescription,  authState}) => {
+const ProductInfo = ({ authState, product, showFullDescription, toggleDescription }) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.horizontalView}>
@@ -265,7 +275,7 @@ const ProductInfo = ({product, showFullDescription, toggleDescription,  authStat
 const FavoriteButton = ({ productId }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
 
   useEffect(() => {
     const fetchFavoriteStatus = async () => {
@@ -276,7 +286,7 @@ const FavoriteButton = ({ productId }) => {
         setIsFavorite(found);
       } catch (err) {
         Toaster.show('Lỗi khi lấy danh sách yêu thích')
-      }finally{
+      } finally {
         setLoading(false)
       }
     };
@@ -304,7 +314,7 @@ const FavoriteButton = ({ productId }) => {
 
   const handlePress = async () => {
     console.log('Loading:', loading);
-   
+
     await toggleFavorite();
   };
 

@@ -9,9 +9,9 @@ import {
   View,
   TextInput,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { Icon, IconButton } from 'react-native-paper';
 import { getAddresses } from '../../axios';
-import { LightStatusBar, NormalHeader, NormalLoading, CustomSearchBar } from '../../components';
+import { LightStatusBar, NormalHeader, NormalLoading, CustomSearchBar, Column, NormalText, TitleText, PrimaryButton, Row } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { UserGraph } from '../../layouts/graphs';
@@ -115,12 +115,14 @@ const SelectAddressScreen = ({ navigation, route }) => {
         longitude: String(updatedAddress.longitude),
       };
       if (isUpdateOrderInfo && cartDispatch) {
+
         CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: addressFinish,
         });
+        navigation.goBack();
       }
 
-      navigation.goBack();
+
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
@@ -134,7 +136,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         consigneeName: address.consigneeName,
         consigneePhone: address.consigneePhone,
       };
-      console.log('Địa chỉ đã chọn:', addressFinish);
+
       if (isUpdateOrderInfo && cartDispatch) {
         CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: addressFinish,
@@ -143,7 +145,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         });
       }
 
-      navigation.goBack(); // Điều hướng về màn hình trước
+      navigation.goBack();
     } else {
       console.log('Chưa chọn địa chỉ');
     }
@@ -205,7 +207,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
             }}
             leftIcon="magnify"
             rightIcon="close"
-            style={{ backgroundColor: colors.fbBg}}
+            style={{ backgroundColor: colors.fbBg }}
             onFocus={() => setIsSearching(true)} />
         </View>
       </View>
@@ -241,29 +243,36 @@ const SelectAddressScreen = ({ navigation, route }) => {
                 address={address}
                 key={address._id}
                 isSelected={selectedAddress === address}
-                onPress={() => setSelectedAddress(address)}
+                onPress={() => {
+                  if (!selectedAddress) {
+                    setSelectedAddress(address)
+                  } else {
+                    setSelectedAddress(null)
+                  }
+
+                }}
               />
             ))}
           </>
         ) : (
           <Text style={styles.emptyText}>Bạn chưa tạo mới địa chỉ nào</Text>
         )}
-        {/* Nút Thêm ở góc dưới bên trái */}
-        <TouchableOpacity
+
+        <Pressable
           style={styles.fab}
           onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
           <Icon source="plus" size={24} color={colors.primary} />
-          <Text style={{}}>Thêm địa chỉ mới</Text>
-        </TouchableOpacity>
+          <NormalText text='Thêm địa chỉ mới' />
+
+        </Pressable>
       </ScrollView>
 
       {/* Nút Xác nhận */}
       {selectedAddress && (
-        <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={() => onConfirmAddress(selectedAddress)}>
-          <Text style={styles.confirmText}>Xác nhận</Text>
-        </TouchableOpacity>
+        <PrimaryButton
+          title='Xác nhận'
+          style={{ margin: 16 }}
+          onPress={() => onConfirmAddress(selectedAddress)} />
       )}
     </SafeAreaView>
   );
@@ -271,27 +280,26 @@ const SelectAddressScreen = ({ navigation, route }) => {
 
 const Card = ({ address, isSelected, onPress }) => (
   <Pressable
-    style={[styles.card, isSelected && styles.selectedCard]}
+    style={[styles.card]}
     onPress={() => onPress(address)}>
-    <View style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: GLOBAL_KEYS.GAP_DEFAULT }}>
-      <Icon
-        source="google-maps"
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.primary}
-      />
-      <View style={styles.textContainer}>
-        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: '500' }}>
-          {''}
-          {`${address.specificAddress}`}
-        </Text>
-        <Text style={styles.location}>
-          {''}
-          {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
-        </Text>
-        <Text style={styles.location}>{address.consigneePhone}, {address.consigneeName}</Text>
+    <IconButton
+      icon='google-maps'
+      size={24}
+      iconColor={isSelected ? colors.white : colors.green500}
+      containerColor={isSelected ? colors.lemon : colors.white}
+    />
 
-      </View>
-    </View>
+    <Column style={styles.textContainer}>
+
+      <TitleText text={`${address.specificAddress}`} />
+      <NormalText
+        style={{ fontWeight: '500', color: colors.earthYellow }}
+        text={`${address.consigneeName} - ${address.consigneePhone}`} />
+      <NormalText
+        style={{ color: colors.gray850 }}
+        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`} />
+
+    </Column>
 
   </Pressable>
 );
@@ -299,23 +307,20 @@ const CardSearch = ({ address, isSelected, onPress }) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
     onPress={() => onPress(address)}>
-    <View style={{ marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', gap: GLOBAL_KEYS.GAP_DEFAULT }}>
-      <Icon
-        source="google-maps"
-        size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-        color={colors.primary}
-      />
-      <View style={styles.textContainer}>
-        <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, fontWeight: '500' }}>
-          {''}
-          {`${address.specificAddress}`}
-        </Text>
-        <Text style={styles.location}>
-          {''}
-          {`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
-        </Text>
-      </View>
-    </View>
+
+    <Icon
+      source="google-maps"
+      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+      color={colors.primary}
+    />
+    <Column style={styles.textContainer}>
+
+      <TitleText text={`${address.specificAddress}`} />
+      <NormalText
+        style={{ color: colors.gray850 }}
+        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`} />
+    </Column>
+
   </Pressable>
 );
 
@@ -324,7 +329,7 @@ export default SelectAddressScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.grayBg,
+    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -335,25 +340,31 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
-  content: {},
+  content: {
+    backgroundColor: colors.fbBg,
+    flex: 1
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: 16,
     backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderColor: colors.gray200,
     marginBottom: 5,
+    gap: 8
+
+
   },
   selectedCard: {
-    borderWidth: 1,
-    borderColor: colors.primary,
+    backgroundColor: colors.yellow300,
+
   },
   location: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
     textAlign: 'justify',
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
+    color: colors.black,
   },
   textContainer: {
     flex: 1,
@@ -363,19 +374,6 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     color: colors.black,
     margin: 20,
-  },
-  confirmButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: colors.primary,
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: 8,
-    width: '90%',
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 
   confirmText: {
@@ -400,5 +398,6 @@ const styles = StyleSheet.create({
     margin: 16,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
+    color: colors.gray850
   },
 });

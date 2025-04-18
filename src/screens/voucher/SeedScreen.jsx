@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     gap: 16,
     marginBottom: 16,
-
   },
   iconSeed: {
     width: 70,
@@ -114,12 +113,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+     color: colors.black,
   },
   beanAmount: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.orange700,
   },
+  
   beanText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',

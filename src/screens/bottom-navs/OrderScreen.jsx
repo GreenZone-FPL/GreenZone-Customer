@@ -97,10 +97,6 @@ const OrderScreen = props => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log('Header title updated:', currentCategory);
-  // }, [currentCategory]);
-
   const handleScroll = event => {
     const scrollY = event.nativeEvent.contentOffset.y;
     let closestCategory = 'Danh mục';
@@ -222,27 +218,34 @@ const OrderScreen = props => {
           navigation.navigate(ShoppingGraph.CheckoutScreen);
         }}
       />
-
-      <DialogShippingMethod
-        isVisible={isModalVisible}
-        selectedOption={selectedOption}
-        onHide={handleCloseDialog}
-        onOptionSelect={handleOptionSelect}
-        onEditOption={handleEditOption}
-      />
-      <DialogBasic
-        isVisible={isDialogVisible}
-        onHide={() => setDialogVisible(false)}
-        title="Danh mục" 
-        styleBody={{marginTop: 16, margin: 0, marginStart: 6}}>
-        <CategoryMenu
-          categories={categories}
-          loading={loading}
-          onCategorySelect={category => {
-            scrollToCategory(category._id);
-          }}
+      {
+        isModalVisible &&
+        <DialogShippingMethod
+          isVisible={isModalVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
+          onEditOption={handleEditOption}
         />
-      </DialogBasic>
+      }
+
+
+      {
+        isDialogVisible &&
+        <DialogBasic
+          isVisible={isDialogVisible}
+          onHide={() => setDialogVisible(false)}
+          title="Danh mục">
+          <CategoryMenu
+            categories={categories}
+            loading={loading}
+            onCategorySelect={category => {
+              scrollToCategory(category._id);
+            }}
+          />
+        </DialogBasic>
+      }
+
     </SafeAreaView>
   );
 };

@@ -23,20 +23,18 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContainer, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { TextFormatter } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
 
-const HomeScreen = () => {
-  const { cartState, authState, awaitingPayments } = useAppContext();
+const HomeScreen = (props) => {
+  const { cartState, authState } = useAppContext();
 
   const {
-    isModalVisible,
-    setIsModalVisible,
+    dialogShippingVisible,
+    setDialogShippingVisible,
     selectedOption,
     currentCategory,
     handleScroll,
-    user,
     allProducts,
     handleEditOption,
     handleOptionSelect,
@@ -44,12 +42,13 @@ const HomeScreen = () => {
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
-    navigateNotification,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
     navigateSeedScreen,
+    needToPay
   } = useHomeContainer();
+
 
   const { onNavigateLogin } = useAppContainer();
   useSaveLocation();
@@ -65,7 +64,7 @@ const HomeScreen = () => {
             : 'Chào bạn mới'
         }
         isHome={false}
-        onBadgePress={navigateNotification}
+        enableBadge={!!authState.lastName}
       />
 
       <ScrollView
@@ -73,31 +72,33 @@ const HomeScreen = () => {
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
+
         {authState.lastName ? (
-          user && (
-            <BarcodeUser
-              user={user}
-              showPoints={true}
-              onPress={navigateSeedScreen}
-            />
-          )
+
+          <BarcodeUser
+            showPoints={true}
+            onPress={navigateSeedScreen}
+          />
+
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
 
         <CategoryView />
-        {awaitingPayments && (
+
+        {
+          needToPay &&
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
             onPress={navigateOrderHistory}>
             <TitleText
-              text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
-                awaitingPayments.totalPrice,
-              )} cần thanh toán`}
+              text={`Bạn có đơn hàng cần thanh toán`}
             />
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
-        )}
+        }
+
+
 
         {allProducts.length > 0 && (
           <ProductsListHorizontal
@@ -152,18 +153,22 @@ const HomeScreen = () => {
                 ? cartState?.address?.label
                 : 'Đang xác định vị trí...'
         }
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
         onPressCart={navigateCheckOut}
       />
-      <DialogShippingMethod
-        isVisible={isModalVisible}
-        selectedOption={selectedOption}
-        onHide={handleCloseDialog}
-        onOptionSelect={handleOptionSelect}
-        onEditOption={handleEditOption}
-      />
+      {
+        dialogShippingVisible &&
+        <DialogShippingMethod
+          isVisible={dialogShippingVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
+          onEditOption={handleEditOption}
+        />
+      }
+
     </SafeAreaView>
   );
 };

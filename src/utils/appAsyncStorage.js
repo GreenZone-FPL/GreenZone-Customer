@@ -6,12 +6,12 @@ export class AppAsyncStorage {
     CART: 'CART',
     accessToken: 'accessToken',
     refreshToken: 'refreshToken',
-    lastName: 'lastName',
+    phoneNumber: 'phoneNumber',
+    user: 'user',
     activeOrders: 'activeOrders',
     currentLocation: 'currentLocation',
     merchantLocation: 'merchantLocation',
-    awaitingPayments: 'awaitingPayments',
-  };
+  }
 
   static async readData(key, defaultValue = null) {
     try {

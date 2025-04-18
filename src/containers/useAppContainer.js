@@ -17,7 +17,6 @@ export const useAppContainer = () => {
     cartDispatch,
     authDispatch,
     authState,
-    setAwaitingPayments,
   } = useAppContext();
 
   const navigation = useNavigation();
@@ -101,9 +100,9 @@ export const useAppContainer = () => {
         updateOrderMessage.status,
       );
 
-      const duration = 2000; // Thời gian hiển thị message
+      const duration = 1500; // Thời gian hiển thị message
 
-    
+
       showMessage({
         message: updateOrderMessage.message,
         type,
@@ -134,12 +133,15 @@ export const useAppContainer = () => {
         // Gọi lại tất cả các đơn hàng đã có trong activeOrders
         await socketService.rejoinOrder(data => {
           // Cập nhật trạng thái đơn hàng khi join thành công
-          setUpdateOrderMessage({
-            visible: true,
-            orderId: data.orderId,
-            message: data.message,
-            status: data.status,
-          });
+          if (data.status != updateOrderMessage.status) {
+            setUpdateOrderMessage({
+              visible: true,
+              orderId: data.orderId,
+              message: data.message,
+              status: data.status,
+            });
+          }
+
         });
       } catch (error) {
         console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);
@@ -155,18 +157,21 @@ export const useAppContainer = () => {
   }, [setUpdateOrderMessage]);
 
   const onLogout = async () => {
-    // Xóa token khỏi AsyncStorage
-    await AppAsyncStorage.clearAll();
-    setAwaitingPayments(null);
-    await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
-    authDispatch({
-      type: AuthActionTypes.LOGOUT,
-      payload: { isLoggedIn: false, lastName: null },
-    });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: MainGraph.graphName }],
-    });
+    try {
+      await AppAsyncStorage.clearAll();
+      await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
+      authDispatch({
+        type: AuthActionTypes.LOGOUT,
+        payload: { isLoggedIn: false, lastName: null, needLogin: false, needRegister: false },
+      });
+      navigation.reset({
+        index: 0,
+        routes: [{ name: MainGraph.graphName }],
+      });
+    } catch (error) {
+      throw error
+    }
+
   };
 
   const onNavigateLogin = () => {

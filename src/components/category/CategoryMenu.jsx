@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
-import LinearGradient from "react-native-linear-gradient";
-import { GLOBAL_KEYS, colors } from '../../constants';
 import Skeleton from '../../components/category/Skeleton';
+import { GLOBAL_KEYS, colors } from '../../constants';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -39,7 +38,7 @@ export const CategoryMenu = props => {
           data={categories}
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
+            <Pressable
               style={styles.itemContainer}
               onPress={() => onCategorySelect(item)}
             >
@@ -49,7 +48,7 @@ export const CategoryMenu = props => {
               <Text style={styles.itemName} numberOfLines={2}>
                 {item.name}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}

@@ -35,7 +35,7 @@ export const PaymentDetails = ({detail}) => {
     0,
   );
 
-  console.log('detail', JSON.stringify(detail, null, 3));
+  // console.log('detail', JSON.stringify(detail, null, 3));
 
   const discount = voucher
     ? voucher.discountType === 'percentage'

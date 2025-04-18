@@ -97,13 +97,13 @@ export const useOrderDetailContainer = (orderId: string) => {
     };
 
     const callBackAfterCancel = async () => {
-        await fetchOrderDetail()
         setUpdateOrderMessage({
             visible: true,
             orderId: orderId,
-            message: 'Hủy đơn hàng thành công',
+            message: 'Đơn hàng đã bị hủy',
             status: OrderStatus.CANCELLED.value,
         })
+        await fetchOrderDetail()
     }
 
     return {
