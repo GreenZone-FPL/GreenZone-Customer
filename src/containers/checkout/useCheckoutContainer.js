@@ -223,15 +223,13 @@ export const useCheckoutContainer = () => {
         actionDialogVisible,
         setActionDialogVisible,
         loading,
-        setLoading,
         timeInfo,
         setTimeInfo,
         selectedProduct,
         setSelectedProduct,
         paymentMethod,
-        setPaymentMethod,
         deleteProduct,
         handleSelectMethod,
-        onApproveCreateOrder
+        onApproveCreateOrder,
     }
 }

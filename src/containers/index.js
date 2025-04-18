@@ -1,6 +1,7 @@
 export * from './useAppContainer';
 
 // auth
+export * from './auth/useAuthActions';
 export * from './auth/useVerifyOTPContainer';
 export * from './auth/useRegisterContainer';
 export * from './user-profile/useUpdateProfileContainer';

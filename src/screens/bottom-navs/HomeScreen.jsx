@@ -21,7 +21,7 @@ import {
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useHomeContainer } from '../../containers';
+import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
@@ -50,7 +50,7 @@ const HomeScreen = () => {
   } = useHomeContainer();
 
 
-  const { onNavigateLogin } = useAppContainer();
+  const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   return (
     <SafeAreaView style={styles.container}>

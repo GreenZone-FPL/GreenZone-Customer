@@ -12,10 +12,11 @@ import {
 
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
 import { useAppContainer } from '../useAppContainer';
+import { useAuthActions } from '../auth/useAuthActions';
 
 export const useOrderContainer = () => {
   const { authState, cartState, cartDispatch } = useAppContext();
-  const { onNavigateLogin } = useAppContainer();
+  const { onNavigateLogin } = useAuthActions();
   const navigation = useNavigation();
 
   const [allProducts, setAllProducts] = useState([]);
