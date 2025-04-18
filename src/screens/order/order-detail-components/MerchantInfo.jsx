@@ -8,7 +8,7 @@ export const MerchantInfo = ({ store }) => {
   return (
     <Column style={styles.areaContainer}>
       <Title title="Cửa hàng" />
-      <NormalText text={store.name} style={{ fontWeight: '500' }} />
+      <NormalText text={store.name} style={{ fontWeight: '500' , color: colors.earthYellow}} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,

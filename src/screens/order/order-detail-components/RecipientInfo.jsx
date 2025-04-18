@@ -38,7 +38,7 @@ export const RecipientInfo = ({ detail }) => {
         <Title title="Người nhận"  />
         <NormalText
           text={[recipientName, recipientPhone].join(' - ')}
-          style={{ color: colors.black, fontWeight: '500' }}
+          style={{ color: colors.earthYellow, fontWeight: '500' }}
         />
      
         {deliveryMethod !== 'pickup' && (

@@ -30,6 +30,8 @@ import {
   ProductsInfo,
   RecipientInfo,
   ShipperInfo,
+  TimelineStatus,
+  CallSupportButton
 } from './order-detail-components';
 
 const OrderDetailScreen = () => {
@@ -77,7 +79,11 @@ const OrderDetailScreen = () => {
 
             <StatusText status={orderDetail.status} />
           </Row>
+          <TimelineStatus details={orderDetail}/>
+          {/* {orderDetail.status !== 
 
+          } */}
+          <CallSupportButton phoneNumber={orderDetail.store.phoneNumber} label="Gọi hỗ trợ"/>
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo shipper={orderDetail.shipper} />
@@ -102,8 +108,6 @@ const OrderDetailScreen = () => {
             status={orderDetail.status}
             createdAt={orderDetail.createdAt}
           />
-
-
 
 
           <Row style={styles.buttonRow}>

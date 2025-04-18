@@ -53,7 +53,7 @@ export const CategoryMenu = props => {
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}
           numColumns={4}
-          columnWrapperStyle={{ gap: 8 }}
+          columnWrapperStyle={{ gap: 16 }}
           contentContainerStyle={styles.flatlistContainer}
         />
       )}
@@ -62,16 +62,13 @@ export const CategoryMenu = props => {
 };
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.white, justifyContent: 'center', marginHorizontal: 16 },
+  container: { backgroundColor: colors.gray200, justifyContent: 'center' },
   itemContainer: {
     alignItems: 'center',
-    marginBottom: 8,
-    // maxWidth: width / 4.5,
-    borderRadius: 6,
-    backgroundColor: colors.white,
-    marginRight: 28
+    marginBottom: GLOBAL_KEYS.GAP_SMALL,
+    width: width / 4.7,
+    borderRadius: 6
     // flex: 1,
-
   },
   flatlistContainer: {
     justifyContent: "center",

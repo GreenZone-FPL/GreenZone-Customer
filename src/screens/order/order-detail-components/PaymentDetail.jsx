@@ -1,8 +1,9 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import React from 'react';
-import {Pressable, StyleSheet, Text, View, Image} from 'react-native';
+import {Pressable, StyleSheet, Text, View, Image, FlatList} from 'react-native';
 import {Icon, Snackbar} from 'react-native-paper';
 import Toast from 'react-native-toast-message';
+import moment from 'moment';
 import {
   DeliveryMethodText,
   DualTextRow,
@@ -23,6 +24,10 @@ export const PaymentDetails = ({detail}) => {
     totalPrice,
     status,
     createdAt,
+    readyForPickupAt,
+    shippingOrderAt,
+    completedAt,
+    cancelledAt,
   } = detail;
 
   const subTotal = orderItems.reduce(
@@ -62,6 +67,63 @@ export const PaymentDetails = ({detail}) => {
       return total + item.price * item.quantity;
     }, 0);
   };
+
+
+  const formatTime = time => {
+      return time ? moment(time).format('HH:mm DD/MM/YYYY') : null;
+    };
+    // Tạo danh sách các mốc timeline theo thứ tự logic
+    const timelineData = [
+      createdAt && {
+        time: formatTime(createdAt),
+        title: 'Đơn hàng của bạn vừa được tạo',
+        status: OrderStatus.PENDING_CONFIRMATION.value
+      },
+      readyForPickupAt && {
+        time: formatTime(readyForPickupAt),
+        title: 'GreenZone vừa xác nhận, đơn hàng của bạn đã sẵn sàng',
+        status: OrderStatus.READY_FOR_PICKUP.value
+  
+      },
+      shippingOrderAt && {
+        time: formatTime(shippingOrderAt),
+        title: 'Nhân viên GreenZone đang giao hàng đến bạn',
+        status: OrderStatus.SHIPPING_ORDER.value
+  
+      },
+      completedAt && {
+        time: formatTime(completedAt),
+        title: 'Đơn hàng đã hoàn thành',
+        status: OrderStatus.COMPLETED.value
+  
+      },
+      cancelledAt && {
+        time: formatTime(cancelledAt),
+        title: 'Đơn hàng đã hủy',
+        status: OrderStatus.CANCELLED.value
+      },
+    ].filter(Boolean);
+      const TimelineItem = ({item, isLast,}) => {
+    
+        const color = item.status == status ? colors.orange700 : colors.black;
+        
+        return(
+        <View style={styles.itemContainer}>
+          {/* Cột trái: vòng tròn và line */}
+          <View style={styles.leftColumn}>
+            <View style={styles.circle} />
+            {!isLast && <View style={styles.verticalLine} />}
+          </View>
+          {/* Cột phải: nội dung */}
+          <View style={styles.rightContent}>
+            <View style={styles.bubble}>
+              <Text style={styles.timeText}>{item.time}</Text>
+              <Text style={[styles.titleText, {color}]}>{item.title}</Text>
+            </View>
+          </View>
+        </View>
+      );
+    };
 
   return (
     <View
@@ -145,7 +207,17 @@ export const PaymentDetails = ({detail}) => {
           rightTextStyle={styles.normalText}
         />
       )}
-
+       {/* <FlatList
+              data={timelineData}
+              keyExtractor={(index, item) => index.toString()}
+              renderItem={({item, index}) => (
+                <TimelineItem
+                  item={item}
+                  isLast={index === timelineData.length - 1}
+                />
+              )}
+              contentContainerStyle={{paddingVertical: 10}}
+            /> */}
       {createdAt && (
         <DualTextRow
           leftText="Thời gian tạo đơn"
@@ -305,5 +377,49 @@ const styles = StyleSheet.create({
     bottom: 0, // Đặt Snackbar ở dưới cùng
     left: 0,
     right: 0,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  leftColumn: {
+    alignItems: 'center',
+    position: 'relative',
+    paddingTop: 24,
+  },
+  circle: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    borderWidth: 3,
+    borderColor: colors.primary,
+    zIndex: 1,
+  },
+  verticalLine: {
+    position: 'absolute',
+    top: 24,
+    width: 2,
+    height: '200%',
+    backgroundColor: 'green',
+    zIndex: 0,
+  },
+  rightContent: {
+    flex: 1,
+    paddingLeft: 5,
+  },
+  bubble: {
+    backgroundColor: colors.white,
+    padding: GLOBAL_KEYS.PADDING_SMALL,
+    borderRadius: 10,
+  },
+  timeText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.gray700,
+    marginBottom: 4,
+  },
+  titleText: {
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    color: colors.black,
   },
 });
