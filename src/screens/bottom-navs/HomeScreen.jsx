@@ -26,17 +26,18 @@ import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
 
-const HomeScreen = (props) => {
+const HomeScreen = () => {
   const { cartState, authState } = useAppContext();
 
   const {
     dialogShippingVisible,
-    setDialogShippingVisible,
     selectedOption,
     currentCategory,
-    handleScroll,
+    needToPay,
     allProducts,
     handleEditOption,
+    setDialogShippingVisible,
+    handleScroll,
     handleOptionSelect,
     handleCloseDialog,
     onLayoutCategory,
@@ -45,8 +46,7 @@ const HomeScreen = (props) => {
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
-    navigateSeedScreen,
-    needToPay
+    navigateSeedScreen
   } = useHomeContainer();
 
 
@@ -141,6 +141,7 @@ const HomeScreen = (props) => {
           )}
         />
       </ScrollView>
+
       <DeliveryButton
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
