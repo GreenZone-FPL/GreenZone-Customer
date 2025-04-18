@@ -57,6 +57,7 @@ export const TimelineStatus = ({ details }) => {
 
     const color = item.status == status ? colors.lemon : colors.black;
 
+
     return (
       <Row style={styles.itemContainer}>
 

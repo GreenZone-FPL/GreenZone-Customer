@@ -30,13 +30,11 @@ import {
   ProductsInfo,
   RecipientInfo,
   ShipperInfo,
-  TimelineStatus,
-  CallSupportButton
+  TimelineStatus
 } from './order-detail-components';
 
 const OrderDetailScreen = () => {
-  const route = useRoute()
-  const { orderId } = route.params;
+  const { orderId } = useRoute().params;
   const { cartState } = useAppContext();
 
   const {
@@ -63,7 +61,6 @@ const OrderDetailScreen = () => {
   }
 
   return (
-
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Chi tiết đơn hàng" onLeftPress={backAction} />
@@ -79,7 +76,7 @@ const OrderDetailScreen = () => {
 
             <StatusText status={orderDetail.status} />
           </Row>
-          <TimelineStatus details={orderDetail}/>
+          <TimelineStatus details={orderDetail} />
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo shipper={orderDetail.shipper} />
@@ -107,8 +104,6 @@ const OrderDetailScreen = () => {
 
 
           <Row style={styles.buttonRow}>
-
-
             {(orderDetail.status ===
               OrderStatus.PENDING_CONFIRMATION.value ||
               orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
@@ -131,22 +126,28 @@ const OrderDetailScreen = () => {
           </Row>
         </ScrollView>
       )}
+      {
+        cancelDialogVisible &&
+        <CancelDialog
+          visible={cancelDialogVisible}
+          onHide={() => setCancelDialogVisible(false)}
+          orderId={orderId}
+          callBack={callBackAfterCancel}
+        />
+      }
 
-      <CancelDialog
-        visible={cancelDialogVisible}
-        onHide={() => setCancelDialogVisible(false)}
-        orderId={orderId}
-        callBack={callBackAfterCancel}
-      />
+      {
+        dialogPaymentMethodVisible &&
+        <DialogPaymentMethod
+          methods={onlineMethods}
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
+        />
+      }
 
-      <DialogPaymentMethod
-        methods={onlineMethods}
-        visible={dialogPaymentMethodVisible}
-        onHide={() => setDialogPaymentMethodVisible(false)}
-        cartState={cartState}
-        selectedMethod={paymentMethod}
-        handleSelectMethod={handleSelectMethod}
-      />
     </View>
   );
 };
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: colors.white,
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
