@@ -1,12 +1,15 @@
-import 'react-native-reanimated'
-import 'react-native-gesture-handler'
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
+import FlashMessage from 'react-native-flash-message';
+import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { PaperProvider } from 'react-native-paper';
+import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { AppContextProvider, useAppContext } from './src/context/appContext';
 import Toast from 'react-native-toast-message';
+import { useAppContainer } from './src/containers/useAppContainer';
+import { AppContextProvider, useAppContext } from './src/context/appContext';
 import {
   AppGraph,
   AuthGraph,
@@ -19,10 +22,13 @@ import {
 } from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
+import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import AddressScreen from './src/screens/address/AddressScreen';
 import MapAdressScreen from './src/screens/address/MapAdressScreen';
 import NewAddressScreen from './src/screens/address/NewAddressScreen';
 import SelectAddressScreen from './src/screens/address/SelectAddressScreen';
+import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
+import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
 import ConfirmDeliveryTimeScreen from './src/screens/order/ConfirmDeliveryTimeScreen';
@@ -30,40 +36,34 @@ import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import RatingOrderScreen from './src/screens/order/RatingOrderScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
+import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
+import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
+import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailSheet from './src/screens/shopping/ProductDetailSheet';
+import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
+import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
-import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
-import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
-import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
-import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
-import { PaperProvider } from 'react-native-paper';
+import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
+import SeedScreen from './src/screens/voucher/SeedScreen';
 import SelectVouchersScreen from './src/screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
-import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
-import FlashMessage from 'react-native-flash-message';
-import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
-import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
-import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
-import SeedScreen from './src/screens/voucher/SeedScreen';
-import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
-import { useAppContainer } from './src/containers/useAppContainer';
 
-import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
-import { LogBox } from 'react-native';
-import NotificationScreen from './src/screens/notification/NotificationScreen';
 import {
-  ZegoUIKitPrebuiltCallWaitingScreen,
   ZegoUIKitPrebuiltCallInCallScreen,
+  ZegoUIKitPrebuiltCallWaitingScreen,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import ZegoCallUI from './src/zego/ZegoCallUI';
-import { onUserLoginZego } from './src/zego/common';
-import { AppAsyncStorage } from './src/utils';
+import { LogBox } from 'react-native';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
+import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
+import { AppAsyncStorage } from './src/utils';
+import { onUserLoginZego } from './src/zego/common';
+import ZegoCallUI from './src/zego/ZegoCallUI';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -220,13 +220,13 @@ function MainNavigator() {
           />
           <BaseStack.Screen
             name={VoucherGraph.VoucherDetailSheet}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={VoucherDetailSheet}
           />
 
           <BaseStack.Screen
             name={'MerchantDetailSheet'}
-            // options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={MerchantDetailSheet}
           />
 
