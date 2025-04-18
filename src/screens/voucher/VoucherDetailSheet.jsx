@@ -88,9 +88,8 @@ const data = {
   qrCode:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1024px-QR_code_for_mobile_English_Wikipedia.svg.png',
   description: [
-    'Áp dụng cho tất cả các đơn hàng giao hàng.',
+    'Áp dụng cho tất cả các đơn hàng.',
     'Không giới hạn số lần sử dụng trong ngày.',
-    'Chỉ áp dụng với đơn hàng trên 100.000 VNĐ.',
     'Không áp dụng cùng các khuyến mãi khác.',
     'Chỉ áp dụng tại các cửa hàng liên kết.',
     'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
@@ -105,7 +104,8 @@ const styles = StyleSheet.create({
   },
 
   closeButton: {
-    margin: 8,
+    marginVertical: 16,
+    marginHorizontal: 8,
     alignSelf: 'flex-start',
     backgroundColor: colors.white
   },
@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     color: colors.lemon
   },
   copyText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
     textAlign: 'center',
     color: colors.blue600,

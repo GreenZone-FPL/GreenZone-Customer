@@ -80,10 +80,6 @@ const OrderDetailScreen = () => {
             <StatusText status={orderDetail.status} />
           </Row>
           <TimelineStatus details={orderDetail}/>
-          {/* {orderDetail.status !== 
-
-          } */}
-          <CallSupportButton phoneNumber={orderDetail.store.phoneNumber} label="Gọi hỗ trợ"/>
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
             <ShipperInfo shipper={orderDetail.shipper} />
@@ -205,7 +201,7 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     backgroundColor: colors.white,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: 16,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
