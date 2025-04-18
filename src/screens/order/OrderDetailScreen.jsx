@@ -80,9 +80,9 @@ const OrderDetailScreen = () => {
             <StatusText status={orderDetail.status} />
           </Row>
           <TimelineStatus details={orderDetail}/>
-          {orderDetail.status !== 
+          {/* {orderDetail.status !== 
 
-          }
+          } */}
           <CallSupportButton phoneNumber={orderDetail.store.phoneNumber} label="Gọi hỗ trợ"/>
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
