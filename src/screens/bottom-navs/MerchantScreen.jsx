@@ -1,10 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
 import React, { useEffect, useRef, useState } from 'react';
-import { CartManager } from '../../utils';
-import { useAppContext } from '../../context/appContext';
 import {
-  Animated,
   FlatList,
   Image,
   SafeAreaView,
@@ -12,22 +9,24 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { getAllMerchants } from '../../axios/modules/merchant';
 import {
-  AuthButton,
   AuthContainer,
   Column,
   CustomSearchBar,
   HeaderWithBadge,
   Indicator,
   NormalText,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAuthActions } from '../../containers';
+import { useAppContext } from '../../context/appContext';
 import { AppGraph } from '../../layouts/graphs';
+import { CartManager } from '../../utils';
 
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
@@ -44,14 +43,14 @@ const MerchantScreen = ({ navigation, route }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const cameraRef = useRef(null);
-  const opacityAnim = useRef(new Animated.Value(0.3)).current;
   const [selectedMerchant, setSelectedMerchant] = useState([]);
   const [queryMerchants, setQueryMerchants] = useState([]);
   const { isUpdateOrderInfo } = route.params || false;
   const { fromCheckout } = route.params || false;
   const { fromHome } = route.params || false;
 
-  const { cartDispatch, authState, onNavigateLogin } = useAppContext();
+  const { cartDispatch, authState } = useAppContext();
+  const {  onNavigateLogin } = useAuthActions();
 
   // hàm gọi api merchants
   const fetchMerchants = async () => {

@@ -15,7 +15,7 @@ import {
   TitleText,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer } from '../../containers';
+import { useAppContainer, useAuthActions } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { OrderGraph, UserGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
@@ -23,8 +23,8 @@ import { Toaster } from '../../utils';
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch, cartDispatch } = useAppContext();
-  const { onLogout, onNavigateLogin } = useAppContainer();
+  const { authState } = useAppContext();
+  const { onLogout, onNavigateLogin } = useAuthActions();
 
   const handleProfile = async () => {
     setLoading(true);

@@ -108,7 +108,7 @@ export const useUpdateProfileContainer = (profile) => {
 
             if (result?._id) {
                 setHasImageChanged(false);
-                
+
                 authDispatch({
                     type: AuthActionTypes.LOGIN,
                     payload: {
@@ -116,6 +116,7 @@ export const useUpdateProfileContainer = (profile) => {
                         needRegister: false,
                         isLoggedIn: true,
                         lastName: result.lastName,
+                        firstName: result.firstName
                     },
                 });
                 await CartManager.updateOrderInfo(cartDispatch, {
@@ -139,20 +140,14 @@ export const useUpdateProfileContainer = (profile) => {
         setDob,
         gender,
         setGender,
-        avatar, 
-        setAvatar,
+        avatar,
         loading,
-        setLoading, 
-        isFocus,
         setIsFocus,
         open,
         setOpen,
         selectedImages,
-        setSelectedImages,
         isImagePickerVisible,
         setImagePickerVisible,
-        hasImageChanged,
-        setHasImageChanged,
         lastNameMessage,
         setLastNameMessage,
         openCamera,

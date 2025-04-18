@@ -12,11 +12,11 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import { useAppContainer } from '../useAppContainer';
+import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
   const { authState, cartState, cartDispatch } = useAppContext();
-  const { onNavigateLogin } = useAppContainer();
+
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
 
@@ -30,6 +30,8 @@ export const useHomeContainer = () => {
 
   const [needToPay, setNeedToPay] = useState(false)
 
+  const { onNavigateLogin } = useAuthActions()
+  
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
@@ -97,10 +99,7 @@ export const useHomeContainer = () => {
     getMerchantLocation();
   }, []);
 
-  const handleLogin = () => {
-    console.log('press');
-    onNavigateLogin();
-  };
+
 
   const handleEditOption = option => {
     setEditOption(option);
@@ -115,7 +114,7 @@ export const useHomeContainer = () => {
         fromHome: true,
       });
     }
-   
+
   };
 
   const handleOptionSelect = async option => {
@@ -180,10 +179,6 @@ export const useHomeContainer = () => {
     });
   };
 
-
-  const navigateNotification = () => {
-    navigation.navigate(AppGraph.NotificationScreen);
-  };
 
   const navigateOrderHistory = () => {
     navigation.navigate(OrderGraph.OrderHistoryScreen);

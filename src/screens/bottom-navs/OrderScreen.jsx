@@ -19,9 +19,10 @@ import {
   ProductsListVertical
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useOrderContainer } from '../../containers';
+import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
+
 
 const OrderScreen = () => {
   const { cartState, authState } =
@@ -51,9 +52,9 @@ const OrderScreen = () => {
     navigateSearchProduct
   } = useOrderContainer()
 
-  // useSaveLocation()
+  useSaveLocation()
 
-  const { onNavigateLogin } = useAppContainer();
+  const { onNavigateLogin } = useAuthActions();
 
   return (
     <SafeAreaView style={styles.container}>
