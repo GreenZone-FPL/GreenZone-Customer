@@ -25,6 +25,7 @@ import {
   getProductDetail,
   postFavoriteProduct,
 } from '../../axios';
+import { ProductDetailSkeleton } from '../../skeletons';
 
 const EditCartItemScreen = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -106,6 +107,14 @@ const EditCartItemScreen = ({ route, navigation }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       />
+
+
+
+      {
+        loading &&
+        <ProductDetailSkeleton />
+      }
+
       {product && (
         <>
           <ScrollView style={styles.modalContent}>
