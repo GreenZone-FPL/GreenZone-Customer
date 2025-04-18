@@ -15,7 +15,7 @@ const BottomTab = createBottomTabNavigator();
 const MainNavigation = () => {
   return (
     <BottomTab.Navigator
-      initialRouteName={MainGraph.OrderStackScreen}
+      initialRouteName={MainGraph.HomeStackScreen}
       screenOptions={({route}) => ({
         headerShown: false,
         tabBarShowLabel: true,
@@ -75,10 +75,10 @@ const MainNavigation = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.gray700,
       })}>
-      {/* <BottomTab.Screen
+      <BottomTab.Screen
         name={MainGraph.HomeStackScreen}
         component={HomeStackScreen}
-      /> */}
+      />
       <BottomTab.Screen
         name={MainGraph.OrderStackScreen}
         component={OrderStackScreen}
