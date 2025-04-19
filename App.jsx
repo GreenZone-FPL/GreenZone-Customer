@@ -201,7 +201,7 @@ function MainNavigator() {
 
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={ProductDetailShort}
           />
           <BaseStack.Screen

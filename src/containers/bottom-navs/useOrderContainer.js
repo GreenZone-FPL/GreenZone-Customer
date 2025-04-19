@@ -1,40 +1,40 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getOrdersByStatus } from '../../axios';
-import { DeliveryMethod, OrderStatus } from '../../constants';
+import { useNavigation } from '@react-navigation/native';
+import { useEffect, useRef, useState } from 'react';
+import { getAllCategories, getAllProducts } from '../../axios';
+import { DeliveryMethod } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
   AppGraph,
   BottomGraph,
-  OrderGraph,
   ShoppingGraph,
-  UserGraph,
-  VoucherGraph,
+  UserGraph
 } from '../../layouts/graphs';
+
 import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
+import { useAppContainer } from '../useAppContainer';
 import { useAuthActions } from '../auth/useAuthActions';
 
-export const useHomeContainer = () => {
+export const useOrderContainer = () => {
   const { authState, cartState, cartDispatch } = useAppContext();
-
+  const { onNavigateLogin } = useAuthActions();
   const navigation = useNavigation();
+
   const [allProducts, setAllProducts] = useState([]);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
   const [merchantLocal, setMerchantLocal] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
+
+  const [categories, setCategories] = useState([]);
+
+  const scrollViewRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+
+  const [dialogVisible, setDialogVisible] = useState(false);
+
   const [positions, setPositions] = useState({});
-  const [currentCategory, setCurrentCategory] = useState(null);
-  const lastCategoryRef = useRef(currentCategory);
-
-  const [needToPay, setNeedToPay] = useState(false)
-
-  const { onNavigateLogin } = useAuthActions()
-  
-  const onNavigateProductDetailSheet = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
-  };
+  const [currentCategory, setCurrentCategory] = useState('Danh mục');
 
   const onClickAddToCart = async productId => {
     try {
@@ -51,30 +51,6 @@ export const useHomeContainer = () => {
       console.log('Error', error);
     }
   };
-
-  const fetchOrderHistory = async () => {
-    try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
-        const response = await getOrdersByStatus();
-        const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
-
-        if (awaitingPayments.length > 0) {
-          setNeedToPay(true);
-        }
-      }
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-  useFocusEffect(
-    useCallback(() => {
-      fetchOrderHistory();
-    }, [])
-  );
-
-
-
 
   useEffect(() => {
     if (allProducts.length === 0) {
@@ -98,7 +74,6 @@ export const useHomeContainer = () => {
 
     getMerchantLocation();
   }, []);
-
 
 
   const handleEditOption = option => {
@@ -143,34 +118,50 @@ export const useHomeContainer = () => {
     } catch (error) {
       console.log('Error', error)
     }
+
+
   };
 
-  const handleScroll = useCallback(
-    event => {
-      const scrollY = event.nativeEvent.contentOffset.y;
-      let closestCategory = 'Danh mục';
-      let minDistance = Number.MAX_VALUE;
 
-      Object.entries(positions).forEach(([categoryId, posY]) => {
-        const distance = Math.abs(scrollY - posY);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCategory =
-            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
-        }
+  const scrollToCategory = categoryId => {
+    if (!scrollViewRef.current) {
+      console.log('scrollViewRef.current is null');
+      return;
+    }
+
+    if (positions[categoryId] !== undefined) {
+      console.log('Scrolling to:', positions[categoryId]);
+      scrollViewRef.current.scrollTo({
+        y: positions[categoryId],
+        animated: true,
       });
-
-      if (closestCategory !== lastCategoryRef.current) {
-        lastCategoryRef.current = closestCategory;
-        setCurrentCategory(closestCategory);
-      }
-    },
-
-    [positions, allProducts],
-  );
+    } else {
+      console.log('Category position not found:', categoryId);
+    }
+    setDialogVisible(false);
+  };
 
   const handleCloseDialog = () => {
     setDialogShippingVisible(false);
+  };
+
+  const handleScroll = event => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+    let closestCategory = 'Danh mục';
+    let minDistance = Number.MAX_VALUE;
+
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory =
+          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+      }
+    });
+
+    if (closestCategory !== currentCategory) {
+      setCurrentCategory(closestCategory);
+    }
   };
 
   const onLayoutCategory = (categoryId, event) => {
@@ -179,39 +170,61 @@ export const useHomeContainer = () => {
     });
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data.docs);
+      } catch (error) {
+        console.log(`Error`, error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const navigateOrderHistory = () => {
-    navigation.navigate(OrderGraph.OrderHistoryScreen);
-  };
+    fetchCategories();
+
+    fetchData(getAllProducts, setAllProducts);
+  }, []);
 
   const navigateCheckOut = () => {
     navigation.navigate(ShoppingGraph.CheckoutScreen);
   };
 
-  const navigateAdvertising = () => {
-    navigation.navigate(AppGraph.AdvertisingScreen);
+  const navigateFavorite = () => {
+    navigation.navigate(AppGraph.FavoriteScreen);
   };
-  const navigateSeedScreen = () => {
-    navigation.navigate(VoucherGraph.SeedScreen);
+
+  const navigateSearchProduct = () => {
+    navigation.navigate(ShoppingGraph.SearchProductScreen);
   };
+
+  const onNavigateProductDetailSheet = productId => {
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+  };
+
 
   return {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
-    needToPay,
     allProducts,
-    handleEditOption,
+    loading,
+    categories,
+    dialogVisible,
+    scrollViewRef,
     setDialogShippingVisible,
-    handleScroll,
+    setDialogVisible,
+    handleEditOption,
     handleOptionSelect,
     handleCloseDialog,
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
     navigateCheckOut,
-    navigateOrderHistory,
-    navigateAdvertising,
-    navigateSeedScreen
+    scrollToCategory,
+    handleScroll,
+    navigateFavorite,
+    navigateSearchProduct
   };
 };
