@@ -34,7 +34,10 @@ export const MyBottomSheet: React.FC<MyBottomSheetProps> = ({
   titleStyle
 }) => {
   return (
-    <Modal visible={visible} animationType="fade" transparent={true}>
+    <>
+    {
+      visible && 
+      <Modal visible={visible} animationType='fade' transparent={true}>
       <Pressable style={styles.overlay} onPress={onHide}>
         <Pressable style={[styles.modalContainer, style]} onPress={() => {}}>
           <OverlayStatusBar />
@@ -54,12 +57,15 @@ export const MyBottomSheet: React.FC<MyBottomSheetProps> = ({
               </Pressable>
             </Row>
 
-            <Column style={styles.body}>{children}</Column>
+            <Column>{children}</Column>
 
           </KeyboardAvoidingView>
         </Pressable>
       </Pressable>
     </Modal>
+    }
+    </>
+   
   );
 };
 
@@ -98,8 +104,5 @@ const styles = StyleSheet.create({
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     backgroundColor: colors.transparent,
-  },
-  body: {
-    paddingVertical: 16
-  },
+  }
 });

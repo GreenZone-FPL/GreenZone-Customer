@@ -151,13 +151,17 @@ const OrderScreen = () => {
           visible={dialogVisible}
           onHide={() => setDialogVisible(false)}
           title="Danh mục">
-          <CategoryMenu
-            categories={categories}
-            loading={loading}
-            onCategorySelect={category => {
-              scrollToCategory(category._id);
-            }}
-          />
+          <View style={{ marginVertical: 8 }}>
+            <CategoryMenu
+              categories={categories}
+              loading={loading}
+              onCategorySelect={category => {
+                scrollToCategory(category._id);
+              }}
+            />
+
+          </View>
+
         </MyBottomSheet>
       }
 

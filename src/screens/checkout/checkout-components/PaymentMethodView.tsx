@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Icon } from "react-native-paper";
 import { NormalText, Row } from "../../../components";
 import { colors } from "../../../constants";
@@ -19,7 +19,7 @@ export const PaymentMethodView: React.FC<PaymentMethodViewProps> = ({
         <Row style={styles.row}>
             <NormalText text="Phương thức thanh toán" />
 
-            <TouchableOpacity
+            <Pressable
                 style={styles.touchableOpacity}
                 onPress={openDialog}
             >
@@ -30,7 +30,7 @@ export const PaymentMethodView: React.FC<PaymentMethodViewProps> = ({
                     </>
                 )}
                 <Icon source="chevron-down" size={24} color={colors.gray700} />
-            </TouchableOpacity>
+            </Pressable>
         </Row>
 
     );
