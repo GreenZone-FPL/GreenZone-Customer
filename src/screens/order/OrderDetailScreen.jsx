@@ -1,6 +1,6 @@
-import {useRoute} from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import React from 'react';
-import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import {
   DeliveryMethodText,
   LightStatusBar,
@@ -17,8 +17,8 @@ import {
   GLOBAL_KEYS,
   OrderStatus,
 } from '../../constants';
-import {useOrderDetailContainer} from '../../containers/orders/useOrderDetailContainer';
-import {useAppContext} from '../../context/appContext';
+import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
+import { useAppContext } from '../../context/appContext';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -31,7 +31,6 @@ import {
   RecipientInfo,
   ShipperInfo,
   TimelineStatus,
-  CallSupportButton,
 } from './order-detail-components';
 
 const OrderDetailScreen = () => {
@@ -77,13 +76,6 @@ const OrderDetailScreen = () => {
             <StatusText status={orderDetail.status} />
           </Row>
           <TimelineStatus details={orderDetail} />
-          {orderDetail.status !== "completed" &&
-            orderDetail.status !== "cancelled" && (
-              <CallSupportButton
-                phoneNumber={orderDetail.store.phoneNumber}
-                label="Gọi hỗ trợ"
-              />
-            )}
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value &&
             ['shippingOrder', 'readyForPickup'].includes(
