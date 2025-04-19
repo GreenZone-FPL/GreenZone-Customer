@@ -1,24 +1,34 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
-  View,
   FlatList,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
+  Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { getAllProducts } from '../../axios';
 import {
-  LightStatusBar,
-  ProductsListVertical,
+  Column,
   NormalText,
+  OverlayStatusBar,
+  ProductsListVertical,
+  Row,
+  TitleText
 } from '../../components';
-import { colors } from '../../constants';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { useHomeContainer } from '../../containers';
+import { ChatHeader, About, InputContainer } from './chat-components';
 
 const AIChatScreen = () => {
+  const navigation = useNavigation()
   const [allProducts, setAllProducts] = useState([]);
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState([]);
@@ -105,37 +115,64 @@ const AIChatScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.select({ ios: 'padding', android: undefined })}
-    >
-      <LightStatusBar />
-      <FlatList
-        data={messages} // chỉ lấy 2 tin nhắn cuối
-        keyExtractor={item => item.id}
-        renderItem={renderMessage}
-        contentContainerStyle={{ padding: 16 }}
-        keyboardShouldPersistTaps="handled"
-      />
+    <Pressable style={styles.modalContainer} onPress={() => navigation.goBack()}>
 
 
-      <View style={styles.inputRow}>
-        <TextInput
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder="Nhập để tìm kiếm sản phẩm..."
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-          <NormalText text="Gửi" style={{ color: 'white', fontWeight: '500' }} />
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.select({ ios: 'padding', android: undefined })}
+      >
+        <Pressable onPress={() => { }} style={{ flex: 1 }}>
+
+          <OverlayStatusBar />
+
+          <ChatHeader />
+
+          <ScrollView style={{ flex: 1 }}>
+
+            <About />
+
+            <FlatList
+              data={messages}
+              keyExtractor={item => item.id}
+              renderItem={renderMessage}
+              contentContainerStyle={{ padding: 16 }}
+              keyboardShouldPersistTaps="handled"
+
+            />
+          </ScrollView>
+
+          <InputContainer handleSend={handleSend} />
+         
+        </Pressable>
+
+      </KeyboardAvoidingView>
+
+
+
+
+    </Pressable>
+
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white },
+  modalContainer: {
+    backgroundColor: colors.overlay,
+    flex: 1,
+    width: '100%',
+    position: 'relative'
+  },
+  container: {
+    width: '100%',
+    backgroundColor: colors.white,
+    flexDirection: 'column',
+    flex: 1,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20
+  },
+
+
   inputRow: {
     flexDirection: 'row',
     padding: 12,
@@ -149,6 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     paddingHorizontal: 16,
     height: 40,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
   },
   sendButton: {
     marginLeft: 10,
@@ -158,6 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   bubble: {
     marginBottom: 16,
     maxWidth: '85%',

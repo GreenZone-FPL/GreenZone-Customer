@@ -192,6 +192,7 @@ function MainNavigator() {
 
           <BaseStack.Screen
             name={AppGraph.AIChatScreen}
+            options={slideFromRightOption}
             component={AIChatScreen}
           />
           <BaseStack.Screen
