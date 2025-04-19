@@ -21,7 +21,6 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import useSaveLocation from '../../utils/useSaveLocation';
 
 
 const OrderScreen = () => {
@@ -52,7 +51,7 @@ const OrderScreen = () => {
     navigateSearchProduct
   } = useOrderContainer()
 
-  useSaveLocation()
+
 
   const { onNavigateLogin } = useAuthActions();
 
