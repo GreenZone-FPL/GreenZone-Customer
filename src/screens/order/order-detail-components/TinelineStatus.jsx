@@ -89,7 +89,7 @@ const DottedLine = () => {
 <View
   style={[
     styles.areaContainer,
-    {paddingHorizontal: 16,},
+    {paddingHorizontal: 16, marginBottom: 4},
   ]}>
   <FlatList
     data={timelineData}

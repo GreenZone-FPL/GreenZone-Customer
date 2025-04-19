@@ -1,11 +1,6 @@
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 import React from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View
-} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import {
   DeliveryMethodText,
   LightStatusBar,
@@ -16,9 +11,14 @@ import {
   Row,
   StatusText,
 } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
-import { useAppContext } from '../../context/appContext';
+import {
+  colors,
+  DeliveryMethod,
+  GLOBAL_KEYS,
+  OrderStatus,
+} from '../../constants';
+import {useOrderDetailContainer} from '../../containers/orders/useOrderDetailContainer';
+import {useAppContext} from '../../context/appContext';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -31,13 +31,13 @@ import {
   RecipientInfo,
   ShipperInfo,
   TimelineStatus,
-  CallSupportButton
+  CallSupportButton,
 } from './order-detail-components';
 
 const OrderDetailScreen = () => {
-  const route = useRoute()
-  const { orderId } = route.params;
-  const { cartState } = useAppContext();
+  const route = useRoute();
+  const {orderId} = route.params;
+  const {cartState} = useAppContext();
 
   const {
     cancelDialogVisible,
@@ -51,7 +51,7 @@ const OrderDetailScreen = () => {
     backAction,
     callBackAfterCancel,
   } = useOrderDetailContainer(orderId);
-
+  console.log('orderDetail', JSON.stringify(orderDetail, null, 2));
   if (loading) {
     return (
       <View style={styles.container}>
@@ -63,7 +63,6 @@ const OrderDetailScreen = () => {
   }
 
   return (
-
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Chi tiết đơn hàng" onLeftPress={backAction} />
@@ -71,23 +70,25 @@ const OrderDetailScreen = () => {
       {orderDetail && (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={styles.containerContent}
-        >
+          style={styles.containerContent}>
           <Row style={styles.statusRow}>
-
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
           </Row>
-          <TimelineStatus details={orderDetail}/>
-          {/* {orderDetail.status !== 
+          <TimelineStatus details={orderDetail} />
+          {orderDetail.status !== "completed" &&
+            orderDetail.status !== "cancelled" && (
+              <CallSupportButton
+                phoneNumber={orderDetail.store.phoneNumber}
+                label="Gọi hỗ trợ"
+              />
+            )}
 
-          } */}
-          <CallSupportButton phoneNumber={orderDetail.store.phoneNumber} label="Gọi hỗ trợ"/>
-
-          {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
-            <ShipperInfo shipper={orderDetail.shipper} />
-          )}
+          {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value &&
+            ['shippingOrder', 'readyForPickup'].includes(
+              orderDetail.status,
+            ) && <ShipperInfo shipper={orderDetail.shipper} />}
 
           {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
 
@@ -109,20 +110,18 @@ const OrderDetailScreen = () => {
             createdAt={orderDetail.createdAt}
           />
 
-
           <Row style={styles.buttonRow}>
-
-
-            {(orderDetail.status ===
-              OrderStatus.PENDING_CONFIRMATION.value ||
+            {(orderDetail.status === OrderStatus.PENDING_CONFIRMATION.value ||
               orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
-                <Pressable
-                  style={[styles.cancelButton, styles.flex1]}
-                  onPress={() => setCancelDialogVisible(true)}
-                >
-                  <NormalText text="Hủy đơn hàng" style={{ color: colors.red900 }} />
-                </Pressable>
-              )}
+              <Pressable
+                style={[styles.cancelButton, styles.flex1]}
+                onPress={() => setCancelDialogVisible(true)}>
+                <NormalText
+                  text="Hủy đơn hàng"
+                  style={{color: colors.red900}}
+                />
+              </Pressable>
+            )}
 
             {orderDetail.status === OrderStatus.AWAITING_PAYMENT.value && (
               <PrimaryButton
@@ -181,7 +180,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   payTitle: {
     fontSize: 12,
@@ -189,19 +188,19 @@ const styles = StyleSheet.create({
   payButton: {
     marginHorizontal: 16,
     flex: 1,
-    padding: 13
+    padding: 13,
   },
   codButton: {
     backgroundColor: colors.white,
     padding: 16,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   codTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.primary,
     fontWeight: '500',
-    flex: 1
+    flex: 1,
   },
   cancelButton: {
     backgroundColor: colors.white,
@@ -211,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 16,
     borderColor: colors.red900,
-    borderWidth: 1
+    borderWidth: 1,
   },
   flex1: {
     flex: 1,
