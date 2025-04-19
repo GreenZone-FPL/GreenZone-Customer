@@ -1,26 +1,17 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Pressable,
+  StyleSheet
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { getFavoriteProducts } from '../../axios';
 import {
   Column,
   EmptyView,
   LightStatusBar,
   NormalHeader,
-  ProductsListVertical,
-  Row,
+  ProductsListVertical
 } from '../../components';
 import { colors } from '../../constants';
-import { getFavoriteProducts } from '../../axios';
-import { useFocusEffect } from '@react-navigation/native';
 import { ShoppingGraph } from '../../layouts/graphs';
 
 const FavoriteScreen = ({ navigation }) => {
@@ -73,7 +64,7 @@ const FavoriteScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     flex: 1,
   },
 });

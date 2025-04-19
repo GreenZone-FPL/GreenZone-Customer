@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   flatListContentContainer: {
     paddingBottom: 16,
-    gap: 12,
+    gap: 16,
   },
   columnWrapper: {
     justifyContent: 'space-between',

@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   orderTotal: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
-    color: colors.earthYellow,
+    color: colors.red800,
     textAlign: 'right'
   },
   buttonContainer: {

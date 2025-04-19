@@ -14,7 +14,7 @@ import { MyBottomSheet } from '../bottom-sheets/MyBottomSheet';
 import { Row } from '../containers/Row';
 
 const DialogShippingMethodPropTypes = {
-  isVisible: PropTypes.bool.isRequired,
+  visible: PropTypes.bool.isRequired,
   selectedOption: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
   onEditOption: PropTypes.func,
@@ -22,7 +22,7 @@ const DialogShippingMethodPropTypes = {
 };
 
 export const DialogShippingMethod = ({
-  isVisible,
+  visible,
   selectedOption,
   onHide,
   onEditOption,
@@ -48,73 +48,76 @@ export const DialogShippingMethod = ({
 
 
   return (
+    <>
+      {
+        visible &&
+        <MyBottomSheet
+          visible={visible}
+          title='Chọn phương thức giao hàng'
+          onHide={onHide}
+        >
+          {options.map((option, index) => (
+            <Pressable
+              key={index}
+              style={[
+                styles.optionItem,
+                selectedOption === option.label && styles.selectedOption,
+              ]}
+              onPress={() => onOptionSelect(option.label)}>
+              <Row style={styles.row}>
+                <Row style={styles.row}>
+                  <View style={styles.iconContainer}>
+                    <Image
+                      source={option.image}
+                      style={[
+                        option.label == 'Mang đi'
+                          ? { width: 40, height: 40 }
+                          : styles.icon,
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.optionText}>{option.label}</Text>
+                </Row>
 
-    <MyBottomSheet
-      visible={isVisible}
-      title='Chọn phương thức giao hàng'
-      onHide={onHide}
-    >
+                <Pressable onPress={() => onEditOption(option.label)}>
+
+                  <Icon
+                    source="square-edit-outline"
+                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                    color={colors.primary}
+                  />
+                </Pressable>
+              </Row>
 
 
-      {options.map((option, index) => (
-        <Pressable
-          key={index}
-          style={[
-            styles.optionItem,
-            selectedOption === option.label && styles.selectedOption,
-          ]}
-          onPress={() => onOptionSelect(option.label)}>
-          <Row style={styles.row}>
-            <Row style={styles.row}>
-              <View style={styles.iconContainer}>
-                <Image
-                  source={option.image}
-                  style={[
-                    option.label == 'Mang đi'
-                      ? { width: 40, height: 40 }
-                      : styles.icon,
-                  ]}
-                />
-              </View>
-              <Text style={styles.optionText}>{option.label}</Text>
-            </Row>
+              <Text style={styles.normalText}>
+                {option.address}
+              </Text>
 
-            <Pressable onPress={() => onEditOption(option.label)}>
 
-              <Icon
-                source="square-edit-outline"
-                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                color={colors.primary}
-              />
+              {option.label === 'Giao hàng' ? (
+                <Text style={styles.phoneText}>
+                  {authState?.firstName
+                    ? authState?.firstName +
+                    ' ' +
+                    authState?.lastName +
+                    ' - ' +
+                    authState?.phoneNumber
+                    : null}
+                </Text>
+              ) : (
+                <Text style={styles.phoneText}>
+                  {cartState?.storeInfoSelect?.storeAddress}
+                </Text>
+              )}
             </Pressable>
-          </Row>
+          ))}
 
+        </MyBottomSheet>
 
-          <Text style={styles.normalText}>
-            {option.address}
-          </Text>
+      }
 
-
-          {option.label === 'Giao hàng' ? (
-            <Text style={styles.phoneText}>
-              {authState?.firstName
-                ? authState?.firstName +
-                ' ' +
-                authState?.lastName +
-                ' - ' +
-                authState?.phoneNumber
-                : null}
-            </Text>
-          ) : (
-            <Text style={styles.phoneText}>
-              {cartState?.storeInfoSelect?.storeAddress}
-            </Text>
-          )}
-        </Pressable>
-      ))}
-
-    </MyBottomSheet>
-
+    </>
 
   );
 };

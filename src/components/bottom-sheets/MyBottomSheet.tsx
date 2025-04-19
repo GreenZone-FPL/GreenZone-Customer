@@ -31,41 +31,40 @@ export const MyBottomSheet: React.FC<MyBottomSheetProps> = ({
   title,
   children,
   style,
-  titleStyle
+  titleStyle,
 }) => {
   return (
     <>
-    {
-      visible && 
-      <Modal visible={visible} animationType='fade' transparent={true}>
-      <Pressable style={styles.overlay} onPress={onHide}>
-        <Pressable style={[styles.modalContainer, style]} onPress={() => {}}>
-          <OverlayStatusBar />
+      {visible && (
+        <Modal visible={visible} animationType="fade" transparent={true}>
+          <Pressable style={styles.overlay} onPress={onHide}>
+            <Pressable
+              style={[styles.modalContainer, style]}
+              onPress={() => {}}>
+              <OverlayStatusBar />
 
-          <KeyboardAvoidingView>
-            <Row style={styles.header}>
-              <View style={styles.placeholderIcon} />
+              <KeyboardAvoidingView>
+                <Row style={styles.header}>
+                  <View style={styles.placeholderIcon} />
 
-              <Text style={[styles.titleText, titleStyle]}>{title}</Text>
+                  <Text style={[styles.titleText, titleStyle]}>{title}</Text>
 
-              <Pressable onPress={onHide}>
-                <Icon
-                  source="close"
-                  size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                  color={colors.black}
-                />
-              </Pressable>
-            </Row>
+                  <Pressable onPress={onHide}>
+                    <Icon
+                      source="close"
+                      size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                      color={colors.black}
+                    />
+                  </Pressable>
+                </Row>
 
-            <Column>{children}</Column>
-
-          </KeyboardAvoidingView>
-        </Pressable>
-      </Pressable>
-    </Modal>
-    }
+                <Column>{children}</Column>
+              </KeyboardAvoidingView>
+            </Pressable>
+          </Pressable>
+        </Modal>
+      )}
     </>
-   
   );
 };
 
@@ -98,11 +97,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-  
   },
   placeholderIcon: {
     width: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     height: GLOBAL_KEYS.ICON_SIZE_DEFAULT,
     backgroundColor: colors.transparent,
-  }
+  },
 });

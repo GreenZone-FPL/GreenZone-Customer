@@ -221,7 +221,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
                 )
                 : [];
 
-              const newCart = await CartManager.updateCartItem(
+              await CartManager.updateCartItem(
                 updateItem.itemId,
                 {
                   variant: selectedVariant?._id,
