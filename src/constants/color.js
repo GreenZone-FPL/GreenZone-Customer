@@ -44,5 +44,6 @@ export const colors = Object.freeze({
   magenta: '#FF00FF',
   violet: '#c300ff',
   earthYellow: '#bd9e02',
-  lemon: '#50ad03'
+  lemon: '#50ad03',
+  shineYellow: '#f5c105'
 });

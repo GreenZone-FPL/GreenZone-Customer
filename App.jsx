@@ -1,6 +1,11 @@
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  ZegoUIKitPrebuiltCallInCallScreen,
+  ZegoUIKitPrebuiltCallWaitingScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
 import React, { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -27,10 +32,12 @@ import AddressScreen from './src/screens/address/AddressScreen';
 import MapAdressScreen from './src/screens/address/MapAdressScreen';
 import NewAddressScreen from './src/screens/address/NewAddressScreen';
 import SelectAddressScreen from './src/screens/address/SelectAddressScreen';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
 import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
 import ConfirmDeliveryTimeScreen from './src/screens/order/ConfirmDeliveryTimeScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
@@ -38,6 +45,7 @@ import RatingOrderScreen from './src/screens/order/RatingOrderScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
 import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
+import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
 import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
 import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
 import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
@@ -52,15 +60,7 @@ import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 import SeedScreen from './src/screens/voucher/SeedScreen';
 import SelectVouchersScreen from './src/screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
-
-import {
-  ZegoUIKitPrebuiltCallInCallScreen,
-  ZegoUIKitPrebuiltCallWaitingScreen,
-} from '@zegocloud/zego-uikit-prebuilt-call-rn';
-import { LogBox } from 'react-native';
-import SplashScreen2 from './src/screens/auth/SplashScreen2';
-import NotificationScreen from './src/screens/notification/NotificationScreen';
-import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
+import AIChatScreen from './src/screens/chat/AIChatScreen';
 import { AppAsyncStorage } from './src/utils';
 import { onUserLoginZego } from './src/zego/common';
 import ZegoCallUI from './src/zego/ZegoCallUI';
@@ -189,6 +189,11 @@ function MainNavigator() {
             name={OrderGraph.OrderHistoryScreen}
             component={OrderHistoryScreen}
           />
+
+          <BaseStack.Screen
+            name={AppGraph.AIChatScreen}
+            component={AIChatScreen}
+          />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
@@ -198,7 +203,6 @@ function MainNavigator() {
             options={slideFromRightOption}
             component={ProductDetailSheet}
           />
-
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
             options={slideFromRightOption}

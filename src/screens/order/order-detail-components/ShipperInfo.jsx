@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.yellow700,
+    color: colors.blue600,
     fontWeight: '500',
   },
   iconRow: {

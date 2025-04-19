@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
-  TextInput,
+  View
 } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
 import { getAddresses } from '../../axios';
-import { LightStatusBar, NormalHeader, NormalLoading, CustomSearchBar, Column, NormalText, TitleText, PrimaryButton, Row } from '../../components';
+import { Column, CustomSearchBar, NormalLoading, NormalText, PrimaryButton, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { UserGraph } from '../../layouts/graphs';
 import { CartManager } from '../../utils';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
@@ -244,12 +241,11 @@ const SelectAddressScreen = ({ navigation, route }) => {
                 key={address._id}
                 isSelected={selectedAddress === address}
                 onPress={() => {
-                  if (!selectedAddress) {
-                    setSelectedAddress(address)
+                  if (selectedAddress?._id === address._id) {
+                    setSelectedAddress(null);
                   } else {
-                    setSelectedAddress(null)
+                    setSelectedAddress(address);
                   }
-
                 }}
               />
             ))}

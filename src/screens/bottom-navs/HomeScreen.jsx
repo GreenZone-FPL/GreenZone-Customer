@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   FlatList,
@@ -6,6 +7,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Image,
+  Pressable
 } from 'react-native';
 import {
   AuthContainer,
@@ -18,13 +21,14 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
+import { AppGraph } from '../../layouts/graphs';
 
 const HomeScreen = () => {
   const { cartState, authState } = useAppContext();
@@ -52,6 +56,7 @@ const HomeScreen = () => {
 
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
+  const navigation = useNavigation()
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -86,6 +91,9 @@ const HomeScreen = () => {
 
         <CategoryView />
 
+
+
+
         {
           needToPay &&
           <TouchableOpacity
@@ -116,6 +124,7 @@ const HomeScreen = () => {
         )}
         <NotificationList onSeeMorePress={navigateAdvertising} />
 
+
         <FlatList
           data={allProducts}
           keyExtractor={item => item._id}
@@ -142,6 +151,17 @@ const HomeScreen = () => {
         />
       </ScrollView>
 
+      {
+        dialogShippingVisible &&
+        <DialogShippingMethod
+          visible={dialogShippingVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
+          onEditOption={handleEditOption}
+        />
+      }
+
       <DeliveryButton
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
@@ -159,16 +179,17 @@ const HomeScreen = () => {
         cartState={cartState}
         onPressCart={navigateCheckOut}
       />
-      {
-        dialogShippingVisible &&
-        <DialogShippingMethod
-          isVisible={dialogShippingVisible}
-          selectedOption={selectedOption}
-          onHide={handleCloseDialog}
-          onOptionSelect={handleOptionSelect}
-          onEditOption={handleEditOption}
-        />
-      }
+
+
+      <Pressable
+        onPress={() => navigation.navigate(AppGraph.AIChatScreen)}
+        style={styles.chat}>
+
+        <Image
+          source={require('../../assets/images/robot.png')}
+          style={styles.imageRobot} />
+      </Pressable>
+
 
     </SafeAreaView>
   );
@@ -198,4 +219,18 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     gap: 8,
   },
+  imageRobot: {
+    width: '100%',
+    height: '100%',
+  },
+  chat: {
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    position: 'absolute',
+    bottom: 100,
+    right: 16
+  }
 });

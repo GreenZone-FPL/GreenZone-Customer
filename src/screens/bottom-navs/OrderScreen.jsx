@@ -21,13 +21,15 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import useSaveLocation from '../../utils/useSaveLocation';
+import { useNavigation } from '@react-navigation/native';
+import { AppGraph } from '../../layouts/graphs';
 
 
 const OrderScreen = () => {
   const { cartState, authState } =
     useAppContext() || {};
 
+  const navigation = useNavigation()
   const {
     dialogShippingVisible,
     selectedOption,
@@ -52,7 +54,7 @@ const OrderScreen = () => {
     navigateSearchProduct
   } = useOrderContainer()
 
-  useSaveLocation()
+
 
   const { onNavigateLogin } = useAuthActions();
 
@@ -137,7 +139,7 @@ const OrderScreen = () => {
       {
         dialogShippingVisible &&
         <DialogShippingMethod
-          isVisible={dialogShippingVisible}
+          visible={dialogShippingVisible}
           selectedOption={selectedOption}
           onHide={handleCloseDialog}
           onOptionSelect={handleOptionSelect}
@@ -152,13 +154,17 @@ const OrderScreen = () => {
           visible={dialogVisible}
           onHide={() => setDialogVisible(false)}
           title="Danh mục">
-          <CategoryMenu
-            categories={categories}
-            loading={loading}
-            onCategorySelect={category => {
-              scrollToCategory(category._id);
-            }}
-          />
+          <View style={{ marginVertical: 8 }}>
+            <CategoryMenu
+              categories={categories}
+              loading={loading}
+              onCategorySelect={category => {
+                scrollToCategory(category._id);
+              }}
+            />
+
+          </View>
+
         </MyBottomSheet>
       }
 
