@@ -129,26 +129,19 @@ export const useHomeContainer = () => {
 
 
 
-  const onClickAddToCart = async productId => {
-    try {
-      const isTokenValid = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-
-      if (isTokenValid && authState.lastName) {
-        navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
-      } else {
-        onNavigateLogin();
-      }
-    } catch (error) {
-      console.log('Error', error);
+  const onClickAddToCart = productId => {
+    if (authState.lastName) {
+      navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+    } else {
+      onNavigateLogin();
     }
+
   };
 
   const fetchOrderHistory = async () => {
     try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
+
+      if (authState.lastName) {
         const response = await getOrdersByStatus();
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
 

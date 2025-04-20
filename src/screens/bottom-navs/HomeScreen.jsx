@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   FlatList,
+  Image,
+  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
-  Image,
-  Pressable
+  View
 } from 'react-native';
 import {
   AuthContainer,
@@ -21,21 +21,21 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText,
+  Row,
   SectionLoader,
-  Row
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
+import { AppGraph } from '../../layouts/graphs';
+import { SkeletonBox } from '../../skeletons';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
-import { AppGraph } from '../../layouts/graphs';
-import { HomeSkeleton, SkeletonBox } from '../../skeletons';
 
 
 const HomeScreen = () => {
-  const { cartState, authState, user } = useAppContext();
+  const { cartState, authState } = useAppContext();
   const {
     dialogShippingVisible,
     selectedOption,
@@ -44,8 +44,6 @@ const HomeScreen = () => {
     allProducts,
     loadingMerchant,
     loadingProducts,
-    loadingProfile,
-    loadingNoti,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -64,7 +62,7 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
- 
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -87,17 +85,10 @@ const HomeScreen = () => {
         style={styles.containerContent}>
 
         {authState.lastName ? (
-
-
-          <SectionLoader
-            loading={loadingProfile}
-            skeleton={<SkeletonBox width="100%" height={150} borderRadius={12} />}>
-            <BarcodeUser
-              showPoints={true}
-              onPress={navigateSeedScreen}
-            />
-          </SectionLoader>
-
+          <BarcodeUser
+            showPoints={true}
+            onPress={navigateSeedScreen}
+          />
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
@@ -119,7 +110,7 @@ const HomeScreen = () => {
 
         <SectionLoader
           loading={loadingProducts}
-          skeleton={<Row style={{ gap: 16 }}>
+          skeleton={<Row style={{ gap: 16, padding: 16 }}>
             <SkeletonBox width="45%" height={250} borderRadius={12} />
             <SkeletonBox width="45%" height={250} borderRadius={12} />
             <SkeletonBox width="45%" height={250} borderRadius={12} />

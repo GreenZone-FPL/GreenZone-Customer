@@ -36,20 +36,14 @@ export const useOrderContainer = () => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
 
-  const onClickAddToCart = async productId => {
-    try {
-      const isTokenValid = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
+  const onClickAddToCart = productId => {
 
-      if (isTokenValid && authState.lastName) {
-        navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
-      } else {
-        onNavigateLogin();
-      }
-    } catch (error) {
-      console.log('Error', error);
+    if (authState.lastName) {
+      navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+    } else {
+      onNavigateLogin();
     }
+
   };
 
   useEffect(() => {
