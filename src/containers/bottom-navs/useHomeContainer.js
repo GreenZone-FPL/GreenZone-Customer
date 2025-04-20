@@ -19,6 +19,7 @@ export const useHomeContainer = () => {
 
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -53,6 +54,7 @@ export const useHomeContainer = () => {
   };
 
   const fetchOrderHistory = async () => {
+    setLoading(true)
     try {
       const isTokenValid = await AppAsyncStorage.isTokenValid()
       if (isTokenValid) {
@@ -65,6 +67,8 @@ export const useHomeContainer = () => {
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      setLoading(false)
     }
   };
   useFocusEffect(
@@ -85,6 +89,7 @@ export const useHomeContainer = () => {
 
   useEffect(() => {
     const getMerchantLocation = async () => {
+      setLoading(true)
       try {
         setMerchantLocal(
           await AppAsyncStorage.readData(
@@ -93,6 +98,8 @@ export const useHomeContainer = () => {
         );
       } catch (error) {
         console.log('error', error);
+      }finally{
+        setLoading(false)
       }
     };
 
@@ -201,6 +208,7 @@ export const useHomeContainer = () => {
     currentCategory,
     needToPay,
     allProducts,
+    loading,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -212,6 +220,6 @@ export const useHomeContainer = () => {
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
-    navigateSeedScreen
+    navigateSeedScreen,
   };
 };
