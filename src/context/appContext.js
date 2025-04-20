@@ -35,7 +35,7 @@ export const AppContextProvider = ({ children }) => {
 
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
- 
+ const [user, setUser] = useState(0)
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -45,7 +45,7 @@ export const AppContextProvider = ({ children }) => {
       const user = await AppAsyncStorage.readData(
         AppAsyncStorage.STORAGE_KEYS.user,
       );
-      if (isValid && user) {
+      if (isValid && user.lastName) {
 
 
         authDispatch({
@@ -111,7 +111,9 @@ export const AppContextProvider = ({ children }) => {
         merchantLocation,
         setMerchantLocation,
         showCallUI,
-        setShowCallUI
+        setShowCallUI,
+        user,
+        setUser
       }}>
       {children}
     </AppContext.Provider>

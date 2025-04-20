@@ -1,5 +1,6 @@
 // @ts-ignore
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import {
   Dimensions,
   Image,
@@ -10,7 +11,7 @@ import {
   Text,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getAllVoucher } from '../../axios';
+import { getAllVoucher, getProfile } from '../../axios';
 import {
   AuthContainer,
   BarcodeUser,
@@ -20,20 +21,66 @@ import {
   Row,
   VoucherVertical,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import {
   useAuthActions,
   useVoucherContainer
 } from '../../containers';
 import { VoucherGraph } from '../../layouts/graphs';
 import { AppAsyncStorage, Toaster } from '../../utils';
+import { User } from 'iconsax-react-native';
+import { useAppContext } from '../../context/appContext';
 
 const width: number = Dimensions.get('window').width;
-const VoucherScreen = ({navigation}) => {
-  const {authState} = useVoucherContainer();
-  const {onNavigateLogin} = useAuthActions();
+const VoucherScreen = ({ navigation }) => {
+  const { authState } = useVoucherContainer();
+  const { onNavigateLogin } = useAuthActions();
+  const { updateOrderMessage,user, setUser } = useAppContext()
 
   const [vouchers, setVouchers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+
+  const fetchProfile = async (enableLoading: boolean) => {
+    try {
+      if (enableLoading) {
+        setLoading(true)
+      }
+
+      const isTokenValid = await AppAsyncStorage.isTokenValid()
+      if (isTokenValid) {
+        const response: any= await getProfile();
+
+        if (response) {
+          setUser(response);
+        }
+      }
+
+    } catch (error) {
+      console.log('error', error);
+    } finally {
+      if (enableLoading) {
+        setLoading(false)
+      }
+
+    }
+  };
+
+
+  useEffect(() => {
+    // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
+    // load lần sau, không cần loading
+    if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
+      fetchProfile(false)
+    }
+  }, [updateOrderMessage.status])
+
+  useEffect(() => {
+    fetchProfile(true)
+  }, [])
+
+
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
@@ -48,6 +95,8 @@ const VoucherScreen = ({navigation}) => {
 
     fetchVouchers();
   }, []);
+
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
@@ -64,7 +113,7 @@ const VoucherScreen = ({navigation}) => {
           source={require('../../assets/images/bgvoucher.png')}
           resizeMode="cover"
           style={styles.imageBg}>
-          <Column style={{padding: 16, gap: 16}}>
+          <Column style={{ padding: 16, gap: 16 }}>
             <Pressable
               style={styles.myTicket}
               onPress={() => {
@@ -81,7 +130,7 @@ const VoucherScreen = ({navigation}) => {
             <BarcodeUser
               hasBackground={true}
               showPoints={true}
-              style={{width: Dimensions.get('window').width}}
+              style={{ width: Dimensions.get('window').width }}
             />
           </Column>
         </ImageBackground>
@@ -89,7 +138,7 @@ const VoucherScreen = ({navigation}) => {
 
       {authState.lastName ? (
         <Column>
-          <Row style={{margin: 16}}>
+          <Row style={{ margin: 16 }}>
             <Card
               iconName="shield-check"
               color={colors.orange700}
@@ -110,7 +159,7 @@ const VoucherScreen = ({navigation}) => {
           <VoucherVertical
             vouchers={vouchers}
             type={1}
-            route={{params: {isUpdateOrderInfo: false}}}
+            route={{ params: { isUpdateOrderInfo: false } }}
           />
         </Column>
       ) : (
@@ -123,7 +172,7 @@ const VoucherScreen = ({navigation}) => {
   );
 };
 
-const Card = ({iconName, color, title, onPress}) => {
+const Card = ({ iconName, color, title, onPress }) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -185,7 +234,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 1.5,
