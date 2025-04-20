@@ -11,10 +11,11 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Button
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getAllProducts } from '../../axios';
+import { chatAssistant, getAllProducts } from '../../axios';
 import {
   Column,
   NormalText,
@@ -58,33 +59,35 @@ const AIChatScreen = () => {
       .toLowerCase();
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const query = inputText.trim();
     if (!query) return;
+    const response = await chatAssistant('Tôi muốn uống trà sữa')
+    console.log('response', JSON.stringify(response, null, 3))
 
-    const normalizedQuery = removeVietnameseTones(query);
-    const filtered = allProducts.filter(item =>
-      removeVietnameseTones(item.name).includes(normalizedQuery),
-    );
+    // const normalizedQuery = removeVietnameseTones(query);
+    // const filtered = allProducts.filter(item =>
+    //   removeVietnameseTones(item.name).includes(normalizedQuery),
+    // );
 
-    const userMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      text: query,
-    };
+    // const userMessage = {
+    //   id: Date.now().toString(),
+    //   type: 'user',
+    //   text: query,
+    // };
 
-    const aiMessage = {
-      id: (Date.now() + 1).toString(),
-      type: 'ai',
-      text:
-        filtered.length > 0
-          ? `Tôi gợi ý các sản phẩm sau cho từ khóa "${query}":`
-          : `Không tìm thấy sản phẩm nào phù hợp với "${query}".`,
-      products: filtered,
-    };
+    // const aiMessage = {
+    //   id: (Date.now() + 1).toString(),
+    //   type: 'ai',
+    //   text:
+    //     filtered.length > 0
+    //       ? `Tôi gợi ý các sản phẩm sau cho từ khóa "${query}":`
+    //       : `Không tìm thấy sản phẩm nào phù hợp với "${query}".`,
+    //   products: filtered,
+    // };
 
-    setMessages(prev => [...prev, userMessage, aiMessage]);
-    setFilteredList(filtered);
+    // setMessages(prev => [...prev, userMessage, aiMessage]);
+    // setFilteredList(filtered);
     setInputText('');
   };
 
@@ -128,7 +131,7 @@ const AIChatScreen = () => {
 
           <ChatHeader />
 
-          <ScrollView style={{ flex: 1 }}>
+        
 
             <About />
 
@@ -136,11 +139,13 @@ const AIChatScreen = () => {
               data={messages}
               keyExtractor={item => item.id}
               renderItem={renderMessage}
+              nestedScrollEnabled
               contentContainerStyle={{ padding: 16 }}
               keyboardShouldPersistTaps="handled"
 
             />
-          </ScrollView>
+    
+          <Button onPress={handleSend} title={'Send'}/>
 
           <InputContainer handleSend={handleSend} />
          
@@ -170,31 +175,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20
-  },
-
-
-  inputRow: {
-    flexDirection: 'row',
-    padding: 12,
-    borderTopWidth: 1,
-    borderColor: '#eee',
-    backgroundColor: 'white',
-  },
-  input: {
-    flex: 1,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 16,
-    height: 40,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT
-  },
-  sendButton: {
-    marginLeft: 10,
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 
   bubble: {
