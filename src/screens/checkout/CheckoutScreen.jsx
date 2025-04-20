@@ -66,7 +66,7 @@ const CheckoutScreen = () => {
     handleSelectMethod,
     onApproveCreateOrder,
   } = useCheckoutContainer();
-
+  console.log('cart:' , JSON.stringify(cartState, null, 2))
   if (cartState.orderItems.length === 0) {
     return (
       <EmptyView />

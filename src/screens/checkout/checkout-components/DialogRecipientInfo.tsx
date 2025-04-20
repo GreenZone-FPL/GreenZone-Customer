@@ -39,8 +39,8 @@ export const DialogRecipientInfo: React.FC<DialogRecipientInfoProps> = ({
         if (!phoneNumber.trim()) {
             setPhoneError('Vui lòng nhập số điện thoại!');
             isValid = false;
-        } else if (!/^\d{10}$/.test(phoneNumber)) {
-            setPhoneError('Số điện thoại phải có đúng 10 chữ số!');
+        } else if (!/^(03|05|07|08|09)[0-9]{8}$/.test(phoneNumber)) {
+            setPhoneError('Vui lòng nhập số điện thoại hợp lệ (10 chữ số, bắt đầu bằng 03, 05, 07, 08 hoặc 09)!');
             isValid = false;
         } else {
             setPhoneError('');

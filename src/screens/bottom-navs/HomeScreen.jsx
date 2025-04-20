@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -29,16 +29,17 @@ import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
 import { AppGraph } from '../../layouts/graphs';
+import { HomeSkeleton } from '../../skeletons';
 
 const HomeScreen = () => {
   const { cartState, authState } = useAppContext();
-
   const {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
     needToPay,
     allProducts,
+    loading,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -57,6 +58,9 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
+  if(loading){
+    return <HomeSkeleton/>
+  }
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -71,7 +75,9 @@ const HomeScreen = () => {
         isHome={false}
         enableBadge={!!authState.lastName}
       />
-
+      {/* {
+        loading && <HomeSkeleton/>
+      } */}
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}

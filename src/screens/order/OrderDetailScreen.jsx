@@ -1,11 +1,6 @@
 import { useRoute } from '@react-navigation/native';
 import React from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import {
   DeliveryMethodText,
   LightStatusBar,
@@ -16,7 +11,12 @@ import {
   Row,
   StatusText,
 } from '../../components';
-import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constants';
+import {
+  colors,
+  DeliveryMethod,
+  GLOBAL_KEYS,
+  OrderStatus,
+} from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
 import {
@@ -30,12 +30,13 @@ import {
   ProductsInfo,
   RecipientInfo,
   ShipperInfo,
-  TimelineStatus
+  TimelineStatus,
 } from './order-detail-components';
 
 const OrderDetailScreen = () => {
-  const { orderId } = useRoute().params;
-  const { cartState } = useAppContext();
+  const route = useRoute();
+  const {orderId} = route.params;
+  const {cartState} = useAppContext();
 
   const {
     cancelDialogVisible,
@@ -49,7 +50,7 @@ const OrderDetailScreen = () => {
     backAction,
     callBackAfterCancel,
   } = useOrderDetailContainer(orderId);
-
+  console.log('orderDetail', JSON.stringify(orderDetail, null, 2));
   if (loading) {
     return (
       <View style={styles.container}>
@@ -68,19 +69,18 @@ const OrderDetailScreen = () => {
       {orderDetail && (
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={styles.containerContent}
-        >
+          style={styles.containerContent}>
           <Row style={styles.statusRow}>
-
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
           </Row>
           <TimelineStatus details={orderDetail} />
 
-          {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
-            <ShipperInfo shipper={orderDetail.shipper} />
-          )}
+          {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value &&
+            ['shippingOrder', 'readyForPickup'].includes(
+              orderDetail.status,
+            ) && <ShipperInfo shipper={orderDetail.shipper} />}
 
           {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
 
@@ -102,18 +102,19 @@ const OrderDetailScreen = () => {
             createdAt={orderDetail.createdAt}
           />
 
-
           <Row style={styles.buttonRow}>
             {(orderDetail.status ===
               OrderStatus.PENDING_CONFIRMATION.value ||
               orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
-                <Pressable
-                  style={[styles.cancelButton, styles.flex1]}
-                  onPress={() => setCancelDialogVisible(true)}
-                >
-                  <NormalText text="Hủy đơn hàng" style={{ color: colors.red900 }} />
-                </Pressable>
-              )}
+              <Pressable
+                style={[styles.cancelButton, styles.flex1]}
+                onPress={() => setCancelDialogVisible(true)}>
+                <NormalText
+                  text="Hủy đơn hàng"
+                  style={{color: colors.red900}}
+                />
+              </Pressable>
+            )}
 
             {orderDetail.status === OrderStatus.AWAITING_PAYMENT.value && (
               <PrimaryButton
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flex: 1,
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   payTitle: {
     fontSize: 12,
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
   payButton: {
     marginHorizontal: 16,
     flex: 1,
-    padding: 13
+    padding: 13,
   },
   cancelButton: {
     backgroundColor: colors.white,
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 16,
     borderColor: colors.red900,
-    borderWidth: 1
+    borderWidth: 1,
   },
   flex1: {
     flex: 1,
