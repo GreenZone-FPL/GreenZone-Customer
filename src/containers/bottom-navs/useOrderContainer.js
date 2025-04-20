@@ -178,7 +178,7 @@ export const useOrderContainer = () => {
 
     fetchCategories();
 
-    fetchData(getAllProducts, setAllProducts);
+    fetchData(getAllProducts, setAllProducts, setLoading);
   }, []);
 
   const navigateCheckOut = () => {
