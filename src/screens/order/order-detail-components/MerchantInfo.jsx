@@ -8,14 +8,14 @@ export const MerchantInfo = ({ store }) => {
   return (
     <Column style={styles.areaContainer}>
       <Title title="Cửa hàng" />
-      <NormalText text={store.name} style={{ fontWeight: '500' , color: colors.earthYellow}} />
+      <NormalText text={store.name} style={{ fontWeight: '500' , color: colors.blue600}} />
       <Text numberOfLines={2} style={styles.normalText}>
         {[
           store.specificAddress,
           store.ward,
           store.district,
           store.province,
-        ].join(' ')}
+        ].join(', ')}
       </Text>
     </Column>
   );

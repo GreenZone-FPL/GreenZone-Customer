@@ -189,18 +189,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 13,
   },
-  codButton: {
-    backgroundColor: colors.white,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  codTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.primary,
-    fontWeight: '500',
-    flex: 1,
-  },
   cancelButton: {
     backgroundColor: colors.white,
     borderRadius: 12,

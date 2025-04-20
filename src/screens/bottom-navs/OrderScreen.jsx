@@ -21,12 +21,15 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
+import { useNavigation } from '@react-navigation/native';
+import { AppGraph } from '../../layouts/graphs';
 
 
 const OrderScreen = () => {
   const { cartState, authState } =
     useAppContext() || {};
 
+  const navigation = useNavigation()
   const {
     dialogShippingVisible,
     selectedOption,
@@ -136,7 +139,7 @@ const OrderScreen = () => {
       {
         dialogShippingVisible &&
         <DialogShippingMethod
-          isVisible={dialogShippingVisible}
+          visible={dialogShippingVisible}
           selectedOption={selectedOption}
           onHide={handleCloseDialog}
           onOptionSelect={handleOptionSelect}
