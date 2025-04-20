@@ -14,8 +14,13 @@ import { TextFormatter } from '../../../utils';
 import { TitleText, NormalText, Column, Row } from '../../../components';
 
 const width = Dimensions.get('window').width;
+type SuggestedListProps = {
+  onItemClick: (id: string) => void,
+  onIconClick: (id: string) => void,
+  products: any[]
+}
 
-export const SuggestedList = ({ onItemClick, onIconClick, products }) => {
+export const SuggestedList: React.FC<SuggestedListProps> = ({ onItemClick, onIconClick, products }) => {
   return (
 
     <Column style={styles.container}>
@@ -51,14 +56,11 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
           text={TextFormatter.formatCurrency(item.originalPrice)}
         />
       </Column>
-      <IconButton
-        onPress={onIconClick}
-        icon='plus'
-        iconColor={colors.white}
-        containerColor={colors.gray200}
-        style={styles.addButton}
-        size={14}
-      />
+      
+      <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
+          <Icon source="plus" size={22} color={colors.white} />
+        </TouchableOpacity>
+    
     </Pressable>
   );
 };
@@ -93,7 +95,9 @@ const styles = StyleSheet.create({
   },
   addButton: {
     alignSelf: 'flex-end',
-    borderRadius: 20,
-    backgroundColor: colors.earthYellow,
+    borderRadius: 6,
+    backgroundColor: colors.primary,
+    margin: 8,
+    // padding: 4
   },
 });

@@ -46,5 +46,6 @@ const styles = StyleSheet.create({
   description: {
     color: colors.gray700,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    textAlign: 'center'
   },
 });

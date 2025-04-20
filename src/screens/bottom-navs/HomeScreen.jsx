@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -39,7 +39,10 @@ const HomeScreen = () => {
     currentCategory,
     needToPay,
     allProducts,
-    loading,
+    loadingMerchant,
+    loadingProducts,
+    loadingProfile,
+    loadingNoti,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -58,8 +61,8 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
-  if(loading){
-    return <HomeSkeleton/>
+  if (loadingMerchant || loadingProducts || loadingProfile || loadingNoti) {
+    return <HomeSkeleton />
   }
   return (
     <SafeAreaView style={styles.container}>

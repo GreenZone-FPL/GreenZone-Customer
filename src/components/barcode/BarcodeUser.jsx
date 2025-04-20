@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 import { getProfile } from '../../axios';
-import { colors, GLOBAL_KEYS } from '../../constants';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { SeedText } from '../texts/SeedText';
 import { AppAsyncStorage } from '../../utils';
 import { useAppContext } from '../../context/appContext';
@@ -26,33 +26,36 @@ export const BarcodeUser = ({
   onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
-  const [user, setUser] = useState(null);
-  const { updateOrderMessage } = useAppContext()
+  // const [user, setUser] = useState(null);
+  const { user} = useAppContext()
 
-  const fetchProfile = async () => {
-    try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
-        const response = await getProfile();
-        if (response) {
-          setUser(response);
-        }
-      }
+  // const fetchProfile = async () => {
+  //   try {
+  //     const isTokenValid = await AppAsyncStorage.isTokenValid()
+  //     if (isTokenValid) {
+  //       const response = await getProfile();
+  //       if (response) {
+  //         setUser(response);
+  //       }
+  //     }
 
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-  useEffect(() => {
-    fetchProfile()
-  }, [updateOrderMessage])
+  //   } catch (error) {
+  //     console.log('error', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
+  //     fetchProfile()
+  //   }
 
-  
-  useFocusEffect(
-    useCallback(() => {
-      fetchProfile();
-    }, [])
-  );
+  // }, [updateOrderMessage])
+
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchProfile();
+  //   }, [])
+  // );
 
   useEffect(() => {
     const generateBarcode = async () => {
