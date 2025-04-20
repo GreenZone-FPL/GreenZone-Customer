@@ -12,6 +12,7 @@ import { SvgXml } from 'react-native-svg';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { SeedText } from '../texts/SeedText';
+import { SkeletonBox } from '../../skeletons';
 
 
 const width = Dimensions.get('window').width;
@@ -23,11 +24,14 @@ export const BarcodeUser = ({
   onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
-  const { user} = useAppContext()
+  const { user } = useAppContext()
 
   useEffect(() => {
+    if (!user?.code) return;
+
+
+
     const generateBarcode = async () => {
-      if (!user?.code) return;
       try {
         const svg = bwipjs.toSVG({
           bcid: 'code128',
@@ -41,6 +45,7 @@ export const BarcodeUser = ({
           margin: 0,
           textfont: 'Helvetica',
         });
+
         setBarcodeSVG(svg);
       } catch (e) {
         console.error('Lỗi khi tạo mã vạch:', e);
@@ -48,7 +53,12 @@ export const BarcodeUser = ({
     };
 
     generateBarcode();
-  }, [user]);
+
+    return () => {
+
+    };
+  }, [user?.code]);
+
 
   const BarcodeContent = () => {
     return (
@@ -94,7 +104,7 @@ export const BarcodeUser = ({
     );
   }
 
-  return null;
+  return <SkeletonBox width="100%" height={150} borderRadius={12} />
 };
 
 const styles = StyleSheet.create({

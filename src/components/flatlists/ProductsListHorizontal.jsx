@@ -21,7 +21,7 @@ export const ProductsListHorizontal = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
+    
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerText}>{title}</Text>
           {/* <Text style={styles.timeText}>08:00:00</Text> */}
@@ -45,7 +45,7 @@ export const ProductsListHorizontal = ({
           }}
           scrollEnabled={true}
         />
-      </View>
+    
     </View>
   );
 };
@@ -77,10 +77,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  headerContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   headerTextContainer: {
     flexDirection: 'row',

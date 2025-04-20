@@ -33,22 +33,18 @@ const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
   const { authState } = useVoucherContainer();
   const { onNavigateLogin } = useAuthActions();
-  const { updateOrderMessage,user, setUser } = useAppContext()
+  const { updateOrderMessage, user, setUser } = useAppContext()
 
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-
 
   const fetchProfile = async (enableLoading: boolean) => {
     try {
       if (enableLoading) {
         setLoading(true)
       }
-
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
-        const response: any= await getProfile();
+      if (authState.lastName) {
+        const response: any = await getProfile();
 
         if (response) {
           setUser(response);
