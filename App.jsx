@@ -64,6 +64,7 @@ import AIChatScreen from './src/screens/chat/AIChatScreen';
 import { AppAsyncStorage } from './src/utils';
 import { onUserLoginZego } from './src/zego/common';
 import ZegoCallUI from './src/zego/ZegoCallUI';
+import MyFlatList from './src/screens/user-profile/MyFlatList';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -195,6 +196,7 @@ function MainNavigator() {
             options={slideFromRightOption}
             component={AIChatScreen}
           />
+          <BaseStack.Screen name={'MyFlatList'} component={MyFlatList} />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
