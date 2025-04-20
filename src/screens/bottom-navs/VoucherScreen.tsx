@@ -1,6 +1,5 @@
 // @ts-ignore
-import React, { useEffect, useState, useCallback } from 'react';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -26,10 +25,9 @@ import {
   useAuthActions,
   useVoucherContainer
 } from '../../containers';
+import { useAppContext } from '../../context/appContext';
 import { VoucherGraph } from '../../layouts/graphs';
 import { AppAsyncStorage, Toaster } from '../../utils';
-import { User } from 'iconsax-react-native';
-import { useAppContext } from '../../context/appContext';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
