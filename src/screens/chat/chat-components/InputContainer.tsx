@@ -18,7 +18,7 @@ export const InputContainer: React.FC<InputContainerProps> = ({handleSend, setIn
       <TextInput
         value={inputText}
         onChangeText={setInputText}
-        placeholder="Nhắn tin"
+        placeholder="Trò chuyện"
         returnKeyType="send"
         style={styles.input}
       />
