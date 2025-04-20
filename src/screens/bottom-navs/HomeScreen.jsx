@@ -61,9 +61,9 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
-  if (loadingMerchant || loadingProducts || loadingProfile || loadingNoti) {
-    return <HomeSkeleton />
-  }
+  // if (loadingMerchant || loadingProducts || loadingProfile || loadingNoti) {
+  //   return <HomeSkeleton />
+  // }
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -78,9 +78,7 @@ const HomeScreen = () => {
         isHome={false}
         enableBadge={!!authState.lastName}
       />
-      {/* {
-        loading && <HomeSkeleton/>
-      } */}
+   
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}

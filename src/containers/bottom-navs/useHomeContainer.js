@@ -1,4 +1,4 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
@@ -15,7 +15,7 @@ import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { authState, cartState, cartDispatch, updateOrderMessage, user, setUser, notifications, setNotifications } = useAppContext();
+  const { authState, cartState, cartDispatch, updateOrderMessage, setUser, setNotifications } = useAppContext();
 
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
@@ -64,7 +64,7 @@ export const useHomeContainer = () => {
     }
   };
 
-  
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -85,6 +85,8 @@ export const useHomeContainer = () => {
 
     fetchNotifications()
   }, [])
+
+  
   useEffect(() => {
     fetchProfile(true)
   }, [])
@@ -115,7 +117,7 @@ export const useHomeContainer = () => {
 
   useEffect(() => {
     if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts,setLoadingProducts).then(r => { });
+      fetchData(getAllProducts, setAllProducts, setLoadingProducts).then(r => { });
     }
   }, [allProducts.length]);
 
@@ -126,6 +128,9 @@ export const useHomeContainer = () => {
       fetchProfile(false)
     }
   }, [updateOrderMessage.status])
+
+
+  
 
 
 
@@ -146,7 +151,6 @@ export const useHomeContainer = () => {
   };
 
   const fetchOrderHistory = async () => {
-    // setLoading(true)
     try {
       const isTokenValid = await AppAsyncStorage.isTokenValid()
       if (isTokenValid) {
@@ -159,20 +163,8 @@ export const useHomeContainer = () => {
       }
     } catch (error) {
       console.log('error', error);
-    } finally {
-      // setLoading(false)
     }
   };
-  
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchOrderHistory();
-  //   }, [])
-  // );
-
- 
-
-
 
   const handleEditOption = option => {
     setEditOption(option);
@@ -269,7 +261,6 @@ export const useHomeContainer = () => {
   };
 
   return {
-    user,
     dialogShippingVisible,
     selectedOption,
     currentCategory,

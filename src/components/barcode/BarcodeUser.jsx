@@ -1,6 +1,5 @@
 import bwipjs from '@bwip-js/react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -10,11 +9,9 @@ import {
   View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { getProfile } from '../../axios';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { SeedText } from '../texts/SeedText';
-import { AppAsyncStorage } from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
+import { SeedText } from '../texts/SeedText';
 
 
 const width = Dimensions.get('window').width;
@@ -26,36 +23,7 @@ export const BarcodeUser = ({
   onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
-  // const [user, setUser] = useState(null);
   const { user} = useAppContext()
-
-  // const fetchProfile = async () => {
-  //   try {
-  //     const isTokenValid = await AppAsyncStorage.isTokenValid()
-  //     if (isTokenValid) {
-  //       const response = await getProfile();
-  //       if (response) {
-  //         setUser(response);
-  //       }
-  //     }
-
-  //   } catch (error) {
-  //     console.log('error', error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
-  //     fetchProfile()
-  //   }
-
-  // }, [updateOrderMessage])
-
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     fetchProfile();
-  //   }, [])
-  // );
 
   useEffect(() => {
     const generateBarcode = async () => {

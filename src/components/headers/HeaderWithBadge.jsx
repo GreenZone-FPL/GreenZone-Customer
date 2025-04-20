@@ -71,16 +71,14 @@ export const HeaderWithBadge = ({
           </Row>
         ) :
           <Text style={styles.title}>{title}</Text>
-
       }
+      
       {
         enableBadge  &&
-
         <IconWithBadge
           quantity={notifications.length}
           onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
         />
-
       }
 
     </View>
