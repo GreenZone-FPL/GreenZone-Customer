@@ -125,6 +125,7 @@ export const useAppContainer = () => {
     }
   }, [navigation, setUpdateOrderMessage, updateOrderMessage]);
 
+
   useEffect(() => {
     const initializeSocket = async () => {
       try {
@@ -150,7 +151,6 @@ export const useAppContainer = () => {
     };
 
     initializeSocket().then(r => { });
-
     return () => {
       socketService.disconnect();
     };

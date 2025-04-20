@@ -12,6 +12,7 @@ import { SvgXml } from 'react-native-svg';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { SeedText } from '../texts/SeedText';
+import { SkeletonBox } from '../../skeletons';
 
 
 const width = Dimensions.get('window').width;
@@ -94,7 +95,7 @@ export const BarcodeUser = ({
     );
   }
 
-  return null;
+  return <SkeletonBox width="100%" height={150} borderRadius={12} />
 };
 
 const styles = StyleSheet.create({

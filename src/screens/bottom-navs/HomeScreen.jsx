@@ -21,7 +21,9 @@ import {
   NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText
+  TitleText,
+  SectionLoader,
+  Row
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
@@ -29,10 +31,11 @@ import { useAppContext } from '../../context/appContext';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { CategoryView } from './HomeComponents/CategoryView';
 import { AppGraph } from '../../layouts/graphs';
-import { HomeSkeleton } from '../../skeletons';
+import { HomeSkeleton, SkeletonBox } from '../../skeletons';
+
 
 const HomeScreen = () => {
-  const { cartState, authState } = useAppContext();
+  const { cartState, authState, user } = useAppContext();
   const {
     dialogShippingVisible,
     selectedOption,
@@ -61,9 +64,7 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
-  // if (loadingMerchant || loadingProducts || loadingProfile || loadingNoti) {
-  //   return <HomeSkeleton />
-  // }
+ 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -78,7 +79,7 @@ const HomeScreen = () => {
         isHome={false}
         enableBadge={!!authState.lastName}
       />
-   
+
       <ScrollView
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -87,19 +88,21 @@ const HomeScreen = () => {
 
         {authState.lastName ? (
 
-          <BarcodeUser
-            showPoints={true}
-            onPress={navigateSeedScreen}
-          />
+
+          <SectionLoader
+            loading={loadingProfile}
+            skeleton={<SkeletonBox width="100%" height={150} borderRadius={12} />}>
+            <BarcodeUser
+              showPoints={true}
+              onPress={navigateSeedScreen}
+            />
+          </SectionLoader>
 
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
 
         <CategoryView />
-
-
-
 
         {
           needToPay &&
@@ -114,38 +117,20 @@ const HomeScreen = () => {
         }
 
 
-
-        {allProducts.length > 0 && (
-          <ProductsListHorizontal
-            title="Sản phẩm mới"
-            products={allProducts
-              .flatMap(category => category.products)
-              .slice(0, 10)}
-            onItemClick={productId => {
-              onNavigateProductDetailSheet(productId);
-            }}
-            onIconClick={productId => {
-              onClickAddToCart(productId);
-            }}
-          />
-        )}
-        <NotificationList onSeeMorePress={navigateAdvertising} />
-
-
-        <FlatList
-          data={allProducts}
-          keyExtractor={item => item._id}
-          scrollEnabled={false}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          nestedScrollEnabled
-          initialNumToRender={10} // Chỉ render 10 item đầu tiên
-          removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
-          renderItem={({ item }) => (
-            <View onLayout={event => onLayoutCategory(item._id, event)}>
-              <ProductsGrid
-                title={item.name}
-                products={item.products}
+        <SectionLoader
+          loading={loadingProducts}
+          skeleton={<Row style={{ gap: 16 }}>
+            <SkeletonBox width="45%" height={250} borderRadius={12} />
+            <SkeletonBox width="45%" height={250} borderRadius={12} />
+            <SkeletonBox width="45%" height={250} borderRadius={12} />
+          </Row>}>
+          <>
+            {allProducts.length > 0 && (
+              <ProductsListHorizontal
+                title="Sản phẩm mới"
+                products={allProducts
+                  .flatMap(category => category.products)
+                  .slice(0, 10)}
                 onItemClick={productId => {
                   onNavigateProductDetailSheet(productId);
                 }}
@@ -153,9 +138,39 @@ const HomeScreen = () => {
                   onClickAddToCart(productId);
                 }}
               />
-            </View>
-          )}
-        />
+            )}
+            <FlatList
+              data={allProducts}
+              keyExtractor={item => item._id}
+              scrollEnabled={false}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              nestedScrollEnabled
+              initialNumToRender={10} // Chỉ render 10 item đầu tiên
+              removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
+              renderItem={({ item }) => (
+                <View onLayout={event => onLayoutCategory(item._id, event)}>
+                  <ProductsGrid
+                    title={item.name}
+                    products={item.products}
+                    onItemClick={productId => {
+                      onNavigateProductDetailSheet(productId);
+                    }}
+                    onIconClick={productId => {
+                      onClickAddToCart(productId);
+                    }}
+                  />
+                </View>
+              )}
+            />
+          </>
+
+        </SectionLoader>
+
+        <NotificationList onSeeMorePress={navigateAdvertising} />
+
+
+
       </ScrollView>
 
       {
@@ -169,23 +184,29 @@ const HomeScreen = () => {
         />
       }
 
-      <DeliveryButton
-        deliveryMethod={selectedOption}
-        title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
-        address={
-          selectedOption === 'Mang đi'
-            ? cartState?.storeInfoSelect?.storeAddress
-            : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
-        }
-        onPress={() => setDialogShippingVisible(true)}
-        style={styles.deliverybutton}
-        cartState={cartState}
-        onPressCart={navigateCheckOut}
-      />
+      <SectionLoader
+        loading={loadingMerchant}
+        skeleton={<SkeletonBox width="100%" height={60} borderRadius={12} />}>
+        <DeliveryButton
+          deliveryMethod={selectedOption}
+          title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
+          address={
+            selectedOption === 'Mang đi'
+              ? cartState?.storeInfoSelect?.storeAddress
+              : cartState?.shippingAddressInfo?.location
+                ? cartState?.shippingAddressInfo?.location
+                : cartState
+                  ? cartState?.address?.label
+                  : 'Đang xác định vị trí...'
+          }
+          onPress={() => setDialogShippingVisible(true)}
+          style={styles.deliverybutton}
+          cartState={cartState}
+          onPressCart={navigateCheckOut}
+        />
+      </SectionLoader>
+
+
 
 
       <Pressable

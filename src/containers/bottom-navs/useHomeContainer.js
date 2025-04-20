@@ -45,10 +45,9 @@ export const useHomeContainer = () => {
         setLoadingProfile(true)
       }
 
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
+      if (authState.lastName) {
         const response = await getProfile();
-
+        console.log('ok')
         if (response) {
           setUser(response);
         }
@@ -68,7 +67,7 @@ export const useHomeContainer = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        if (await AppAsyncStorage.isTokenValid()) {
+        if (authState.lastName) {
           setLoadingNoti(true)
           const response = await getNotifications()
           if (response) {
@@ -85,15 +84,14 @@ export const useHomeContainer = () => {
 
     fetchNotifications()
   }, [])
-
-  
   useEffect(() => {
     fetchProfile(true)
   }, [])
 
   useEffect(() => {
-    fetchOrderHistory()
-  }, [])
+    fetchData(getAllProducts, setAllProducts, setLoadingProducts)
+  }, []);
+
 
 
   useEffect(() => {
@@ -115,11 +113,11 @@ export const useHomeContainer = () => {
     getMerchantLocation();
   }, []);
 
+
   useEffect(() => {
-    if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts, setLoadingProducts).then(r => { });
-    }
-  }, [allProducts.length]);
+    fetchOrderHistory()
+  }, [])
+
 
   useEffect(() => {
     // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
@@ -128,9 +126,6 @@ export const useHomeContainer = () => {
       fetchProfile(false)
     }
   }, [updateOrderMessage.status])
-
-
-  
 
 
 
