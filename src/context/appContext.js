@@ -36,7 +36,7 @@ export const AppContextProvider = ({ children }) => {
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
  const [user, setUser] = useState(0)
-
+ const [notifications, setNotifications] = useState([]);
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
@@ -113,7 +113,9 @@ export const AppContextProvider = ({ children }) => {
         showCallUI,
         setShowCallUI,
         user,
-        setUser
+        setUser,
+        notifications, 
+        setNotifications
       }}>
       {children}
     </AppContext.Provider>

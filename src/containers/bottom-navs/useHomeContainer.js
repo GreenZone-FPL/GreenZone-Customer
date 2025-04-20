@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getOrdersByStatus, getProfile } from '../../axios';
+import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
@@ -11,15 +11,14 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
+import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { authState, cartState, cartDispatch, updateOrderMessage, user, setUser } = useAppContext();
+  const { authState, cartState, cartDispatch, updateOrderMessage, user, setUser, notifications, setNotifications } = useAppContext();
 
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
-  // const [loading, setLoading] = useState(true);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -32,9 +31,10 @@ export const useHomeContainer = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadingMerchant, setLoadingMerchant] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingNoti, setLoadingNoti] = useState(false);
+
   const { onNavigateLogin } = useAuthActions()
 
-  const loading = loadingProfile || loadingMerchant || loadingProducts;
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
@@ -63,6 +63,28 @@ export const useHomeContainer = () => {
 
     }
   };
+
+  
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (await AppAsyncStorage.isTokenValid()) {
+          setLoadingNoti(true)
+          const response = await getNotifications()
+          if (response) {
+            setNotifications(response)
+          }
+        }
+
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoadingNoti(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
   useEffect(() => {
     fetchProfile(true)
   }, [])
@@ -253,10 +275,10 @@ export const useHomeContainer = () => {
     currentCategory,
     needToPay,
     allProducts,
-    loading,
     loadingMerchant,
     loadingProducts,
     loadingProfile,
+    loadingNoti,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,

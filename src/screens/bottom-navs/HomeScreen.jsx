@@ -42,6 +42,7 @@ const HomeScreen = () => {
     loadingMerchant,
     loadingProducts,
     loadingProfile,
+    loadingNoti,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -60,7 +61,7 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
-  if (loadingMerchant || loadingProducts || loadingProfile) {
+  if (loadingMerchant || loadingProducts || loadingProfile || loadingNoti) {
     return <HomeSkeleton />
   }
   return (
