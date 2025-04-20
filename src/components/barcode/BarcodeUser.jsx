@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import bwipjs from '@bwip-js/react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -8,21 +10,49 @@ import {
   View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import bwipjs from '@bwip-js/react-native';
+import { getProfile } from '../../axios';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { TextFormatter } from '../../utils';
 import { SeedText } from '../texts/SeedText';
+import { AppAsyncStorage } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+
 
 const width = Dimensions.get('window').width;
 
 export const BarcodeUser = ({
   hasBackground = true,
   showPoints = false,
-  user,
   style,
   onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
+  const [user, setUser] = useState(null);
+  const { updateOrderMessage } = useAppContext()
+
+  const fetchProfile = async () => {
+    try {
+      const isTokenValid = await AppAsyncStorage.isTokenValid()
+      if (isTokenValid) {
+        const response = await getProfile();
+        if (response) {
+          setUser(response);
+        }
+      }
+
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+  useEffect(() => {
+    fetchProfile()
+  }, [updateOrderMessage])
+
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile();
+    }, [])
+  );
 
   useEffect(() => {
     const generateBarcode = async () => {
@@ -58,7 +88,7 @@ export const BarcodeUser = ({
 
         {showPoints && (
           <Pressable style={styles.pointsBadge} onPress={onPress}>
-            <SeedText point={user?.seed} textStyle={{color: colors.white}} enableImage={true}/>
+            <SeedText point={user?.seed} textStyle={{ color: colors.white }} enableImage={true} />
           </Pressable>
         )}
 

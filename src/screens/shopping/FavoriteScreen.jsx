@@ -1,28 +1,20 @@
-import React, {useContext, useState, useEffect, useCallback} from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
 import {
-  Dimensions,
-  Image,
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Pressable,
+  StyleSheet
 } from 'react-native';
-import {Icon} from 'react-native-paper';
+import { getFavoriteProducts } from '../../axios';
 import {
   Column,
+  EmptyView,
   LightStatusBar,
   NormalHeader,
-  ProductsListVertical,
-  Row,
+  ProductsListVertical
 } from '../../components';
-import {colors} from '../../constants';
-import {getFavoriteProducts} from '../../axios';
-import {useFocusEffect} from '@react-navigation/native';
-import {ShoppingGraph} from '../../layouts/graphs';
+import { colors } from '../../constants';
+import { ShoppingGraph } from '../../layouts/graphs';
 
-const FavoriteScreen = ({navigation}) => {
+const FavoriteScreen = ({ navigation }) => {
   const [favorites, setFavorites] = useState([]);
 
   const fetchFavorites = async () => {
@@ -35,11 +27,11 @@ const FavoriteScreen = ({navigation}) => {
   };
 
   const onItemClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
   const onIconClick = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
+    navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
   };
   // khi màn hình được chọn thì dùng để tránh trường hợp cập nhập ui
   useFocusEffect(
@@ -54,19 +46,25 @@ const FavoriteScreen = ({navigation}) => {
         title="Sản phẩm yêu thích"
         onLeftPress={() => navigation.goBack()}
       />
-      <ProductsListVertical
-        title={null}
-        onIconClick={onIconClick}
-        onItemClick={onItemClick}
-        products={favorites}
-      />
+      {
+        favorites.length > 0 ?
+          <ProductsListVertical
+            title={null}
+            onIconClick={onIconClick}
+            onItemClick={onItemClick}
+            products={favorites}
+          /> :
+
+          <EmptyView message='Danh sách yêu thích của bạn đang trống' />
+      }
+
     </Column>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.fbBg,
+    backgroundColor: colors.white,
     flex: 1,
   },
 });

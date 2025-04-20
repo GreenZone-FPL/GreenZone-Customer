@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: GLOBAL_KEYS.PADDING_SMALL,
+    color: colors.black,
   },
   redText: {
     color: colors.red800,

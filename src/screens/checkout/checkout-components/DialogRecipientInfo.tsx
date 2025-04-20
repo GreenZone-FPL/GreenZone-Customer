@@ -59,8 +59,11 @@ export const DialogRecipientInfo: React.FC<DialogRecipientInfoProps> = ({
         }
     };
 
-    return (
-        <DialogBasic
+    return (    
+        <>
+        {
+            visible && 
+            <DialogBasic
             titleStyle={styles.title}
             title="Thay đổi thông tin người nhận"
             isVisible={visible}
@@ -85,6 +88,10 @@ export const DialogRecipientInfo: React.FC<DialogRecipientInfoProps> = ({
                 <PrimaryButton title="Cập nhật" onPress={handleConfirm} />
             </Column>
         </DialogBasic>
+        }
+        
+        </>
+       
     );
 };
 

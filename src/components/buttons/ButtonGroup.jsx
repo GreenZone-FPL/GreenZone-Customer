@@ -1,13 +1,13 @@
 
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../constants';
 
 export const ButtonGroup = ({ titles, tabIndex, onTabChange }) => {
     return (
         <View style={styles.tabContainer}>
             {titles.map((title, index) => (
-                <TouchableOpacity
+                <Pressable
                     key={index}
                     style={[
                         styles.tabItem,
@@ -23,7 +23,7 @@ export const ButtonGroup = ({ titles, tabIndex, onTabChange }) => {
                     >
                         {title}
                     </Text>
-                </TouchableOpacity>
+                </Pressable>
             ))}
         </View>
     );

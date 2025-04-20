@@ -2,20 +2,20 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
   Dimensions,
+  Image,
+  Linking,
   Modal,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
-  Image,
-  Linking
+  View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { PrimaryButton } from '../buttons/PrimaryButton';
-import { NormalText } from '../texts/NormalText';
-import { Row } from '../containers/Row';
 import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
+import { NormalText } from '../texts/NormalText';
 import { DialogBasic } from './DialogBasic';
 
 const { width } = Dimensions.get('window');
@@ -40,7 +40,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
   const CustomRatingBar = () => (
     <View style={styles.ratingContainer}>
       {[1, 2, 3, 4, 5].map((rating, index) => (
-        <TouchableOpacity
+        <Pressable
           key={index}
           activeOpacity={1}
           onPress={() => setDefaultRating(rating)}
@@ -50,7 +50,7 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
             size={35}
             color={colors.yellow500}
           />
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );
@@ -125,13 +125,13 @@ export const DialogReviewOder = ({ isVisible, onHide, item }) => {
             <View style={styles.header}>
               <View style={styles.placeholderIcon} />
               <Text style={styles.titleText}>Đánh giá dịch vụ</Text>
-              <TouchableOpacity onPress={() => setVoteRating(false)}>
+              <Pressable onPress={() => setVoteRating(false)}>
                 <Icon
                   source="close"
                   size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                   color={colors.primary}
                 />
-              </TouchableOpacity>
+              </Pressable>
             </View>
             <View style={styles.body}>
               <NormalText text='Tại cửa hàng'/>

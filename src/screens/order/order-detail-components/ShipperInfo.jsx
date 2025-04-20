@@ -1,20 +1,51 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, Image, Linking } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import ZegoUIKit from '@zegocloud/zego-uikit-rn';
+import React, { useEffect } from 'react';
+import { Image, Linking, Pressable, StyleSheet, Text } from 'react-native';
+import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
-import { Column, NormalText, Row } from '../../../components';
+import { Column, CustomCallButton, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 
-export const ShipperInfo = ({ messageClick, shipper }) => {
- 
-  const handleCall = () => {
-    if (!shipper?.phoneNumber) return;
-    const phoneNumber = `tel:${shipper.phoneNumber}`;
-    Linking.openURL(phoneNumber).catch((err) =>
-      console.error('Failed to open dialer:', err)
-    );
+
+export const ShipperInfo = (props) => {
+  const { shipper } = props;
+  console.log('shipper', JSON.stringify(shipper, null, 3))
+  const navigation = useNavigation()
+
+  useEffect(() => {
+    const handleOrientationChange = (orientation) => {
+      let orientationValue = 0;
+      if (orientation === 'LANDSCAPE-LEFT') orientationValue = 1;
+      else if (orientation === 'LANDSCAPE-RIGHT') orientationValue = 3;
+      console.log('📱 Orientation:', orientation, orientationValue);
+      ZegoUIKit.setAppOrientation(orientationValue);
+    };
+
+
+
+    Orientation.addOrientationListener(handleOrientationChange);
+    return () => {
+      Orientation.removeOrientationListener(handleOrientationChange);
+    };
+  }, []);
+
+
+  const handleCallInvitationPress = (errorCode, errorMessage, errorInvitees) => {
+    if (errorCode !== 0) {
+      console.log('🚨 Zego call error:', { errorCode, errorMessage, errorInvitees });
+    } else {
+      console.log('📞 Call invitation sent successfully.');
+    }
   };
 
-  console.log('shipper', JSON.stringify(shipper, null, 2))
+  const handleSend = () => {
+    if (!shipper?.phoneNumber) return;
+
+    const message = `sms:${shipper.phoneNumber}`;
+
+    Linking.openURL(message).catch((err) => console.error("Failed to open SMS app:", err));
+  };
 
   return (
     <Row style={styles.container}>
@@ -37,13 +68,33 @@ export const ShipperInfo = ({ messageClick, shipper }) => {
         <NormalText text={`Điện thoại: ${shipper.phoneNumber}`} />
       </Column>
 
-      <Row style={styles.iconRow}>
-        <Pressable onPress={handleCall}>
-          <Icon source="phone-outline" color={colors.black} size={20} />
+      <Row>
+        <CustomCallButton
+          userName={`${shipper?.firstName ?? ''} ${shipper?.lastName ?? ''}`.trim()}
+          userID={shipper?.phoneNumber ?? ''}
+          navigation={navigation}
+        />
+        {/* <ZegoSendCallInvitationButton
+          invitees={[
+            {
+              userID: shipper?.phoneNumber ?? '',
+              userName: `${shipper?.firstName ?? ''} ${shipper?.lastName ?? ''}`.trim()
+            }
+          ]}
+          isVideoCall={false}
+          resourceID={"zegouikit_call"}
+          showWaitingPageWhenGroupCall={true}
+          onPressed={handleCallInvitationPress}
+        /> */}
+
+        <Pressable style={styles.iconButton} onPress={handleSend}>
+          <Icon
+            source="message"
+            color={colors.blue600}
+            size={20}
+          />
         </Pressable>
-        <Pressable onPress={messageClick}>
-          <Icon source="message-outline" color={colors.black} size={20} />
-        </Pressable>
+
       </Row>
     </Row>
   );
@@ -69,10 +120,19 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.yellow700,
+    color: colors.blue600,
     fontWeight: '500',
   },
   iconRow: {
     gap: 24,
+  },
+  iconButton: {
+    padding: 11,
+    borderRadius: 24,
+    backgroundColor: colors.fbBg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8
+
   },
 });

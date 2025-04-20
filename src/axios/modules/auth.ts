@@ -8,7 +8,7 @@ export const getProfile = async (): Promise<void> => {
 
     return response.data;
   } catch (error) {
-    console.log('error:', error); // debug
+    console.log('error:', error);
     throw error;
   }
 };
@@ -19,6 +19,7 @@ export const register = async (request: RegisterRequest) => {
 
     const {data} = response;
 
+    console.log('data', JSON.stringify(data, null, 2));
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -27,10 +28,10 @@ export const register = async (request: RegisterRequest) => {
       AppAsyncStorage.STORAGE_KEYS.refreshToken,
       data.token.refreshToken.token,
     );
-   
+
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
 
     return data;
@@ -40,7 +41,7 @@ export const register = async (request: RegisterRequest) => {
   }
 };
 
-export const sendOTP = async phoneNumber => {
+export const sendOTP = async (phoneNumber: string): Promise<void> => {
   try {
     const response = await axiosInstance.post('/auth/otp/send', {phoneNumber});
     return response.data;
@@ -57,7 +58,8 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       code,
     });
     const {data} = response;
-
+    
+    console.log('data', JSON.stringify(data, null, 2));
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -68,8 +70,8 @@ export const verifyOTP = async ({phoneNumber, code}) => {
     );
 
     await AppAsyncStorage.storeData(
-      AppAsyncStorage.STORAGE_KEYS.lastName,
-      data.user.lastName,
+      AppAsyncStorage.STORAGE_KEYS.user,
+      data.user,
     );
 
     return data;

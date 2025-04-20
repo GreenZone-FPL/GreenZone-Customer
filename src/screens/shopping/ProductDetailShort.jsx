@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { Icon, IconButton } from 'react-native-paper';
+import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
-import { CheckoutFooter, Column, NormalLoading, NotesList, OverlayStatusBar, RadioGroup, Row, SelectableGroup } from '../../components';
+import { CheckoutFooter, OverlayStatusBar, RadioGroup, Row, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { CartManager, Toaster } from '../../utils';
+import FastImage from 'react-native-fast-image';
 
 const { width, height } = Dimensions.get('window')
 const ProductDetailShort = ({ route, navigation }) => {
@@ -15,13 +16,12 @@ const ProductDetailShort = ({ route, navigation }) => {
     const [product, setProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedToppings, setSelectedToppings] = useState([]);
-    const [selectedNotes, setSelectedNotes] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
     const { productId } = route.params
-    const [customNote, setCustomNote] = useState("");
 
-    const { cartDispatch } = useAppContext()
+
+    const { cartDispatch, cartState } = useAppContext()
 
 
     useEffect(() => {
@@ -73,7 +73,10 @@ const ProductDetailShort = ({ route, navigation }) => {
 
                 product &&
 
-                <Pressable style={styles.contentContainer} onPress={() => {}}>
+                <Pressable style={styles.contentContainer} onPress={() => { }}>
+
+
+
                     <ProductInfo
                         product={product}
                         showFullDescription={showFullDescription}
@@ -84,7 +87,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.modalContent}>
-
+                       
                         {
                             product.variant.length > 1 && selectedVariant &&
                             <View style={styles.infoContainer}>
@@ -120,7 +123,6 @@ const ProductDetailShort = ({ route, navigation }) => {
                         }
 
 
-
                     </ScrollView>
 
                     <CheckoutFooter
@@ -128,7 +130,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                         backgroundColor={colors.white}
                         quantity={quantity}
                         handlePlus={() => {
-                            if (quantity < 10) {
+                            if (quantity < 99) {
                                 setQuantity(quantity + 1)
                             }
                         }}
@@ -152,8 +154,14 @@ const ProductDetailShort = ({ route, navigation }) => {
 
 
                             const productPrice = totalAmount / quantity
-                            await CartManager
-                                .addToCart(product, selectedVariant, updatedToppings, productPrice, quantity, cartDispatch)
+                            await CartManager.addToCart(
+                                product,
+                                selectedVariant,
+                                updatedToppings,
+                                productPrice,
+                                quantity,
+                                cartDispatch
+                            )
 
 
                             navigation.goBack()
@@ -236,6 +244,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         gap: 8
     },
+ 
 });
 
 export default ProductDetailShort

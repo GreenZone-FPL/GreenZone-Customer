@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, StyleSheet, Pressable, Text } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
 import PropTypes from 'prop-types';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils/textFormatter';
 
@@ -12,10 +12,10 @@ const IconWithBadgePropTypes = {
 
 export const IconWithBadge = ({ quantity = 10, onPress }) => {
     return (
-        <View style={styles.container}>
-            <Pressable onPress={onPress} style={styles.button}>
+        <Pressable style={styles.container} onPress={onPress}>
+            <View style={styles.button}>
                 <Feather name="bell" style={styles.icon} />
-            </Pressable>
+            </View>
             {
                 (quantity < GLOBAL_KEYS.MAX_QUANTITY &&
                     quantity > GLOBAL_KEYS.MIN_QUANTITY) &&
@@ -25,7 +25,7 @@ export const IconWithBadge = ({ quantity = 10, onPress }) => {
             }
 
 
-        </View>
+        </Pressable>
     );
 };
 

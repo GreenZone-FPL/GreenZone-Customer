@@ -2,40 +2,40 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
+  Image,
   ImageBackground,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  Image
 } from 'react-native';
 import { Icon } from 'react-native-paper';
+import { getAllVoucher } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   BarcodeUser,
   Column,
   LightStatusBar,
   NormalText,
   Row,
-  TitleText,
   VoucherVertical,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useVoucherContainer } from '../../containers';
-import { AppAsyncStorage, Toaster } from '../../utils';
-import { getAllVoucher } from '../../axios';
+import {
+  useAuthActions,
+  useVoucherContainer
+} from '../../containers';
 import { VoucherGraph } from '../../layouts/graphs';
+import { AppAsyncStorage, Toaster } from '../../utils';
 
 const width: number = Dimensions.get('window').width;
-const VoucherScreen = ({ navigation }) => {
-  const { authState, user } = useVoucherContainer();
-  const { onNavigateLogin } = useAppContainer();
+const VoucherScreen = ({navigation}) => {
+  const {authState} = useVoucherContainer();
+  const {onNavigateLogin} = useAuthActions();
 
   const [vouchers, setVouchers] = useState([]);
   useEffect(() => {
     const fetchVouchers = async () => {
-      console.log(await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.accessToken))
       try {
         if (await AppAsyncStorage.isTokenValid()) {
           const response = await getAllVoucher();
@@ -52,27 +52,23 @@ const VoucherScreen = ({ navigation }) => {
     <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
       <LightStatusBar />
 
-      {!authState.lastName ?
-
+      {!authState.lastName ? (
         <ImageBackground
           source={require('../../assets/images/bgvoucher.png')}
-          resizeMode="cover"
+          resizeMode="stretch"
           style={styles.imageBg}>
-          <Column style={{ padding: 16, gap: 16 }}>
-            <AuthContainer onPress={onNavigateLogin} />
-          </Column>
+          <AuthContainer onPress={onNavigateLogin} />
         </ImageBackground>
-        :
-
+      ) : (
         <ImageBackground
           source={require('../../assets/images/bgvoucher.png')}
           resizeMode="cover"
           style={styles.imageBg}>
-          <Column style={{ padding: 16, gap: 16 }}>
+          <Column style={{padding: 16, gap: 16}}>
             <Pressable
               style={styles.myTicket}
               onPress={() => {
-                navigation.navigate(VoucherGraph.MyVouchersScreen)
+                navigation.navigate(VoucherGraph.MyVouchersScreen);
               }}>
               <Icon
                 source="ticket"
@@ -83,45 +79,51 @@ const VoucherScreen = ({ navigation }) => {
             </Pressable>
 
             <BarcodeUser
-              user={user}
               hasBackground={true}
               showPoints={true}
-              style={{ width: Dimensions.get('window').width }}
+              style={{width: Dimensions.get('window').width}}
             />
           </Column>
         </ImageBackground>
-      }
+      )}
 
-      {
-        authState.lastName ?
-          <Column>
-            <Row style={{ margin: 16 }}>
-              <Card
-                iconName="shield-check"
-                color={colors.orange700}
-                title="Quyền lợi của bạn"
-                onPress={() => { Toaster.show('Tính năng đang phát triển') }}
-              />
-              <Card iconName="gift" color={colors.primary} title="Đổi thưởng" onPress={() => { navigation.navigate(VoucherGraph.SeedScreen) }} />
-            </Row>
-            <VoucherVertical vouchers={vouchers} type={1} route={{ params: { isUpdateOrderInfo: false } }} />
-
-          </Column>
-          :
-
-          <Image
-            source={require('../../assets/images/logo.png')}
-            style={styles.logo}
+      {authState.lastName ? (
+        <Column>
+          <Row style={{margin: 16}}>
+            <Card
+              iconName="shield-check"
+              color={colors.orange700}
+              title="Quyền lợi của bạn"
+              onPress={() => {
+                Toaster.show('Tính năng đang phát triển');
+              }}
+            />
+            <Card
+              iconName="gift"
+              color={colors.primary}
+              title="Đổi thưởng"
+              onPress={() => {
+                navigation.navigate(VoucherGraph.SeedScreen);
+              }}
+            />
+          </Row>
+          <VoucherVertical
+            vouchers={vouchers}
+            type={1}
+            route={{params: {isUpdateOrderInfo: false}}}
           />
-
-      }
-
+        </Column>
+      ) : (
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={styles.logo}
+        />
+      )}
     </ScrollView>
   );
 };
 
-
-const Card = ({ iconName, color, title, onPress }) => {
+const Card = ({iconName, color, title, onPress}) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <Icon
@@ -139,13 +141,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flexDirection: 'column',
     gap: 16,
-
-
   },
   imageBg: {
     width: '100%',
     height: width / 1.5,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 
   title: {
@@ -163,13 +163,13 @@ const styles = StyleSheet.create({
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     width: 150,
-    alignItems: 'center', justifyContent: 'center'
-
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textVoucher: {
     color: colors.primary,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   logo: {
     width: Dimensions.get('window').width / 1.5,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0,
     shadowRadius: 1,
     elevation: 1.5,

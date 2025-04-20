@@ -1,9 +1,9 @@
+import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 import {
@@ -19,7 +19,6 @@ import {
 import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useAppContext } from '../../context/appContext';
-import { ShoppingGraph } from '../../layouts/graphs';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -31,16 +30,16 @@ import {
   ProductsInfo,
   RecipientInfo,
   ShipperInfo,
+  TimelineStatus
 } from './order-detail-components';
 
-const OrderDetailScreen = ({ route }) => {
-  const { orderId } = route.params;
+const OrderDetailScreen = () => {
+  const { orderId } = useRoute().params;
   const { cartState } = useAppContext();
 
   const {
     cancelDialogVisible,
     setCancelDialogVisible,
-    navigation,
     orderDetail,
     loading,
     paymentMethod,
@@ -62,7 +61,6 @@ const OrderDetailScreen = ({ route }) => {
   }
 
   return (
-
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Chi tiết đơn hàng" onLeftPress={backAction} />
@@ -73,20 +71,15 @@ const OrderDetailScreen = ({ route }) => {
           style={styles.containerContent}
         >
           <Row style={styles.statusRow}>
-          
+
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
             <StatusText status={orderDetail.status} />
           </Row>
-
+          <TimelineStatus details={orderDetail} />
 
           {orderDetail.deliveryMethod !== DeliveryMethod.PICK_UP.value && ['shippingOrder', 'readyForPickup'].includes(orderDetail.status) && (
-            <ShipperInfo
-              messageClick={() =>
-                navigation.navigate(ShoppingGraph.ChatScreen)
-              }
-              shipper={orderDetail.shipper}
-            />
+            <ShipperInfo shipper={orderDetail.shipper} />
           )}
 
           {orderDetail.store && <MerchantInfo store={orderDetail.store} />}
@@ -110,11 +103,7 @@ const OrderDetailScreen = ({ route }) => {
           />
 
 
-
-
           <Row style={styles.buttonRow}>
-
-
             {(orderDetail.status ===
               OrderStatus.PENDING_CONFIRMATION.value ||
               orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
@@ -137,22 +126,28 @@ const OrderDetailScreen = ({ route }) => {
           </Row>
         </ScrollView>
       )}
+      {
+        cancelDialogVisible &&
+        <CancelDialog
+          visible={cancelDialogVisible}
+          onHide={() => setCancelDialogVisible(false)}
+          orderId={orderId}
+          callBack={callBackAfterCancel}
+        />
+      }
 
-      <CancelDialog
-        visible={cancelDialogVisible}
-        onHide={() => setCancelDialogVisible(false)}
-        orderId={orderId}
-        callBack={callBackAfterCancel}
-      />
+      {
+        dialogPaymentMethodVisible &&
+        <DialogPaymentMethod
+          methods={onlineMethods}
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
+        />
+      }
 
-      <DialogPaymentMethod
-        methods={onlineMethods}
-        visible={dialogPaymentMethodVisible}
-        onHide={() => setDialogPaymentMethodVisible(false)}
-        cartState={cartState}
-        selectedMethod={paymentMethod}
-        handleSelectMethod={handleSelectMethod}
-      />
     </View>
   );
 };
@@ -193,21 +188,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 13
   },
-  codButton: {
-    backgroundColor: colors.white,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  codTitle: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    color: colors.primary,
-    fontWeight: '500',
-    flex: 1
-  },
   cancelButton: {
     backgroundColor: colors.white,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    borderRadius: 12,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',

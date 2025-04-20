@@ -3,17 +3,15 @@ import React from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+  Text
 } from 'react-native';
-import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
+import { Column } from '../containers/Column';
+import { Row } from '../containers/Row';
 import { OverlayStatusBar } from '../status-bars/OverlayStatusBar';
-import {Column} from '../containers/Column'
-import {Row} from '../containers/Row'
 
 const DialogNotificationPropTypes = {
   isVisible: PropTypes.bool.isRequired,
@@ -49,12 +47,12 @@ export const DialogNotification = ({ isVisible, onHide, title, style, textConten
               <Column style={styles.body}>
                 <Text style={styles.textOrder}>{textContent} </Text>
               </Column>
-              <TouchableOpacity style={styles.btn}>
+              <Pressable style={styles.btn}>
                 <Text style={styles.textBtn} onPress={onHide}>{textHide}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.btn} onPress={onConfirm}>
+              </Pressable>
+              <Pressable style={styles.btn} onPress={onConfirm}>
                 <Text style={styles.textBtn}>{textConfirm}</Text>
-              </TouchableOpacity>
+              </Pressable>
             </KeyboardAvoidingView>
           </ScrollView>
         </Column>

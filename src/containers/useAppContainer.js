@@ -1,26 +1,26 @@
-import { useEffect } from 'react';
-import { navigationRef } from '../../App';
-import { Alert, BackHandler } from 'react-native';
-import socketService from '../services/socketService';
-import { useAppContext } from '../context/appContext';
-import { OrderStatus } from '../constants';
-import { showMessage } from 'react-native-flash-message';
-import { MainGraph, OrderGraph } from '../layouts/graphs';
 import { useNavigation } from '@react-navigation/native';
-import { AppAsyncStorage, CartManager } from '../utils';
-import { AuthActionTypes, cartInitialState } from '../reducers';
+import { useEffect } from 'react';
+import { Alert, BackHandler } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
+import { navigationRef } from '../../App';
+import { OrderStatus } from '../constants';
+import { useAppContext } from '../context/appContext';
+import { OrderGraph } from '../layouts/graphs';
+import { AuthActionTypes } from '../reducers';
+import socketService from '../services/socketService';
+import { AppAsyncStorage } from '../utils';
+import { useAuthActions } from './auth/useAuthActions';
 
 export const useAppContainer = () => {
   const {
     updateOrderMessage,
     setUpdateOrderMessage,
-    cartDispatch,
     authDispatch,
     authState,
-    setAwaitingPayments,
   } = useAppContext();
 
   const navigation = useNavigation();
+  const { onNavigateLogin } = useAuthActions()
 
   useEffect(() => {
     const backAction = () => {
@@ -101,9 +101,9 @@ export const useAppContainer = () => {
         updateOrderMessage.status,
       );
 
-      const duration = 2000; // Thời gian hiển thị message
+      const duration = 1500; // Thời gian hiển thị message
 
-    
+
       showMessage({
         message: updateOrderMessage.message,
         type,
@@ -134,12 +134,15 @@ export const useAppContainer = () => {
         // Gọi lại tất cả các đơn hàng đã có trong activeOrders
         await socketService.rejoinOrder(data => {
           // Cập nhật trạng thái đơn hàng khi join thành công
-          setUpdateOrderMessage({
-            visible: true,
-            orderId: data.orderId,
-            message: data.message,
-            status: data.status,
-          });
+          if (data.status != updateOrderMessage.status) {
+            setUpdateOrderMessage({
+              visible: true,
+              orderId: data.orderId,
+              message: data.message,
+              status: data.status,
+            });
+          }
+
         });
       } catch (error) {
         console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);
@@ -149,43 +152,7 @@ export const useAppContainer = () => {
     initializeSocket().then(r => { });
 
     return () => {
-      // Ngắt kết nối socket khi component bị unmount
       socketService.disconnect();
     };
   }, [setUpdateOrderMessage]);
-
-  const onLogout = async () => {
-    // Xóa token khỏi AsyncStorage
-    await AppAsyncStorage.clearAll();
-    setAwaitingPayments(null);
-    await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
-    authDispatch({
-      type: AuthActionTypes.LOGOUT,
-      payload: { isLoggedIn: false, lastName: null },
-    });
-    navigation.reset({
-      index: 0,
-      routes: [{ name: MainGraph.graphName }],
-    });
-  };
-
-  const onNavigateLogin = () => {
-    authDispatch({
-      type: AuthActionTypes.LOGIN,
-      payload: { needLogin: true, needAuthen: true, needRegister: false },
-    });
-  };
-
-  const onNavigateRegister = () => {
-    authDispatch({
-      type: AuthActionTypes.LOGIN,
-      payload: { needLogin: false, needAuthen: true, needRegister: true },
-    });
-  };
-
-  return {
-    onLogout,
-    onNavigateLogin,
-    onNavigateRegister,
-  };
 };

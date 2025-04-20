@@ -108,17 +108,15 @@ export const useUpdateProfileContainer = (profile) => {
 
             if (result?._id) {
                 setHasImageChanged(false);
-                await AppAsyncStorage.storeData(
-                    AppAsyncStorage.STORAGE_KEYS.lastName,
-                    result.lastName,
-                );
-                await authDispatch({
+
+                authDispatch({
                     type: AuthActionTypes.LOGIN,
                     payload: {
                         needLogin: false,
                         needRegister: false,
                         isLoggedIn: true,
                         lastName: result.lastName,
+                        firstName: result.firstName
                     },
                 });
                 await CartManager.updateOrderInfo(cartDispatch, {
@@ -142,20 +140,14 @@ export const useUpdateProfileContainer = (profile) => {
         setDob,
         gender,
         setGender,
-        avatar, 
-        setAvatar,
+        avatar,
         loading,
-        setLoading, 
-        isFocus,
         setIsFocus,
         open,
         setOpen,
         selectedImages,
-        setSelectedImages,
         isImagePickerVisible,
         setImagePickerVisible,
-        hasImageChanged,
-        setHasImageChanged,
         lastNameMessage,
         setLastNameMessage,
         openCamera,

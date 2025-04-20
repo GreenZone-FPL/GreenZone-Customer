@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -11,6 +11,7 @@ import {
   Row,
 } from '../../components';
 
+import { useNavigation } from '@react-navigation/native';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
 import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
 import { useAppContext } from '../../context/appContext';
@@ -26,6 +27,7 @@ import {
   DialogPaymentMethod,
   DialogRecipientInfo,
   DialogSelectTime,
+  EmptyView,
   Footer,
   PaymentDetailsView,
   PaymentMethodView,
@@ -36,12 +38,12 @@ import {
   TimeSection,
 } from './checkout-components';
 
-const { width } = Dimensions.get('window');
+
 const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useAppContext();
+  const navigation = useNavigation()
 
   const {
-    navigation,
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,
     dialogRecipientInforVisible,
@@ -65,6 +67,11 @@ const CheckoutScreen = () => {
     onApproveCreateOrder,
   } = useCheckoutContainer();
 
+  if (cartState.orderItems.length === 0) {
+    return (
+      <EmptyView />
+    )
+  }
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -73,10 +80,10 @@ const CheckoutScreen = () => {
         onLeftPress={() => navigation.goBack()}
       />
 
-
-
-      <NormalLoading visible={loading} />
-
+      {
+        loading &&
+        <NormalLoading visible={loading} />
+      }
 
       <ScrollView style={styles.containerContent}>
         <Column
@@ -108,7 +115,7 @@ const CheckoutScreen = () => {
             onRightPress={() => setDialogShippingMethodVisible(true)}
           />
 
-          {cartState?.deliveryMethod === DeliveryMethod.PICK_UP.value && (
+          {cartState.deliveryMethod === DeliveryMethod.PICK_UP.value && (
             <StoreAddress
               storeInfo={cartState?.storeInfo}
               chooseMerchant={() => {
@@ -165,20 +172,18 @@ const CheckoutScreen = () => {
           )}
         </Column>
 
-        {cartState.orderItems.length > 0 && (
-          <ProductsInfo
-            items={cartState.orderItems}
-            onEditItem={item =>
-              navigation.navigate(ShoppingGraph.EditCartItemScreen, {
-                updateItem: item,
-              })
-            }
-            confirmDelete={product => {
-              setSelectedProduct(product);
-              setActionDialogVisible(true);
-            }}
-          />
-        )}
+        <ProductsInfo
+          items={cartState.orderItems}
+          onEditItem={item =>
+            navigation.navigate(ShoppingGraph.EditCartItemScreen, {
+              updateItem: item,
+            })
+          }
+          confirmDelete={product => {
+            setSelectedProduct(product);
+            setActionDialogVisible(true);
+          }}
+        />
 
         <PaymentDetailsView
           cartState={cartState}
@@ -194,6 +199,7 @@ const CheckoutScreen = () => {
           selectedMethod={paymentMethod}
           openDialog={() => setDialogPaymentMethodVisible(true)}
         />
+
       </ScrollView>
 
       <Footer
@@ -203,75 +209,106 @@ const CheckoutScreen = () => {
         cartState={cartState}
       />
 
+      {
+        dialogPaymentMethodVisible &&
+        <DialogPaymentMethod
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
+        />
+      }
 
-      <DialogPaymentMethod
-        visible={dialogPaymentMethodVisible}
-        onHide={() => setDialogPaymentMethodVisible(false)}
-        cartState={cartState}
-        selectedMethod={paymentMethod}
-        handleSelectMethod={handleSelectMethod}
-      />
+      {
+        dialogSelecTimeVisible &&
+        <DialogSelectTime
+          visible={dialogSelecTimeVisible}
+          onClose={() => setDialogSelectTimeVisible(false)}
+          onConfirm={data => {
+            setTimeInfo(data);
 
-      <DialogSelectTime
-        visible={dialogSelecTimeVisible}
-        onClose={() => setDialogSelectTimeVisible(false)}
-        onConfirm={data => {
-          // console.log('timeInfo', data);
-          setTimeInfo(data);
-          cartDispatch({
-            type: CartActionTypes.UPDATE_ORDER_INFO,
-            payload: { fulfillmentDateTime: data.fulfillmentDateTime },
-          });
-          setDialogSelectTimeVisible(false);
-        }}
-      />
+            setTimeout(() => {
+              cartDispatch({
+                type: CartActionTypes.UPDATE_ORDER_INFO,
+                payload: { fulfillmentDateTime: data.fulfillmentDateTime },
+              });
+            }, 0)
+            setDialogSelectTimeVisible(false);
+          }}
+        />
+      }
 
-      <ActionDialog
-        visible={dialogCreateOrderVisible}
-        title="Xác nhận"
-        content={`Bạn xác nhận đặt đơn hàng?`}
-        cancelText="Hủy"
-        approveText="Đồng ý"
-        onCancel={() => setDialogCreateOrderVisible(false)}
-        onApprove={onApproveCreateOrder}
-      />
-      <ActionDialog
-        visible={actionDialogVisible}
-        title="Xác nhận"
-        content={`Bạn có chắc chắn muốn xóa "${selectedProduct?.productName}"?`}
-        cancelText="Hủy"
-        approveText="Xóa"
-        onCancel={() => setActionDialogVisible(false)}
-        onApprove={() => deleteProduct(selectedProduct.itemId)}
-      />
+      {
+        dialogCreateOrderVisible &&
+        <ActionDialog
+          visible={dialogCreateOrderVisible}
+          title="Xác nhận"
+          content={`Bạn xác nhận đặt đơn hàng?`}
+          cancelText="Hủy"
+          approveText="Đồng ý"
+          onCancel={() => setDialogCreateOrderVisible(false)}
+          onApprove={onApproveCreateOrder}
+        />
+      }
 
-      <DialogRecipientInfo
-        visible={dialogRecipientInforVisible}
-        onHide={() => setDialogRecipientInfoVisible(false)}
-        onConfirm={data => {
-          CartManager.updateOrderInfo(cartDispatch, {
-            consigneeName: data.name,
-            consigneePhone: data.phoneNumber,
-          });
-          setDialogRecipientInfoVisible(false);
-        }}
-      />
+      {
+        actionDialogVisible &&
+        <ActionDialog
+          visible={actionDialogVisible}
+          title="Xác nhận"
+          content={`Bạn có chắc chắn muốn xóa "${selectedProduct?.productName}"?`}
+          cancelText="Hủy"
+          approveText="Xóa"
+          onCancel={() => setActionDialogVisible(false)}
+          onApprove={() => deleteProduct(selectedProduct.itemId)}
+        />
+      }
 
-      <DeliveryMethodSheet
-        visible={dialogShippingMethodVisible}
-        selectedOption={
-          cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
-            ? DeliveryMethod.PICK_UP
-            : DeliveryMethod.DELIVERY
-        }
-        onClose={() => setDialogShippingMethodVisible(false)}
-        onSelect={async option => {
-          await CartManager.updateOrderInfo(cartDispatch, {
-            deliveryMethod: option.value,
-          });
-          setDialogShippingMethodVisible(false);
-        }}
-      />
+      {
+        dialogRecipientInforVisible &&
+        <DialogRecipientInfo
+          visible={dialogRecipientInforVisible}
+          onHide={() => setDialogRecipientInfoVisible(false)}
+          onConfirm={data => {
+            setTimeout(() => {
+              CartManager.updateOrderInfo(cartDispatch, {
+                consigneeName: data.name,
+                consigneePhone: data.phoneNumber,
+              }).catch(error => {
+                console.log('Lỗi khi updateOrderInfo:', error);
+              });
+            }, 0)
+
+            setDialogRecipientInfoVisible(false);
+          }}
+        />
+      }
+
+      {
+        dialogShippingMethodVisible &&
+        <DeliveryMethodSheet
+          visible={dialogShippingMethodVisible}
+          selectedOption={
+            cartState.deliveryMethod === DeliveryMethod.PICK_UP.value
+              ? DeliveryMethod.PICK_UP
+              : DeliveryMethod.DELIVERY
+          }
+          onClose={() => setDialogShippingMethodVisible(false)}
+          onSelect={async option => {
+            setDialogShippingMethodVisible(false);
+            try {
+              await CartManager.updateOrderInfo(cartDispatch, {
+                deliveryMethod: option.value,
+              })
+            } catch (error) {
+              console.log('Lỗi khi updateOrderInfo:', error);
+            }
+
+          }}
+        />
+      }
+
     </SafeAreaView>
   );
 };

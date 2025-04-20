@@ -1,16 +1,18 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Dimensions,
   FlatList,
+  Pressable,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  TouchableOpacity
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Icon} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {TextFormatter} from '../../utils';
+import { Icon } from 'react-native-paper';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { Column } from '../containers/Column';
+import { NormalText } from '../texts/NormalText';
+import { TitleText } from '../texts/TitleText';
 
 const width = Dimensions.get('window').width;
 
@@ -22,8 +24,12 @@ export const ProductsListVertical = ({
   products,
 }) => {
   return (
-    <View style={styles.container}>
-      {title && <Text style={styles.title}>{title}</Text>}
+    <Column style={styles.container}>
+      {
+        title &&
+        <TitleText text={title} />
+      }
+
       <FlatList
         showsVerticalScrollIndicator={false}
         data={products}
@@ -32,41 +38,43 @@ export const ProductsListVertical = ({
         nestedScrollEnabled
         initialNumToRender={10}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemProduct
             item={item}
             onItemClick={() => onItemClick(item._id)}
             onIconClick={() => onIconClick(item._id)}
           />
         )}
-        contentContainerStyle={{gap: 16}}
+        contentContainerStyle={{ gap: 16 }}
         scrollEnabled={scrollEnabled}
       />
-    </View>
+    </Column>
   );
 };
 
-const ItemProduct = ({item, onItemClick, onIconClick}) => {
+const ItemProduct = ({ item, onItemClick, onIconClick }) => {
   return (
-    <View style={styles.itemProduct}>
-      <TouchableOpacity onPress={onItemClick}>
-        <FastImage
-          source={{uri: item.image, priority: FastImage.priority.high}}
-          style={styles.itemImage}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-      </TouchableOpacity>
-      <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.name}</Text>
-        <Text style={styles.productPrice}>
-          {TextFormatter.formatCurrency(item.originalPrice)}
-          {/* {item.originalPrice.toLocaleString('vi-VN')}đ */}
-        </Text>
-      </View>
+    <Pressable style={styles.itemProduct} onPress={onItemClick}>
+
+      <FastImage
+        source={{ uri: item.image, priority: FastImage.priority.high }}
+        style={styles.itemImage}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+
+      <Column style={styles.productInfo}>
+        <TitleText text={item.name} />
+
+        <NormalText
+          style={styles.productPrice}
+          text={TextFormatter.formatCurrency(item.originalPrice)} />
+
+      </Column>
+
       <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
         <Icon source="plus" size={22} color={colors.white} />
       </TouchableOpacity>
-    </View>
+    </Pressable>
   );
 };
 
@@ -76,20 +84,11 @@ const styles = StyleSheet.create({
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
   },
-  title: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '500',
-    color: colors.black,
-  },
-
-  flatListContentContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
   itemProduct: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     flex: 1,
     marginVertical: GLOBAL_KEYS.PADDING_SMALL,
+    gap: 16
   },
   itemImage: {
     width: width / 4.5,
@@ -99,11 +98,6 @@ const styles = StyleSheet.create({
   productInfo: {
     flexDirection: 'column',
     flex: 1,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-  },
-  productName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    fontWeight: '500',
   },
   productPrice: {
     marginTop: GLOBAL_KEYS.PADDING_SMALL,
@@ -111,11 +105,9 @@ const styles = StyleSheet.create({
     color: colors.red900,
   },
   addButton: {
+    alignSelf: 'flex-end',
     borderRadius: 20,
     backgroundColor: colors.primary,
-    position: 'absolute',
-    end: 0,
-    bottom: 0,
     padding: 4,
   },
 });

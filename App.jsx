@@ -1,10 +1,20 @@
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
+import {
+  ZegoUIKitPrebuiltCallInCallScreen,
+  ZegoUIKitPrebuiltCallWaitingScreen,
+} from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import React, {useEffect} from 'react';
+import {LogBox} from 'react-native';
+import FlashMessage from 'react-native-flash-message';
+import 'react-native-gesture-handler';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {PaperProvider} from 'react-native-paper';
+import 'react-native-reanimated';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {AppContextProvider, useAppContext} from './src/context/appContext';
 import Toast from 'react-native-toast-message';
+import {useAppContainer} from './src/containers/useAppContainer';
+import {AppContextProvider, useAppContext} from './src/context/appContext';
 import {
   AppGraph,
   AuthGraph,
@@ -17,43 +27,43 @@ import {
 } from './src/layouts/graphs';
 import MainNavigation from './src/layouts/MainNavigation';
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
+import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
 import AddressScreen from './src/screens/address/AddressScreen';
 import MapAdressScreen from './src/screens/address/MapAdressScreen';
 import NewAddressScreen from './src/screens/address/NewAddressScreen';
 import SelectAddressScreen from './src/screens/address/SelectAddressScreen';
+import SplashScreen2 from './src/screens/auth/SplashScreen2';
+import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
+import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
+import NotificationScreen from './src/screens/notification/NotificationScreen';
+import ConfirmDeliveryTimeScreen from './src/screens/order/ConfirmDeliveryTimeScreen';
 import OrderDetailScreen from './src/screens/order/OrderDetailScreen';
 import OrderHistoryScreen from './src/screens/order/OrderHistoryScreen';
 import RatingOrderScreen from './src/screens/order/RatingOrderScreen';
 import ChatScreen from './src/screens/shopping/ChatScreen';
+import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
 import FavoriteScreen from './src/screens/shopping/FavoriteScreen';
+import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
+import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
+import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
+import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
 import ProductDetailSheet from './src/screens/shopping/ProductDetailSheet';
+import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
+import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
-import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
-import EditCartItemScreen from './src/screens/shopping/EditCartItemScreen';
-import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
-import AddressMerchantScreen from './src/screens/address/AddressMerchantScreen';
-import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
-import {PaperProvider} from 'react-native-paper';
+import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
+import SeedScreen from './src/screens/voucher/SeedScreen';
 import SelectVouchersScreen from './src/screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
-import OrderSuccessScreen from './src/screens/shopping/OrderSuccessScreen';
-import FlashMessage from 'react-native-flash-message';
-import PayOsScreen from './src/screens/shopping/payment/PayOsScreen';
-import Zalopayscreen from './src/screens/shopping/payment/Zalopayscreen';
-import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
-import SeedScreen from './src/screens/voucher/SeedScreen';
-import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
-import {useAppContainer} from './src/containers/useAppContainer';
-import SplashScreen2 from './src/screens/auth/SplashScreen2';
-import MerchantDetailSheet from './src/screens/shopping/MerchantDetailSheet';
-import {LogBox} from 'react-native';
-import NotificationScreen from './src/screens/notification/NotificationScreen';
-
+import AIChatScreen from './src/screens/chat/AIChatScreen';
+import {AppAsyncStorage} from './src/utils';
+import {onUserLoginZego} from './src/zego/common';
+import ZegoCallUI from './src/zego/ZegoCallUI';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -66,18 +76,7 @@ export default function App() {
       <PaperProvider>
         <GestureHandlerRootView style={{flex: 1}}>
           <SafeAreaProvider>
-            <NavigationContainer ref={navigationRef}>
-              <BaseStack.Navigator screenOptions={{headerShown: false}}>
-                <BaseStack.Screen
-                  name="AppNavigator"
-                  component={AppNavigator}
-                />
-                <BaseStack.Screen
-                  name={OrderGraph.OrderDetailScreen}
-                  component={OrderDetailScreen}
-                />
-              </BaseStack.Navigator>
-            </NavigationContainer>
+            <AppNavigator />
             <FlashMessage position="top" />
             <Toast />
           </SafeAreaProvider>
@@ -88,13 +87,63 @@ export default function App() {
 }
 
 function AppNavigator() {
-  const {authState} = useAppContext();
+  const {showCallUI} = useAppContext();
+  return (
+    <NavigationContainer ref={navigationRef}>
+      <RootNavigator />
+      {showCallUI && <ZegoCallUI />}
+    </NavigationContainer>
+  );
+}
+
+function RootNavigator() {
+  return (
+    <BaseStack.Navigator screenOptions={{headerShown: false}}>
+      <BaseStack.Screen name="MainNavigator" component={MainNavigator} />
+      <BaseStack.Screen
+        name={OrderGraph.OrderDetailScreen}
+        component={OrderDetailScreen}
+      />
+    </BaseStack.Navigator>
+  );
+}
+
+const slideFromBottomOption = {
+  animation: 'slide_from_bottom',
+  presentation: 'transparentModal',
+  headerShown: false,
+};
+
+const slideFromRightOption = {
+  animation: 'slide_from_right',
+  presentation: 'transparentModal',
+  headerShown: false,
+};
+function MainNavigator() {
+  const navigation = useNavigation();
+  const {authState, showCallUI} = useAppContext();
+
   useAppContainer();
-  const slideFromBottomOption = {
-    animation: 'slide_from_bottom',
-    presentation: 'transparentModal',
-    headerShown: false,
+  const initZego = async () => {
+    const user = await AppAsyncStorage.readData(
+      AppAsyncStorage.STORAGE_KEYS.user,
+    );
+
+    if (user) {
+      console.log('loginZego');
+      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
+    }
   };
+
+  useEffect(() => {
+    if (authState.lastName) {
+      console.log('initZego');
+      initZego();
+    } else {
+      console.log('Khong the init Zego');
+    }
+  }, [authState.lastName]);
+
   return (
     <BaseStack.Navigator screenOptions={{headerShown: false}}>
       {authState.needAuthen === false ? (
@@ -109,19 +158,46 @@ function AppNavigator() {
             name={MainGraph.graphName}
             component={MainNavigation}
           />
+
+          {showCallUI && (
+            <>
+              <BaseStack.Screen
+                options={{headerShown: false}}
+                // DO NOT change the name
+                name="ZegoUIKitPrebuiltCallWaitingScreen"
+                component={ZegoUIKitPrebuiltCallWaitingScreen}
+              />
+              <BaseStack.Screen
+                options={{headerShown: false}}
+                // DO NOT change the name
+                name="ZegoUIKitPrebuiltCallInCallScreen"
+                component={ZegoUIKitPrebuiltCallInCallScreen}
+              />
+            </>
+          )}
+
+          <BaseStack.Screen
+            name={OrderGraph.OrderHistoryScreen}
+            component={OrderHistoryScreen}
+          />
+
+          <BaseStack.Screen
+            name={AppGraph.AIChatScreen}
+            options={slideFromRightOption}
+            component={AIChatScreen}
+          />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}
           />
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailSheet}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={ProductDetailSheet}
           />
-
           <BaseStack.Screen
             name={ShoppingGraph.ProductDetailShort}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={ProductDetailShort}
           />
           <BaseStack.Screen
@@ -140,19 +216,19 @@ function AppNavigator() {
           />
           <BaseStack.Screen
             name={VoucherGraph.VoucherDetailSheet}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={VoucherDetailSheet}
           />
 
           <BaseStack.Screen
             name={'MerchantDetailSheet'}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={MerchantDetailSheet}
           />
 
           <BaseStack.Screen
             name={ShoppingGraph.EditCartItemScreen}
-            options={slideFromBottomOption}
+            options={slideFromRightOption}
             component={EditCartItemScreen}
           />
           <BaseStack.Screen
@@ -224,10 +300,7 @@ function AppNavigator() {
             name={UserGraph.ContactScreen}
             component={ContactScreen}
           />
-          <BaseStack.Screen
-            name={OrderGraph.OrderHistoryScreen}
-            component={OrderHistoryScreen}
-          />
+
           <BaseStack.Screen
             name={OrderGraph.OrderDetailScreen}
             component={OrderDetailScreen}

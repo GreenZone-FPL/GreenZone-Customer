@@ -264,7 +264,7 @@ const ModalAddress = ({ visible, onClose, onSelectAddress }) => {
               />
             ) : (
               <View style={styles.emptyWrapper}>
-                <EmptyView />
+                <EmptyView message='Không tìm thấy địa chỉ nào'/>
               </View>
             )}
 

@@ -120,7 +120,7 @@ const LoginScreenFake = ({route, navigation}) => {
 
       <LightStatusBar />
       <Image
-        source={require('../../assets/images/register_bg.png')}
+        source={require('../../assets/images/logo.png')}
         style={{width: '100%', height: 200}}
       />
       <TitleText text="Chào mừng đến với" style={{textAlign: 'center'}} />

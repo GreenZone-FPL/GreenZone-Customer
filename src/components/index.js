@@ -3,12 +3,19 @@ export * from './animations/Ani_ModalLoading';
 export * from './animations/FillingJuiceLoading';
 export * from './animations/NormalLoading';
 export * from './animations/Ani_Success';
+export * from './animations/Feature';
 // activity-indicator
 export * from './indicators/Indicator';
 //barcode
 export * from './barcode/BarcodeUser';
 
+
+
 // bottom-sheets
+export * from './bottom-sheets/DeliveryMethodSheet';
+export * from './bottom-sheets/MyBottomSheet';
+
+
 
 //background
 export * from './background/EmptyView';
@@ -20,6 +27,7 @@ export * from './buttons/QuantityButton';
 export * from './buttons/QuantitySelector';
 export * from './buttons/ButtonGroup';
 export * from './buttons/AuthButton';
+export * from './buttons/CustomCallButton';
 
 // carousel
 export * from './carousel/CarouselBanner';
@@ -34,7 +42,7 @@ export * from './containers/AuthContainer';
 
 // dialogs
 export * from './dialogs/ActionDialog';
-export * from './bottom-sheets/DeliveryMethodSheet';
+
 export * from './dialogs/DialogShippingMethod';
 export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';

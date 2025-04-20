@@ -26,8 +26,8 @@ export const DeliveryMethodSheet = ({
       animationType="fade"
       transparent={true}
       onRequestClose={onClose}>
-      <Column style={styles.overlay}>
-        <Column style={styles.modalContainer}>
+      <Pressable style={styles.overlay} onPress={onClose}>
+        <Pressable style={styles.modalContainer} onPress={() => {}}>
           <OverlayStatusBar />
           <Row style={styles.header}>
             <View style={styles.placeholderIcon} />
@@ -80,8 +80,8 @@ export const DeliveryMethodSheet = ({
               </Text>
             </Pressable>
           </Column>
-        </Column>
-      </Column>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 };

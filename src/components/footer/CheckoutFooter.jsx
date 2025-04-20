@@ -51,7 +51,7 @@ export const CheckoutFooter = ({
 }) => {
     return (
         <Row style={[styles.footer, { backgroundColor: backgroundColor }]}>
-            <Row style={{ gap: 20 }}>
+            <Row style={{ gap:  5}}>
                 <Pressable style={styles.circleWrapper} onPress={handleMinus}>
                     <Feather name={"minus"} color={colors.primary} size={18} />
                 </Pressable>
@@ -61,7 +61,7 @@ export const CheckoutFooter = ({
                         fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
                         textAlign: 'center',
                         borderBottomWidth: 1,
-                        borderColor: colors.gray400,
+                        borderColor: colors.gray300,
                         width: 35
                     }}
                     keyboardType="numeric"
@@ -69,18 +69,18 @@ export const CheckoutFooter = ({
                     onChangeText={(value) => {
                         // Chỉ giữ lại ký tự số
                         const cleanedValue = value.replace(/[^0-9]/g, '');
-                
+
                         if (cleanedValue === '') {
                             setQuantity('');
                             return;
                         }
-                
+
                         const parsed = parseInt(cleanedValue, 10);
-                
+
                         if (isNaN(parsed)) {
                             return;
                         }
-                
+
                         if (parsed > 99) {
                             setQuantity(99);
                             Toaster.show('Số lượng không vượt quá 99');

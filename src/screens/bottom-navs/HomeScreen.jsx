@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   FlatList,
@@ -6,6 +7,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Image,
+  Pressable,
 } from 'react-native';
 import {
   AuthContainer,
@@ -21,41 +24,38 @@ import {
   TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContainer, useHomeContainer} from '../../containers';
+import {useAuthActions, useHomeContainer} from '../../containers';
 import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
 import {CategoryView} from './HomeComponents/CategoryView';
-import VoucherPopup from '../../components/modal/VoucherPopup';
-import CarouselBanner from '../../components/carousel/CarouselBanner';
+import {AppGraph} from '../../layouts/graphs';
 
 const HomeScreen = () => {
-  const {cartState, authState, awaitingPayments} = useAppContext();
+  const {cartState, authState} = useAppContext();
 
   const {
-    isModalVisible,
-    setIsModalVisible,
+    dialogShippingVisible,
     selectedOption,
     currentCategory,
-    handleScroll,
-    user,
+    needToPay,
     allProducts,
     handleEditOption,
+    setDialogShippingVisible,
+    handleScroll,
     handleOptionSelect,
     handleCloseDialog,
     onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
-    navigateNotification,
     navigateCheckOut,
     navigateOrderHistory,
     navigateAdvertising,
     navigateSeedScreen,
-    navigateOrderScreen,
   } = useHomeContainer();
 
-  const {onNavigateLogin} = useAppContainer();
+  const {onNavigateLogin} = useAuthActions();
   useSaveLocation();
+  const navigation = useNavigation();
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
@@ -68,7 +68,7 @@ const HomeScreen = () => {
             : 'Chào bạn mới'
         }
         isHome={false}
-        onBadgePress={navigateNotification}
+        enableBadge={!!authState.lastName}
       />
 
       <ScrollView
@@ -77,30 +77,18 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         style={styles.containerContent}>
         {authState.lastName ? (
-          user && (
-            <BarcodeUser
-              user={user}
-              showPoints={true}
-              onPress={navigateSeedScreen}
-            />
-          )
+          <BarcodeUser showPoints={true} onPress={navigateSeedScreen} />
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
 
         <CategoryView />
 
-        <CarouselBanner onPress={navigateOrderScreen} />
-
-        {awaitingPayments && (
+        {needToPay && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
             onPress={navigateOrderHistory}>
-            <TitleText
-              text={`Bạn có đơn hàng ${TextFormatter.formatCurrency(
-                awaitingPayments.totalPrice,
-              )} cần thanh toán`}
-            />
+            <TitleText text={`Bạn có đơn hàng cần thanh toán`} />
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
         )}
@@ -146,6 +134,17 @@ const HomeScreen = () => {
           )}
         />
       </ScrollView>
+
+      {dialogShippingVisible && (
+        <DialogShippingMethod
+          visible={dialogShippingVisible}
+          selectedOption={selectedOption}
+          onHide={handleCloseDialog}
+          onOptionSelect={handleOptionSelect}
+          onEditOption={handleEditOption}
+        />
+      )}
+
       <DeliveryButton
         deliveryMethod={selectedOption}
         title={selectedOption === 'Mang đi' ? 'Đến lấy tại' : 'Giao đến'}
@@ -158,19 +157,20 @@ const HomeScreen = () => {
             ? cartState?.address?.label
             : 'Đang xác định vị trí...'
         }
-        onPress={() => setIsModalVisible(true)}
+        onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
         cartState={cartState}
         onPressCart={navigateCheckOut}
       />
-      <DialogShippingMethod
-        isVisible={isModalVisible}
-        selectedOption={selectedOption}
-        onHide={handleCloseDialog}
-        onOptionSelect={handleOptionSelect}
-        onEditOption={handleEditOption}
-      />
-      <VoucherPopup onPress={navigateOrderScreen} />
+
+      <Pressable
+        onPress={() => navigation.navigate(AppGraph.AIChatScreen)}
+        style={styles.chat}>
+        <Image
+          source={require('../../assets/images/robot.png')}
+          style={styles.imageRobot}
+        />
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -198,5 +198,19 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     gap: 8,
+  },
+  imageRobot: {
+    width: '100%',
+    height: '100%',
+  },
+  chat: {
+    width: 70,
+    height: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 40,
+    position: 'absolute',
+    bottom: 100,
+    right: 16,
   },
 });

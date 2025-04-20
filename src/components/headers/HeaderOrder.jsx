@@ -1,7 +1,7 @@
 import { ArrowDown2, Category2, Heart, SearchNormal1 } from 'iconsax-react-native';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { Row } from '../containers/Row';
 
@@ -13,25 +13,27 @@ const HeaderOrderPropTypes = {
 };
 
 export const HeaderOrder = (props) => {
-  const { title,onCategoryPress , onFavoritePress , onSearchProduct} = props;
+  const { title, onCategoryPress, onFavoritePress, onSearchProduct } = props;
   return (
-    <View style={styles.header}>
+    <Pressable style={styles.header} onPress={onCategoryPress}>
       <Row>
-      <Category2 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} variant="Bulk" />
+        <Category2 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} variant="Bulk" />
+
         <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity onPress={onCategoryPress}>
-          <ArrowDown2 size={GLOBAL_KEYS.ICON_SIZE_SMALL} color={colors.primary}/>
-        </TouchableOpacity>
+
+        <ArrowDown2 size={GLOBAL_KEYS.ICON_SIZE_SMALL} color={colors.primary} />
       </Row>
+
       <Row>
-          <TouchableOpacity onPress={onSearchProduct}>
-            <SearchNormal1 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary}/>
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={onFavoritePress}>
-            <Heart size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}  color={colors.primary}/>
-          </TouchableOpacity>
+        <Pressable onPress={onSearchProduct}>
+          <SearchNormal1 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
+        </Pressable>
+
+        <Pressable onPress={onFavoritePress}>
+          <Heart size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} />
+        </Pressable>
       </Row>
-    </View>
+    </Pressable>
   );
 };
 

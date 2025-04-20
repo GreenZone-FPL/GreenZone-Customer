@@ -1,61 +1,55 @@
 import React, { useState } from 'react';
 import {
-  Dimensions,
   FlatList,
-  Image,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from 'react-native';
-import LinearGradient from "react-native-linear-gradient";
-import { GLOBAL_KEYS, colors } from '../../constants';
-import Skeleton from '../../components/category/Skeleton';
+import FastImage from 'react-native-fast-image';
+import { colors, GLOBAL_KEYS } from '../../constants';
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+export const CategoryMenu = ({ categories, onCategorySelect }) => {
+  const [containerWidth, setContainerWidth] = useState(0);
+  const NUM_COLUMNS = 4;
+  const GAP = 16;
 
-export const CategoryMenu = props => {
+  const itemWidth =
+    containerWidth > 0
+      ? (containerWidth - GAP * (NUM_COLUMNS - 1)) / NUM_COLUMNS
+      : 0;
 
-  const { categories, loading, onCategorySelect } = props
- 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <FlatList
-          data={Array(8).fill({})} // Tạo danh sách giả có 8 phần tử để hiển thị skeleton
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={() => (
-            <Skeleton height={80} width={'23%'} borderRadius={8} />
-          )}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={false}
-          numColumns={4}
-          columnWrapperStyle={{ gap: 8 }}
-          contentContainerStyle={styles.flatlistContainer}
-        />
-      ) : (
+    <View
+      style={styles.container}
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+    >
+      {containerWidth > 0 && (
         <FlatList
           data={categories}
           keyExtractor={(item) => item._id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.itemContainer}
+            <Pressable
+              style={[styles.itemContainer, { width: itemWidth }]}
               onPress={() => onCategorySelect(item)}
             >
               <View style={styles.imageContainer}>
-                <Image source={{ uri: item.icon }} style={styles.image} />
+                <FastImage
+                  source={{ uri: item.icon, priority: FastImage.priority.normal }}
+                  style={styles.image}
+                  resizeMode={FastImage.resizeMode.contain}
+                />
               </View>
+              
               <Text style={styles.itemName} numberOfLines={2}>
                 {item.name}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}
-          numColumns={4}
-          columnWrapperStyle={{ gap: 8 }}
-          contentContainerStyle={styles.flatlistContainer}
+          numColumns={NUM_COLUMNS}
+          columnWrapperStyle={{ gap: GAP }}
         />
       )}
     </View>
@@ -63,86 +57,29 @@ export const CategoryMenu = props => {
 };
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.white, justifyContent: 'center', marginHorizontal: 16 },
+  container: {
+    backgroundColor: colors.white,
+    justifyContent: 'center',
+  },
   itemContainer: {
     alignItems: 'center',
     marginBottom: 8,
-    // maxWidth: width / 4.5,
     borderRadius: 6,
-    backgroundColor: colors.white,
-    marginRight: 28
-    // flex: 1,
-
-  },
-  flatlistContainer: {
-    justifyContent: "center",
-    backgroundColor: colors.white,
+    gap: 5,
   },
   imageContainer: {
     borderRadius: 34,
     backgroundColor: colors.green100,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: 16,
   },
-  image: { width: 34, height: 34, resizeMode: 'contain', borderRadius: 34 },
+  image: {
+    width: 34,
+    height: 34,
+    borderRadius: 34,
+  },
   itemName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.black,
-    marginTop: GLOBAL_KEYS.GAP_SMALL,
     textAlign: 'center',
-    width: 68,
-  },
-
-  modalContainer: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '100%',
-    backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-  },
-  modalTitleContainer: {
-    flexDirection: 'row',
-    marginHorizontal: GLOBAL_KEYS.PADDING_SMALL,
-    justifyContent: 'space-between',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  productItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  productImage: {
-    width: width / 4,
-    height: height / 8,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-  },
-  productInfo: { flex: 1, marginLeft: GLOBAL_KEYS.PADDING_DEFAULT },
-  productName: { fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER, fontWeight: 'bold' },
-  productPrice: { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.red900 },
-  addText: { color: colors.white, fontSize: 20, fontWeight: 'bold' },
-  closeButton: { alignItems: 'center' },
-  addButton: {
-    backgroundColor: colors.green200,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 'auto',
-  },
-  emptyText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-    color: colors.gray,
-    textAlign: 'center',
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
   },
 });
-
-

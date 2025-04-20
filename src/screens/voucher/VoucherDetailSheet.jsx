@@ -1,118 +1,86 @@
-import React, {useEffect, useState} from 'react';
+import Clipboard from '@react-native-clipboard/clipboard';
+import React from 'react';
 import {
   Dimensions,
   Image,
-  Linking,
+  Pressable,
   ScrollView,
-  StatusBar,
   StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+  Text
 } from 'react-native';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {OverlayStatusBar} from '../../components';
-import {Icon} from 'react-native-paper';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {TextFormatter} from '../../utils';
+import { Icon } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
+import { Column, LightStatusBar, NormalText, Row, TitleText } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { TextFormatter } from '../../utils';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 
-const VoucherDetailSheet = ({navigation, route}) => {
-  const {item} = route.params || null;
-  const [showAlert, setShowAlert] = useState(false);
+const VoucherDetailSheet = () => {
+  const { item } = useRoute().params
+  const navigation = useNavigation()
 
   const copyToClipboard = () => {
     Clipboard.setString(item.code);
-    setShowAlert(true);
-
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 2000);
+    Toast.show({
+      type: 'success',
+      position: 'top',
+      text1: 'Đã sao chép mã đơn hàng!',
+      visibilityTime: 2000,
+      text1Style: {
+        color: colors.black,
+        fontWeight: 'bold',
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+      },
+    });
   };
-  console.log('item', JSON.stringify(item, null, 2));
 
-  const handleTermsText = () => {
-    Linking.openURL(data.homepage);
-  };
-
-  if(!item){
-    return null
-  }
   return (
-    <View style={styles.container}>
-      {showAlert && (
-        <View style={styles.alert}>
-          <Text style={styles.alertText}>Sao chép thành công</Text>
-        </View>
-      )}
+    <Pressable
+      onPress={() => navigation.goBack()}
+      style={styles.container}>
 
-      <OverlayStatusBar />
+      <LightStatusBar />
+      <Pressable onPress={() => { }} style={styles.contentContainer}>
+        <ScrollView>
 
-      <View style={styles.mainContainer}>
-        <View style={styles.closeButtonContainer}>
-          <TouchableOpacity
+          <Pressable
             onPress={() => navigation.goBack()}
-            style={styles.closeButton}>
-            <Icon
-              source="close"
-              size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-              color={colors.black}
-            />
-          </TouchableOpacity>
-        </View>
+            style={styles.closeButton}
+          >
+            <Icon source="close" size={24} color={colors.primary} />
+          </Pressable>
 
-        <View style={styles.borderContainer}>
-          <ScrollView
-            style={styles.contentContainer}
-            showsVerticalScrollIndicator={false}>
-            <View style={styles.voucherInfoContainer}>
-              <Text style={styles.voucherTitle}>Green Zone</Text>
-              <Text style={styles.voucherName}>{item.name}</Text>
+          <Column>
+            <TitleText text='GreenZone' style={styles.voucherTitle} />
+            <Text style={styles.voucherName}>{item.name}</Text>
 
-              <View style={styles.separator} />
+            <Image source={{ uri: item.image }} style={styles.qrCodeImage} />
 
-              <Image source={{uri: item.image}} style={styles.qrCodeImage} />
-              <Text style={styles.discountCode}>{item.code}</Text>
+            <Text style={styles.discountCode}>{item.code}</Text>
 
-              <TouchableOpacity onPress={copyToClipboard}>
-                <Text style={styles.copyText}>Sao chép</Text>
-              </TouchableOpacity>
+            <Pressable onPress={copyToClipboard}>
+              <Text style={styles.copyText}>Sao chép</Text>
+            </Pressable>
 
-              {/* <TouchableOpacity
-                style={styles.orderButton}
-                onPress={() => navigation.navigate(BottomGraph.OrderScreen)}>
-                <Text style={styles.orderButtonText}>Bắt đầu đặt hàng</Text>
-              </TouchableOpacity> */}
+          </Column>
 
-              <View style={styles.separator} />
+          <Row style={styles.expiryContainer}>
+            <NormalText text='Ngày hết hạn:' />
+            <NormalText text={TextFormatter.formatDateSimple(item.endDate)} style={styles.endDate} />
+          </Row>
 
-              <View style={styles.expiryContainer}>
-                <Text style={styles.expiryText}>Ngày hết hạn:</Text>
-                <Text style={styles.expiryDate}>
-                  {TextFormatter.formatDateSimple(item.endDate)}
-                </Text>
-              </View>
 
-              <View style={styles.separator} />
+          <Column >
+            {data?.description.map((desc, index) => (
+              <NormalText text={`${index + 1}. ${desc}`} style={styles.infoText} />
+            ))}
+          </Column>
+        </ScrollView>
+      </Pressable>
 
-              {data?.description.map((desc, index) => (
-                <Text style={styles.descriptionText} key={index}>
-                  {index + 1}/ <Text>{desc}</Text>
-                </Text>
-              ))}
-
-              <Text style={styles.termsText}>
-                Xem thêm các điều khoản sử dụng dịch vụ tại:
-                <TouchableOpacity onPress={handleTermsText}>
-                  <Text style={styles.termsLink}>{data.homepage}</Text>
-                </TouchableOpacity>
-              </Text>
-            </View>
-          </ScrollView>
-        </View>
-      </View>
-    </View>
+    </Pressable>
   );
 };
 
@@ -120,15 +88,13 @@ const data = {
   qrCode:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1024px-QR_code_for_mobile_English_Wikipedia.svg.png',
   description: [
-    'Áp dụng cho tất cả các đơn hàng giao hàng.',
+    'Áp dụng cho tất cả các đơn hàng.',
     'Không giới hạn số lần sử dụng trong ngày.',
-    'Chỉ áp dụng với đơn hàng trên 100.000 VNĐ.',
-    'Không áp dụng cùng các chương trình khuyến mãi khác.',
+    'Không áp dụng cùng các khuyến mãi khác.',
     'Chỉ áp dụng tại các cửa hàng liên kết.',
     'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
     'Liên hệ tổng đài để biết thêm chi tiết.',
-  ],
-  homepage: 'https://www.example.com/delivery-voucher-1',
+  ]
 };
 
 const styles = StyleSheet.create({
@@ -136,142 +102,66 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.overlay,
   },
-  alert: {
-    position: 'absolute',
-    backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    opacity: 0.9,
-    zIndex: 10,
-    width: width,
-    alignItems: 'center',
-  },
-  alertText: {
-    color: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-  },
-  mainContainer: {
-    backgroundColor: colors.gray200,
-    marginTop: StatusBar.currentHeight + 40,
-    borderTopLeftRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-    flex: 1,
-  },
-  closeButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
+
   closeButton: {
-    // position: 'absolute',
-    // top: StatusBar.currentHeight,
-    // right: GLOBAL_KEYS.PADDING_DEFAULT,
-    // zIndex: 1,
-    backgroundColor: colors.gray200,
-    margin: 16,
-  },
-  borderContainer: {
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 4,
-    flex: 1,
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT * 2,
-    marginBottom: GLOBAL_KEYS.PADDING_DEFAULT * 2,
-    marginTop: GLOBAL_KEYS.PADDING_DEFAULT,
-    overflow: 'hidden',
+    marginVertical: 16,
+    marginHorizontal: 8,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.white
   },
   contentContainer: {
-    flex: 1,
+    flexDirection: 'column',
+    backgroundColor: colors.white,
+    width: Dimensions.get('window').width * 0.85,
+    alignSelf: 'flex-end',
+    flex: 1
   },
-  voucherInfoContainer: {
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    paddingVertical: GLOBAL_KEYS.PADDING_DEFAULT,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT * 2,
-    shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 4,
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    alignItems: 'center',
-  },
+
   voucherTitle: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '700',
+    alignSelf: 'center',
     textAlign: 'center',
     color: colors.primary,
+  },
+  infoText: {
+    paddingHorizontal: 16,
+    alignItems: 'flex-start',
+    backgroundColor: colors.transparent,
+    color: colors.gray850
+  },
+  endDate: {
+    color: colors.orange700
   },
   voucherName: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  separator: {
-    height: 1,
-    width: '100%',
-    backgroundColor: colors.gray300,
+    color: colors.black,
   },
   qrCodeImage: {
     width: width / 3,
     height: width / 3,
     borderRadius: 8,
-    // backgroundColor: 'green'
+    alignSelf: 'center'
   },
   discountCode: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
     textAlign: 'center',
+    color: colors.lemon
   },
   copyText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '500',
     textAlign: 'center',
     color: colors.blue600,
-  },
-  orderButton: {
-    backgroundColor: colors.primary,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
-  },
-  orderButtonText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '700',
-    textAlign: 'center',
-    color: colors.white,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
   },
   expiryContainer: {
-    flexDirection: 'row',
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     justifyContent: 'space-between',
-    width: '100%',
-  },
-  expiryText: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '500',
-  },
-  expiryDate: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '600',
-  },
-  descriptionText: {
-    width: '100%',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '400',
-  },
-  termsText: {
-    width: '100%',
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '400',
-    marginTop: GLOBAL_KEYS.PADDING_SMALL,
-  },
-  termsLink: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    fontWeight: '400',
-    marginTop: GLOBAL_KEYS.PADDING_SMALL,
-    color: colors.blue600,
-  },
+    backgroundColor: colors.white,
+    marginBottom: 8
+  }
 });
 
 export default VoucherDetailSheet;

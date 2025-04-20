@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import { LightStatusBar, NormalHeader } from '../../components';
+import { Feature, LightStatusBar, NormalHeader } from '../../components';
 import { Row } from '../../components';
 import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
@@ -11,12 +11,13 @@ const SettingScreen = props => {
     <View style={styles.container}>
       <LightStatusBar />
       <NormalHeader title="Cài đặt" onLeftPress={() => navigation.goBack()} />
-      <View style={styles.itemContainer}>
+      <Feature />
+      {/* <View style={styles.itemContainer}>
         <Item iconName="bell" title="Nhận thông báo" notification={true} />
         <Item iconName="link-variant" title="Liên kết tài khoản" />
         <Item iconName="alert-circle-outline" title="Về chúng tôi" />
       </View>
-      <Text style={styles.versionText}>Phiên bản 18.06</Text>
+      <Text style={styles.versionText}>Phiên bản 18.06</Text> */}
     </View>
   );
 };
@@ -82,7 +83,8 @@ const NotificationToggle = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.grayBg,
+    backgroundColor: colors.white,
+    flex: 1
   },
   itemContainer: {
     backgroundColor: colors.white,

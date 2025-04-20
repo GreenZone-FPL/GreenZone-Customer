@@ -35,7 +35,11 @@ export const NormalInput: React.FC<NormalInputProps> = ({
 }) => {
   return (
     <Column style={[styles.container, style]}>
-      <LabelInput label={label} required={required} style={{fontSize: 14}}/>
+      {
+        label && 
+        <LabelInput label={label} required={required} style={{fontSize: 14}}/>
+      }
+      
       <TextInput
         value={value}
         onChangeText={setValue}
@@ -72,7 +76,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderInput,
     borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: 14,
+    paddingVertical: 8,
   },
   errorText: {
     marginTop: 4,

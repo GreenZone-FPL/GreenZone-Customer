@@ -1,37 +1,62 @@
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {IconWithBadge} from './IconWithBadge';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import PropTypes from 'prop-types';
-import { useNavigation } from '@react-navigation/native';
+import { Icon } from 'react-native-paper';
+import { getNotifications } from '../../axios';
+import { colors, GLOBAL_KEYS } from '../../constants';
 import { AppGraph } from '../../layouts/graphs';
+import { AppAsyncStorage } from '../../utils';
+import { Row } from '../containers/Row';
+import { IconWithBadge } from './IconWithBadge';
 
 const HeaderWithBadgePropTypes = {
   title: PropTypes.string,
-  onBadgePress: PropTypes.func,
   isHome: PropTypes.bool,
   leftIcon: PropTypes.string,
   enableLeftIcon: PropTypes.bool,
   onLeftPress: PropTypes.func,
+  enableBadge: PropTypes.bool
 };
 
 export const HeaderWithBadge = ({
   title,
-  onBadgePress,
   isHome,
   leftIcon = 'arrow-left',
   enableLeftIcon = false,
   onLeftPress,
+  enableBadge = false
 }) => {
   const navigation = useNavigation()
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (await AppAsyncStorage.isTokenValid()) {
+          setLoading(true)
+          const response = await getNotifications()
+          if (response) {
+            setNotifications(response)
+          }
+        }
+
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
   return (
     <View style={styles.header}>
       {enableLeftIcon && (
@@ -49,13 +74,13 @@ export const HeaderWithBadge = ({
         // 1. Nếu là trang Home thì đổi Header Chào user
         // 2. Nếu không phải Home thì chỉ hiển thị Header Title
         isHome ? (
-          <View style={styles.left}>
+          <Row >
             <Image
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
             />
             <Text
-              style={[styles.title, {fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE}]}>
+              style={[styles.title, { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }]}>
               {title}
             </Text>
             <Icon
@@ -63,17 +88,21 @@ export const HeaderWithBadge = ({
               color={colors.yellow700}
               size={GLOBAL_KEYS.ICON_SIZE_SMALL}
             />
-          </View>
-        ) : (
-          <View style={styles.left}>
-            <Text style={styles.title}>{title}</Text>
-          </View>
-        )
+          </Row>
+        ) :
+          <Text style={styles.title}>{title}</Text>
+
+      }
+      {
+        enableBadge && !loading &&
+
+        <IconWithBadge
+          quantity={notifications.length}
+          onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
+        />
+
       }
 
-      <TouchableOpacity style={styles.right}>
-        <IconWithBadge onPress={() => navigation.navigate(AppGraph.NotificationScreen)} />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -92,10 +121,6 @@ const styles = StyleSheet.create({
   left: {
     flexDirection: 'row',
     gap: GLOBAL_KEYS.GAP_SMALL,
-    alignItems: 'center',
-  },
-  right: {
-    flexDirection: 'row',
     alignItems: 'center',
   },
   title: {
