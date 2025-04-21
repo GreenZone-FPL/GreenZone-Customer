@@ -69,11 +69,11 @@ export const ShipperInfo = (props) => {
       </Column>
 
       <Row>
-        <CustomCallButton
+        {/* <CustomCallButton
           userName={`${shipper?.firstName ?? ''} ${shipper?.lastName ?? ''}`.trim()}
           userID={shipper?.phoneNumber ?? ''}
           navigation={navigation}
-        />
+        /> */}
         {/* <ZegoSendCallInvitationButton
           invitees={[
             {

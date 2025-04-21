@@ -62,7 +62,7 @@ const AIChatScreen: React.FC = () => {
 
       setInputText('');
 
-      const response = responses
+      const response = await chatAssistant(query)
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),

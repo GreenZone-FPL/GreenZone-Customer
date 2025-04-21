@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     },
     consigneeName: {
         fontWeight: '500',
-        color: colors.green500,
+        color: colors.lemon,
         fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
     }
 });
