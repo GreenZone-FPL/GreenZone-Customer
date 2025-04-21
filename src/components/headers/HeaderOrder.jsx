@@ -15,14 +15,14 @@ const HeaderOrderPropTypes = {
 export const HeaderOrder = (props) => {
   const { title, onCategoryPress, onFavoritePress, onSearchProduct } = props;
   return (
-    <Pressable style={styles.header} onPress={onCategoryPress}>
-      <Row>
+    <Pressable style={styles.header} >
+      <Pressable style={{flexDirection: 'row', alignItems: 'center', gap: 6}} onPress={onCategoryPress}>
         <Category2 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT} color={colors.primary} variant="Bulk" />
 
         <Text style={styles.title}>{title}</Text>
 
         <ArrowDown2 size={GLOBAL_KEYS.ICON_SIZE_SMALL} color={colors.primary} />
-      </Row>
+      </Pressable>
 
       <Row>
         <Pressable onPress={onSearchProduct}>

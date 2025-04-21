@@ -14,7 +14,7 @@ import { Column, CustomSearchBar, NormalLoading, NormalText, PrimaryButton, Titl
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { UserGraph } from '../../layouts/graphs';
-import { CartManager } from '../../utils';
+import { CartManager, Toaster } from '../../utils';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
@@ -124,8 +124,9 @@ const SelectAddressScreen = ({ navigation, route }) => {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
   };
-  const onConfirmAddress = address => {
-    if (address) {
+  const onConfirmAddress = async address => {
+    navigation.goBack();
+    try {
       const addressFinish = {
         location: `${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`,
         latitude: address.latitude,
@@ -141,11 +142,15 @@ const SelectAddressScreen = ({ navigation, route }) => {
           consigneePhone: addressFinish.consigneePhone,
         });
       }
-
-      navigation.goBack();
-    } else {
-      console.log('Chưa chọn địa chỉ');
+    } catch (error) {
+      console.log('error', error)
+      Toaster.show('Lỗi chọn địa chỉ')
     }
+  
+    
+
+   
+   
   };
   // Tìm kiếm
   const handleSearch = async text => {
