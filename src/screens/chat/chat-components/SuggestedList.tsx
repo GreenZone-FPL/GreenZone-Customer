@@ -27,13 +27,13 @@ export const SuggestedList: React.FC<SuggestedListProps> = ({ onItemClick, onIco
       data={products}
       renderItem={({ item: product }) => {
         return <ItemProduct
-          key={product._id}
+          // key={product._id}
           item={product}
           onItemClick={() => onItemClick(product._id)}
           onIconClick={() => onIconClick(product._id)}
         />
       }}
-      contentContainerStyle={{maxHeight: 500}}
+      contentContainerStyle={{maxHeight: 300, gap: 4}}
     />
     // <Column style={styles.container}>
     //   {
@@ -87,12 +87,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 16,
     backgroundColor: colors.white,
+    marginBottom: 4
   },
   itemImage: {
     width: 80,
     height: 80,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
     resizeMode: 'cover'
   },
 
