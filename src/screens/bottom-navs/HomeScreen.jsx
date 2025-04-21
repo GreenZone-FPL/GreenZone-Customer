@@ -2,8 +2,6 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   FlatList,
-  Image,
-  Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -22,16 +20,14 @@ import {
   ProductsGrid,
   ProductsListHorizontal,
   Row,
-  SectionLoader,
   TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { AppGraph } from '../../layouts/graphs';
-import { SkeletonBox } from '../../skeletons';
+import { SectionLoader, SkeletonBox } from '../../skeletons';
 import useSaveLocation from '../../utils/useSaveLocation';
-import { CategoryView } from './HomeComponents/CategoryView';
+import { AIAssistant, CategoryView } from './HomeComponents';
 
 
 const HomeScreen = () => {
@@ -62,6 +58,32 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
+  // const pan = useRef(new Animated.ValueXY({ x: width - 20 - 50, y: height - 200 })).current;
+
+
+
+  // const panResponder = useRef(
+  //   PanResponder.create({
+  //     onStartShouldSetPanResponder: (evt, gestureState) => false,
+  //     onMoveShouldSetPanResponder: (evt, gestureState) => {
+  //       // Chỉ bắt drag khi di chuyển đủ xa (ví dụ: 5px)
+  //       return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+  //     },
+  //     onPanResponderGrant: () => {
+  //       pan.setOffset({
+  //         x: pan.x._value,
+  //         y: pan.y._value,
+  //       });
+  //     },
+  //     onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+  //       useNativeDriver: false,
+  //     }),
+  //     onPanResponderRelease: () => {
+  //       pan.flattenOffset();
+  //     },
+  //   })
+
+  // ).current;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -196,20 +218,7 @@ const HomeScreen = () => {
           onPressCart={navigateCheckOut}
         />
       </SectionLoader>
-
-
-
-
-      <Pressable
-        onPress={() => navigation.navigate(AppGraph.AIChatScreen)}
-        style={styles.chat}>
-
-        <Image
-          source={require('../../assets/images/robot.png')}
-          style={styles.imageRobot} />
-      </Pressable>
-
-
+      <AIAssistant />
     </SafeAreaView>
   );
 };
@@ -239,8 +248,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageRobot: {
-    width: '100%',
-    height: '100%',
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
   chat: {
     width: 70,
@@ -250,6 +260,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     position: 'absolute',
     bottom: 100,
-    right: 16
+    right: 16,
   }
+
 });

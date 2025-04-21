@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
     height: 44,
     borderRadius: 48
   },
-});
+})
