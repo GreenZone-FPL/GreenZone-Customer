@@ -109,11 +109,11 @@ export const useAppContainer = () => {
         type,
         icon,
         duration,
-        onPress: () => {
-          navigation.navigate(OrderGraph.OrderDetailScreen, {
-            orderId: updateOrderMessage.orderId,
-          });
-        },
+        // onPress: () => {
+        //   navigation.navigate(OrderGraph.OrderDetailScreen, {
+        //     orderId: updateOrderMessage.orderId,
+        //   });
+        // },
       });
 
       // Sau khi message ẩn đi, cập nhật visible thành false

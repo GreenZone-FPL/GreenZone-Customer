@@ -101,7 +101,7 @@ const AIChatScreen: React.FC = () => {
 
 
   const Message: React.FC<{ item: Message }> = ({ item }) => {
-    // const formattedTime = new Date(item.timestamp).toLocaleTimeString()
+
     const formattedTime = moment(item.timestamp).utcOffset(7).format('HH:mm')
     if (item.type === 'user') {
       return (
