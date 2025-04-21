@@ -28,6 +28,7 @@ export const SuggestedList: React.FC<SuggestedListProps> = ({ onItemClick, onIco
         products.map((product: any) => {
           return (
             <ItemProduct
+              key={product._id}
               item={product}
               onItemClick={() => onItemClick(product._id)}
               onIconClick={() => onIconClick(product._id)}
@@ -56,11 +57,11 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
           text={TextFormatter.formatCurrency(item.originalPrice)}
         />
       </Column>
-      
+
       <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
-          <Icon source="plus" size={22} color={colors.white} />
-        </TouchableOpacity>
-    
+        <Icon source="plus" size={22} color={colors.white} />
+      </TouchableOpacity>
+
     </Pressable>
   );
 };
