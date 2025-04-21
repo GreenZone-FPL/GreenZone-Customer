@@ -78,12 +78,11 @@ const NewAddressScreen = props => {
         ward: locationDetail.commune,
         district: locationDetail.district,
         province: locationDetail.province,
-        consigneePhone: consigneeName,
-        consigneeName: consigneePhone,
+        consigneePhone: consigneePhone,
+        consigneeName: consigneeName,
         latitude: String(locationDetail.lat),
         longitude: String(locationDetail.lng),
       };
-      console.log('Tạo địa chỉ thành công:', JSON.stringify(payload, null, 2));
       try {
         setLoading(true)
         const response = await postAddress(payload);
