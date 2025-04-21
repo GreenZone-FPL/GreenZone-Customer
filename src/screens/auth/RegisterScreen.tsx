@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {
   Column,
@@ -43,16 +44,19 @@ const RegisterScreen: React.FC = () => {
             style={styles.message}
           />
 
+          <View style={{marginVertical: 10}}>
 
-          <NormalInput
-            label="Họ"
-            required
-            value={state.firstName}
-            setValue={(value: string) =>
-              dispatch({ type: 'SET_VALUE', field: 'firstName', value })
-            }
-            invalidMessage={state.firstNameError}
-          />
+            <NormalInput
+              label="Họ"
+              required
+              value={state.firstName}
+              setValue={(value: string) =>
+                dispatch({ type: 'SET_VALUE', field: 'firstName', value })
+              }
+              invalidMessage={state.firstNameError}
+            />
+          </View>
+
 
           <NormalInput
             label="Tên"
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: 16,
-    gap: 6,
+    gap: 10,
     justifyContent: 'center',
   },
   logo: {

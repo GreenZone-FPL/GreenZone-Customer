@@ -17,6 +17,7 @@ import {
     CartManager,
     Toaster
 } from '../../utils';
+import useSaveLocation from '../../utils/useSaveLocation';
 
 export const useCheckoutContainer = () => {
     const navigation = useNavigation()
@@ -46,6 +47,7 @@ export const useCheckoutContainer = () => {
 
     const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0]);
 
+    useSaveLocation()
     const handleSelectMethod = (method, disabled) => {
         if (!disabled) {
             setPaymentMethod(method); // 1. Cập nhật UI ngay, phản hồi nhanh

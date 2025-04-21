@@ -23,20 +23,32 @@ type SuggestedListProps = {
 export const SuggestedList: React.FC<SuggestedListProps> = ({ onItemClick, onIconClick, products }) => {
   return (
 
-    <Column style={styles.container}>
-      {
-        products.map((product: any) => {
-          return (
-            <ItemProduct
-              key={product._id}
-              item={product}
-              onItemClick={() => onItemClick(product._id)}
-              onIconClick={() => onIconClick(product._id)}
-            />
-          )
-        })
-      }
-    </Column>
+    <FlatList
+      data={products}
+      renderItem={({ item: product }) => {
+        return <ItemProduct
+          key={product._id}
+          item={product}
+          onItemClick={() => onItemClick(product._id)}
+          onIconClick={() => onIconClick(product._id)}
+        />
+      }}
+      contentContainerStyle={{maxHeight: 500}}
+    />
+    // <Column style={styles.container}>
+    //   {
+    //     products.map((product: any) => {
+    //       return (
+    //         <ItemProduct
+    //           key={product._id}
+    //           item={product}
+    //           onItemClick={() => onItemClick(product._id)}
+    //           onIconClick={() => onIconClick(product._id)}
+    //         />
+    //       )
+    //     })
+    //   }
+    // </Column>
   );
 };
 

@@ -17,16 +17,20 @@ const requiredFieldsDelivery = [
   'fulfillmentDateTime',
   // 'totalPrice',
   'paymentMethod',
-  'shippingAddress',
+  'consigneeName',
+  'consigneePhone',
   'store',
+  'shippingAddress',
   'orderItems',
+  'latitude',
+  'longitude',
+  
 ];
 export const CartManager = (() => {
   const setupDeliveryOrder = cartState => {
     const deliveryOrder = {
       deliveryMethod: cartState.deliveryMethod,
       fulfillmentDateTime: cartState.fulfillmentDateTime,
-      note: cartState.note,
       totalPrice: cartState.totalPrice,
       paymentMethod: cartState.paymentMethod,
       consigneeName: cartState.consigneeName,
@@ -57,7 +61,6 @@ export const CartManager = (() => {
     const pickupOrder = {
       deliveryMethod: cartState.deliveryMethod,
       fulfillmentDateTime: cartState.fulfillmentDateTime,
-      note: cartState.note,
       totalPrice: cartState.totalPrice,
       paymentMethod: cartState.paymentMethod,
       store: cartState.store,

@@ -47,6 +47,6 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     greenText: {
-        color: colors.green500,
+        color: colors.lemon,
     },
 });
