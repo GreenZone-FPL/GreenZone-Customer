@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { createOrder } from '../../axios';
 import {
     DeliveryMethod,
     OnlineMethod,
-    OrderStatus,
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
@@ -13,12 +13,10 @@ import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
 import {
-    AppAsyncStorage,
     CartManager,
     Toaster
 } from '../../utils';
 import useSaveLocation from '../../utils/useSaveLocation';
-import { Alert } from 'react-native';
 
 export const useCheckoutContainer = () => {
     const navigation = useNavigation()

@@ -50,7 +50,7 @@ const OrderDetailScreen = () => {
     backAction,
     callBackAfterCancel,
   } = useOrderDetailContainer(orderId);
-  console.log('orderDetail', JSON.stringify(orderDetail, null, 2));
+
   if (loading) {
     return (
       <View style={styles.container}>
