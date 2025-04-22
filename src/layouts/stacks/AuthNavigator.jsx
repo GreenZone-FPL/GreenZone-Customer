@@ -12,6 +12,7 @@ const AuthStack = createNativeStackNavigator();
 const AuthNavigator = () => {
   const {authState} = useAppContext(); // Lấy trạng thái đăng nhập
 
+  console.log('in Auth Navigator')
   return (
     <AuthStack.Navigator screenOptions={{headerShown: false}}>
       {authState.needRegister ? (
