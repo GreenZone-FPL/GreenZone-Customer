@@ -145,7 +145,7 @@ export const useHomeContainer = () => {
 
       if (authState.lastName) {
         const response = await getOrdersByStatus();
-        console.log('call api')
+
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
 
         if (awaitingPayments.length > 0) {

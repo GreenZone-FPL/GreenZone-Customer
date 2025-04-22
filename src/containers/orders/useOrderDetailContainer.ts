@@ -3,13 +3,13 @@ import {
   useFocusEffect,
   useNavigation,
 } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
-import { BackHandler } from 'react-native';
-import { getOrderDetail } from '../../axios';
-import { OnlineMethod } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { onlineMethods } from '../../screens/checkout/checkout-components';
-import { PaymentMethodItem } from '../../type/checkout';
+import {useCallback, useEffect, useState} from 'react';
+import {BackHandler} from 'react-native';
+import {getOrderDetail} from '../../axios';
+import {OnlineMethod} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {onlineMethods} from '../../screens/checkout/checkout-components';
+import {PaymentMethodItem} from '../../type-interface/checkout';
 
 // ✅ Type cho navigation
 type ShoppingGraphParamList = {
@@ -34,7 +34,7 @@ export const useOrderDetailContainer = (orderId: string) => {
     useState(false);
   const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
-  const {updateOrderMessage, setUpdateOrderMessage} = useAppContext();
+  const {updateOrderMessage} = useAppContext();
 
   useEffect(() => {
     fetchOrderDetail();
@@ -87,7 +87,6 @@ export const useOrderDetailContainer = (orderId: string) => {
       return () => backHandler.remove();
     }, [navigation]),
   );
-
 
   const callBackAfterCancel = async (): Promise<void> => {
     await fetchOrderDetail();
