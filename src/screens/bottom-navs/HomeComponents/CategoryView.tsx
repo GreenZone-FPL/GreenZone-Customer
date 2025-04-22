@@ -24,10 +24,10 @@ type ItemProps = {
 
 const Item: React.FC<ItemProps> = ({ IconComponent, title, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.item}>
+    <Pressable onPress={onPress} style={styles.item}>
       <IconComponent />
       <TitleText text={title} />
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

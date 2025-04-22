@@ -132,8 +132,7 @@ function MainNavigator() {
 
     const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
 
-    if (user) {
-      console.log('loginZego')
+    if (user.lastName) {
       await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
     }
   }
@@ -141,7 +140,6 @@ function MainNavigator() {
 
   useEffect(() => {
     if (authState.lastName) {
-      console.log('initZego')
       initZego()
     } else {
       console.log('Khong the init Zego')
