@@ -240,6 +240,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   btnAwaitingPayments: {
+    marginBottom: 16,
     marginHorizontal: 16,
     backgroundColor: colors.yellow300,
     paddingHorizontal: 24,

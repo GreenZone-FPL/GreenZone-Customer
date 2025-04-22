@@ -43,7 +43,7 @@ const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useAppContext();
   const navigation = useNavigation()
 
-  console.log('cartState', JSON.stringify(cartState, null, 3))
+  // console.log('cartState', JSON.stringify(cartState, null, 3))
   const {
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,
@@ -204,10 +204,8 @@ const CheckoutScreen = () => {
       </ScrollView>
 
       <Footer
-        timeInfo={timeInfo}
-        showDialog={() => setDialogCreateOrderVisible(true)}
-        cartDispatch={cartDispatch}
         cartState={cartState}
+        showDialog={() => setDialogCreateOrderVisible(true)}
       />
 
       {

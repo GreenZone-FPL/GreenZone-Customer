@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { getAllVoucher, getProfile } from '../../axios';
 import {
   Column,
   LightStatusBar,
@@ -9,20 +10,21 @@ import {
   VoucherVertical,
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { getAllVoucher, getProfile } from '../../axios';
-import { AppAsyncStorage, TextFormatter } from '../../utils';
+import { useAppContext } from '../../context/appContext';
+import { TextFormatter } from '../../utils';
 
 const SeedScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [vouchers, setVouchers] = useState([]);
   const [changePoint, setChangePoint] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { authState } = useAppContext()
 
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
         setLoading(true);
-        if (await AppAsyncStorage.isTokenValid()) {
+        if (authState.lastName) {
           const response = await getAllVoucher();
           if (response) setVouchers(response);
         }
@@ -64,7 +66,7 @@ const SeedScreen = ({ navigation }) => {
           style={styles.iconSeed}
           source={require('../../assets/seed/icon_seed.png')}
         />
-        
+
         <Column >
           <Text style={styles.headerText}>Số seed của bạn</Text>
 
@@ -76,7 +78,7 @@ const SeedScreen = ({ navigation }) => {
           </Text>
         </Column>
 
-        
+
       </Row>
 
       <VoucherVertical
@@ -113,14 +115,14 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
-     color: colors.black,
+    color: colors.black,
   },
   beanAmount: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.orange700,
   },
-  
+
   beanText: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',

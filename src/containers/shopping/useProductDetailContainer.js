@@ -1,22 +1,13 @@
-import {useAppContext} from '../../context/appContext';
-import {useNavigation} from '@react-navigation/native';
-import {useAppContainer} from '../useAppContainer';
-import {AppAsyncStorage} from '../../utils';
+import { useAppContext } from '../../context/appContext';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useProductDetailContainer = () => {
-  const {authDispatch, authState} = useAppContext();
-  const {onNavigateLogin, onNavigateRegister} = useAuthActions();
-
-  const navigation = useNavigation();
+  const {authState} = useAppContext();
+  const {onNavigateLogin} = useAuthActions();
 
   const onClickAddToCart = async addToCart => {
     try {
-      const isTokenValid = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-
-      if (isTokenValid && authState.lastName) {
+      if (authState.lastName) {
         if (addToCart) addToCart();
       } else {
         onNavigateLogin();
