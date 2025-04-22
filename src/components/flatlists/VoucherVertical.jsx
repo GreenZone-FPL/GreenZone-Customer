@@ -54,11 +54,11 @@ export const VoucherVertical = ({
   const changeBean = async item => {
     // Hiển thị alert xác nhận
     Alert.alert(
-      'Xác nhận đổi Bean',
-      `Bạn có chắc muốn đổi "${item.requiredPoints}" Bean lấy mã giảm giá "${item.name}" không?`,
+      'Xác nhận',
+      `Bạn có chắc muốn đổi ${item.requiredPoints} Seed lấy mã giảm giá "${item.name}" không?`,
       [
         {
-          text: 'Hủy',
+          text: 'Đóng',
           onPress: () => console.log('Hành động hủy bỏ'),
           style: 'cancel',
         },

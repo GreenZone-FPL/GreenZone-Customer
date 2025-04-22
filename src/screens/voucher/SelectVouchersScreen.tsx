@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View
+  View,
 } from 'react-native';
-import { getAllVoucher, getMyVouchers } from '../../axios/index';
+import {getAllVoucher, getMyVouchers} from '../../axios/index';
 import {
   Column,
   LightStatusBar,
@@ -18,11 +18,11 @@ import {
   Row,
   TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { VoucherGraph } from '../../layouts/graphs';
-import { CartActionTypes } from '../../reducers';
-import { TextFormatter } from '../../utils';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {VoucherGraph} from '../../layouts/graphs';
+import {CartActionTypes} from '../../reducers';
+import {TextFormatter} from '../../utils';
 
 const {width} = Dimensions.get('window');
 
@@ -102,20 +102,15 @@ const SelectVouchersScreen = ({navigation, route}) => {
 
   const onItemPress = (item: any) => {
     if (isUpdateOrderInfo) {
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
+          voucher: item._id,
+          voucherInfo: item,
+        },
+      });
+
       navigation.goBack();
-
-      const task = () => {
-        cartDispatch({
-          type: CartActionTypes.UPDATE_VOUCHER,
-          payload: item._id,
-        });
-
-        cartDispatch({
-          type: CartActionTypes.UPDATE_VOUCHER_INFO,
-          payload: item,
-        });
-      };
-      setTimeout(task, 0);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
     }
@@ -128,6 +123,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
         title="Chọn phiếu ưu đãi"
         onLeftPress={() => navigation.goBack()}
       />
+
       <ScrollView>
         {myExchangedVouchers.length > 0 && (
           <>
@@ -168,7 +164,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
 
 const ItemVoucher = ({onPress, item}) => {
   return (
-    <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
+    <Pressable style={styles.itemVoucher} onPress={onPress}>
       <Image source={{uri: item.image}} style={styles.itemImage} />
       <Column>
         <View style={{maxWidth: width / 2}}>
@@ -186,7 +182,7 @@ const ItemVoucher = ({onPress, item}) => {
           />
         </Row>
       </Column>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

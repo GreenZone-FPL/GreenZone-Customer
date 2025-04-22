@@ -27,13 +27,13 @@ import {
 } from '../../containers';
 import { useAppContext } from '../../context/appContext';
 import { VoucherGraph } from '../../layouts/graphs';
-import { AppAsyncStorage, Toaster } from '../../utils';
+import { Toaster } from '../../utils';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({ navigation }) => {
   const { authState } = useVoucherContainer();
   const { onNavigateLogin } = useAuthActions();
-  const { updateOrderMessage, user, setUser } = useAppContext()
+  const { updateOrderMessage, setUser } = useAppContext()
 
   const [vouchers, setVouchers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,7 +78,7 @@ const VoucherScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        if (await AppAsyncStorage.isTokenValid()) {
+        if (authState.lastName) {
           const response = await getAllVoucher();
           setVouchers(response);
         }
@@ -118,7 +118,8 @@ const VoucherScreen = ({ navigation }) => {
                 size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
                 color={colors.primary}
               />
-              <Text style={styles.textVoucher}>Phiếu ưu đãi của tôi</Text>
+              <NormalText style={styles.textVoucher} text='Phiếu ưu đãi của tôi'/>
+            
             </Pressable>
 
             <BarcodeUser
@@ -201,18 +202,15 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     flexDirection: 'row',
     backgroundColor: colors.white,
-    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
     paddingVertical: 4,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
-    width: 150,
     alignItems: 'center',
     justifyContent: 'center',
   },
   textVoucher: {
-    color: colors.primary,
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    textAlign: 'right',
+    color: colors.primary
   },
   logo: {
     width: Dimensions.get('window').width / 1.5,

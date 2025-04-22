@@ -79,7 +79,6 @@ const OrderScreen = () => {
         )}
         <CategoryMenu
           categories={categories}
-          loading={loading}
           onCategorySelect={category => scrollToCategory(category._id)}
         />
 
