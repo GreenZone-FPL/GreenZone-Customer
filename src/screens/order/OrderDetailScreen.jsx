@@ -2,6 +2,7 @@ import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import {
+  Column,
   DeliveryMethodText,
   LightStatusBar,
   NormalHeader,
@@ -10,6 +11,7 @@ import {
   PrimaryButton,
   Row,
   StatusText,
+  TitleText,
 } from '../../components';
 import {
   colors,
@@ -35,8 +37,8 @@ import {
 
 const OrderDetailScreen = () => {
   const route = useRoute();
-  const {orderId} = route.params;
-  const {cartState} = useAppContext();
+  const { orderId } = route.params;
+  const { cartState } = useAppContext();
 
   const {
     cancelDialogVisible,
@@ -70,10 +72,34 @@ const OrderDetailScreen = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.containerContent}>
+
+
+          {orderDetail.status === OrderStatus.AWAITING_PAYMENT.value && (
+
+            <Column style={styles.areaContainer}>
+              <TitleText text='Chờ thanh toán...' style={{fontSize: 16}}/>
+              <NormalText
+                text='Vui lòng hoàn tất thanh toán cho đơn hàng này'
+              />
+              <PrimaryButton
+                titleStyle={styles.payTitle}
+                style={styles.payButton}
+                title="Thanh toán ngay"
+                onPress={() => setDialogPaymentMethodVisible(true)}
+              />
+            </Column>
+
+          )}
+
+
           <Row style={styles.statusRow}>
             <DeliveryMethodText deliveryMethod={orderDetail?.deliveryMethod} />
 
-            <StatusText status={orderDetail.status} />
+            {
+              orderDetail.status !== OrderStatus.AWAITING_PAYMENT.value &&
+              <StatusText status={orderDetail.status} />
+            }
+
           </Row>
           <TimelineStatus details={orderDetail} />
 
@@ -106,24 +132,17 @@ const OrderDetailScreen = () => {
             {(orderDetail.status ===
               OrderStatus.PENDING_CONFIRMATION.value ||
               orderDetail.status === OrderStatus.AWAITING_PAYMENT.value) && (
-              <Pressable
-                style={[styles.cancelButton, styles.flex1]}
-                onPress={() => setCancelDialogVisible(true)}>
-                <NormalText
-                  text="Hủy đơn hàng"
-                  style={{color: colors.red900}}
-                />
-              </Pressable>
-            )}
+                <Pressable
+                  style={[styles.cancelButton, styles.flex1]}
+                  onPress={() => setCancelDialogVisible(true)}>
+                  <NormalText
+                    text="Hủy đơn hàng"
+                    style={{ color: colors.red900 }}
+                  />
+                </Pressable>
+              )}
 
-            {orderDetail.status === OrderStatus.AWAITING_PAYMENT.value && (
-              <PrimaryButton
-                titleStyle={styles.payTitle}
-                style={styles.payButton}
-                title="Thanh toán"
-                onPress={() => setDialogPaymentMethodVisible(true)}
-              />
-            )}
+
           </Row>
         </ScrollView>
       )}
@@ -163,10 +182,14 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 12,
   },
+  areaContainer: {
+    backgroundColor: colors.white,
+    padding: 16,
+    gap: 12
+  },
   statusRow: {
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
     paddingHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginBottom: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     flex: 1,
     backgroundColor: colors.white,
@@ -182,12 +205,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   payTitle: {
-    fontSize: 12,
+    fontWeight: '400'
   },
   payButton: {
-    marginHorizontal: 16,
-    flex: 1,
-    padding: 13,
+    padding: 12,
+    width: 150,
+    borderRadius: 4,
+    backgroundColor: colors.primary
   },
   cancelButton: {
     backgroundColor: colors.white,

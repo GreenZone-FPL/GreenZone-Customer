@@ -59,7 +59,7 @@ const AIChatScreen: React.FC = () => {
 
       setMessages((prev: any) => [...prev, aiMessage]);
 
-      console.log('response', JSON.stringify(response, null, 3));
+
     } catch (error: any) {
       Toaster.show(error.toString());
       const errorMessage: IMessage = {

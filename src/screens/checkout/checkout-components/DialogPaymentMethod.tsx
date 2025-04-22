@@ -1,7 +1,12 @@
 import React, {useMemo} from 'react';
-import {Image, StyleSheet} from 'react-native';
+import {Image, Pressable, StyleSheet, View} from 'react-native';
 import {RadioButton} from 'react-native-paper';
-import {DialogBasic, NormalText, Row} from '../../../components';
+import {
+  MyBottomSheet,
+  NormalText,
+  PrimaryButton,
+  Row,
+} from '../../../components';
 import {colors, DeliveryMethod, PaymentMethod} from '../../../constants';
 import {PaymentMethodItem} from '../../../type-interface/checkout';
 
@@ -59,6 +64,9 @@ export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
   selectedMethod,
   handleSelectMethod,
 }) => {
+  const [currentSelected, setCurrentSelected] =
+    React.useState<PaymentMethodItem>(selectedMethod);
+
   const methodOptions = useMemo(() => {
     return methods.map(method => {
       const disabled =
@@ -75,37 +83,60 @@ export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
   return (
     <>
       {visible && (
-        <DialogBasic
-          isVisible={visible}
+        <MyBottomSheet
+          visible={visible}
           onHide={onHide}
+          style={{paddingHorizontal: 16}}
           title="Chọn phương thức thanh toán">
-          <RadioButton.Group
-            onValueChange={value => {
-              const method = methodOptions.find(m => m.value === value);
-              if (!method) return;
-              handleSelectMethod(method, method.disabled);
-            }}
-            value={selectedMethod?.value}>
-            {methodOptions.map(method => (
-              <Row key={method.value} style={styles.methodItem}>
-                <RadioButton
-                  disabled={method.disabled}
-                  value={method.value}
-                  color={colors.primary}
-                />
-                <Image source={method.image} style={styles.image} />
-                <NormalText
-                  text={
-                    method.disabled
-                      ? `${method.label} (Không khả dụng)`
-                      : method.label
+          {methodOptions.map(method => {
+            const isSelected = currentSelected?.value === method.value;
+            return (
+              <Pressable
+                key={method.value}
+                onPress={() => {
+                  if (!method.disabled) {
+                    setCurrentSelected(method);
                   }
-                  style={method.disabled ? styles.disabledText : styles.text}
-                />
-              </Row>
-            ))}
-          </RadioButton.Group>
-        </DialogBasic>
+                }}>
+                <Row style={styles.methodItem}>
+                  {/* Có thể để lại icon selected nếu muốn */}
+                  <RadioButton
+                    disabled={method.disabled}
+                    value={method.value}
+                    status={isSelected ? 'checked' : 'unchecked'}
+                    onPress={() => {
+                      if (!method.disabled) {
+                        setCurrentSelected(method);
+                      }
+                    }}
+                    color={colors.primary}
+                  />
+                  <Image source={method.image} style={styles.image} />
+                  <NormalText
+                    text={
+                      method.disabled
+                        ? `${method.label} (Không khả dụng)`
+                        : method.label
+                    }
+                    style={method.disabled ? styles.disabledText : styles.text}
+                  />
+                </Row>
+              </Pressable>
+            );
+          })}
+
+          <PrimaryButton
+            titleStyle={styles.payTitle}
+            style={styles.payButton}
+            title="Xác nhận"
+            onPress={() =>
+              handleSelectMethod(
+                currentSelected,
+                currentSelected?.disabled ?? false,
+              )
+            }
+          />
+        </MyBottomSheet>
       )}
     </>
   );
@@ -131,5 +162,13 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     color: colors.gray400,
+  },
+  payTitle: {
+    fontSize: 12,
+  },
+  payButton: {
+    marginVertical: 16,
+    flex: 1,
+    padding: 13,
   },
 });
