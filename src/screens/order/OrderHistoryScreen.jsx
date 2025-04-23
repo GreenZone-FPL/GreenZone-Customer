@@ -6,7 +6,7 @@ import { Column, CustomTabView, DeliveryMethodText, EmptyView, LightStatusBar, N
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useAppContext } from '../../context/appContext';
-import { MainGraph } from '../../layouts/graphs';
+import { BottomGraph, MainGraph } from '../../layouts/graphs';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 import { CancelDialog } from './order-detail-components';
 
@@ -39,7 +39,7 @@ const OrderHistoryScreen = () => {
           if (navigation.canGoBack()) {
             navigation.goBack();
           } else {
-            navigation.reset({ index: 0, routes: [{ name: MainGraph.graphName }] });
+            navigation.reset({ index: 0, routes: [{ name: BottomGraph.graphName}] });
           }
 
         }}

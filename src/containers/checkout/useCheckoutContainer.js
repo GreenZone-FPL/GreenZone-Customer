@@ -8,7 +8,7 @@ import {
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
-import { MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
+import { BottomGraph, MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
@@ -204,7 +204,7 @@ export const useCheckoutContainer = () => {
             navigation.reset({
                 index: 1,
                 routes: [
-                    { name: MainGraph.graphName },
+                    { name: BottomGraph.graphName },
                     {
                         name: OrderGraph.OrderDetailScreen,
                         params: { orderId: order._id },

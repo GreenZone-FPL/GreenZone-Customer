@@ -58,32 +58,7 @@ const HomeScreen = () => {
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
   const navigation = useNavigation()
-  // const pan = useRef(new Animated.ValueXY({ x: width - 20 - 50, y: height - 200 })).current;
 
-
-
-  // const panResponder = useRef(
-  //   PanResponder.create({
-  //     onStartShouldSetPanResponder: (evt, gestureState) => false,
-  //     onMoveShouldSetPanResponder: (evt, gestureState) => {
-  //       // Chỉ bắt drag khi di chuyển đủ xa (ví dụ: 5px)
-  //       return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
-  //     },
-  //     onPanResponderGrant: () => {
-  //       pan.setOffset({
-  //         x: pan.x._value,
-  //         y: pan.y._value,
-  //       });
-  //     },
-  //     onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-  //       useNativeDriver: false,
-  //     }),
-  //     onPanResponderRelease: () => {
-  //       pan.flattenOffset();
-  //     },
-  //   })
-
-  // ).current;
 
   return (
     <SafeAreaView style={styles.container}>
