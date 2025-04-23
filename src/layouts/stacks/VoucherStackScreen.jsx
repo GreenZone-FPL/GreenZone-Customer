@@ -1,8 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import VoucherScreen from '../../screens/bottom-navs/VoucherScreen';
-import SelectVouchersScreen from '../../screens/voucher/SelectVouchersScreen';
-import { BottomGraph, MainGraph, VoucherGraph } from '../graphs';
+import { BottomGraph, MainGraph } from '../graphs';
 const VoucherStack = createNativeStackNavigator();
 const VoucherStackScreen = () => {
   return (
@@ -14,10 +13,7 @@ const VoucherStackScreen = () => {
         component={VoucherScreen}
       />
 
-      <VoucherStack.Screen
-        name={VoucherGraph.SelectVouchersScreen}
-        component={SelectVouchersScreen}
-      />
+    
     </VoucherStack.Navigator>
   );
 };

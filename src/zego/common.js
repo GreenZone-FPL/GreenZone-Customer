@@ -2,23 +2,20 @@ import { Image, View } from 'react-native';
 
 import * as ZIM from 'zego-zim-react-native';
 
-import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 import ZegoUIKitPrebuiltCallService, {
   ZegoInvitationType,
   ZegoMenuBarButtonName,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { OrderGraph } from '../layouts/graphs';
-import { getProfile } from '../axios';
+import { AppGraph, MainGraph, OrderGraph } from '../layouts/graphs';
 
 const notificationStyle = 'CustomView';
 
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego')
   try {
-    const profile = await getProfile();
-    const avatar = profile.avatar;
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
@@ -36,7 +33,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
               <Image
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="cover"
-                source={{ uri: avatar ?? `https://robohash.org/${userInfo.userId}.png` }}
+                source={{ uri: `https://robohash.org/${userInfo.userId}.png` }}
               />
             </View>
           );
@@ -125,8 +122,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
               ZegoUIKitPrebuiltCallService.hangUp();
-            
-              navigation.navigate(OrderGraph.OrderHistoryScreen);
+              // navigation.navigate(AppGraph.AIChatScreen);
             },
 
             timingConfig: {
@@ -141,6 +137,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 }
               },
             },
+            
             topMenuBarConfig: {
               buttons: [
                 ZegoMenuBarButtonName.minimizingButton,
@@ -149,19 +146,20 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
             },
             bottomMenuBarConfig: {
               buttons: [
-                ZegoMenuBarButtonName.toggleCameraButton,
-                ZegoMenuBarButtonName.toggleMicrophoneButton,
+                // ZegoMenuBarButtonName.toggleCameraButton,
+                // ZegoMenuBarButtonName.toggleMicrophoneButton,
                 ZegoMenuBarButtonName.hangUpButton, // Đây là nút tắt cuộc gọi
               ],
             },
 
-            // onWindowMinimized: () => {
-            //   console.log('[Demo]CallInvitation onWindowMinimized');
-            //   navigation.navigate(OrderGraph.OrderHistoryScreen);
-            // },
+            onWindowMinimized: () => {
+              console.log('[Demo]CallInvitation onWindowMinimized');
+              // navigation.navigate(OrderGraph.OrderHistoryScreen);
+            },
+            
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
-              navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+              // navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
             },
           };
         },

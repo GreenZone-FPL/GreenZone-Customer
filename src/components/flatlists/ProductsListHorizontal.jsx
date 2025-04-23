@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginBottom: 16
   },
   headerTextContainer: {
     flexDirection: 'row',
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemImage: {
-    width: 180,
+    width: (Dimensions.get('window').width - 48) / 2,
     height: 245,
     resizeMode: 'cover',
     opacity: 0.7,

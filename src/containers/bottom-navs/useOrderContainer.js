@@ -29,7 +29,7 @@ export const useOrderContainer = () => {
   const [categories, setCategories] = useState([]);
 
   const scrollViewRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [dialogVisible, setDialogVisible] = useState(false);
 
@@ -45,10 +45,11 @@ export const useOrderContainer = () => {
     }
 
   };
+  
 
   useEffect(() => {
     if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts).then(r => { });
+      fetchData(getAllProducts, setAllProducts, setLoading).then(r => { });
     }
   }, [allProducts.length]);
 
@@ -167,6 +168,7 @@ export const useOrderContainer = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true)
         const data = await getAllCategories();
         setCategories(data.docs);
       } catch (error) {

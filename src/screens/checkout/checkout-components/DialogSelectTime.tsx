@@ -17,7 +17,7 @@ import {
   TitleText,
 } from '../../../components';
 import {colors, GLOBAL_KEYS} from '../../../constants';
-import {TimeInfo} from '../../../type/checkout';
+import {TimeInfo} from '../../../type-interface/checkout';
 
 interface DialogSelectTimeProps {
   visible: boolean;

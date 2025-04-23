@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { DualTextRow, NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
+import moment from 'moment';
 
 export const RecipientInfo = ({ detail }) => {
   const {

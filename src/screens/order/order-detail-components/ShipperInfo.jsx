@@ -6,11 +6,12 @@ import Orientation from 'react-native-orientation-locker';
 import { Icon } from 'react-native-paper';
 import { Column, CustomCallButton, NormalText, Row } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
+import { ZegoSendCallInvitationButton } from '@zegocloud/zego-uikit-prebuilt-call-rn';
 
 
 export const ShipperInfo = (props) => {
   const { shipper } = props;
-  console.log('shipper', JSON.stringify(shipper, null, 3))
+
   const navigation = useNavigation()
 
   useEffect(() => {
@@ -69,12 +70,14 @@ export const ShipperInfo = (props) => {
       </Column>
 
       <Row>
-        <CustomCallButton
+        {/* <CustomCallButton
           userName={`${shipper?.firstName ?? ''} ${shipper?.lastName ?? ''}`.trim()}
           userID={shipper?.phoneNumber ?? ''}
           navigation={navigation}
-        />
-        {/* <ZegoSendCallInvitationButton
+        /> */}
+
+
+        <ZegoSendCallInvitationButton
           invitees={[
             {
               userID: shipper?.phoneNumber ?? '',
@@ -85,7 +88,7 @@ export const ShipperInfo = (props) => {
           resourceID={"zegouikit_call"}
           showWaitingPageWhenGroupCall={true}
           onPressed={handleCallInvitationPress}
-        /> */}
+        />
 
         <Pressable style={styles.iconButton} onPress={handleSend}>
           <Icon
