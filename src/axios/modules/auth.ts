@@ -1,6 +1,6 @@
 import axiosInstance from '../axiosInstance';
 import {AppAsyncStorage} from '../../utils';
-import {RegisterRequest} from '../../type/register';
+import {RegisterRequest} from '../../type-interface/register';
 
 export const getProfile = async (): Promise<void> => {
   try {
@@ -58,7 +58,7 @@ export const verifyOTP = async ({phoneNumber, code}) => {
       code,
     });
     const {data} = response;
-    
+
     console.log('data', JSON.stringify(data, null, 2));
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,

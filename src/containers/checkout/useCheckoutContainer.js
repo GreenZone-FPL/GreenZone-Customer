@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import { createOrder } from '../../axios';
 import {
     DeliveryMethod,
     OnlineMethod,
-    OrderStatus,
     PaymentMethod
 } from '../../constants';
 import { useAppContext } from '../../context/appContext';
@@ -13,10 +13,10 @@ import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
 import {
-    AppAsyncStorage,
     CartManager,
     Toaster
 } from '../../utils';
+import useSaveLocation from '../../utils/useSaveLocation';
 
 export const useCheckoutContainer = () => {
     const navigation = useNavigation()
@@ -46,6 +46,7 @@ export const useCheckoutContainer = () => {
 
     const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0]);
 
+    useSaveLocation()
     const handleSelectMethod = (method, disabled) => {
         if (!disabled) {
             setPaymentMethod(method); // 1. Cập nhật UI ngay, phản hồi nhanh
@@ -127,86 +128,105 @@ export const useCheckoutContainer = () => {
     };
 
     const onApproveCreateOrder = async () => {
+        const orderData = prepareOrderData();
+        if (!validateOrderData(orderData)) return;
         try {
-            setLoading(true)
-            let response;
-            if (cartState.deliveryMethod === DeliveryMethod.PICK_UP.value) {
-                response = await createPickupOrder();
-            } else {
-                response = await createDeliveryOrder();
-            }
+            setLoading(true);
 
-            setDialogCreateOrderVisible(false);
+            const order = await submitOrder(orderData);
+
             const newActiveOrder = {
-                visible: response?.data.status !== 'awaitingPayment',
-                orderId: response?.data?._id,
+                visible: order.status !== 'awaitingPayment',
+                orderId: order._id,
                 message: 'Đặt hàng thành công',
-                status: response?.data?.status,
+                status: order.status,
             };
-            await AppAsyncStorage.addToActiveOrders(newActiveOrder);
+
             setUpdateOrderMessage(newActiveOrder);
 
-            await socketService.joinOrder2(
-                response?.data?._id,
-                response?.data?.status,
-                data => {
-                    setUpdateOrderMessage({
-                        visible: data.status !== 'awaitingPayment',
-                        orderId: data.orderId,
-                        message: data.message,
-                        status: data.status,
-                    });
-                },
-            );
+            await handleOrderResponse(order);
 
-
-            console.log('order data =', JSON.stringify(response, null, 2));
-
-            if (response?.data?.status === 'awaitingPayment') {
-                const paymentParams = {
-                    orderId: response.data._id,
-                    totalPrice: response.data.totalPrice,
-                    paymentMethod: cartState.onlineMethod
-                };
-
-
-                if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
-                    navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
-                }
-                else if (cartState.onlineMethod === OnlineMethod.CARD.value) {
-                    navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
-                }
-            } else {
-                navigation.reset({
-                    index: 1,
-                    routes: [
-                        { name: MainGraph.graphName },
-                        {
-                            name: OrderGraph.OrderDetailScreen,
-                            params: { orderId: response?.data?._id },
-                        },
-                    ],
-                });
-            }
             await CartManager.clearOrderItems(cartDispatch);
         } catch (error) {
             console.log('error', error);
             Toaster.show('Đã xảy ra lỗi, vui lòng thử lại');
         } finally {
-            setLoading(false)
-
+            setLoading(false);
         }
-    }
-
-    const createPickupOrder = async () => {
-        const pickupOrder = CartManager.setUpPickupOrder(cartState);
-        return await createOrder(pickupOrder);
     };
 
-    const createDeliveryOrder = async () => {
-        const deliveryOrder = CartManager.setupDeliveryOrder(cartState);
-        return await createOrder(deliveryOrder);
+
+    const prepareOrderData = () => {
+        const newCart = {
+            ...cartState,
+            fulfillmentDateTime: timeInfo?.fulfillmentDateTime || new Date().toISOString(),
+            totalPrice: CartManager.getPaymentDetails(cartState).paymentTotal,
+        };
+
+        return newCart.deliveryMethod === DeliveryMethod.PICK_UP.value
+            ? CartManager.setUpPickupOrder(newCart)
+            : CartManager.setupDeliveryOrder(newCart);
     };
+
+    const validateOrderData = (orderData) => {
+        const missingFields = CartManager.checkValid(orderData, orderData.deliveryMethod);
+        if (missingFields) {
+            Alert.alert('Thiếu thông tin', `${missingFields.join(', ')}`);
+            setDialogCreateOrderVisible(false);
+            return false;
+        }
+        return true;
+    };
+
+    const submitOrder = async (orderData) => {
+        setDialogCreateOrderVisible(false);
+        const response = await createOrder(orderData);
+        return response?.data
+    };
+
+
+    const handleOrderResponse = async (order) => {
+        console.log('order', JSON.stringify(order, null, 3))
+        if (order.status === 'awaitingPayment') {
+            const paymentParams = {
+                orderId: order._id,
+                totalPrice: order.totalPrice,
+                paymentMethod: cartState.onlineMethod,
+            };
+
+            if (cartState.onlineMethod === OnlineMethod.PAYOS.value) {
+                navigation.navigate(ShoppingGraph.PayOsScreen, paymentParams);
+            } else if (cartState.onlineMethod === OnlineMethod.CARD.value) {
+                navigation.navigate(ShoppingGraph.Zalopayscreen, paymentParams);
+            }
+
+        } else {
+            navigation.reset({
+                index: 1,
+                routes: [
+                    { name: MainGraph.graphName },
+                    {
+                        name: OrderGraph.OrderDetailScreen,
+                        params: { orderId: order._id },
+                    },
+                ],
+            });
+        }
+
+        try {
+            await socketService.joinOrder2(order._id, order.status, (data) => {
+                setUpdateOrderMessage({
+                    visible: data.status !== 'awaitingPayment',
+                    orderId: data.orderId,
+                    message: data.message,
+                    status: data.status,
+                });
+            });
+        } catch (error) {
+            console.log('Error', error)
+        }
+    };
+
 
 
     return {

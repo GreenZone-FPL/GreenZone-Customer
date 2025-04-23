@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
         color: colors.black,
         flex: 1,
+        fontWeight: '500'
 
     },
 })

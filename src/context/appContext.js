@@ -31,17 +31,16 @@ export const AppContextProvider = ({ children }) => {
     visible: false,
     order: null,
   });
-  const [showCallUI, setShowCallUI] = useState(true);
 
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
- const [user, setUser] = useState(0)
- const [notifications, setNotifications] = useState([]);
+  const [user, setUser] = useState(0)
+  const [notifications, setNotifications] = useState([]);
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
 
-     
+
       const user = await AppAsyncStorage.readData(
         AppAsyncStorage.STORAGE_KEYS.user,
       );
@@ -79,7 +78,7 @@ export const AppContextProvider = ({ children }) => {
     };
   }, [authState]);
 
- 
+
 
   useEffect(() => {
     const readCart = async () => {
@@ -95,7 +94,7 @@ export const AppContextProvider = ({ children }) => {
     return () => { };
   }, []);
 
- 
+
 
   return (
     <AppContext.Provider
@@ -110,11 +109,9 @@ export const AppContextProvider = ({ children }) => {
         setActiveOrders,
         merchantLocation,
         setMerchantLocation,
-        showCallUI,
-        setShowCallUI,
         user,
         setUser,
-        notifications, 
+        notifications,
         setNotifications
       }}>
       {children}

@@ -56,7 +56,7 @@ const OrderHistoryScreen = () => {
         {orderStatuses.map((status, index) => (
           <View key={index} style={{ flex: 1 }}>
             <OrderListView
-              status={status}
+
               orders={orders[status] || []}
               loading={loading}
               setSelectedOrder={setSelectedOrder}
@@ -74,26 +74,34 @@ const OrderHistoryScreen = () => {
         ))}
       </CustomTabView>
 
-      <CancelDialog
-        visible={cancelDialogVisible}
-        onHide={() => setCancelDialogVisible(false)}
-        orderId={selectedOrder?._id}
-        callBack={() => {}}
-      />
+      {
+        cancelDialogVisible &&
+        <CancelDialog
+          visible={cancelDialogVisible}
+          onHide={() => setCancelDialogVisible(false)}
+          orderId={selectedOrder?._id}
+          callBack={() => { }}
+        />
+      }
 
-      <DialogPaymentMethod
-        methods={onlineMethods}
-        visible={dialogPaymentMethodVisible}
-        onHide={() => setDialogPaymentMethodVisible(false)}
-        cartState={cartState}
-        selectedMethod={paymentMethod}
-        handleSelectMethod={handleSelectMethod}
-      />
+
+      {
+        dialogPaymentMethodVisible &&
+        <DialogPaymentMethod
+          methods={onlineMethods}
+          visible={dialogPaymentMethodVisible}
+          onHide={() => setDialogPaymentMethodVisible(false)}
+          cartState={cartState}
+          selectedMethod={paymentMethod}
+          handleSelectMethod={handleSelectMethod}
+        />
+      }
+
     </View>
   );
 };
 
-const OrderListView = ({ status, orders, loading, onItemPress, onPay, onCancel, setSelectedOrder }) => (
+const OrderListView = ({ orders, loading, onItemPress, onPay, onCancel, setSelectedOrder }) => (
   <View style={styles.scene}>
     {loading ? (
       <NormalLoading visible={loading} />
@@ -108,7 +116,7 @@ const OrderListView = ({ status, orders, loading, onItemPress, onPay, onCancel, 
         contentContainerStyle={{ gap: 5 }}
       />
     ) : (
-      <EmptyView  message='Danh sách này trống'/>
+      <EmptyView message='Danh sách này trống' />
     )}
   </View>
 );
@@ -129,7 +137,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
 
   return (
     <Pressable
-      onPress={() => onPress(order)} 
+      onPress={() => onPress(order)}
     >
       <Column style={styles.itemContainer} >
 
@@ -148,7 +156,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
                 : 'Chưa có thời gian'}
             </Text>
 
-            <DeliveryMethodText deliveryMethod={order.deliveryMethod} />
+            <DeliveryMethodText deliveryMethod={order.deliveryMethod} style={{fontWeight: '400'}}/>
 
           </Column>
           <Column style={styles.orderColumnEnd}>
@@ -173,7 +181,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
 
             <Pressable
               onPress={() => {
-                console.log('orderDetail', JSON.stringify(order, null, 2))
+
                 setSelectedOrder(order)
                 onCancel()
               }}
@@ -182,7 +190,7 @@ const OrderItem = ({ order, onPress, onPay, onCancel, setSelectedOrder }) => {
             </Pressable>
             <Pressable
               onPress={() => {
-                console.log('orderDetail', JSON.stringify(order, null, 2))
+
                 setSelectedOrder(order)
                 onPay()
               }}
@@ -284,11 +292,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    borderColor: colors.red900,
-    borderWidth: 1
+    borderColor: colors.gray200,
+    borderWidth: 1,
   },
   cancelText: {
-    color: colors.red900
+    color: colors.orange700
   }
 });
 

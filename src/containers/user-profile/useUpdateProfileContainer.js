@@ -102,7 +102,7 @@ export const useUpdateProfileContainer = (profile) => {
                 avatar: avatarUrl,
             };
 
-            console.log('Dữ liệu gửi lên API:', profileData);
+        
 
             const result = await updateUserProfile(profileData);
 

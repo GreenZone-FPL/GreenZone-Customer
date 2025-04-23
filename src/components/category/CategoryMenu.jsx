@@ -40,7 +40,7 @@ export const CategoryMenu = ({ categories, onCategorySelect }) => {
                   resizeMode={FastImage.resizeMode.contain}
                 />
               </View>
-              
+
               <Text style={styles.itemName} numberOfLines={2}>
                 {item.name}
               </Text>

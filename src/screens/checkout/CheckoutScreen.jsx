@@ -43,6 +43,7 @@ const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useAppContext();
   const navigation = useNavigation()
 
+  // console.log('cartState', JSON.stringify(cartState, null, 3))
   const {
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,
@@ -66,7 +67,7 @@ const CheckoutScreen = () => {
     handleSelectMethod,
     onApproveCreateOrder,
   } = useCheckoutContainer();
-  console.log('cart:' , JSON.stringify(cartState, null, 2))
+
   if (cartState.orderItems.length === 0) {
     return (
       <EmptyView />
@@ -203,10 +204,8 @@ const CheckoutScreen = () => {
       </ScrollView>
 
       <Footer
-        timeInfo={timeInfo}
-        showDialog={() => setDialogCreateOrderVisible(true)}
-        cartDispatch={cartDispatch}
         cartState={cartState}
+        showDialog={() => setDialogCreateOrderVisible(true)}
       />
 
       {

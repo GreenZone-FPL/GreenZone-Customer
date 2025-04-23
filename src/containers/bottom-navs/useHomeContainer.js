@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
@@ -114,9 +114,11 @@ export const useHomeContainer = () => {
   }, []);
 
 
-  useEffect(() => {
-    fetchOrderHistory()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrderHistory();
+    }, [])
+  );
 
 
   useEffect(() => {
@@ -143,6 +145,7 @@ export const useHomeContainer = () => {
 
       if (authState.lastName) {
         const response = await getOrdersByStatus();
+
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
 
         if (awaitingPayments.length > 0) {

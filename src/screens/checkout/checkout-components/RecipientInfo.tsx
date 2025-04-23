@@ -49,7 +49,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
     return (
         <Pressable onPress={onChangeRecipientInfo} style={[styles.container, style]}>
             <NormalText text={`${consigneeName}`} style={styles.consigneeName} />
-            <NormalText text={`${consigneePhone}`} style={styles.phoneText} />
+            <NormalText text={`${consigneePhone}`} />
         </Pressable>
     );
 };
@@ -63,12 +63,9 @@ const styles = StyleSheet.create({
         borderRightColor: colors.primary,
         borderRightWidth: 5,
     },
-    phoneText: {
-        color: colors.gray700,
-    },
     consigneeName: {
         fontWeight: '500',
-        color: colors.green500,
+        color: colors.lemon,
         fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
     }
 });
