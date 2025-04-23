@@ -20,7 +20,7 @@ import { NormalLoading } from '../../../components';
 import ToastDialog from '../../../components/dialogs/ToastDialog';
 import { colors } from '../../../constants';
 import { useAppContext } from '../../../context/appContext';
-import { MainGraph } from '../../../layouts/graphs';
+import { BottomGraph, MainGraph } from '../../../layouts/graphs';
 import { AppAsyncStorage, CartManager, Toaster } from '../../../utils';
 
 const PayOsScreen = () => {
@@ -53,7 +53,7 @@ const PayOsScreen = () => {
               navigation.reset({
                 index: 1,
                 routes: [
-                  { name: MainGraph.graphName },
+                  { name: BottomGraph.graphName },
                   { name: 'OrderDetailScreen', params: { orderId } },
                 ],
               });
@@ -162,7 +162,7 @@ const PayOsScreen = () => {
       navigation.reset({
         index: 1,
         routes: [
-          { name: MainGraph.graphName },
+          { name: BottomGraph.graphName },
           { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });
@@ -171,7 +171,7 @@ const PayOsScreen = () => {
       navigation.reset({
         index: 1,
         routes: [
-          { name: MainGraph.graphName },
+          { name: BottomGraph.graphName },
           { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });

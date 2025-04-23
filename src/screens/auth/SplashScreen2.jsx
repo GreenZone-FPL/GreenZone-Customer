@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Image, Dimensions } from 'react-native';
-import {MainGraph} from '../../layouts/graphs';
+import {BottomGraph, MainGraph} from '../../layouts/graphs';
 
 const { width, height } = Dimensions.get('window')
 const SplashScreen2 = ({ navigation }) => {
@@ -8,7 +8,7 @@ const SplashScreen2 = ({ navigation }) => {
     const timer = setTimeout(() => {
       navigation.reset({
         index: 0,
-        routes: [{name: MainGraph.graphName}],
+        routes: [{name: BottomGraph.graphName}],
       });
     }, 2000);
 

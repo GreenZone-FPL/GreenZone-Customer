@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Column, Row } from "../../components";
 import Ani_Success from "../../components/animations/Ani_Success";
 import { colors, GLOBAL_KEYS, OrderStatus } from "../../constants";
-import { MainGraph, OrderGraph } from "../../layouts/graphs";
+import { BottomGraph, MainGraph, OrderGraph } from "../../layouts/graphs";
 import { useAppContext } from "../../context/appContext";
 
 const OrderSuccessScreen = ({ route, navigation }) => {
@@ -31,7 +31,7 @@ const OrderSuccessScreen = ({ route, navigation }) => {
 
                         <TouchableOpacity
                             style={[styles.button, styles.continueButton]}
-                            onPress={() => navigation.navigate(MainGraph.graphName)}
+                            onPress={() => navigation.navigate(BottomGraph.graphName)}
                         >
                             <Text style={styles.buttonText}>Tiếp tục mua hàng</Text>
                         </TouchableOpacity>

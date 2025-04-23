@@ -3,7 +3,7 @@ import { AuthActionTypes } from '../../reducers';
 import { AppAsyncStorage, CartManager } from '../../utils';
 import { cartInitialState } from '../../reducers';
 import { useNavigation } from '@react-navigation/native';
-import { MainGraph } from '../../layouts/graphs';
+import { BottomGraph, MainGraph } from '../../layouts/graphs';
 
 export const useAuthActions = () => {
   const { authDispatch, cartDispatch } = useAppContext();
@@ -33,7 +33,7 @@ export const useAuthActions = () => {
       });
       navigation.reset({
         index: 0,
-        routes: [{ name: MainGraph.graphName }],
+        routes: [{ name: BottomGraph.graphName }],
       });
     } catch (error) {
       throw error

@@ -122,10 +122,10 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
 
-              ZegoUIKitPrebuiltCallService.hangUp();
+              // ZegoUIKitPrebuiltCallService.hangUp();
 
               // navigation.navigate(AppGraph.OrderHistoryScreen)
-              navigation.goBack()
+              // navigation.goBack()
             },
 
             timingConfig: {
@@ -158,12 +158,12 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
 
             onWindowMinimized: () => {
               console.log('[Demo]CallInvitation onWindowMinimized');
-              navigation.navigate(OrderGraph.OrderHistoryScreen);
+              // navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
 
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
-              navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+              // navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
             },
           };
         },

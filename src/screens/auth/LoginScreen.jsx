@@ -131,7 +131,7 @@ const LoginScreen = ({ route, navigation }) => {
   useEffect(() => {
     const backAction = () => {
       if (authState.needLogin) {
-        // navigation.navigate(MainGraph.graphName);
+
         authDispatch({
           type: AuthActionTypes.LOGIN,
           payload: { needLogin: false },
