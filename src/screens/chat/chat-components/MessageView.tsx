@@ -4,7 +4,7 @@ import moment from 'moment';
 import {Column} from '../../../components';
 import {colors} from '../../../constants';
 import {useHomeContainer} from '../../../containers';
-import {IMessage} from '../../../type-interface/chat';
+import {IMessage} from '../../../type-interface'
 import {SuggestedList} from './SuggestedList';
 
 export const MessageView: React.FC<{item: IMessage}> = ({item}) => {

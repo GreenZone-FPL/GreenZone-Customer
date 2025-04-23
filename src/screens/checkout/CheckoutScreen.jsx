@@ -14,7 +14,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
 import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import {
   BottomGraph,
   ShoppingGraph,
@@ -40,7 +40,8 @@ import {
 
 
 const CheckoutScreen = () => {
-  const { cartState, cartDispatch } = useAppContext();
+
+  const { cartState, cartDispatch } = useCartContext();
   const navigation = useNavigation()
 
   // console.log('cartState', JSON.stringify(cartState, null, 3))

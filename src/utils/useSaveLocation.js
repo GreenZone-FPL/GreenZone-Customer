@@ -1,16 +1,16 @@
-import {useEffect, useState} from 'react';
-import {fetchUserLocation} from './geoLocationUtils';
-import {AppAsyncStorage} from './appAsyncStorage';
+import { useEffect, useState } from 'react';
+import { getAllMerchants } from '../axios/modules/merchant';
+import { useCartContext } from '../context';
+import { AppAsyncStorage } from './appAsyncStorage';
+import { CartManager } from './cartMananger';
+import { fetchUserLocation } from './geoLocationUtils';
 import LocationManager from './locationManager';
-import {getAllMerchants} from '../axios/modules/merchant';
-import {CartManager} from './cartMananger';
-import {useAppContext} from '../context/appContext';
 
 const useSaveLocation = () => {
   const [currentLocation, setCurrentLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [merchants, setMerchants] = useState([]);
-  const {cartDispatch, cartState} = useAppContext();
+  const {cartDispatch, cartState} = useCartContext();
 
   // Lấy danh sách merchants
   useEffect(() => {

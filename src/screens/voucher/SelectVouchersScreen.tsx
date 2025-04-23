@@ -23,6 +23,7 @@ import {useAppContext} from '../../context/appContext';
 import {VoucherGraph} from '../../layouts/graphs';
 import {CartActionTypes} from '../../reducers';
 import {TextFormatter} from '../../utils';
+import { useCartContext } from '../../context';
 
 const {width} = Dimensions.get('window');
 
@@ -32,7 +33,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
   const [validStoreVouchers, setValidStoreVouchers] = useState([]);
   const [validMyVouchers, setValidMyVouchers] = useState([]);
 
-  const {cartDispatch} = useAppContext();
+  const {cartDispatch} = useCartContext();
   const {isUpdateOrderInfo} = route.params || false;
 
   useEffect(() => {

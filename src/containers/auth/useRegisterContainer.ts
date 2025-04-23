@@ -2,7 +2,7 @@ import {
   RegisterAction,
   RegisterFormProps,
   RegisterRequest,
-} from '../../type-interface/register';
+} from '../../type-interface'
 import {useEffect, useReducer, useState} from 'react';
 import {Keyboard} from 'react-native';
 import {register} from '../../axios';

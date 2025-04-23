@@ -23,9 +23,9 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useProductDetailContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { CartManager, Toaster } from '../../utils';
+import { useAppContext, useCartContext } from '../../context';
 import { ProductDetailSkeleton } from '../../skeletons';
+import { CartManager, Toaster } from '../../utils';
 
 
 const ProductDetailSheet = ({ route, navigation }) => {
@@ -37,7 +37,8 @@ const ProductDetailSheet = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const { productId } = route.params;
-  const { cartDispatch, cartState, authState } = useAppContext();
+  const { authState } = useAppContext();
+  const { cartDispatch } = useCartContext();
   const { onClickAddToCart } = useProductDetailContainer();
 
 

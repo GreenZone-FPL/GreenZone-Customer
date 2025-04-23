@@ -52,9 +52,6 @@ import MyVouchersScreen from '../../screens/voucher/MyVouchersScreen';
 import SeedScreen from '../../screens/voucher/SeedScreen';
 import SelectVouchersScreen from '../../screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from '../../screens/voucher/VoucherDetailSheet';
-import { onUserLoginZego } from '../../zego/common';
-import { AppAsyncStorage } from '../../utils';
-import { useNavigation } from '@react-navigation/native';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -73,11 +70,6 @@ const slideFromRightOption = {
 }
 function MainNavigator() {
   const { authState } = useAppContext();
-
-  console.log('in Main Navigator')
-  const navigation = useNavigation()
-  
-
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
 

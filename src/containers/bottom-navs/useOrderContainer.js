@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useRef, useState } from 'react';
-import { getAllCategories, getAllProducts } from '../../axios';
+import { getAllCategories } from '../../axios';
 import { DeliveryMethod } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+
 import {
   AppGraph,
   BottomGraph,
@@ -10,16 +10,19 @@ import {
   UserGraph
 } from '../../layouts/graphs';
 
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
-import { useAppContainer } from '../useAppContainer';
+import { AppAsyncStorage, CartManager } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
 
+import { useAppContext, useCartContext, useProductContext } from '../../context';
+
 export const useOrderContainer = () => {
-  const { authState, cartState, cartDispatch } = useAppContext();
+  const { authState, } = useAppContext();
+  const { cartState, cartDispatch } = useCartContext();
+  const { allProducts } = useProductContext();
   const { onNavigateLogin } = useAuthActions();
   const navigation = useNavigation();
 
-  const [allProducts, setAllProducts] = useState([]);
+
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -35,7 +38,8 @@ export const useOrderContainer = () => {
 
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
-
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const onClickAddToCart = productId => {
 
     if (authState.lastName) {
@@ -45,13 +49,6 @@ export const useOrderContainer = () => {
     }
 
   };
-  
-
-  useEffect(() => {
-    if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts, setLoading).then(r => { });
-    }
-  }, [allProducts.length]);
 
 
   useEffect(() => {
@@ -168,19 +165,18 @@ export const useOrderContainer = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        setLoading(true)
+        setLoadingCategories(true)
         const data = await getAllCategories();
         setCategories(data.docs);
       } catch (error) {
         console.log(`Error`, error);
       } finally {
-        setLoading(false);
+        setLoadingCategories(false);
       }
     };
 
     fetchCategories();
 
-    fetchData(getAllProducts, setAllProducts, setLoading);
   }, []);
 
   const navigateCheckOut = () => {
@@ -204,11 +200,12 @@ export const useOrderContainer = () => {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
-    allProducts,
     loading,
     categories,
     dialogVisible,
     scrollViewRef,
+    loadingProducts,
+    loadingCategories,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,

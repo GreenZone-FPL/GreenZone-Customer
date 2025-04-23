@@ -20,25 +20,21 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { useNavigation } from '@react-navigation/native';
-import { AppGraph } from '../../layouts/graphs';
+import { useAppContext, useCartContext, useProductContext } from '../../context';
 
 
 const OrderScreen = () => {
-  const { cartState, authState } =
-    useAppContext() || {};
-
-  const navigation = useNavigation()
+  const { authState } = useAppContext()
+  const { cartState } = useCartContext()
+  const { allProducts } = useProductContext();
   const {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
-    allProducts,
-    loading,
     categories,
     dialogVisible,
     scrollViewRef,
+    loadingCategories,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,
@@ -53,7 +49,6 @@ const OrderScreen = () => {
     navigateFavorite,
     navigateSearchProduct
   } = useOrderContainer()
-
 
 
   const { onNavigateLogin } = useAuthActions();
@@ -77,12 +72,16 @@ const OrderScreen = () => {
         {!authState.lastName && (
           <AuthContainer onPress={onNavigateLogin} />
         )}
+
         <CategoryMenu
+          loading={loadingCategories}
           categories={categories}
           onCategorySelect={category => scrollToCategory(category._id)}
         />
 
+
         <ProductsListHorizontal
+          loading={false}
           title='Sản phẩm mới'
           products={allProducts
             .flatMap(category => category.products)
@@ -156,7 +155,7 @@ const OrderScreen = () => {
           <View style={{ marginVertical: 8 }}>
             <CategoryMenu
               categories={categories}
-              loading={loading}
+              loading={loadingCategories}
               onCategorySelect={category => {
                 scrollToCategory(category._id);
               }}

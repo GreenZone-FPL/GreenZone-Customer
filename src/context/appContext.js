@@ -25,7 +25,7 @@ export let globalAuthDispatch = null;
 
 export const AppContextProvider = ({ children }) => {
   const [authState, authDispatch] = useReducer(authReducer, authInitialState);
-  const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState);
+
 
   const [updateOrderMessage, setUpdateOrderMessage] = useState({
     visible: false,
@@ -36,6 +36,9 @@ export const AppContextProvider = ({ children }) => {
   const [merchantLocation, setMerchantLocation] = useState(null);
   const [user, setUser] = useState(0)
   const [notifications, setNotifications] = useState([]);
+
+  const [allProducts, setAllProducts] = useState([]);
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       const isValid = await AppAsyncStorage.isTokenValid();
@@ -80,29 +83,11 @@ export const AppContextProvider = ({ children }) => {
 
 
 
-  useEffect(() => {
-    const readCart = async () => {
-      try {
-        const cart = await CartManager.readCart();
-        cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
-      } catch (error) {
-        console.log('Error loading cart', error);
-      }
-    };
-    readCart();
-
-    return () => { };
-  }, []);
-
-
-
   return (
     <AppContext.Provider
       value={{
         authState,
         authDispatch,
-        cartState,
-        cartDispatch,
         updateOrderMessage,
         setUpdateOrderMessage,
         activeOrders,
@@ -112,7 +97,9 @@ export const AppContextProvider = ({ children }) => {
         user,
         setUser,
         notifications,
-        setNotifications
+        setNotifications,
+        allProducts,
+        setAllProducts
       }}>
       {children}
     </AppContext.Provider>

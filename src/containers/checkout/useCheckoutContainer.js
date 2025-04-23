@@ -7,8 +7,8 @@ import {
     OnlineMethod,
     PaymentMethod
 } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { BottomGraph, MainGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
+import { useAppContext, useCartContext } from '../../context';
+import { BottomGraph, OrderGraph, ShoppingGraph } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
 import { paymentMethods } from '../../screens/checkout/checkout-components';
 import socketService from '../../services/socketService';
@@ -19,6 +19,9 @@ import {
 import useSaveLocation from '../../utils/useSaveLocation';
 
 export const useCheckoutContainer = () => {
+    const { setUpdateOrderMessage } = useAppContext();
+    const { cartState, cartDispatch } = useCartContext();
+    
     const navigation = useNavigation()
     const [dialogCreateOrderVisible, setDialogCreateOrderVisible] =
         useState(false);
@@ -35,7 +38,7 @@ export const useCheckoutContainer = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const { cartState, cartDispatch, setUpdateOrderMessage } = useAppContext();
+ 
 
     const [timeInfo, setTimeInfo] = useState({
         selectedDay: 'Hôm nay',

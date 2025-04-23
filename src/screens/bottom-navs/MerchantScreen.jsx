@@ -18,14 +18,14 @@ import {
   Column,
   CustomSearchBar,
   HeaderWithBadge,
-  Indicator,
   NormalText,
   TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions } from '../../containers';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext, useCartContext } from '../../context';
 import { AppGraph } from '../../layouts/graphs';
+import { SkeletonBox } from '../../skeletons';
 import { CartManager } from '../../utils';
 
 
@@ -49,11 +49,12 @@ const MerchantScreen = ({ navigation, route }) => {
   const { fromCheckout } = route.params || false;
   const { fromHome } = route.params || false;
 
-  const { cartDispatch, authState } = useAppContext();
+  const { authState } = useAppContext();
+  const { cartDispatch } = useCartContext();
   const { onNavigateLogin } = useAuthActions();
   const [loadingMerchants, setLoadingMerchants] = useState(false);
 
-  // hàm gọi api merchants
+
   const fetchMerchants = async () => {
     try {
       setLoadingMerchants(true)
@@ -65,6 +66,10 @@ const MerchantScreen = ({ navigation, route }) => {
       setLoadingMerchants(false)
     }
   };
+
+  useEffect(() => {
+    fetchMerchants();
+  }, []);
 
   // hàm tính khoảng cách giữa người dùng và cửa hàng
   const haversineDistance = (lat2, lon2) => {
@@ -161,10 +166,7 @@ const MerchantScreen = ({ navigation, route }) => {
     return () => clearTimeout(timeoutId);
   }, []);
 
-  // gọi data merchants
-  useEffect(() => {
-    fetchMerchants();
-  }, []);
+
 
   // sắp xếp lại merchants theo khoảng cách
   useEffect(() => {
@@ -345,14 +347,17 @@ const MerchantScreen = ({ navigation, route }) => {
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.mechant1}>
-              <Text style={styles.title}>Cửa hàng gần bạn</Text>
+              {
+                loadingMerchants ?
+                  <SkeletonBox width='40%' height={20} borderRadius={10} style={{ marginHorizontal: 16, marginVertical: 10 }} /> :
+                  <Text style={styles.title}>Cửa hàng gần bạn</Text>
+              }
+
 
 
               {sortedMerchants.length == 0 ? (
-                <Indicator
-                  size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                  color={colors.primary}
-                />
+                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
+
               ) : (
                 <FlatList
                   scrollEnabled={false}
@@ -369,12 +374,19 @@ const MerchantScreen = ({ navigation, route }) => {
                 />
               )}
             </View>
-            <Text style={styles.title}>Cửa hàng khác</Text>
+            {
+              loadingMerchants ?
+                <SkeletonBox width='40%' height={20} borderRadius={10} style={{ marginHorizontal: 16, marginVertical: 10 }} /> :
+                <Text style={styles.title}>Cửa hàng khác</Text>
+            }
+
             {sortedMerchants.length == 0 ? (
-              <Indicator
-                size={GLOBAL_KEYS.ICON_SIZE_LARGE}
-                color={colors.primary}
-              />
+              <Column style={{ gap: 2 }}>
+                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
+                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
+                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
+              </Column>
+
             ) : (
               <FlatList
                 scrollEnabled={false}

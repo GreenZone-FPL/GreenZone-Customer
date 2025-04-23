@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   Image,
@@ -7,17 +8,16 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useHomeContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
 import { MyBottomSheet } from '../../components/bottom-sheets/MyBottomSheet';
 import { Row } from '../../components/containers/Row';
-import { useNavigation } from '@react-navigation/native';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext, useCartContext } from '../../context';
 
 
 const ShippingMethodScreen = () => {
 
-  const { cartState, authState } = useAppContext();
+  const {  authState } = useAppContext();
+  const { cartState } = useCartContext();
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const navigation = useNavigation()
   const options = React.useMemo(() => [

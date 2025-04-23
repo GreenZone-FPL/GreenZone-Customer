@@ -12,6 +12,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import { MyBottomSheet } from '../bottom-sheets/MyBottomSheet';
 import { Row } from '../containers/Row';
+import { useCartContext } from '../../context'
 
 const DialogShippingMethodPropTypes = {
   visible: PropTypes.bool.isRequired,
@@ -29,95 +30,95 @@ export const DialogShippingMethod = ({
   onOptionSelect,
 }) => {
 
-  const { cartState, authState } = useAppContext();
+  const { authState } = useAppContext();
+  const { cartState } = useCartContext();
+
+
+  const location = cartState?.shippingAddressInfo?.location;
 
   const options = React.useMemo(() => [
     {
       label: 'Giao hàng',
       image: require('../../assets/images/ic_delivery.png'),
-      address: cartState
-        ? cartState?.shippingAddressInfo?.location
-        : 'Đang lấy vị trí...',
+      address: location ?? 'Đang lấy vị trí...',
     },
     {
       label: 'Mang đi',
       image: require('../../assets/images/ic_take_away.png'),
       address: 'Đến lấy tại chi nhánh GreenZone',
     },
-  ], [cartState]);
+  ], [location]);
+
 
 
   return (
-    <>
-      {
-        visible &&
-        <MyBottomSheet
-          visible={visible}
-          title='Chọn phương thức giao hàng'
-          onHide={onHide}
-        >
-          {options.map((option, index) => (
-            <Pressable
-              key={index}
-              style={[
-                styles.optionItem,
-                selectedOption === option.label && styles.selectedOption,
-              ]}
-              onPress={() => onOptionSelect(option.label)}>
-              <Row style={styles.row}>
-                <Row style={styles.row}>
-                  <View style={styles.iconContainer}>
-                    <Image
-                      source={option.image}
-                      style={[
-                        option.label == 'Mang đi'
-                          ? { width: 40, height: 40 }
-                          : styles.icon,
-                      ]}
-                    />
-                  </View>
-                  <Text style={styles.optionText}>{option.label}</Text>
-                </Row>
-
-                <Pressable onPress={() => onEditOption(option.label)}>
-
-                  <Icon
-                    source="square-edit-outline"
-                    size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                    color={colors.primary}
-                  />
-                </Pressable>
-              </Row>
 
 
-              <Text style={styles.normalText}>
-                {option.address}
-              </Text>
+    <MyBottomSheet
+      visible={visible}
+      title='Chọn phương thức giao hàng'
+      onHide={onHide}
+    >
+      {options.map((option, index) => (
+        <Pressable
+          key={index}
+          style={[
+            styles.optionItem,
+            selectedOption === option.label && styles.selectedOption,
+          ]}
+          onPress={() => onOptionSelect(option.label)}>
+          <Row style={styles.row}>
+            <Row style={styles.row}>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={option.image}
+                  style={[
+                    option.label == 'Mang đi'
+                      ? { width: 40, height: 40 }
+                      : styles.icon,
+                  ]}
+                />
+              </View>
+              <Text style={styles.optionText}>{option.label}</Text>
+            </Row>
 
+            <Pressable onPress={() => onEditOption(option.label)}>
 
-              {option.label === 'Giao hàng' ? (
-                <Text style={styles.phoneText}>
-                  {authState?.firstName
-                    ? authState?.firstName +
-                    ' ' +
-                    authState?.lastName +
-                    ' - ' +
-                    authState?.phoneNumber
-                    : null}
-                </Text>
-              ) : (
-                <Text style={styles.phoneText}>
-                  {cartState?.storeInfoSelect?.storeAddress}
-                </Text>
-              )}
+              <Icon
+                source="square-edit-outline"
+                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                color={colors.primary}
+              />
             </Pressable>
-          ))}
+          </Row>
 
-        </MyBottomSheet>
 
-      }
+          <Text style={styles.normalText}>
+            {option.address}
+          </Text>
 
-    </>
+
+          {option.label === 'Giao hàng' ? (
+            <Text style={styles.phoneText}>
+              {authState?.firstName
+                ? authState?.firstName +
+                ' ' +
+                authState?.lastName +
+                ' - ' +
+                authState?.phoneNumber
+                : null}
+            </Text>
+          ) : (
+            <Text style={styles.phoneText}>
+              {cartState?.storeInfoSelect?.storeAddress}
+            </Text>
+          )}
+        </Pressable>
+      ))}
+
+    </MyBottomSheet>
+
+
 
   );
 };

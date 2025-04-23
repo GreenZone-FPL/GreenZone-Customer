@@ -17,6 +17,8 @@ import {
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
 import MainNavigator from './src/layouts/stacks/MainNavigator';
 import ZegoCallUI from './src/zego/ZegoCallUI';
+import { ProductProvider } from './src/context/productContext';
+import { CartProvider } from './src/context/cartContext';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -27,15 +29,22 @@ export const navigationRef = React.createRef();
 export default function App() {
   return (
     <AppContextProvider>
-      <PaperProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <AppNavigator />
-            <FlashMessage position="top" />
-            <Toast />
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </PaperProvider>
+      <CartProvider>
+        <ProductProvider>
+          <PaperProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <SafeAreaProvider>
+                <AppNavigator />
+                <FlashMessage position="top" />
+                <Toast />
+              </SafeAreaProvider>
+            </GestureHandlerRootView>
+          </PaperProvider>
+        </ProductProvider>
+
+      </CartProvider>
+
+
     </AppContextProvider>
 
   );
@@ -51,7 +60,7 @@ function AppNavigator() {
 
 function RootNavigator() {
   const { authState } = useAppContext();
-  
+
   useAppContainer();
 
   return (

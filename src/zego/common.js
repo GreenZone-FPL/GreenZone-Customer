@@ -9,7 +9,6 @@ import ZegoUIKitPrebuiltCallService, {
 import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { AppGraph, MainGraph, OrderGraph } from '../layouts/graphs';
 
 const notificationStyle = 'CustomView';
 

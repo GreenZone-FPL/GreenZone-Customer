@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { changeBeans } from '../../axios';
 import { colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import { VoucherGraph } from '../../layouts/graphs';
 import { CartManager, Toaster } from '../../utils';
 import { Column, NormalText, Row, SeedText, TitleText } from '../index';
@@ -26,7 +26,7 @@ export const VoucherVertical = ({
   setChangePoint = false,
 }) => {
   const navigation = useNavigation();
-  const { cartDispatch } = useAppContext();
+  const { cartDispatch } = useCartContext();
   const { isUpdateOrderInfo } = route.params || false;
   const { isChangeBeans } = route.params || false;
   const [validVouchers, setValidVouchers] = useState([]);

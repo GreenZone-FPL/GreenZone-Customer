@@ -2,7 +2,8 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+
+import { useAppContext, useCartContext, useProductContext } from '../../context';
 import {
   AppGraph,
   BottomGraph,
@@ -11,15 +12,17 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
-import { useAuthActions } from '../auth/useAuthActions';
+import { CartActionTypes } from '../../reducers';
+import { AppAsyncStorage, fetchData, Toaster } from '../../utils';
 import { onUserLoginZego } from '../../zego/common';
+import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { authState, cartState, cartDispatch, updateOrderMessage, setUser, setNotifications } = useAppContext();
+  const { authState, updateOrderMessage, setUser, setNotifications } = useAppContext();
+  const { cartState, cartDispatch } = useCartContext();
+  const { allProducts, setAllProducts } = useProductContext();
 
   const navigation = useNavigation();
-  const [allProducts, setAllProducts] = useState([]);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -48,7 +51,7 @@ export const useHomeContainer = () => {
 
       if (authState.lastName) {
         const response = await getProfile();
-        console.log('ok')
+
         if (response) {
           setUser(response);
         }
@@ -151,6 +154,8 @@ export const useHomeContainer = () => {
 
         if (awaitingPayments.length > 0) {
           setNeedToPay(true);
+        } else {
+          setNeedToPay(false)
         }
       }
     } catch (error) {
@@ -159,8 +164,9 @@ export const useHomeContainer = () => {
   };
 
   const handleEditOption = option => {
-    setEditOption(option);
     setDialogShippingVisible(false);
+    setEditOption(option);
+
     if (option === 'Giao hàng') {
       navigation.navigate(UserGraph.SelectAddressScreen, {
         isUpdateOrderInfo: true,
@@ -174,32 +180,40 @@ export const useHomeContainer = () => {
 
   };
 
-  const handleOptionSelect = async option => {
-    setSelectedOption(option);
+  const handleOptionSelect = option => {
     setDialogShippingVisible(false);
-    try {
-      if (option === 'Mang đi') {
-        await CartManager.updateOrderInfo(cartDispatch, {
+    setSelectedOption(option);
+
+    if (option === 'Mang đi') {
+
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           deliveryMethod: DeliveryMethod.PICK_UP.value,
           store: cartState?.storeSelect,
           storeInfo: {
             storeName: cartState?.storeInfoSelect?.storeName,
             storeAddress: cartState?.storeInfoSelect?.storeAddress,
           },
-        });
-      } else if (option === 'Giao hàng') {
-        await CartManager.updateOrderInfo(cartDispatch, {
+        }
+      })
+
+    } else if (option === 'Giao hàng') {
+
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           deliveryMethod: DeliveryMethod.DELIVERY.value,
           store: merchantLocal?._id,
           storeInfo: {
             storeName: merchantLocal?.name,
             storeAddress: merchantLocal?.storeAddress,
           },
-        });
-      }
-    } catch (error) {
-      console.log('Error', error)
+        }
+      })
+
     }
+
   };
 
   const handleScroll = useCallback(
@@ -237,9 +251,9 @@ export const useHomeContainer = () => {
   };
 
   const initZego = async () => {
-    const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
-    if (user.lastName) {
-      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
+    // const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
+    if (authState.lastName && authState.phoneNumber) {
+      await onUserLoginZego(authState.phoneNumber, authState.lastName, navigation);
     }
   }
 
@@ -272,7 +286,6 @@ export const useHomeContainer = () => {
     selectedOption,
     currentCategory,
     needToPay,
-    allProducts,
     loadingMerchant,
     loadingProducts,
     loadingProfile,

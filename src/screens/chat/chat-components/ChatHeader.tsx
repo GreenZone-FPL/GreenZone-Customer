@@ -1,17 +1,18 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Pressable, StyleSheet, View, Text } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-
 import { NormalText, Row, TitleText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
-import { useAppContext } from '../../../context/appContext';
-import { CartManager, TextFormatter } from '../../../utils';
+import { useCartContext } from '../../../context';
 import { ShoppingGraph } from '../../../layouts/graphs';
+import { CartManager, TextFormatter } from '../../../utils';
 
 export const ChatHeader: React.FC = () => {
   const navigation = useNavigation<any>();
-  const { cartState } = useAppContext()
+
+  const {cartState } = useCartContext()
+
   return (
     <Row style={styles.header}>
       <Pressable onPress={() => navigation.goBack()}>
@@ -25,15 +26,16 @@ export const ChatHeader: React.FC = () => {
 
       <View style={styles.placeholderIcon} />
       {cartState?.orderItems?.length > 0 && (
-        <Pressable style={styles.btnCart} onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}>
+        <Pressable
+          style={styles.btnCart}
+          onPress={() => navigation.navigate(ShoppingGraph.CheckoutScreen)}>
           <Text style={styles.quantity}>{cartState.orderItems.length}</Text>
           <NormalText
             text={TextFormatter.formatCurrency(
               CartManager.getCartTotal(cartState),
             )}
-            style={{ color: colors.white, fontWeight: '500' }}
+            style={{color: colors.white, fontWeight: '500'}}
           />
-
         </Pressable>
       )}
     </Row>

@@ -5,8 +5,8 @@ import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native
 import { Column, CustomTabView, DeliveryMethodText, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row, StatusText } from '../../components';
 import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { BottomGraph, MainGraph } from '../../layouts/graphs';
+import { useCartContext } from '../../context';
+import { BottomGraph } from '../../layouts/graphs';
 import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
 import { CancelDialog } from './order-detail-components';
 
@@ -14,7 +14,7 @@ const orderStatuses = ['', 'completed', 'cancelled'];
 const titles = ['Đang thực hiện', 'Đã hoàn tất', 'Đã huỷ'];
 
 const OrderHistoryScreen = () => {
-  const { cartState } = useAppContext();
+  const { cartState } = useCartContext();
   const navigation = useNavigation()
   const {
     tabIndex,

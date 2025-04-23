@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Alert,
   Image,
   Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
-import { Icon, IconButton } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
+import {
+  deleteFavoriteProduct,
+  getFavoriteProducts,
+  getProductDetail,
+  postFavoriteProduct,
+} from '../../axios';
 import {
   CheckoutFooter,
   OverlayStatusBar,
@@ -17,15 +22,9 @@ import {
   SelectableGroup
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { CartManager, Toaster } from '../../utils';
-import {
-  deleteFavoriteProduct,
-  getFavoriteProducts,
-  getProductDetail,
-  postFavoriteProduct,
-} from '../../axios';
+import { useAppContext, useCartContext } from '../../context';
 import { ProductDetailSkeleton } from '../../skeletons';
+import { CartManager, Toaster } from '../../utils';
 
 const EditCartItemScreen = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -36,7 +35,8 @@ const EditCartItemScreen = ({ route, navigation }) => {
   const [quantity, setQuantity] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const { updateItem } = route.params;
-  const { cartDispatch, authState } = useAppContext();
+  const { authState } = useAppContext();
+  const { cartDispatch } = useCartContext();
 
   useEffect(() => {
     if (product) {
