@@ -108,6 +108,7 @@ function RootNavigator() {
     <BaseStack.Navigator screenOptions={{ headerShown: false }}>
       <BaseStack.Screen name="MainNavigator" component={MainNavigator} />
       <BaseStack.Screen name={OrderGraph.OrderDetailScreen} component={OrderDetailScreen} />
+      <BaseStack.Screen name={OrderGraph.OrderHistoryScreen} component={OrderHistoryScreen} />
     </BaseStack.Navigator>
   );
 }

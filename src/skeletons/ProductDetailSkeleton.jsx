@@ -9,7 +9,7 @@ export const ProductDetailSkeleton = () => {
       <SkeletonBox width="100%" height={300} borderRadius={12} />
 
 
-      <Column style={{ paddingHorizontal: 16, flex: 1 }}>
+      <Column style={{ paddingHorizontal: 16, flex: 1, gap: 12 }}>
         <SkeletonBox width="80%" height={25} />
         <SkeletonBox width="40%" height={20} />
         <SkeletonBox width="100%" height={15} />

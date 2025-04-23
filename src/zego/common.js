@@ -9,7 +9,7 @@ import ZegoUIKitPrebuiltCallService, {
 import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { AppGraph, MainGraph, OrderGraph } from '../layouts/graphs';
+import { OrderGraph } from '../layouts/graphs';
 
 const notificationStyle = 'CustomView';
 
@@ -121,8 +121,11 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 reason,
                 duration,
               );
+
               ZegoUIKitPrebuiltCallService.hangUp();
-              // navigation.navigate(AppGraph.AIChatScreen);
+
+              // navigation.navigate(AppGraph.OrderHistoryScreen)
+              navigation.goBack()
             },
 
             timingConfig: {
@@ -137,13 +140,14 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 }
               },
             },
-            
+
             topMenuBarConfig: {
               buttons: [
                 ZegoMenuBarButtonName.minimizingButton,
                 // ZegoMenuBarButtonName.showMemberListButton
               ],
             },
+
             bottomMenuBarConfig: {
               buttons: [
                 // ZegoMenuBarButtonName.toggleCameraButton,
@@ -154,12 +158,12 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
 
             onWindowMinimized: () => {
               console.log('[Demo]CallInvitation onWindowMinimized');
-              // navigation.navigate(OrderGraph.OrderHistoryScreen);
+              navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
-            
+
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
-              // navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+              navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
             },
           };
         },
