@@ -1,4 +1,5 @@
 {
     "java.configuration.updateBuildConfiguration": "disabled",
-    "html.format.wrapLineLength": 200
+    "html.format.wrapLineLength": 200,
+    "java.compile.nullAnalysis.mode": "disabled"
 }

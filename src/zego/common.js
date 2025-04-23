@@ -122,7 +122,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
               ZegoUIKitPrebuiltCallService.hangUp();
-              // navigation.navigate(AppGraph.AIChatScreen);
+              navigation.navigate(OrderGraph.OrderHistoryScreen);
             },
 
             timingConfig: {
@@ -146,8 +146,8 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
             },
             bottomMenuBarConfig: {
               buttons: [
-                // ZegoMenuBarButtonName.toggleCameraButton,
-                // ZegoMenuBarButtonName.toggleMicrophoneButton,
+                 ZegoMenuBarButtonName.toggleCameraButton,
+                ZegoMenuBarButtonName.toggleMicrophoneButton,
                 ZegoMenuBarButtonName.hangUpButton, // Đây là nút tắt cuộc gọi
               ],
             },
