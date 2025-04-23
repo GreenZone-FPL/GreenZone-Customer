@@ -122,10 +122,10 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
 
-              // ZegoUIKitPrebuiltCallService.hangUp();
+              ZegoUIKitPrebuiltCallService.hangUp();
 
               // navigation.navigate(AppGraph.OrderHistoryScreen)
-              // navigation.goBack()
+              navigation.goBack()
             },
 
             timingConfig: {

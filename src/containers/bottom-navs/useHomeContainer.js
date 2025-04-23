@@ -13,6 +13,7 @@ import {
 } from '../../layouts/graphs';
 import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
+import { onUserLoginZego } from '../../zego/common';
 
 export const useHomeContainer = () => {
   const { authState, cartState, cartDispatch, updateOrderMessage, setUser, setNotifications } = useAppContext();
@@ -234,6 +235,21 @@ export const useHomeContainer = () => {
       setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
   };
+
+  const initZego = async () => {
+    const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
+    if (user.lastName) {
+      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
+    }
+  }
+
+  useEffect(() => {
+    if (authState.lastName) {
+      initZego()
+    } else {
+      console.log('Khong the init Zego')
+    }
+  }, [authState.lastName])
 
 
   const navigateOrderHistory = () => {

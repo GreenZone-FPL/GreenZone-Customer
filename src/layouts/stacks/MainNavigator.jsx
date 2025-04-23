@@ -76,20 +76,7 @@ function MainNavigator() {
 
   console.log('in Main Navigator')
   const navigation = useNavigation()
-  const initZego = async () => {
-    const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
-    if (user.lastName) {
-      await onUserLoginZego(user.phoneNumber, user.lastName, navigation);
-    }
-  }
-
-  React.useEffect(() => {
-    if (authState.lastName) {
-      initZego()
-    } else {
-      console.log('Khong the init Zego')
-    }
-  }, [authState.lastName])
+  
 
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
