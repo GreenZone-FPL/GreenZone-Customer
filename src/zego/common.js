@@ -9,7 +9,7 @@ import ZegoUIKitPrebuiltCallService, {
 import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { OrderGraph } from '../layouts/graphs';
+import { AppGraph, MainGraph, OrderGraph } from '../layouts/graphs';
 
 const notificationStyle = 'CustomView';
 
@@ -122,10 +122,11 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
 
-              ZegoUIKitPrebuiltCallService.hangUp();
+               ZegoUIKitPrebuiltCallService.hangUp();
 
-              // navigation.navigate(AppGraph.OrderHistoryScreen)
-              navigation.goBack()
+               navigation.navigate(OrderGraph.OrderHistoryScreen)
+             // navigation.navigate(MainGraph.HomeStackScreen)
+              //navigation.goBack()
             },
 
             timingConfig: {

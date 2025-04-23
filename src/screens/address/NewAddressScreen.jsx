@@ -320,6 +320,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: '500',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    color: colors.black
   },
   cardSubtitle: {
     color: colors.gray400,

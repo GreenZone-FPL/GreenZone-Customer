@@ -1,24 +1,31 @@
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Pressable,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import { Icon, IconButton } from 'react-native-paper';
-import { getAddresses } from '../../axios';
-import { Column, CustomSearchBar, NormalLoading, NormalText, PrimaryButton, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
-import { UserGraph } from '../../layouts/graphs';
-import { CartManager, Toaster } from '../../utils';
+import {Icon, IconButton} from 'react-native-paper';
+import {getAddresses} from '../../axios';
+import {
+  Column,
+  CustomSearchBar,
+  NormalLoading,
+  NormalText,
+  PrimaryButton,
+  TitleText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAppContext} from '../../context/appContext';
+import {UserGraph} from '../../layouts/graphs';
+import {CartManager, Toaster} from '../../utils';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
@@ -26,15 +33,15 @@ const SEARCH_RADIUS = 2000;
 const RESULT_LIMIT = 10;
 const GOONG_DETAIL_API = 'https://rsapi.goong.io/Place/Detail';
 
-const SelectAddressScreen = ({ navigation, route }) => {
+const SelectAddressScreen = ({navigation, route}) => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isSearching, setIsSearching] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const { isUpdateOrderInfo } = route.params || false;
+  const {isUpdateOrderInfo} = route.params || false;
   const [loading, setLoading] = useState(false);
-  const { cartDispatch } = useAppContext();
+  const {cartDispatch} = useAppContext();
   const sessionToken = uuidv4();
   let searchTimeout = null;
   const [locationAvailable, setLocationAvailable] = useState(false);
@@ -55,8 +62,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
       };
 
       fetchAddress(); // Gọi API khi màn hình được focus
-
-    }, [])
+    }, []),
   );
   // Lấy vị trí người dùng
   useEffect(() => {
@@ -70,7 +76,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
     });
   }, []);
 
-  const reverseGeocode = async ({ lat, long }) => {
+  const reverseGeocode = async ({lat, long}) => {
     const api = `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${lat},${long}&lang=vi-VI&apikey=Q9zv9fPQ8xwTBc2UqcUkP32bXAR1_ZA-8wLk7tjgRWo`;
 
     try {
@@ -96,7 +102,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         },
       });
       const name = response.data.result.name;
-      const { lat, lng } = response.data.result.geometry.location;
+      const {lat, lng} = response.data.result.geometry.location;
 
       const updatedAddress = {
         ...address,
@@ -112,14 +118,11 @@ const SelectAddressScreen = ({ navigation, route }) => {
         longitude: String(updatedAddress.longitude),
       };
       if (isUpdateOrderInfo && cartDispatch) {
-
         CartManager.updateOrderInfo(cartDispatch, {
           shippingAddressInfo: addressFinish,
         });
         navigation.goBack();
       }
-
-
     } catch (error) {
       console.error('❌ Lỗi khi lấy tọa độ:', error);
     }
@@ -143,14 +146,9 @@ const SelectAddressScreen = ({ navigation, route }) => {
         });
       }
     } catch (error) {
-      console.log('error', error)
-      Toaster.show('Lỗi chọn địa chỉ')
+      console.log('error', error);
+      Toaster.show('Lỗi chọn địa chỉ');
     }
-  
-    
-
-   
-   
   };
   // Tìm kiếm
   const handleSearch = async text => {
@@ -187,7 +185,12 @@ const SelectAddressScreen = ({ navigation, route }) => {
       setSearchResults([]);
     }
   };
-
+  const handleAddNewAddress = () => {
+    setSearchText('');
+    setSearchResults([]);
+    setIsSearching(false);
+    navigation.navigate(UserGraph.NewAddressScreen);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <NormalLoading visible={loading} />
@@ -196,7 +199,7 @@ const SelectAddressScreen = ({ navigation, route }) => {
         <Pressable onPress={() => navigation.goBack()}>
           <Icon source="arrow-left" size={24} color={colors.black} />
         </Pressable>
-        <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <CustomSearchBar
             placeholder="Tìm kiếm địa chỉ ..."
             searchQuery={searchText}
@@ -209,8 +212,9 @@ const SelectAddressScreen = ({ navigation, route }) => {
             }}
             leftIcon="magnify"
             rightIcon="close"
-            style={{ backgroundColor: colors.fbBg }}
-            onFocus={() => setIsSearching(true)} />
+            style={{backgroundColor: colors.fbBg}}
+            onFocus={() => setIsSearching(true)}
+          />
         </View>
       </View>
 
@@ -223,7 +227,10 @@ const SelectAddressScreen = ({ navigation, route }) => {
                 key={result.place_id}
                 address={{
                   place_id: result.place_id,
-                  specificAddress: [result.terms[1]?.value, result.terms[0]?.value].join(' '),
+                  specificAddress: [
+                    result.terms[1]?.value,
+                    result.terms[0]?.value,
+                  ].join(' '),
                   ward: result.terms[2]?.value || '',
                   district: result.terms[3]?.value || '',
                   province: result.terms[4]?.value || '',
@@ -259,69 +266,62 @@ const SelectAddressScreen = ({ navigation, route }) => {
           <Text style={styles.emptyText}>Bạn chưa tạo mới địa chỉ nào</Text>
         )}
 
-        <Pressable
-          style={styles.fab}
-          onPress={() => navigation.navigate(UserGraph.NewAddressScreen)}>
+        <Pressable style={styles.fab} onPress={handleAddNewAddress}>
           <Icon source="plus" size={24} color={colors.primary} />
-          <NormalText text='Thêm địa chỉ mới' />
-
+          <NormalText text="Thêm địa chỉ mới" />
         </Pressable>
       </ScrollView>
 
       {/* Nút Xác nhận */}
       {selectedAddress && (
         <PrimaryButton
-          title='Xác nhận'
-          style={{ margin: 16 }}
-          onPress={() => onConfirmAddress(selectedAddress)} />
+          title="Xác nhận"
+          style={{margin: 16}}
+          onPress={() => onConfirmAddress(selectedAddress)}
+        />
       )}
     </SafeAreaView>
   );
 };
 
-const Card = ({ address, isSelected, onPress }) => (
-  <Pressable
-    style={[styles.card]}
-    onPress={() => onPress(address)}>
+const Card = ({address, isSelected, onPress}) => (
+  <Pressable style={[styles.card]} onPress={() => onPress(address)}>
     <IconButton
-      icon='google-maps'
+      icon="google-maps"
       size={24}
       iconColor={isSelected ? colors.white : colors.green500}
       containerColor={isSelected ? colors.lemon : colors.white}
     />
 
     <Column style={styles.textContainer}>
-
       <TitleText text={`${address.specificAddress}`} />
       <NormalText
-        style={{ fontWeight: '500', color: colors.earthYellow }}
-        text={`${address.consigneeName} - ${address.consigneePhone}`} />
+        style={{fontWeight: '500', color: colors.earthYellow}}
+        text={`${address.consigneeName} - ${address.consigneePhone}`}
+      />
       <NormalText
-        style={{ color: colors.gray850 }}
-        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`} />
-
+        style={{color: colors.gray850}}
+        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
+      />
     </Column>
-
   </Pressable>
 );
-const CardSearch = ({ address, isSelected, onPress }) => (
+const CardSearch = ({address, isSelected, onPress}) => (
   <Pressable
     style={[styles.card, isSelected && styles.selectedCard]}
     onPress={() => onPress(address)}>
-
     <Icon
       source="google-maps"
       size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
       color={colors.primary}
     />
     <Column style={styles.textContainer}>
-
       <TitleText text={`${address.specificAddress}`} />
       <NormalText
-        style={{ color: colors.gray850 }}
-        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`} />
+        style={{color: colors.gray850}}
+        text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
+      />
     </Column>
-
   </Pressable>
 );
 
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   },
   content: {
     backgroundColor: colors.fbBg,
-    flex: 1
+    flex: 1,
   },
   card: {
     flexDirection: 'row',
@@ -352,13 +352,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: colors.white,
     marginBottom: 5,
-    gap: 8
-
-
+    gap: 8,
   },
   selectedCard: {
     backgroundColor: colors.yellow300,
-
   },
   location: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
@@ -388,7 +385,7 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     backgroundColor: colors.white,
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 1.5,
@@ -399,6 +396,6 @@ const styles = StyleSheet.create({
     margin: 16,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
     fontWeight: '500',
-    color: colors.gray850
+    color: colors.gray850,
   },
 });

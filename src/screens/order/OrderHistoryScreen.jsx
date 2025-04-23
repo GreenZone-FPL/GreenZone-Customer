@@ -41,6 +41,7 @@ const OrderHistoryScreen = () => {
           } else {
             navigation.reset({ index: 0, routes: [{ name: MainGraph.graphName }] });
           }
+
         }}
       />
 
