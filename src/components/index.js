@@ -40,6 +40,7 @@ export * from './category/CategoryMenu';
 export * from './containers/Column';
 export * from './containers/Row';
 export * from './containers/AuthContainer';
+export * from './containers/SectionLoader';
 
 // dialogs
 export * from './dialogs/ActionDialog';

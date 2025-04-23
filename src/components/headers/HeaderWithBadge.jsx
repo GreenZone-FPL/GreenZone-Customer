@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Image,
   Pressable,
@@ -9,10 +9,9 @@ import {
   View
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { getNotifications } from '../../axios';
 import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAppContext } from '../../context/appContext';
 import { AppGraph } from '../../layouts/graphs';
-import { AppAsyncStorage } from '../../utils';
 import { Row } from '../containers/Row';
 import { IconWithBadge } from './IconWithBadge';
 
@@ -31,32 +30,13 @@ export const HeaderWithBadge = ({
   leftIcon = 'arrow-left',
   enableLeftIcon = false,
   onLeftPress,
-  enableBadge = false
+  enableBadge = false,
+
 }) => {
   const navigation = useNavigation()
-  const [loading, setLoading] = useState(false);
-  const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        if (await AppAsyncStorage.isTokenValid()) {
-          setLoading(true)
-          const response = await getNotifications()
-          if (response) {
-            setNotifications(response)
-          }
-        }
+  const { notifications } = useAppContext()
 
-      } catch (error) {
-        Toaster.show('Error', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchNotifications()
-  }, [])
   return (
     <View style={styles.header}>
       {enableLeftIcon && (
@@ -91,16 +71,14 @@ export const HeaderWithBadge = ({
           </Row>
         ) :
           <Text style={styles.title}>{title}</Text>
-
       }
+      
       {
-        enableBadge && !loading &&
-
+        enableBadge  &&
         <IconWithBadge
           quantity={notifications.length}
           onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
         />
-
       }
 
     </View>

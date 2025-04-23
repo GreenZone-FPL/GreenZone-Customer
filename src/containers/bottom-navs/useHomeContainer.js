@@ -1,6 +1,6 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getOrdersByStatus } from '../../axios';
+import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
 import { useAppContext } from '../../context/appContext';
 import {
@@ -11,15 +11,14 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { AppAsyncStorage, CartManager, fetchData } from '../../utils';
+import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { authState, cartState, cartDispatch } = useAppContext();
+  const { authState, cartState, cartDispatch, updateOrderMessage, setUser, setNotifications } = useAppContext();
 
   const navigation = useNavigation();
   const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -28,36 +27,121 @@ export const useHomeContainer = () => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
-
   const [needToPay, setNeedToPay] = useState(false)
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [loadingMerchant, setLoadingMerchant] = useState(true);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingNoti, setLoadingNoti] = useState(false);
 
   const { onNavigateLogin } = useAuthActions()
-  
+
   const onNavigateProductDetailSheet = productId => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
   };
 
-  const onClickAddToCart = async productId => {
+  const fetchProfile = async (enableLoading) => {
     try {
-      const isTokenValid = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-
-      if (isTokenValid && authState.lastName) {
-        navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
-      } else {
-        onNavigateLogin();
+      if (enableLoading) {
+        setLoadingProfile(true)
       }
+
+      if (authState.lastName) {
+        const response = await getProfile();
+        console.log('ok')
+        if (response) {
+          setUser(response);
+        }
+      }
+
     } catch (error) {
-      console.log('Error', error);
+      console.log('error', error);
+    } finally {
+      if (enableLoading) {
+        setLoadingProfile(false)
+      }
+
     }
   };
 
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (authState.lastName) {
+          setLoadingNoti(true)
+          const response = await getNotifications()
+          if (response) {
+            setNotifications(response)
+          }
+        }
+
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoadingNoti(false)
+      }
+    }
+
+    fetchNotifications()
+  }, [])
+  useEffect(() => {
+    fetchProfile(true)
+  }, [])
+
+  useEffect(() => {
+    fetchData(getAllProducts, setAllProducts, setLoadingProducts)
+  }, []);
+
+
+
+  useEffect(() => {
+    const getMerchantLocation = async () => {
+      setLoadingMerchant(true)
+      try {
+        setMerchantLocal(
+          await AppAsyncStorage.readData(
+            AppAsyncStorage.STORAGE_KEYS.merchantLocation,
+          ),
+        );
+      } catch (error) {
+        console.log('error', error);
+      } finally {
+        setLoadingMerchant(false)
+      }
+    };
+
+    getMerchantLocation();
+  }, []);
+
+
+  useEffect(() => {
+    fetchOrderHistory()
+  }, [])
+
+
+  useEffect(() => {
+    // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
+    // load lần sau, không cần loading
+    if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
+      fetchProfile(false)
+    }
+  }, [updateOrderMessage.status])
+
+
+
+  const onClickAddToCart = productId => {
+    if (authState.lastName) {
+      navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+    } else {
+      onNavigateLogin();
+    }
+
+  };
+
   const fetchOrderHistory = async () => {
-    setLoading(true)
     try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
+
+      if (authState.lastName) {
         const response = await getOrdersByStatus();
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
 
@@ -67,46 +151,8 @@ export const useHomeContainer = () => {
       }
     } catch (error) {
       console.log('error', error);
-    } finally {
-      setLoading(false)
     }
   };
-  useFocusEffect(
-    useCallback(() => {
-      fetchOrderHistory();
-    }, [])
-  );
-
-
-
-
-  useEffect(() => {
-    if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts).then(r => { });
-    }
-  }, [allProducts.length]);
-
-
-  useEffect(() => {
-    const getMerchantLocation = async () => {
-      setLoading(true)
-      try {
-        setMerchantLocal(
-          await AppAsyncStorage.readData(
-            AppAsyncStorage.STORAGE_KEYS.merchantLocation,
-          ),
-        );
-      } catch (error) {
-        console.log('error', error);
-      }finally{
-        setLoading(false)
-      }
-    };
-
-    getMerchantLocation();
-  }, []);
-
-
 
   const handleEditOption = option => {
     setEditOption(option);
@@ -208,7 +254,10 @@ export const useHomeContainer = () => {
     currentCategory,
     needToPay,
     allProducts,
-    loading,
+    loadingMerchant,
+    loadingProducts,
+    loadingProfile,
+    loadingNoti,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,

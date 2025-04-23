@@ -34,6 +34,7 @@ import NewAddressScreen from './src/screens/address/NewAddressScreen';
 import SelectAddressScreen from './src/screens/address/SelectAddressScreen';
 import SplashScreen2 from './src/screens/auth/SplashScreen2';
 import MerchantScreen from './src/screens/bottom-navs/MerchantScreen';
+import AIChatScreen from './src/screens/chat/AIChatScreen';
 import CheckoutScreen from './src/screens/checkout/CheckoutScreen';
 import MembershipScreen from './src/screens/member-ship/MemberShipScreen';
 import AdvertisingScreen from './src/screens/notification/AdvertisingScreen';
@@ -54,13 +55,13 @@ import ProductDetailShort from './src/screens/shopping/ProductDetailShort';
 import RecipientInfoSheet from './src/screens/shopping/RecipientInfoSheet';
 import SearchProductScreen from './src/screens/shopping/SearchProductScreen';
 import ContactScreen from './src/screens/user-profile/ContactScreen';
+import MyFlatList from './src/screens/user-profile/MyFlatList';
 import SettingScreen from './src/screens/user-profile/SettingScreen';
 import UpdateProfileScreen from './src/screens/user-profile/UpdateProfileScreen';
 import MyVouchersScreen from './src/screens/voucher/MyVouchersScreen';
 import SeedScreen from './src/screens/voucher/SeedScreen';
 import SelectVouchersScreen from './src/screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from './src/screens/voucher/VoucherDetailSheet';
-import AIChatScreen from './src/screens/chat/AIChatScreen';
 import { AppAsyncStorage } from './src/utils';
 import { onUserLoginZego } from './src/zego/common';
 import ZegoCallUI from './src/zego/ZegoCallUI';
@@ -75,7 +76,6 @@ export default function App() {
   return (
 
     <AppContextProvider>
-
       <PaperProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <SafeAreaProvider>
@@ -85,20 +85,18 @@ export default function App() {
           </SafeAreaProvider>
         </GestureHandlerRootView>
       </PaperProvider>
-
-
     </AppContextProvider>
 
   );
 }
 
 function AppNavigator() {
-  const { showCallUI } = useAppContext();
+
   return (
     <NavigationContainer ref={navigationRef}>
 
       <RootNavigator />
-      {showCallUI && <ZegoCallUI />}
+      <ZegoCallUI />
 
     </NavigationContainer>
   )
@@ -127,7 +125,7 @@ const slideFromRightOption = {
 }
 function MainNavigator() {
   const navigation = useNavigation()
-  const { authState, showCallUI } = useAppContext();
+  const { authState } = useAppContext();
 
   useAppContainer();
   const initZego = async () => {
@@ -165,25 +163,18 @@ function MainNavigator() {
             component={MainNavigation}
           />
 
-
-          {
-            showCallUI &&
-            <>
-
-              <BaseStack.Screen
-                options={{ headerShown: false }}
-                // DO NOT change the name 
-                name="ZegoUIKitPrebuiltCallWaitingScreen"
-                component={ZegoUIKitPrebuiltCallWaitingScreen}
-              />
-              <BaseStack.Screen
-                options={{ headerShown: false }}
-                // DO NOT change the name
-                name="ZegoUIKitPrebuiltCallInCallScreen"
-                component={ZegoUIKitPrebuiltCallInCallScreen}
-              />
-            </>
-          }
+          <BaseStack.Screen
+            options={{ headerShown: false }}
+            // DO NOT change the name 
+            name="ZegoUIKitPrebuiltCallWaitingScreen"
+            component={ZegoUIKitPrebuiltCallWaitingScreen}
+          />
+          <BaseStack.Screen
+            options={{ headerShown: false }}
+            // DO NOT change the name
+            name="ZegoUIKitPrebuiltCallInCallScreen"
+            component={ZegoUIKitPrebuiltCallInCallScreen}
+          />
 
           <BaseStack.Screen
             name={OrderGraph.OrderHistoryScreen}
@@ -195,6 +186,7 @@ function MainNavigator() {
             options={slideFromRightOption}
             component={AIChatScreen}
           />
+          <BaseStack.Screen name={'MyFlatList'} component={MyFlatList} />
           <BaseStack.Screen
             name={AppGraph.MembershipScreen}
             component={MembershipScreen}

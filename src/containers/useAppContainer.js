@@ -109,11 +109,11 @@ export const useAppContainer = () => {
         type,
         icon,
         duration,
-        onPress: () => {
-          navigation.navigate(OrderGraph.OrderDetailScreen, {
-            orderId: updateOrderMessage.orderId,
-          });
-        },
+        // onPress: () => {
+        //   navigation.navigate(OrderGraph.OrderDetailScreen, {
+        //     orderId: updateOrderMessage.orderId,
+        //   });
+        // },
       });
 
       // Sau khi message ẩn đi, cập nhật visible thành false
@@ -124,6 +124,7 @@ export const useAppContainer = () => {
       return () => clearTimeout(timer);
     }
   }, [navigation, setUpdateOrderMessage, updateOrderMessage]);
+
 
   useEffect(() => {
     const initializeSocket = async () => {
@@ -150,7 +151,6 @@ export const useAppContainer = () => {
     };
 
     initializeSocket().then(r => { });
-
     return () => {
       socketService.disconnect();
     };
