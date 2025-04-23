@@ -50,15 +50,19 @@ const MerchantScreen = ({ navigation, route }) => {
   const { fromHome } = route.params || false;
 
   const { cartDispatch, authState } = useAppContext();
-  const {  onNavigateLogin } = useAuthActions();
+  const { onNavigateLogin } = useAuthActions();
+  const [loadingMerchants, setLoadingMerchants] = useState(false);
 
   // hàm gọi api merchants
   const fetchMerchants = async () => {
     try {
+      setLoadingMerchants(true)
       const data = await getAllMerchants();
       setMerchants(data.docs);
     } catch (error) {
       console.log('Error fetching merchants:', error);
+    } finally {
+      setLoadingMerchants(false)
     }
   };
 
@@ -342,6 +346,7 @@ const MerchantScreen = ({ navigation, route }) => {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.mechant1}>
               <Text style={styles.title}>Cửa hàng gần bạn</Text>
+
 
               {sortedMerchants.length == 0 ? (
                 <Indicator

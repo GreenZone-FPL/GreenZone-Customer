@@ -17,7 +17,7 @@ export const SkeletonBox = ({ width, height, borderRadius = 8, style = {} }) => 
         height,
         backgroundColor: '#e1e9ee',
         borderRadius,
-        marginBottom: 12,
+        // marginBottom: 12,
       },
       style,
     ]}
