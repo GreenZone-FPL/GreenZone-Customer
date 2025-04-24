@@ -30,7 +30,7 @@ export const CategoryMenu: React.FC<CategoryMenuProps> = ({
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const itemWidth = (SCREEN_WIDTH - GAP * 3) / NUM_COLUMNS;
 
-  if (!loading) {
+  if (loading) {
     return (
       <Column style={{paddingHorizontal: 8, gap: 0, marginVertical: 5 }}>
         {[0, 1].map(row => {
@@ -48,7 +48,7 @@ export const CategoryMenu: React.FC<CategoryMenuProps> = ({
                     <SkeletonBox
                       width={50}
                       height={12}
-                      borderRadius={4}
+                      borderRadius={10}
                       style={{alignSelf: 'center'}}
                     />
                   </Column>
