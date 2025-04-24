@@ -24,14 +24,20 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAuthContext, useCartContext, useProductContext } from '../../context';
-import useSaveLocation from '../../utils/useSaveLocation';
+import { useLocation } from '../../utils';
 import { AIAssistant, CategoryView } from './HomeComponents';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested inside plain ScrollViews',
+]);
 
 const HomeScreen = () => {
   const { authState } = useAuthContext();
   const { cartState } = useCartContext();
   const { allProducts } = useProductContext();
+
+
   const {
     dialogShippingVisible,
     selectedOption,
@@ -54,7 +60,9 @@ const HomeScreen = () => {
 
 
   const { onNavigateLogin } = useAuthActions();
-  useSaveLocation();
+
+  useLocation()
+
 
   const onItemClick = useCallback((productId) => {
     onNavigateProductDetailSheet(productId);
@@ -80,6 +88,7 @@ const HomeScreen = () => {
         isHome={false}
         enableBadge={!!authState.lastName}
       />
+
 
       <ScrollView
         onScroll={handleScroll}
@@ -119,17 +128,15 @@ const HomeScreen = () => {
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />
+        <NotificationList onSeeMorePress={navigateAdvertising} />
 
         <FlashList
           data={allProducts}
           estimatedItemSize={600}
           keyExtractor={item => item._id}
           scrollEnabled={false}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          nestedScrollEnabled
-          initialNumToRender={10} // Chỉ render 10 item đầu tiên
-          removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
+          nestedScrollEnabled={true}
+          removeClippedSubviews={true}
           renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
@@ -143,7 +150,7 @@ const HomeScreen = () => {
           )}
         />
 
-        <NotificationList onSeeMorePress={navigateAdvertising} />
+
 
 
 

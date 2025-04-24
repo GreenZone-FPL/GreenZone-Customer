@@ -24,7 +24,7 @@ import { CartManager, Toaster } from '../../utils';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
+import uuid from 'react-native-uuid';
 import { useCartContext } from '../../context';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
@@ -42,7 +42,7 @@ const SelectAddressScreen = ({navigation, route}) => {
   const {isUpdateOrderInfo} = route.params || false;
   const [loading, setLoading] = useState(false);
   const {cartDispatch} = useCartContext();
-  const sessionToken = uuidv4();
+  const sessionToken = uuid.v4();
   let searchTimeout = null;
   const [locationAvailable, setLocationAvailable] = useState(false);
   const [currentLocation, setCurrenLocation] = useState('');
@@ -318,7 +318,7 @@ const CardSearch = ({address, isSelected, onPress}) => (
     <Column style={styles.textContainer}>
       <TitleText text={`${address.specificAddress}`} />
       <NormalText
-        style={{color: colors.gray850}}
+        style={{color: colors.black}}
         text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
       />
     </Column>

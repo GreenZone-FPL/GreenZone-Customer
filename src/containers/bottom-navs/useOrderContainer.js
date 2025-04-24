@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { getAllCategories } from '../../axios';
 import { DeliveryMethod } from '../../constants';
 
@@ -12,7 +12,6 @@ import {
 
 import { AppAsyncStorage, CartManager } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
-
 import { useAuthContext, useCartContext, useProductContext } from '../../context';
 
 export const useOrderContainer = () => {
@@ -137,24 +136,42 @@ export const useOrderContainer = () => {
     setDialogShippingVisible(false);
   };
 
-  const handleScroll = event => {
+  const handleScroll = useCallback((event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
+  
     let closestCategory = 'Danh mục';
     let minDistance = Number.MAX_VALUE;
-
+  
+    let minPos = Number.MAX_VALUE;
+    let firstCategoryId = null;
+  
     Object.entries(positions).forEach(([categoryId, posY]) => {
       const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
-        closestCategory =
-          allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+      }
+  
+      if (posY < minPos) {
+        minPos = posY;
+        firstCategoryId = categoryId;
       }
     });
-
-    if (closestCategory !== currentCategory) {
+  
+    // Nếu cuộn lên trên danh mục đầu tiên
+    if (scrollY < minPos) {
+      if (lastCategoryRef.current !== 'Xin chào') {
+        lastCategoryRef.current = 'Xin Chào';
+        setCurrentCategory('Xin chào');
+      }
+      return;
+    }
+  
+    if (closestCategory !== lastCategoryRef.current) {
+      lastCategoryRef.current = closestCategory;
       setCurrentCategory(closestCategory);
     }
-  };
+  }, [positions, allProducts]);
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {

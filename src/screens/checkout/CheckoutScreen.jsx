@@ -38,7 +38,6 @@ import {
   TimeSection,
 } from './checkout-components';
 
-
 const CheckoutScreen = () => {
 
   const { cartState, cartDispatch } = useCartContext();

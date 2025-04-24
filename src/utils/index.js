@@ -6,3 +6,4 @@ export * from './textFormatter';
 export * from './toaster';
 export * from './locationManager';
 export * from './useSaveLocation';
+export * from './useLocation'

@@ -74,7 +74,7 @@ const VoucherDetailSheet = () => {
 
           <Column >
             {data?.description.map((desc, index) => (
-              <NormalText text={`${index + 1}. ${desc}`} style={styles.infoText} />
+              <NormalText key={index} text={`${index + 1}. ${desc}`} style={styles.infoText} />
             ))}
           </Column>
         </ScrollView>

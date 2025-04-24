@@ -10,7 +10,9 @@ import {
 import FastImage from 'react-native-fast-image';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {SkeletonBox} from '../../skeletons';
-import {Category} from '../../type-interface'
+import {Category} from '../../type-interface';
+import {Row} from '../containers/Row';
+import {Column} from '../containers/Column';
 
 type CategoryMenuProps = {
   loading: boolean;
@@ -18,26 +20,44 @@ type CategoryMenuProps = {
   onCategorySelect: (item: Category) => void;
 };
 
-
 export const CategoryMenu: React.FC<CategoryMenuProps> = ({
   loading,
   categories,
   onCategorySelect,
 }) => {
-  
   const NUM_COLUMNS = 4;
   const GAP = 16;
   const SCREEN_WIDTH = Dimensions.get('window').width;
   const itemWidth = (SCREEN_WIDTH - GAP * 3) / NUM_COLUMNS;
 
-  if (loading) {
+  if (!loading) {
     return (
-      <SkeletonBox
-        width="90%"
-        height={185}
-        borderRadius={10}
-        style={{alignSelf: 'center', marginBottom: 5}}
-      />
+      <Column style={{paddingHorizontal: 8, gap: 0, marginVertical: 5 }}>
+        {[0, 1].map(row => {
+          return (
+            <Row key={row} style={{justifyContent: 'space-between'}}>
+              {[0, 1, 2, 3].map(item => {
+                return (
+                  <Column key={item} style={styles.itemContainer}>
+                    <SkeletonBox
+                      width={65}
+                      height={65}
+                      borderRadius={40}
+                      style={{alignSelf: 'center'}}
+                    />
+                    <SkeletonBox
+                      width={50}
+                      height={12}
+                      borderRadius={4}
+                      style={{alignSelf: 'center'}}
+                    />
+                  </Column>
+                );
+              })}
+            </Row>
+          );
+        })}
+      </Column>
     );
   }
   return (

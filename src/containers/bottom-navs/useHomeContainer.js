@@ -234,38 +234,55 @@ export const useHomeContainer = () => {
 
   };
 
-  const handleScroll = useCallback(
-    event => {
-      const scrollY = event.nativeEvent.contentOffset.y;
-      let closestCategory = 'Danh mục';
-      let minDistance = Number.MAX_VALUE;
-
-      Object.entries(positions).forEach(([categoryId, posY]) => {
-        const distance = Math.abs(scrollY - posY);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestCategory =
-            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
-        }
-      });
-
-      if (closestCategory !== lastCategoryRef.current) {
-        lastCategoryRef.current = closestCategory;
-        setCurrentCategory(closestCategory);
+  
+  const handleScroll = useCallback((event) => {
+    const scrollY = event.nativeEvent.contentOffset.y;
+  
+    let closestCategory = 'Danh mục';
+    let minDistance = Number.MAX_VALUE;
+  
+    let minPos = Number.MAX_VALUE;
+    let firstCategoryId = null;
+  
+    Object.entries(positions).forEach(([categoryId, posY]) => {
+      const distance = Math.abs(scrollY - posY);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
-    },
+  
+      if (posY < minPos) {
+        minPos = posY;
+        firstCategoryId = categoryId;
+      }
+    });
+  
+    // Nếu cuộn lên trên danh mục đầu tiên
+    if (scrollY < minPos) {
+      if (lastCategoryRef.current !== 'Xin chào') {
+        lastCategoryRef.current = 'Xin Chào';
+        setCurrentCategory('Xin chào');
+      }
+      return;
+    }
+  
+    if (closestCategory !== lastCategoryRef.current) {
+      lastCategoryRef.current = closestCategory;
+      setCurrentCategory(closestCategory);
+    }
+  }, [positions, allProducts]);
+  
 
-    [positions, allProducts],
-  );
-
-  const handleCloseDialog = () => {
-    setDialogShippingVisible(false);
-  };
+ 
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
       setPositions(prev => ({ ...prev, [categoryId]: y }));
     });
+  };
+
+  const handleCloseDialog = () => {
+    setDialogShippingVisible(false);
   };
 
   const initZego = async () => {
