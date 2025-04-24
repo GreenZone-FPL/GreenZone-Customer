@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
 
-import { useAppContext, useCartContext, useProductContext } from '../../context';
+import { useAppContext, useAuthContext, useCartContext, useProductContext } from '../../context';
 import {
   AppGraph,
   BottomGraph,
@@ -18,7 +18,8 @@ import { onUserLoginZego } from '../../zego/common';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { authState, updateOrderMessage, setUser, setNotifications } = useAppContext();
+  const { updateOrderMessage, setUser, setNotifications } = useAppContext();
+  const { authState } = useAuthContext();
   const { cartState, cartDispatch } = useCartContext();
   const { allProducts, setAllProducts } = useProductContext();
 
@@ -93,7 +94,24 @@ export const useHomeContainer = () => {
   }, [])
 
   useEffect(() => {
-    fetchData(getAllProducts, setAllProducts, setLoadingProducts)
+    const fetchProducts = async () => {
+      try {
+
+        setLoadingProducts(true)
+        const response = await getAllProducts()
+        console.log('getAllProducts')
+        if (response) {
+          setAllProducts(response)
+        }
+
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+    fetchProducts()
+    // fetchData(getAllProducts, setAllProducts, setLoadingProducts)
   }, []);
 
 
@@ -120,7 +138,7 @@ export const useHomeContainer = () => {
 
   useFocusEffect(
     useCallback(() => {
-      fetchOrderHistory();
+      // fetchOrderHistory();
     }, [])
   );
 

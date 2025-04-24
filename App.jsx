@@ -10,15 +10,13 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useAppContainer } from './src/containers/useAppContainer';
-import { AppContextProvider, useAppContext } from './src/context/appContext';
+import { AppContextProvider, AuthProvider, CartProvider, ProductProvider, useAuthContext } from './src/context';
 import {
   AppGraph
 } from './src/layouts/graphs';
 import AuthNavigator from './src/layouts/stacks/AuthNavigator';
 import MainNavigator from './src/layouts/stacks/MainNavigator';
 import ZegoCallUI from './src/zego/ZegoCallUI';
-import { ProductProvider } from './src/context/productContext';
-import { CartProvider } from './src/context/cartContext';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -29,20 +27,24 @@ export const navigationRef = React.createRef();
 export default function App() {
   return (
     <AppContextProvider>
-      <CartProvider>
-        <ProductProvider>
-          <PaperProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <SafeAreaProvider>
-                <AppNavigator />
-                <FlashMessage position="top" />
-                <Toast />
-              </SafeAreaProvider>
-            </GestureHandlerRootView>
-          </PaperProvider>
-        </ProductProvider>
+      <AuthProvider>
+        <CartProvider>
+          <ProductProvider>
+            <PaperProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <SafeAreaProvider>
+                  <AppNavigator />
+                  <FlashMessage position="top" />
+                  <Toast />
+                </SafeAreaProvider>
+              </GestureHandlerRootView>
+            </PaperProvider>
+          </ProductProvider>
 
-      </CartProvider>
+        </CartProvider>
+
+      </AuthProvider>
+
 
 
     </AppContextProvider>
@@ -59,7 +61,7 @@ function AppNavigator() {
 }
 
 function RootNavigator() {
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
 
   useAppContainer();
 

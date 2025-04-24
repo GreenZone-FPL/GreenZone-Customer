@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   Column,
   HeaderWithBadge,
@@ -12,18 +11,18 @@ import {
   NormalLoading,
   NormalText,
   Row,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useAuthActions } from '../../containers';
-import { useAppContext } from '../../context/appContext';
+import { useAuthActions } from '../../containers';
+import { useAuthContext } from '../../context';
 import { OrderGraph, UserGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const { onLogout, onNavigateLogin } = useAuthActions();
 
   const handleProfile = async () => {

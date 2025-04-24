@@ -23,7 +23,7 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions } from '../../containers';
-import { useAppContext, useCartContext } from '../../context';
+import { useAuthContext, useCartContext } from '../../context';
 import { AppGraph } from '../../layouts/graphs';
 import { SkeletonBox } from '../../skeletons';
 import { CartManager } from '../../utils';
@@ -49,7 +49,7 @@ const MerchantScreen = ({ navigation, route }) => {
   const { fromCheckout } = route.params || false;
   const { fromHome } = route.params || false;
 
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const { cartDispatch } = useCartContext();
   const { onNavigateLogin } = useAuthActions();
   const [loadingMerchants, setLoadingMerchants] = useState(false);

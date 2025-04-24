@@ -15,7 +15,6 @@ import {
   VoucherGraph
 } from '../graphs';
 
-import { useAppContext } from '../../context/appContext';
 import AddressMerchantScreen from '../../screens/address/AddressMerchantScreen';
 import AddressScreen from '../../screens/address/AddressScreen';
 import MapAdressScreen from '../../screens/address/MapAdressScreen';
@@ -30,6 +29,7 @@ import AdvertisingScreen from '../../screens/notification/AdvertisingScreen';
 import NotificationScreen from '../../screens/notification/NotificationScreen';
 import BottomTab from '../BottomTab';
 
+import { useAuthContext } from '../../context';
 import OrderDetailScreen from '../../screens/order/OrderDetailScreen';
 import OrderHistoryScreen from '../../screens/order/OrderHistoryScreen';
 import RatingOrderScreen from '../../screens/order/RatingOrderScreen';
@@ -37,7 +37,7 @@ import ChatScreen from '../../screens/shopping/ChatScreen';
 import EditCartItemScreen from '../../screens/shopping/EditCartItemScreen';
 import FavoriteScreen from '../../screens/shopping/FavoriteScreen';
 import MerchantDetailSheet from '../../screens/shopping/MerchantDetailSheet';
-import OrderSuccessScreen from '../../screens/shopping/OrderSuccessScreen';
+
 import PayOsScreen from '../../screens/shopping/payment/PayOsScreen';
 import ZalopayScreen from '../../screens/shopping/payment/Zalopayscreen';
 import ProductDetailSheet from '../../screens/shopping/ProductDetailSheet';
@@ -52,6 +52,7 @@ import MyVouchersScreen from '../../screens/voucher/MyVouchersScreen';
 import SeedScreen from '../../screens/voucher/SeedScreen';
 import SelectVouchersScreen from '../../screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from '../../screens/voucher/VoucherDetailSheet';
+import ShippingMethodScreen from '../../screens/shopping/ShippingMethodScreen';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -69,7 +70,7 @@ const slideFromRightOption = {
   headerShown: false
 }
 function MainNavigator() {
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   return (
     <MainStack.Navigator screenOptions={{ headerShown: false }}>
 
@@ -138,7 +139,7 @@ function MainNavigator() {
       />
       <MainStack.Screen
         name={VoucherGraph.VoucherDetailSheet}
-        options={slideFromRightOption}
+        // options={slideFromRightOption}
         component={VoucherDetailSheet}
       />
 
@@ -157,13 +158,15 @@ function MainNavigator() {
         name={ShoppingGraph.ChatScreen}
         component={ChatScreen}
       />
-      <MainStack.Screen
-        name={ShoppingGraph.OrderSuccessScreen}
-        component={OrderSuccessScreen}
-      />
+
       <MainStack.Screen
         name={BottomGraph.MerchantScreen}
         component={MerchantScreen}
+      />
+
+      <MainStack.Screen
+        name={'ShippingMethodScreen'}
+        component={ShippingMethodScreen}
       />
       <MainStack.Screen
         name={VoucherGraph.SelectVouchersScreen}

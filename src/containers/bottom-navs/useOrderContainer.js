@@ -13,10 +13,10 @@ import {
 import { AppAsyncStorage, CartManager } from '../../utils';
 import { useAuthActions } from '../auth/useAuthActions';
 
-import { useAppContext, useCartContext, useProductContext } from '../../context';
+import { useAuthContext, useCartContext, useProductContext } from '../../context';
 
 export const useOrderContainer = () => {
-  const { authState, } = useAppContext();
+  const { authState } = useAuthContext();
   const { cartState, cartDispatch } = useCartContext();
   const { allProducts } = useProductContext();
   const { onNavigateLogin } = useAuthActions();

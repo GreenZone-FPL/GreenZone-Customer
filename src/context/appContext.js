@@ -1,32 +1,14 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
-  useReducer,
-  useState,
+  useState
 } from 'react';
-import { AppAsyncStorage } from '../utils';
-import {
-  authReducer,
-  authInitialState,
-  AuthActionTypes,
-} from '../reducers/authReducer';
-import {
-  cartReducer,
-  cartInitialState,
-  CartActionTypes,
-} from '../reducers/cartReducer';
-import { CartManager } from '../utils';
 
 
-export const AppContext = createContext();
-
-export let globalAuthDispatch = null;
+export const AppContext = createContext(); 
 
 export const AppContextProvider = ({ children }) => {
-  const [authState, authDispatch] = useReducer(authReducer, authInitialState);
-
-
+ 
   const [updateOrderMessage, setUpdateOrderMessage] = useState({
     visible: false,
     order: null,
@@ -39,55 +21,10 @@ export const AppContextProvider = ({ children }) => {
 
   const [allProducts, setAllProducts] = useState([]);
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const isValid = await AppAsyncStorage.isTokenValid();
-
-
-      const user = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.user,
-      );
-      if (isValid && user.lastName) {
-
-
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: {
-            needLogin: false,
-            isLoggedIn: true,
-            lastName: user.lastName,
-            firstName: user.firstName,
-            needRegister: false,
-            phoneNumber: user.phoneNumber
-          },
-        });
-
-      } else {
-        // Không có accessToken, chưa đăng ký
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: false, needRegister: false },
-        });
-      }
-    };
-    checkLoginStatus();
-  }, []);
-
-  useEffect(() => {
-    globalAuthDispatch = authDispatch;
-
-    return () => {
-      globalAuthDispatch = null;
-    };
-  }, [authState]);
-
-
 
   return (
     <AppContext.Provider
       value={{
-        authState,
-        authDispatch,
         updateOrderMessage,
         setUpdateOrderMessage,
         activeOrders,

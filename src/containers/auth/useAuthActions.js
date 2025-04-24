@@ -1,11 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
-import { useAppContext, useCartContext } from '../../context';
+import { useAuthContext, useCartContext } from '../../context';
 import { BottomGraph } from '../../layouts/graphs';
 import { AuthActionTypes, cartInitialState } from '../../reducers';
 import { AppAsyncStorage, CartManager } from '../../utils';
 
 export const useAuthActions = () => {
-  const { authDispatch } = useAppContext();
+  const { authDispatch } = useAuthContext();
   const { cartDispatch } = useCartContext();
 
   const navigation = useNavigation()

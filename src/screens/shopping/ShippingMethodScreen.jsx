@@ -11,12 +11,12 @@ import { Icon } from 'react-native-paper';
 import { MyBottomSheet } from '../../components/bottom-sheets/MyBottomSheet';
 import { Row } from '../../components/containers/Row';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext, useCartContext } from '../../context';
+import { useAuthContext, useCartContext } from '../../context';
 
 
 const ShippingMethodScreen = () => {
 
-  const {  authState } = useAppContext();
+  const {  authState } = useAuthContext();
   const { cartState } = useCartContext();
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
   const navigation = useNavigation()

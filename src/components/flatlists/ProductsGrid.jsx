@@ -13,24 +13,25 @@ import {colors, GLOBAL_KEYS} from '../../constants';
 import {TextFormatter} from '../../utils';
 import {Column} from '../containers/Column';
 import {Row} from '../containers/Row';
+import { FlashList } from '@shopify/flash-list';
 
 const width = Dimensions.get('window').width;
 
-export const ProductsGrid = ({
+export const ProductsGrid = React.memo(({
   title = 'Món Mới Phải Thử',
-  scrollEnabled = false,
   onItemClick,
   onIconClick,
   products,
 }) => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { minHeight: 200 }]}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
         data={products}
-        numColumns={2} // Chuyển thành grid 2 cột
+        estimatedItemSize={280}
+        numColumns={2}
         keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemProduct
             item={item}
             onItemClick={() => onItemClick(item._id)}
@@ -38,12 +39,11 @@ export const ProductsGrid = ({
           />
         )}
         contentContainerStyle={styles.flatListContentContainer}
-        columnWrapperStyle={styles.columnWrapper} // Thêm style để tạo khoảng cách giữa các cột
-        scrollEnabled={scrollEnabled}
+        columnWrapperStyle={styles.columnWrapper}
       />
     </View>
   );
-};
+});
 
 const ItemProduct = ({item, onItemClick, onIconClick}) => {
   return (
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   flatListContentContainer: {
-    paddingBottom: 16,
+    // paddingBottom: 16,
     gap: 16,
   },
   columnWrapper: {

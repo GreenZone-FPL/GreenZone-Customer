@@ -1,25 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {getAllVoucher, getProfile} from '../../axios';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { getAllVoucher, getProfile } from '../../axios';
 import {
   Column,
   LightStatusBar,
   NormalHeader,
-  NormalLoading,
   Row,
-  VoucherVertical,
+  VoucherVertical
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
-import {SectionLoader, SkeletonBox} from '../../skeletons';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAuthContext } from '../../context';
+import { SectionLoader, SkeletonBox } from '../../skeletons';
+import { TextFormatter } from '../../utils';
 
 const SeedScreen = ({navigation}) => {
   const [user, setUser] = useState(null);
   const [vouchers, setVouchers] = useState([]);
   const [changePoint, setChangePoint] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
-  const {authState} = useAppContext();
+  const {authState} = useAuthContext();
   const [loadingVoucher, setLoadingVoucher] = useState(false);
 
   useEffect(() => {

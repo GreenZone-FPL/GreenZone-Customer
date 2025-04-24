@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { updateUserProfile, uploadFile } from "../../axios";
-import { useAppContext, useCartContext } from "../../context";
+import { useAuthContext, useCartContext } from "../../context";
 import { AuthActionTypes } from "../../reducers";
 import { CartManager, Toaster } from "../../utils";
 export const useUpdateProfileContainer = (profile) => {
@@ -18,7 +18,7 @@ export const useUpdateProfileContainer = (profile) => {
     const [avatar, setAvatar] = useState('');
     const [hasImageChanged, setHasImageChanged] = useState(false); // biến cờ mới
 
-    const {authDispatch} = useAppContext();
+    const {authDispatch} = useAuthContext();
     const { cartDispatch} = useCartContext();
 
     useEffect(() => {

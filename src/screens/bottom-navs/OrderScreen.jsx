@@ -20,11 +20,11 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
-import { useAppContext, useCartContext, useProductContext } from '../../context';
-
+import { useAuthContext, useCartContext, useProductContext } from '../../context';
+import { FlashList } from '@shopify/flash-list';
 
 const OrderScreen = () => {
-  const { authState } = useAppContext()
+  const { authState } = useAuthContext()
   const { cartState } = useCartContext()
   const { allProducts } = useProductContext();
   const {
@@ -94,8 +94,9 @@ const OrderScreen = () => {
           }}
         />
 
-        <FlatList
+        <FlashList
           data={allProducts}
+          estimatedItemSize={600}
           keyExtractor={item => item._id}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}

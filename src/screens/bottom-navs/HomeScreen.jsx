@@ -1,6 +1,7 @@
-import React from 'react';
+import { FlashList } from '@shopify/flash-list';
+
+import React, { useCallback } from 'react';
 import {
-  FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -22,13 +23,13 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useHomeContainer } from '../../containers';
-import { useAppContext, useCartContext, useProductContext } from '../../context';
+import { useAuthContext, useCartContext, useProductContext } from '../../context';
 import useSaveLocation from '../../utils/useSaveLocation';
 import { AIAssistant, CategoryView } from './HomeComponents';
 
 
 const HomeScreen = () => {
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const { cartState } = useCartContext();
   const { allProducts } = useProductContext();
   const {
@@ -54,6 +55,14 @@ const HomeScreen = () => {
 
   const { onNavigateLogin } = useAuthActions();
   useSaveLocation();
+
+  const onItemClick = useCallback((productId) => {
+    onNavigateProductDetailSheet(productId);
+  }, [onNavigateProductDetailSheet]);
+
+  const onIconClick = useCallback((productId) => {
+    onClickAddToCart(productId);
+  }, [onClickAddToCart]);
 
 
 
@@ -107,16 +116,13 @@ const HomeScreen = () => {
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
-          onItemClick={productId => {
-            onNavigateProductDetailSheet(productId);
-          }}
-          onIconClick={productId => {
-            onClickAddToCart(productId);
-          }}
+          onItemClick={onItemClick}
+          onIconClick={onIconClick}
         />
 
-        <FlatList
+        <FlashList
           data={allProducts}
+          estimatedItemSize={600}
           keyExtractor={item => item._id}
           scrollEnabled={false}
           maxToRenderPerBatch={10}
@@ -129,13 +135,10 @@ const HomeScreen = () => {
               <ProductsGrid
                 title={item.name}
                 products={item.products}
-                onItemClick={productId => {
-                  onNavigateProductDetailSheet(productId);
-                }}
-                onIconClick={productId => {
-                  onClickAddToCart(productId);
-                }}
+                onItemClick={onItemClick}
+                onIconClick={onIconClick}
               />
+
             </View>
           )}
         />

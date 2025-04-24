@@ -1,16 +1,15 @@
 // @ts-ignore
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
   ImageBackground,
   Pressable,
   ScrollView,
-  StyleSheet,
-  Text,
+  StyleSheet
 } from 'react-native';
-import {Icon} from 'react-native-paper';
-import {getAllVoucher, getProfile} from '../../axios';
+import { Icon } from 'react-native-paper';
+import { getAllVoucher, getProfile } from '../../axios';
 import {
   AuthContainer,
   BarcodeUser,
@@ -20,16 +19,17 @@ import {
   Row,
   VoucherVertical,
 } from '../../components';
-import {colors, GLOBAL_KEYS, OrderStatus} from '../../constants';
-import {useAuthActions, useVoucherContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import {VoucherGraph} from '../../layouts/graphs';
-import {Toaster} from '../../utils';
-import {SectionLoader, SkeletonBox} from '../../skeletons';
+import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
+import { useAuthActions } from '../../containers';
+import { useAuthContext } from '../../context';
+import { useAppContext } from '../../context/appContext';
+import { VoucherGraph } from '../../layouts/graphs';
+import { SectionLoader, SkeletonBox } from '../../skeletons';
+import { Toaster } from '../../utils';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({navigation}) => {
-  const {authState} = useVoucherContainer();
+  const {authState} = useAuthContext();
   const {onNavigateLogin} = useAuthActions();
   const {updateOrderMessage, setUser} = useAppContext();
 
@@ -242,6 +242,8 @@ const styles = StyleSheet.create({
     padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: colors.gray200
   },
 });
 

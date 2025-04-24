@@ -9,10 +9,9 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useAuthContext, useCartContext } from '../../context';
 import { MyBottomSheet } from '../bottom-sheets/MyBottomSheet';
 import { Row } from '../containers/Row';
-import { useCartContext } from '../../context'
 
 const DialogShippingMethodPropTypes = {
   visible: PropTypes.bool.isRequired,
@@ -30,7 +29,7 @@ export const DialogShippingMethod = ({
   onOptionSelect,
 }) => {
 
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const { cartState } = useCartContext();
 
 
