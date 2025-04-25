@@ -13,7 +13,6 @@ export const ShoppingGraph = Object.freeze({
   RecipientInfoSheet: 'RecipientInfoSheet',
   ChatScreen: 'ChatScreen',
   ConfirmDeliveryTimeScreen: 'ConfirmDeliveryTimeScreen',
-  OrderSuccessScreen: 'OrderSuccessScreen',
   PayOsScreen: 'PayOsScreen',
   Zalopayscreen: 'Zalopayscreen',
 });

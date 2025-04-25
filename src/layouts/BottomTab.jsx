@@ -13,7 +13,7 @@ import VoucherStackScreen from './stacks/VoucherStackScreen';
 const Tab = createBottomTabNavigator();
 
 const BottomTab = () => {
-  console.log('inBottomTab')
+
   return (
     <Tab.Navigator
       initialRouteName={MainGraph.HomeStackScreen}

@@ -1,16 +1,16 @@
 import { useNavigation } from '@react-navigation/native';
-import { useAppContext } from '../../context/appContext';
 import { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 import { verifyOTP } from '../../axios';
-import { Toaster } from '../../utils';
+import { useAuthContext } from '../../context';
 import { AuthActionTypes } from '../../reducers';
+import { Toaster } from '../../utils';
 import { onUserLoginZego } from '../../zego/common';
 
 export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp: string, realCode: string) => {
   const navigation = useNavigation();
   const [code, setCode] = useState('');
-  const { authDispatch } = useAppContext();
+  const { authDispatch } = useAuthContext();
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 

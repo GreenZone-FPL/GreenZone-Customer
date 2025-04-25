@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
+import { getProfile } from "../../../axios";
 import { NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from "../../../constants";
-import { AppAsyncStorage, CartManager } from "../../../utils";
-import { getProfile } from "../../../axios";
+import { CartManager } from "../../../utils";
 
 interface RecipientInfoProps {
     cartState: any,

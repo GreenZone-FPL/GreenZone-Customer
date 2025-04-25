@@ -1,14 +1,16 @@
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {useEffect, useState} from 'react';
-import {getOrdersByStatus} from '../../axios';
-import {OnlineMethod, OrderStatus} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {onlineMethods} from '../../screens/checkout/checkout-components';
-import {PaymentMethodItem} from '../../type-interface/checkout';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import { getOrdersByStatus } from '../../axios';
+import { OnlineMethod } from '../../constants';
+import { useAppContext } from '../../context/appContext';
+import { onlineMethods } from '../../screens/checkout/checkout-components';
+import { PaymentMethodItem } from '../../type-interface/checkout';
 
 type ShoppingGraphParamList = {
   PayOsScreen: {orderId: string; totalPrice: number};
   Zalopayscreen: {orderId: string; totalPrice: number};
+  OrderDetailScreen: {orderId: string};
+  BottomGraph: {name: 'BottomGraph'};
 };
 
 interface OrderDetail {
@@ -46,7 +48,7 @@ export const useOrderHistoryContainer = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     orderStatuses.forEach(status => fetchOrders(status));
   }, [updateOrderMessage.status]);
@@ -71,6 +73,17 @@ export const useOrderHistoryContainer = () => {
     setDialogPaymentMethodVisible(false);
   };
 
+  const onHeaderPress = () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.reset({index: 0, routes: [{name: 'BottomGraph'}]});
+    }
+  };
+  const navigateOrderDetail = (order: OrderDetail) => {
+    navigation.navigate('OrderDetailScreen', {orderId: order._id});
+  };
+
   return {
     navigation,
     tabIndex,
@@ -88,5 +101,7 @@ export const useOrderHistoryContainer = () => {
     cancelDialogVisible,
     setCancelDialogVisible,
     handleSelectMethod,
+    onHeaderPress,
+    navigateOrderDetail
   };
 };

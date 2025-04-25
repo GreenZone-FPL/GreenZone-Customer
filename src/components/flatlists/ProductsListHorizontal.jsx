@@ -12,42 +12,56 @@ import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import { Row } from '../containers/Row';
+import { SkeletonBox } from '../../skeletons';
+import { Column } from '../containers/Column';
 
 export const ProductsListHorizontal = ({
+  loading = false,
   title = 'Combo 69K + Freeship',
   onItemClick,
   onIconClick,
   products,
 }) => {
 
+  if (loading) {
+    return (
+      <Column style={styles.container}>
+        <SkeletonBox width="45%" height={25} borderRadius={12} />
+        <Row style={{ gap: 16 }}>
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+        </Row>
+      </Column>
+    )
+  }
   return (
-    <View style={styles.container}>
-    
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>{title}</Text>
-          {/* <Text style={styles.timeText}>08:00:00</Text> */}
-        </View>
-        <FlatList
-          data={products}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({ item }) => {
+    <Column style={styles.container}>
 
-            return (
-              <ItemProduct
-                item={item}
-                onItemClick={() => onItemClick(item._id)}
-                onIconClick={() => onIconClick(item._id)}
-              />
-            );
-          }}
-          horizontal={true}
-          contentContainerStyle={{
-            gap: GLOBAL_KEYS.GAP_DEFAULT,
-          }}
-          scrollEnabled={true}
-        />
-    
-    </View>
+      <View style={styles.headerTextContainer}>
+        <Text style={styles.headerText}>{title}</Text>
+      </View>
+      <FlatList
+        data={products}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => {
+
+          return (
+            <ItemProduct
+              item={item}
+              onItemClick={() => onItemClick(item._id)}
+              onIconClick={() => onIconClick(item._id)}
+            />
+          );
+        }}
+        horizontal={true}
+        contentContainerStyle={{
+          gap: GLOBAL_KEYS.GAP_DEFAULT,
+        }}
+        scrollEnabled={true}
+      />
+
+    </Column>
   );
 };
 

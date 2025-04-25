@@ -11,7 +11,7 @@ import {
 import {chatAssistant} from '../../axios';
 import {OverlayStatusBar} from '../../components';
 import {colors} from '../../constants';
-import {IMessage} from '../../type-interface/chat';
+import {IMessage} from '../../type-interface'
 import {Toaster} from '../../utils';
 import {
   About,

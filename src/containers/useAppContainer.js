@@ -4,19 +4,15 @@ import { Alert, BackHandler } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { navigationRef } from '../../App';
 import { OrderStatus } from '../constants';
-import { useAppContext } from '../context/appContext';
+import { useAppContext, useAuthContext } from '../context';
 import { AuthActionTypes } from '../reducers';
 import socketService from '../services/socketService';
 import { AppAsyncStorage } from '../utils';
-import { onUserLoginZego } from '../zego/common';
 
 export const useAppContainer = () => {
-  const {
-    updateOrderMessage,
-    setUpdateOrderMessage,
-    authDispatch,
-    authState,
-  } = useAppContext();
+  const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
+  const { authDispatch, authState } = useAuthContext();
+
 
   const navigation = useNavigation();
 
@@ -116,7 +112,7 @@ export const useAppContainer = () => {
   }, [navigation, setUpdateOrderMessage, updateOrderMessage]);
 
 
-  
+
 
   useEffect(() => {
     const initializeSocket = async () => {

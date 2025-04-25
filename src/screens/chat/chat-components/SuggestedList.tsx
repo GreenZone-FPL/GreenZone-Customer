@@ -1,18 +1,15 @@
 import React from 'react';
 import {
-  Dimensions,
-  FlatList,
   Pressable,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Icon} from 'react-native-paper';
-import {Column, NormalText, TitleText} from '../../../components';
-import {GLOBAL_KEYS, colors} from '../../../constants';
-import {TextFormatter} from '../../../utils';
+import { Icon } from 'react-native-paper';
+import { Column, NormalText, TitleText } from '../../../components';
+import { GLOBAL_KEYS, colors } from '../../../constants';
+import { TextFormatter } from '../../../utils';
 
-const width = Dimensions.get('window').width;
+
 type SuggestedListProps = {
   onItemClick: (id: string) => void;
   onIconClick: (id: string) => void;
@@ -37,19 +34,6 @@ export const SuggestedList: React.FC<SuggestedListProps> = ({
         );
       })}
     </Column>
-    // <FlatList
-    //   data={products}
-    //   renderItem={({item: product}) => {
-    //     return (
-    //       <ItemProduct
-    //         item={product}
-    //         onItemClick={() => onItemClick(product._id)}
-    //         onIconClick={() => onIconClick(product._id)}
-    //       />
-    //     );
-    //   }}
-    //   contentContainerStyle={{gap: 4}}
-    // />
   );
 };
 

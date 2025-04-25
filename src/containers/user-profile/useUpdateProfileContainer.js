@@ -1,9 +1,9 @@
-import { useAppContext } from "../../context/appContext";
-import React, { useState, useEffect } from "react";
-import { AppAsyncStorage, CartManager, Toaster } from "../../utils";
-import { updateUserProfile, uploadFile } from "../../axios";
-import { AuthActionTypes } from "../../reducers";
+import { useEffect, useState } from "react";
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { updateUserProfile, uploadFile } from "../../axios";
+import { useAuthContext, useCartContext } from "../../context";
+import { AuthActionTypes } from "../../reducers";
+import { CartManager, Toaster } from "../../utils";
 export const useUpdateProfileContainer = (profile) => {
     const [lastName, setLastName] = useState('');
     const [lastNameMessage, setLastNameMessage] = useState('');
@@ -18,10 +18,8 @@ export const useUpdateProfileContainer = (profile) => {
     const [avatar, setAvatar] = useState('');
     const [hasImageChanged, setHasImageChanged] = useState(false); // biến cờ mới
 
-    const {
-        authDispatch,
-        cartDispatch
-    } = useAppContext();
+    const {authDispatch} = useAuthContext();
+    const { cartDispatch} = useCartContext();
 
     useEffect(() => {
         setLastName(profile.lastName || '');

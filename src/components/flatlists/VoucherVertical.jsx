@@ -12,21 +12,24 @@ import {
 } from 'react-native';
 import { changeBeans } from '../../axios';
 import { colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import { VoucherGraph } from '../../layouts/graphs';
-import { CartManager, Toaster } from '../../utils';
+import { CartActionTypes } from '../../reducers';
+import { VoucherVerticalSkeleton } from '../../skeletons';
+import { Toaster } from '../../utils';
 import { Column, NormalText, Row, SeedText, TitleText } from '../index';
 
 const { width } = Dimensions.get('window');
 
 export const VoucherVertical = ({
+  loading = false,
   route,
   vouchers,
   type,
   setChangePoint = false,
 }) => {
   const navigation = useNavigation();
-  const { cartDispatch } = useAppContext();
+  const { cartDispatch } = useCartContext();
   const { isUpdateOrderInfo } = route.params || false;
   const { isChangeBeans } = route.params || false;
   const [validVouchers, setValidVouchers] = useState([]);
@@ -103,21 +106,27 @@ export const VoucherVertical = ({
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      // console.log('item Vouher = ', item);
-      if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch, {
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           voucher: item._id,
           voucherInfo: item,
-        });
-      }
+        }
+      })
 
       navigation.goBack();
+
     } else if (isChangeBeans) {
       changeBean(item);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
+  if (loading) {
+    return (
+      <VoucherVerticalSkeleton />
+    )
+  }
 
   return (
     <Column style={styles.container}>
@@ -126,7 +135,7 @@ export const VoucherVertical = ({
         data={filterByDiscountType(type)}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
-          <ItemVoucher onPress={() => onItemPress(item)} item={item} />
+          <ItemVoucher onPress={() => onItemPress(item)} item={item} loading={loading} />
         )}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
@@ -136,7 +145,9 @@ export const VoucherVertical = ({
   );
 };
 
+
 const ItemVoucher = ({ onPress, item }) => {
+
   return (
     <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />

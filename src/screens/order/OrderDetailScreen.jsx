@@ -20,7 +20,7 @@ import {
   OrderStatus,
 } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import {
   DialogPaymentMethod,
   onlineMethods,
@@ -38,7 +38,7 @@ import {
 const OrderDetailScreen = () => {
   const route = useRoute();
   const { orderId } = route.params;
-  const { cartState } = useAppContext();
+  const { cartState } = useCartContext();
 
   const {
     cancelDialogVisible,

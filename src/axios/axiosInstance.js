@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { globalAuthDispatch } from '../context/appContext';
+
+import { globalAuthDispatch } from '../context';
 import { AuthActionTypes } from '../reducers';
 import { AppAsyncStorage } from '../utils';
-import { useNavigation } from '@react-navigation/native';
-import { AuthGraph } from '../layouts/graphs';
 
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
 

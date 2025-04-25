@@ -20,25 +20,21 @@ import {
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { useNavigation } from '@react-navigation/native';
-import { AppGraph } from '../../layouts/graphs';
-
+import { useAuthContext, useCartContext, useProductContext } from '../../context';
+import { FlashList } from '@shopify/flash-list';
 
 const OrderScreen = () => {
-  const { cartState, authState } =
-    useAppContext() || {};
-
-  const navigation = useNavigation()
+  const { authState } = useAuthContext()
+  const { cartState } = useCartContext()
+  const { allProducts } = useProductContext();
   const {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
-    allProducts,
-    loading,
     categories,
     dialogVisible,
     scrollViewRef,
+    loadingCategories,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,
@@ -53,7 +49,6 @@ const OrderScreen = () => {
     navigateFavorite,
     navigateSearchProduct
   } = useOrderContainer()
-
 
 
   const { onNavigateLogin } = useAuthActions();
@@ -71,18 +66,23 @@ const OrderScreen = () => {
       <ScrollView
         style={styles.containerContent}
         ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}>
 
         {!authState.lastName && (
           <AuthContainer onPress={onNavigateLogin} />
         )}
+
         <CategoryMenu
+          loading={loadingCategories}
           categories={categories}
           onCategorySelect={category => scrollToCategory(category._id)}
         />
 
+
         <ProductsListHorizontal
+          loading={false}
           title='Sản phẩm mới'
           products={allProducts
             .flatMap(category => category.products)
@@ -95,11 +95,12 @@ const OrderScreen = () => {
           }}
         />
 
-        <FlatList
+        <FlashList
           data={allProducts}
+          estimatedItemSize={600}
           keyExtractor={item => item._id}
-          scrollEnabled={false}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
           renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
@@ -156,7 +157,7 @@ const OrderScreen = () => {
           <View style={{ marginVertical: 8 }}>
             <CategoryMenu
               categories={categories}
-              loading={loading}
+              loading={loadingCategories}
               onCategorySelect={category => {
                 scrollToCategory(category._id);
               }}

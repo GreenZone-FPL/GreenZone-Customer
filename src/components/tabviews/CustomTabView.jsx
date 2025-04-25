@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
 
   },
   tabViewContainer: {
-    backgroundColor: colors.green100,
+    backgroundColor: colors.white,
   },
   tabViewItem: {
     backgroundColor: colors.white,

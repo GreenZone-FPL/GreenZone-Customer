@@ -108,7 +108,7 @@ const NewAddressScreen = props => {
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
           style={styles.btnAddress} disabled={loading}>
-          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black }}>
             {selectedAddress}
           </Text>
         </TouchableOpacity>

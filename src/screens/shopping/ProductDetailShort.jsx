@@ -4,9 +4,8 @@ import { Icon } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, OverlayStatusBar, RadioGroup, Row, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import { CartManager, Toaster } from '../../utils';
-import FastImage from 'react-native-fast-image';
 
 const { width, height } = Dimensions.get('window')
 const ProductDetailShort = ({ route, navigation }) => {
@@ -21,7 +20,7 @@ const ProductDetailShort = ({ route, navigation }) => {
     const { productId } = route.params
 
 
-    const { cartDispatch, cartState } = useAppContext()
+    const { cartDispatch } = useCartContext()
 
 
     useEffect(() => {

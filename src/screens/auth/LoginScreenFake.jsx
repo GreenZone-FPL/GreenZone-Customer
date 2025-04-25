@@ -29,7 +29,6 @@ const LoginScreenFake = ({route, navigation}) => {
   const [phoneNumberError, setPhoneNumberError] = useState(false);
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  // const {authState, authDispatch} = useAppContext();
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // useEffect(() => {

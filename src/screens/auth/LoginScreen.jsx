@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Alert,
   Animated,
   BackHandler,
   Dimensions,
@@ -19,17 +18,16 @@ import {
   TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useAuthContext } from '../../context';
 import { AuthGraph } from '../../layouts/graphs';
 import { AuthActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
-import axios from 'axios';
 
 const LoginScreen = ({ route, navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [phoneNumberMessage, setPhoneNumberMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { authState, authDispatch } = useAppContext();
+  const { authState, authDispatch } = useAuthContext();
 
   // Hàm gửi SMS OTP
   // const sendSms = async (phoneNumber, otpCode) => {

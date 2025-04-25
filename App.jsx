@@ -10,7 +10,7 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useAppContainer } from './src/containers/useAppContainer';
-import { AppContextProvider, useAppContext } from './src/context/appContext';
+import { AppContextProvider, AuthProvider, CartProvider, ProductProvider, useAuthContext } from './src/context';
 import {
   AppGraph
 } from './src/layouts/graphs';
@@ -27,15 +27,26 @@ export const navigationRef = React.createRef();
 export default function App() {
   return (
     <AppContextProvider>
-      <PaperProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <SafeAreaProvider>
-            <AppNavigator />
-            <FlashMessage position="top" />
-            <Toast />
-          </SafeAreaProvider>
-        </GestureHandlerRootView>
-      </PaperProvider>
+      <AuthProvider>
+        <CartProvider>
+          <ProductProvider>
+            <PaperProvider>
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <SafeAreaProvider>
+                  <AppNavigator />
+                  <FlashMessage position="top" />
+                  <Toast />
+                </SafeAreaProvider>
+              </GestureHandlerRootView>
+            </PaperProvider>
+          </ProductProvider>
+
+        </CartProvider>
+
+      </AuthProvider>
+
+
+
     </AppContextProvider>
 
   );
@@ -50,8 +61,8 @@ function AppNavigator() {
 }
 
 function RootNavigator() {
-  const { authState } = useAppContext();
-  
+  const { authState } = useAuthContext();
+
   useAppContainer();
 
   return (

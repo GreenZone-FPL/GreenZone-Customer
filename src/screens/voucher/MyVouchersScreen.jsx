@@ -52,6 +52,7 @@ const MyVouchersScreen = ({ navigation }) => {
 
       {vouchers?.length > 0 ? (
         <VoucherVertical
+          loading={loading}
           vouchers={vouchers}
           route={{ params: { isUpdateOrderInfo: false, isChangeBeans: false } }}
           type={0}

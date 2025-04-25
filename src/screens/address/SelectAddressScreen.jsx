@@ -1,5 +1,5 @@
-import {useFocusEffect} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   SafeAreaView,
@@ -8,8 +8,8 @@ import {
   Text,
   View,
 } from 'react-native';
-import {Icon, IconButton} from 'react-native-paper';
-import {getAddresses} from '../../axios';
+import { Icon, IconButton } from 'react-native-paper';
+import { getAddresses } from '../../axios';
 import {
   Column,
   CustomSearchBar,
@@ -18,14 +18,14 @@ import {
   PrimaryButton,
   TitleText,
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {UserGraph} from '../../layouts/graphs';
-import {CartManager, Toaster} from '../../utils';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { UserGraph } from '../../layouts/graphs';
+import { CartManager, Toaster } from '../../utils';
 
 import Geolocation from '@react-native-community/geolocation';
 import axios from 'axios';
-import {v4 as uuidv4} from 'uuid';
+import uuid from 'react-native-uuid';
+import { useCartContext } from '../../context';
 
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_PLACE_API = 'https://rsapi.goong.io/Place/AutoComplete';
@@ -41,8 +41,8 @@ const SelectAddressScreen = ({navigation, route}) => {
   const [searchResults, setSearchResults] = useState([]);
   const {isUpdateOrderInfo} = route.params || false;
   const [loading, setLoading] = useState(false);
-  const {cartDispatch} = useAppContext();
-  const sessionToken = uuidv4();
+  const {cartDispatch} = useCartContext();
+  const sessionToken = uuid.v4();
   let searchTimeout = null;
   const [locationAvailable, setLocationAvailable] = useState(false);
   const [currentLocation, setCurrenLocation] = useState('');
@@ -318,7 +318,7 @@ const CardSearch = ({address, isSelected, onPress}) => (
     <Column style={styles.textContainer}>
       <TitleText text={`${address.specificAddress}`} />
       <NormalText
-        style={{color: colors.gray850}}
+        style={{color: colors.black}}
         text={`${address.specificAddress}, ${address.ward}, ${address.district}, ${address.province}`}
       />
     </Column>

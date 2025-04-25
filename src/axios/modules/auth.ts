@@ -19,7 +19,7 @@ export const register = async (request: RegisterRequest) => {
 
     const {data} = response;
 
-    console.log('data', JSON.stringify(data, null, 2));
+
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,
@@ -59,7 +59,7 @@ export const verifyOTP = async ({phoneNumber, code}) => {
     });
     const {data} = response;
 
-    console.log('data', JSON.stringify(data, null, 2));
+
     await AppAsyncStorage.storeData(
       AppAsyncStorage.STORAGE_KEYS.accessToken,
       data.token.accessToken.token,

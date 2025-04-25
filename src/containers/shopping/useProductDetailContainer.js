@@ -1,8 +1,8 @@
-import { useAppContext } from '../../context/appContext';
+import { useAuthContext } from '../../context';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useProductDetailContainer = () => {
-  const {authState} = useAppContext();
+  const {authState} = useAuthContext();
   const {onNavigateLogin} = useAuthActions();
 
   const onClickAddToCart = async addToCart => {

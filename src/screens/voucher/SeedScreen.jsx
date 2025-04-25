@@ -1,26 +1,42 @@
-import React, {useEffect, useState} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
-import {getAllVoucher, getProfile} from '../../axios';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import { getAllVoucher, getProfile } from '../../axios';
 import {
   Column,
   LightStatusBar,
   NormalHeader,
-  NormalLoading,
   Row,
-  VoucherVertical,
+  VoucherVertical
 } from '../../components';
-import {colors, GLOBAL_KEYS} from '../../constants';
-import {useAppContext} from '../../context/appContext';
-import {TextFormatter} from '../../utils';
-import {SectionLoader, SkeletonBox} from '../../skeletons';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { useAuthContext } from '../../context';
+import { SectionLoader, SkeletonBox } from '../../skeletons';
+import { TextFormatter } from '../../utils';
 
-const SeedScreen = ({navigation}) => {
+const SeedScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [vouchers, setVouchers] = useState([]);
   const [changePoint, setChangePoint] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
-  const {authState} = useAppContext();
+  const { authState } = useAuthContext();
   const [loadingVoucher, setLoadingVoucher] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoadingProfile(true);
+
+      try {
+        const response = await getProfile();
+        if (response) setUser(response);
+      } catch (error) {
+        console.error('Lỗi khi lấy profile:', error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    fetchProfile();
+  }, [changePoint]);
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -40,22 +56,7 @@ const SeedScreen = ({navigation}) => {
     fetchVouchers();
   }, []);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      setLoadingProfile(true);
 
-      try {
-        const response = await getProfile();
-        if (response) setUser(response);
-      } catch (error) {
-        console.error('Lỗi khi lấy profile:', error);
-      } finally {
-        setLoadingProfile(false);
-      }
-    };
-
-    fetchProfile();
-  }, [changePoint]);
 
   return (
     <View style={styles.container}>
@@ -65,11 +66,11 @@ const SeedScreen = ({navigation}) => {
       <SectionLoader
         loading={loadingProfile}
         skeleton={
-          <Row style={{marginHorizontal: 16}}>
+          <Row style={{ marginHorizontal: 16 }}>
             <SkeletonBox width={70} height={70} borderRadius={48} />
             <Column>
-              <SkeletonBox width={150} height={25} borderRadius={4} />
-              <SkeletonBox width={75} height={25} borderRadius={4} />
+              <SkeletonBox width={150} height={25} borderRadius={20} />
+              <SkeletonBox width={75} height={25} borderRadius={20} />
             </Column>
           </Row>
         }>
@@ -85,7 +86,7 @@ const SeedScreen = ({navigation}) => {
               <Text
                 style={[
                   styles.beanAmount,
-                  {color: colors.gray700, fontSize: 14},
+                  { color: colors.black, fontSize: 14 },
                 ]}>
                 seed
               </Text>
@@ -93,25 +94,15 @@ const SeedScreen = ({navigation}) => {
           </Column>
         </Row>
       </SectionLoader>
-      <SectionLoader
+
+      <VoucherVertical
         loading={loadingVoucher}
-        skeleton={
-          <Column>
-            <View style={{marginHorizontal: 16}}>
-              <SkeletonBox width="25%" height={25} borderRadius={4} />
-            </View>
-            <SkeletonBox width="100%" height={100} borderRadius={0} />
-            <SkeletonBox width="100%" height={100} borderRadius={0} />
-            <SkeletonBox width="100%" height={100} borderRadius={0} />
-          </Column>
-        }>
-        <VoucherVertical
-          vouchers={vouchers}
-          type={2}
-          route={{params: {isUpdateOrderInfo: false, isChangeBeans: true}}}
-          setChangePoint={setChangePoint}
-        />
-      </SectionLoader>
+        vouchers={vouchers}
+        type={2}
+        route={{ params: { isUpdateOrderInfo: false, isChangeBeans: true } }}
+        setChangePoint={setChangePoint}
+      />
+
     </View>
   );
 };
@@ -129,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginHorizontal: 16,
     gap: 16,
-    marginBottom: 16,
+    // marginBottom: 16,
   },
   iconSeed: {
     width: 70,
