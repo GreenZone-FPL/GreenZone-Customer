@@ -1,15 +1,15 @@
 // @ts-ignore
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
   ImageBackground,
   Pressable,
   ScrollView,
-  StyleSheet
+  StyleSheet,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { getAllVoucher, getProfile } from '../../axios';
+import {Icon} from 'react-native-paper';
+import {getAllVoucher, getProfile} from '../../axios';
 import {
   AuthContainer,
   BarcodeUser,
@@ -19,13 +19,13 @@ import {
   Row,
   VoucherVertical,
 } from '../../components';
-import { colors, GLOBAL_KEYS, OrderStatus } from '../../constants';
-import { useAuthActions } from '../../containers';
-import { useAuthContext } from '../../context';
-import { useAppContext } from '../../context/appContext';
-import { VoucherGraph } from '../../layouts/graphs';
-import { SectionLoader, SkeletonBox } from '../../skeletons';
-import { Toaster } from '../../utils';
+import {colors, GLOBAL_KEYS, OrderStatus} from '../../constants';
+import {useAuthActions} from '../../containers';
+import {useAuthContext} from '../../context';
+import {useAppContext} from '../../context/appContext';
+import {VoucherGraph} from '../../layouts/graphs';
+import {SectionLoader, SkeletonBox} from '../../skeletons';
+import {Toaster} from '../../utils';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({navigation}) => {
@@ -139,16 +139,10 @@ const VoucherScreen = ({navigation}) => {
           <SectionLoader
             loading={loadingVouchers}
             skeleton={
-              <Column style={{alignItems: 'center', gap: 3, marginVertical: 8}}>
-                <Row style={{marginVertical: 8}}>
-                  <SkeletonBox width="45%" height={90} borderRadius={8} />
-                  <SkeletonBox width="45%" height={90} borderRadius={8} />
-                </Row>
-                <SkeletonBox width="100%" height={30} borderRadius={5} />
-                <SkeletonBox width="100%" height={100} borderRadius={5} />
-                <SkeletonBox width="100%" height={100} borderRadius={5} />
-                <SkeletonBox width="100%" height={100} borderRadius={5} />
-              </Column>
+              <Row style={{marginVertical: 8, alignSelf: 'center'}}>
+                <SkeletonBox width="45%" height={90} borderRadius={8} />
+                <SkeletonBox width="45%" height={90} borderRadius={8} />
+              </Row>
             }>
             <Row style={{margin: 16}}>
               <Card
@@ -168,12 +162,13 @@ const VoucherScreen = ({navigation}) => {
                 }}
               />
             </Row>
-            <VoucherVertical
-              vouchers={vouchers}
-              type={1}
-              route={{params: {isUpdateOrderInfo: false}}}
-            />
           </SectionLoader>
+          <VoucherVertical
+            loading={loadingVouchers}
+            vouchers={vouchers}
+            type={1}
+            route={{params: {isUpdateOrderInfo: false}}}
+          />
         </Column>
       ) : (
         <Image
@@ -243,7 +238,8 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_SMALL,
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: colors.gray200
+    borderColor: colors.gray200,
+    borderRadius: 10,
   },
 });
 

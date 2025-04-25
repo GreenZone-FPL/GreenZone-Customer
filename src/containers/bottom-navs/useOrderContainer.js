@@ -20,7 +20,7 @@ export const useOrderContainer = () => {
   const { allProducts } = useProductContext();
   const { onNavigateLogin } = useAuthActions();
   const navigation = useNavigation();
-
+  const lastCategoryRef = useRef(currentCategory);
 
 
   const [editOption, setEditOption] = useState('');

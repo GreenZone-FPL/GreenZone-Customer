@@ -138,7 +138,7 @@ export const useHomeContainer = () => {
 
   useFocusEffect(
     useCallback(() => {
-      // fetchOrderHistory();
+      fetchOrderHistory();
     }, [])
   );
 

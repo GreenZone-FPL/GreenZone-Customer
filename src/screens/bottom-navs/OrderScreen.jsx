@@ -66,6 +66,7 @@ const OrderScreen = () => {
       <ScrollView
         style={styles.containerContent}
         ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}>
 
@@ -98,8 +99,8 @@ const OrderScreen = () => {
           data={allProducts}
           estimatedItemSize={600}
           keyExtractor={item => item._id}
-          scrollEnabled={false}
           showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
           renderItem={({ item }) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
