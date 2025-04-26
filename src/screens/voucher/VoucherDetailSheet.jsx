@@ -1,19 +1,19 @@
 import Clipboard from '@react-native-clipboard/clipboard';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import {
   Dimensions,
   Image,
   Pressable,
-  ScrollView,
+  SafeAreaView,
   StyleSheet,
   Text
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { Column, LightStatusBar, NormalText, QrCodeVoucher, Row, TitleText } from '../../components';
+import { Column, NormalText, OverlayStatusBar, QrCodeVoucher, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { TextFormatter } from '../../utils';
-import { useNavigation, useRoute } from '@react-navigation/native';
 
 const width = Dimensions.get('window').width;
 
@@ -26,7 +26,7 @@ const VoucherDetailSheet = () => {
     Toast.show({
       type: 'success',
       position: 'top',
-      text1: 'Đã sao chép mã đơn hàng!',
+      text1: 'Đã sao chép mã giảm giá',
       visibilityTime: 2000,
       text1Style: {
         color: colors.black,
@@ -37,41 +37,46 @@ const VoucherDetailSheet = () => {
   };
 
   return (
-    <Pressable onPress={() => navigation.goBack()} style={styles.container}>
-      <LightStatusBar />
-      <Pressable onPress={() => {}} style={styles.contentContainer}>
-        <ScrollView>
-          <Pressable
-            onPress={() => navigation.goBack()}
-            style={styles.closeButton}>
-            <Icon source="close" size={24} color={colors.primary} />
-          </Pressable>
 
-          <Column>
-            <TitleText text="GreenZone" style={styles.voucherTitle} />
-            <Text style={styles.voucherName}>{item.name}</Text>
-
-            {/* <Image source={{uri: item.image}} style={styles.qrCodeImage} /> */}
-            <QrCodeVoucher voucherCode={item.code} />
-
-            <Text style={styles.discountCode}>{item.code}</Text>
-
-            <Pressable onPress={copyToClipboard}>
-              <Text style={styles.copyText}>Sao chép</Text>
-            </Pressable>
-          </Column>
-
-          <Row style={styles.expiryContainer}>
-            <NormalText text="Ngày hết hạn:" />
-            <NormalText
-              text={TextFormatter.formatDateSimple(item.endDate)}
-              style={styles.endDate}
-            />
-          </Row>
-          <Text style={styles.infoText}>{item.description}</Text>
-        </ScrollView>
+    <SafeAreaView style={styles.contentContainer}>
+      <OverlayStatusBar />
+      <Pressable
+        onPress={() => navigation.goBack()}
+        style={styles.closeButton}>
+        <Icon source="close" size={24} color={colors.primary} />
       </Pressable>
-    </Pressable>
+
+      <Column style={{ gap: 16, paddingHorizontal: 16 }}>
+        <TitleText text="GreenZone" style={styles.voucherTitle} />
+        <Row style={{ alignSelf: 'center' }}>
+          <Image source={{ uri: item.image }} style={styles.qrCodeImage} />
+          <Text style={styles.voucherName}>{item.name}</Text>
+        </Row>
+
+
+
+        <QrCodeVoucher voucherCode={item.code} />
+
+        <Text style={styles.discountCode}>{item.code}</Text>
+
+        <Pressable onPress={copyToClipboard}>
+          <Text style={styles.copyText}>Sao chép</Text>
+        </Pressable>
+
+
+        <Row >
+          <NormalText text="Ngày hết hạn:" />
+          <NormalText
+            text={TextFormatter.formatDateSimple(item.endDate)}
+            style={styles.endDate}
+          />
+        </Row>
+        <Text style={styles.infoText}>{item.description}</Text>
+      </Column>
+
+    </SafeAreaView>
+
+
   );
 };
 
@@ -83,17 +88,17 @@ const styles = StyleSheet.create({
   },
 
   closeButton: {
-    marginVertical: 16,
-    marginHorizontal: 8,
+    margin: 16,
     alignSelf: 'flex-start',
     backgroundColor: colors.white
   },
   contentContainer: {
     flexDirection: 'column',
     backgroundColor: colors.white,
-    width: Dimensions.get('window').width * 0.85,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
     alignSelf: 'flex-end',
-    flex: 1
+    flex: 1,
   },
 
   voucherTitle: {
@@ -104,46 +109,37 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   infoText: {
-    paddingHorizontal: 16,
-    alignItems: 'flex-start',
-    backgroundColor: colors.transparent,
     color: colors.gray850,
-    justifyContent:'center',
-    alignItems: 'center',
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+    lineHeight: 20
   },
   endDate: {
     color: colors.orange700
   },
   voucherName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_HEADER,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '700',
     textAlign: 'center',
     color: colors.black,
   },
   qrCodeImage: {
-    width: width / 2,
-    height: width / 2,
+    width: width / 4.5,
+    height: width / 4.5,
     borderRadius: 8,
-    alignSelf: 'center',
-    resizeMode:"cover"
+    resizeMode: "cover"
   },
   discountCode: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
     textAlign: 'center',
-    color: colors.lemon
+    color: colors.primary
   },
   copyText: {
     fontWeight: '500',
     textAlign: 'center',
     color: colors.blue600,
   },
-  expiryContainer: {
-    padding: GLOBAL_KEYS.PADDING_DEFAULT,
-    justifyContent: 'space-between',
-    backgroundColor: colors.white,
-    marginBottom: 8
-  }
+
 });
 
 export default VoucherDetailSheet;
