@@ -66,7 +66,7 @@ const ItemProduct = ({item, onItemClick, onIconClick}) => {
         <Column style={styles.productInfo}>
           <Text style={styles.productName}>{item.name}</Text>
           <Text style={styles.productPrice}>
-            {TextFormatter.formatCurrency(item.originalPrice)}
+            {TextFormatter.formatCurrency(item.sellingPrice)}
           </Text>
         </Column>
 
