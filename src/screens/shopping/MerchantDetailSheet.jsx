@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dimensions,
   Image,
+  Linking,
+  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -10,10 +12,10 @@ import {
   View,
 } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
 import { OverlayStatusBar } from '../../components/status-bars/OverlayStatusBar';
-import { Linking } from 'react-native';
-import { NormalText, Row } from '../../components';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { Pressable } from 'react-native';
+import { Toaster } from '../../utils';
 
 const width = Dimensions.get('window').width;
 
@@ -77,47 +79,49 @@ const Body = ({ item }) => {
     );
   };
   return (
-    <ScrollView>
-      <View style={styles.body}>
-        <Text style={styles.title}>{item.name}</Text>
 
-        <Text style={styles.openingHours}>Giờ mở cửa: {item.openTime}</Text>
-        <Text style={styles.openingHours}>Giờ đóng cửa: {item.closeTime}</Text>
-        <TouchableOpacity
-          onPress={() => openGoogleMaps(item.latitude, item.longitude)}
-          style={styles.infoContainer}>
-          <Icon
-            source="navigation-variant-outline"
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.primary}
-          />
-          <Text numberOfLines={2} style={styles.infoText}>
-            {item.specificAddress}, {item.ward}, {item.district},{' '}
-            {item.province}
-            {/* {item.address} */}
-          </Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.body}>
+      <Text style={styles.title}>{item.name}</Text>
 
-        <View style={styles.infoContainer}>
-          <Icon
-            source="phone-outline"
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.primary}
-          />
+      <Text style={styles.openingHours}>Giờ mở cửa: {item.openTime}</Text>
+      <Text style={styles.openingHours}>Giờ đóng cửa: {item.closeTime}</Text>
+      <Pressable
+        onPress={() => openGoogleMaps(item.latitude, item.longitude)}
+        style={styles.infoContainer}>
+        <Icon
+          source="navigation-variant-outline"
+          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+          color={colors.primary}
+        />
+        <Text numberOfLines={2} style={styles.infoText}>
+          {item.address}
+        </Text>
+      </Pressable>
 
-          <Text style={styles.infoText}>Số điện thoại: {item.phoneNumber}</Text>
-        </View>
+      <Pressable
+        onPress={() => Linking.openURL(`tel:${item.phoneNumber}`)}
+        style={styles.infoContainer}>
+        <Icon
+          source="phone-outline"
+          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+          color={colors.primary}
+        />
+        <Text style={styles.infoText}>Liên hệ: {item.phoneNumber}</Text>
+      </Pressable>
 
-        <View style={styles.infoContainer}>
-          <Icon
-            source="share-variant-outline"
-            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-            color={colors.primary}
-          />
-          <Text style={styles.infoText}>Chia sẻ với bạn bè</Text>
-        </View>
-      </View>
-    </ScrollView>
+
+      <Pressable
+        onPress={() => Toaster.show('Tính năng đang phát triển')}
+        style={styles.infoContainer}>
+        <Icon
+          source="share-variant-outline"
+          size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+          color={colors.primary}
+        />
+        <Text style={styles.infoText}>Chia sẻ với bạn bè</Text>
+      </Pressable>
+    </SafeAreaView>
+
   );
 };
 
@@ -149,7 +153,7 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   body: {
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    padding: GLOBAL_KEYS.PADDING_DEFAULT,
     gap: 24,
   },
   title: {
@@ -173,7 +177,9 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '400',
     marginLeft: GLOBAL_KEYS.PADDING_DEFAULT,
-    color: colors.black
+    color: colors.black,
+    flex: 1,
+    lineHeight: 20
   },
   buttonText: {
     position: 'absolute',

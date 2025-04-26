@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, StatusBar } from 'react-native';
-import { SkeletonBox } from './SkeletonBox';
-import { Column, Row } from '../components';
-import { colors } from '../constants';
+import { StatusBar, StyleSheet } from 'react-native';
+import { Column } from '../../components';
+import { colors } from '../../constants';
+import { SkeletonBox } from '../SkeletonBox';
 export const ProductDetailSkeleton = () => {
   return (
     <Column style={styles.container}>
@@ -17,7 +17,7 @@ export const ProductDetailSkeleton = () => {
         <SkeletonBox width="95%" height={15} />
       </Column>
 
-      <SkeletonBox width="95%" height={70} style={{alignSelf: 'center'}} />
+      <SkeletonBox width="95%" height={70} style={{ alignSelf: 'center' }} />
     </Column>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Dimensions,
   Pressable,
   ScrollView,
   StatusBar,
@@ -27,7 +28,7 @@ import { useAuthContext, useCartContext } from '../../context';
 import { ProductDetailSkeleton } from '../../skeletons';
 import { CartManager, Toaster } from '../../utils';
 
-
+const width = Dimensions.get('window').width
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -330,13 +331,12 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
-    width: '100%',
-    height: 300,
+    width: width,
+    height: width,
   },
   productImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   closeButton: {
     position: 'absolute',

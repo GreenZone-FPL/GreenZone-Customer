@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
-import { Column, Row } from '../components';
-import { colors } from '../constants';
-import { SkeletonBox } from './SkeletonBox';
+import { Column, Row } from '../../components';
+import { colors } from '../../constants';
+import { SkeletonBox } from '../SkeletonBox';
 
 const { width } = Dimensions.get('window');
 export const VoucherVerticalSkeleton = () => {

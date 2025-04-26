@@ -105,26 +105,19 @@ const ProfileScreen = ({ navigation }) => {
               onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)}
             />
 
-            {/* <View style={styles.separator} /> */}
+
             <CardUtiliti
               icon="chat-outline"
               title="Liên hệ góp ý"
               onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)}
             />
-            {/* <View style={styles.separator} /> */}
+
             <CardUtiliti
               icon="star-outline"
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
-            {/* <View style={styles.separator} /> */}
-            <CardUtiliti
-              icon="clipboard-list-outline"
-              title="My Flatlist"
-              onPress={() => navigateIfLoggedIn('MyFlatList')}
-            />
 
-            {/* <View style={styles.separator} /> */}
             {authState.lastName && (
               <CardUtiliti icon="logout" title="Đăng xuất" onPress={handleLogout} />
             )}
@@ -204,7 +197,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderBottomColor: colors.gray200,
     borderBottomWidth: 1
-  
+
   },
   leftSection: {
     flexDirection: 'row',

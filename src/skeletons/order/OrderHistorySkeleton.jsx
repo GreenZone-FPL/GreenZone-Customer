@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Column, Row } from '../components';
-import { colors } from '../constants';
-import { SkeletonBox } from './SkeletonBox';
+import { Column, Row } from '../../components';
+import { colors } from '../../constants';
+import { SkeletonBox } from '../SkeletonBox';
 export const OrderHistorySkeleton = () => {
   return (
     <Column style={styles.container}>
@@ -19,7 +19,7 @@ const OrderItemSkeleton = () => {
       <Row>
         <SkeletonBox width={30} height={30} borderRadius={20} />
         <Row style={{ flex: 1 }}>
-          <Column style={{ flex: 1, gap: 10}}>
+          <Column style={{ flex: 1, gap: 10 }}>
             <SkeletonBox width={100} height={12} />
             <SkeletonBox width={100} height={12} />
             <SkeletonBox width={100} height={12} />

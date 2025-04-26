@@ -28,7 +28,7 @@ export const CategoryMenu: React.FC<CategoryMenuProps> = ({
   const NUM_COLUMNS = 4;
   const GAP = 16;
   const SCREEN_WIDTH = Dimensions.get('window').width;
-  const itemWidth = (SCREEN_WIDTH - GAP * 3) / NUM_COLUMNS;
+  const itemWidth = (SCREEN_WIDTH -GAP * 3) / NUM_COLUMNS;
 
   if (loading) {
     return (
@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: 'center',
     minHeight: 185,
+    marginBottom: 8
   },
   itemContainer: {
     alignItems: 'center',
