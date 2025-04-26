@@ -19,18 +19,14 @@ const MyVouchersScreen = ({ navigation }) => {
       try {
         setLoading(true);
         const response = await getMyVouchers();
-        if (response) {
-          const uniqueVouchers = Object.values(
-            response.reduce((acc, item) => {
-              if (item?.voucher) {
-                acc[item.voucher._id] = item.voucher;
-              }
-              return acc;
-            }, {}),
-          );
+      if (response) {
+        const allVouchers = response
+          .filter(item => item?.voucher)
+          .map(item => item.voucher);
 
-          setVouchers(uniqueVouchers);
-        }
+        setVouchers(allVouchers);
+      }
+       
       } catch (error) {
         console.log('error', error);
       } finally {
