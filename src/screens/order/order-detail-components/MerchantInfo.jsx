@@ -1,22 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Column, NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
-import { Column, NormalText } from '../../../components';
 
 export const MerchantInfo = ({ store }) => {
   return (
     <Column style={styles.areaContainer}>
       <Title title="Cửa hàng" />
       <NormalText text={store.name} style={{ fontWeight: '500' , color: colors.blue600}} />
-      <Text numberOfLines={2} style={styles.normalText}>
-        {[
-          store.specificAddress,
-          store.ward,
-          store.district,
-          store.province,
-        ].join(', ')}
-      </Text>
+      <NormalText text={store.address}/>
     </Column>
   );
 };

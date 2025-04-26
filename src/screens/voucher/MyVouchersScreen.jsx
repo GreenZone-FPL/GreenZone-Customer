@@ -64,10 +64,12 @@ const MyVouchersScreen = ({ navigation }) => {
             textAlign: 'center',
             textAlignVertical: 'center',
             margin: 16,
-            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+            fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+            lineHeight: 20
           }}>
-          Bạn chưa đổi phiếu giảm giá nào, hãy đổi phiếu giảm giá ở mục Đổi
-          Seed nhé!
+
+          Bạn chưa đổi phiếu giảm giá nào.
+          Hãy đổi phiếu giảm giá ở mục Đổi Seed nhé!
         </Text>
       )}
 
