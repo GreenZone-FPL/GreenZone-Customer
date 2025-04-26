@@ -140,8 +140,8 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   qrCodeImage: {
-    width: width / 3,
-    height: width / 3,
+    width: width / 2,
+    height: width / 2,
     borderRadius: 8,
     alignSelf: 'center'
   },

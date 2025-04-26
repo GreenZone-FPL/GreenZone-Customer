@@ -29,8 +29,14 @@ const OrderHistoryScreen = () => {
     setCancelDialogVisible,
     handleSelectMethod,
     onHeaderPress,
-    navigateOrderDetail
+    navigateOrderDetail,
+    getPagedOrders,
+    setCurrentPage,
+    totalPages,
+    currentPageMap,
   } = useOrderHistoryContainer()
+
+
   return (
     <View style={styles.container}>
       <LightStatusBar />
@@ -52,7 +58,8 @@ const OrderHistoryScreen = () => {
           <View key={index} style={{ flex: 1 }}>
             <OrderListView
 
-              orders={orders[status] || []}
+              // orders={mockOrders[status] || []}
+              orders={getPagedOrders(status)}
               loading={loading}
               setSelectedOrder={setSelectedOrder}
               onItemPress={navigateOrderDetail}
@@ -62,6 +69,9 @@ const OrderHistoryScreen = () => {
               onCancel={() =>
                 setCancelDialogVisible(true)
               }
+              currentPage={currentPageMap[status] || 1}
+              totalPages={totalPages(status)}
+              onPageChange={(newPage) => setCurrentPage(status, newPage)}
             />
           </View>
         ))}
@@ -100,5 +110,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   }
 });
+
+
+
 
 export default OrderHistoryScreen;

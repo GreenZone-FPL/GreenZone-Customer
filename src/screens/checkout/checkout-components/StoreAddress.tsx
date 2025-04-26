@@ -9,6 +9,7 @@ interface StoreAddressProps {
 }
 
 export const StoreAddress: React.FC<StoreAddressProps> = ({ storeInfo, chooseMerchant }) => {
+    console.log('storeInfo', JSON.stringify(storeInfo, null, 2))
     return (
         <View style={styles.containerItem}>
             <DualTextRow

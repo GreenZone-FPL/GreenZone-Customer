@@ -2,6 +2,7 @@ import Geolocation from '@react-native-community/geolocation';
 import MapboxGL from '@rnmapbox/maps';
 import React, { useEffect, useRef, useState } from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
   SafeAreaView,
@@ -25,10 +26,10 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions } from '../../containers';
 import { useAuthContext, useCartContext } from '../../context';
 import { AppGraph } from '../../layouts/graphs';
-import { SkeletonBox } from '../../skeletons';
+import { MerchantItemSkeleton, MerchantListSkeleton, SkeletonBox } from '../../skeletons';
 import { CartManager } from '../../utils';
 
-
+const { width } = Dimensions.get('window');
 const GOONG_API_KEY = 'stT3Aahcr8XlLXwHpiLv9fmTtLUQHO94XlrbGe12';
 const GOONG_MAPTILES_KEY = 'pBGH3vaDBztjdUs087pfwqKvKDXtcQxRCaJjgFOZ';
 
@@ -104,32 +105,22 @@ const MerchantScreen = ({ navigation, route }) => {
   // hàm tới cửa hàng chi tiết
   const handleMerchant = merchant => {
     if (isUpdateOrderInfo) {
-      if (isUpdateOrderInfo && fromHome) {
-        if (cartDispatch) {
-          CartManager.updateOrderInfo(cartDispatch, {
-            storeSelect: merchant._id,
-            storeInfoSelect: {
-              storeName: merchant.name,
-              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
-            },
-          });
-        }
-      } else if (isUpdateOrderInfo && fromCheckout) {
-        if (cartDispatch) {
-          CartManager.updateOrderInfo(cartDispatch, {
-            store: merchant._id,
-            storeInfo: {
-              storeName: merchant.name,
-              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
-            },
-            storeSelect: merchant._id,
-            storeInfoSelect: {
-              storeName: merchant.name,
-              storeAddress: `${merchant.specificAddress} ${merchant.ward} ${merchant.district} ${merchant.province}`,
-            },
-          });
-        }
-      }
+      const storeSelect = merchant._id;
+      const storeInfoSelect = {
+        storeName: merchant.name,
+        storeAddress: `${merchant.address}`,
+      };
+
+      const updatePayload = fromHome
+        ? { storeSelect, storeInfoSelect }
+        : {
+          store: storeSelect,
+          storeInfo: storeInfoSelect,
+          storeSelect,
+          storeInfoSelect
+        };
+
+      CartManager.updateOrderInfo(cartDispatch, updatePayload);
       navigation.goBack();
     } else {
       navigation.navigate(AppGraph.MerchantDetailSheet, {
@@ -137,6 +128,7 @@ const MerchantScreen = ({ navigation, route }) => {
       });
     }
   };
+
 
   // Handle Search Focus
   const handleSearchPress = () => {
@@ -356,7 +348,7 @@ const MerchantScreen = ({ navigation, route }) => {
 
 
               {sortedMerchants.length == 0 ? (
-                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
+                <MerchantListSkeleton numOfRows={1} />
 
               ) : (
                 <FlatList
@@ -376,16 +368,14 @@ const MerchantScreen = ({ navigation, route }) => {
             </View>
             {
               loadingMerchants ?
+
                 <SkeletonBox width='40%' height={20} borderRadius={10} style={{ marginHorizontal: 16, marginVertical: 10 }} /> :
                 <Text style={styles.title}>Cửa hàng khác</Text>
             }
 
             {sortedMerchants.length == 0 ? (
-              <Column style={{ gap: 2 }}>
-                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
-                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
-                <SkeletonBox width='90%' height={125} borderRadius={10} style={{ alignSelf: 'center' }} />
-              </Column>
+              <MerchantListSkeleton numOfRows={3} />
+
 
             ) : (
               <FlatList
@@ -409,32 +399,38 @@ const MerchantScreen = ({ navigation, route }) => {
   );
 };
 
-const RenderItem = ({ item, handleMerchant, haversineDistance }) => (
-  <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
-    <Image source={{ uri: item.images[0] }} style={styles.imageItem} />
+const RenderItem = ({ item, handleMerchant, haversineDistance }) => {
 
-    <Column style={styles.infoItem}>
+  return (
+    <TouchableOpacity onPress={() => handleMerchant(item)} style={styles.item}>
+      <Image source={{ uri: item.images[0] }} style={styles.imageItem} />
 
-      <TitleText text={item.name} />
+      <Column style={styles.infoItem}>
 
-      <NormalText
-        style={styles.location}
-        text={`${item.specificAddress}, ${item.ward}, ${item.district}, ${item.province}`}
-      />
+        <TitleText text={item.name} />
 
-
-      {
-        haversineDistance(item.latitude, item.longitude) &&
         <NormalText
-          style={styles.distance}
-          text={`${haversineDistance(item.latitude, item.longitude)} km`}
+          style={styles.location}
+          text={`${item?.address}`}
         />
-      }
 
 
-    </Column>
-  </TouchableOpacity>
-);
+        {
+          haversineDistance(item.latitude, item.longitude) &&
+          <NormalText
+            style={styles.distance}
+            text={`${haversineDistance(item.latitude, item.longitude)} km`}
+          />
+        }
+
+
+      </Column>
+    </TouchableOpacity>
+  )
+}
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -511,15 +507,15 @@ const styles = StyleSheet.create({
   },
   infoItem: { flex: 1 },
   imageItem: {
-    width: 80,
-    height: 80,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    width: width / 5,
+    height: width / 5,
+    borderRadius: width / 2,
     marginRight: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   location: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     fontWeight: '400',
-    color: colors.gray700
+    color: colors.black
   },
   distance: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
