@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { Column, LightStatusBar, NormalText, Row, TitleText } from '../../components';
+import { Column, LightStatusBar, NormalText, QrCodeVoucher, Row, TitleText } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { TextFormatter } from '../../utils';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -37,65 +37,44 @@ const VoucherDetailSheet = () => {
   };
 
   return (
-    <Pressable
-      onPress={() => navigation.goBack()}
-      style={styles.container}>
-
+    <Pressable onPress={() => navigation.goBack()} style={styles.container}>
       <LightStatusBar />
-      <Pressable onPress={() => { }} style={styles.contentContainer}>
+      <Pressable onPress={() => {}} style={styles.contentContainer}>
         <ScrollView>
-
           <Pressable
             onPress={() => navigation.goBack()}
-            style={styles.closeButton}
-          >
+            style={styles.closeButton}>
             <Icon source="close" size={24} color={colors.primary} />
           </Pressable>
 
           <Column>
-            <TitleText text='GreenZone' style={styles.voucherTitle} />
+            <TitleText text="GreenZone" style={styles.voucherTitle} />
             <Text style={styles.voucherName}>{item.name}</Text>
 
-            <Image source={{ uri: item.image }} style={styles.qrCodeImage} />
+            {/* <Image source={{uri: item.image}} style={styles.qrCodeImage} /> */}
+            <QrCodeVoucher voucherCode={item.code} />
 
             <Text style={styles.discountCode}>{item.code}</Text>
 
             <Pressable onPress={copyToClipboard}>
               <Text style={styles.copyText}>Sao chép</Text>
             </Pressable>
-
           </Column>
 
           <Row style={styles.expiryContainer}>
-            <NormalText text='Ngày hết hạn:' />
-            <NormalText text={TextFormatter.formatDateSimple(item.endDate)} style={styles.endDate} />
+            <NormalText text="Ngày hết hạn:" />
+            <NormalText
+              text={TextFormatter.formatDateSimple(item.endDate)}
+              style={styles.endDate}
+            />
           </Row>
-
-
-          <Column >
-            {data?.description.map((desc, index) => (
-              <NormalText key={index} text={`${index + 1}. ${desc}`} style={styles.infoText} />
-            ))}
-          </Column>
+          <Text style={styles.infoText}>{item.description}</Text>
         </ScrollView>
       </Pressable>
-
     </Pressable>
   );
 };
 
-const data = {
-  qrCode:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1024px-QR_code_for_mobile_English_Wikipedia.svg.png',
-  description: [
-    'Áp dụng cho tất cả các đơn hàng.',
-    'Không giới hạn số lần sử dụng trong ngày.',
-    'Không áp dụng cùng các khuyến mãi khác.',
-    'Chỉ áp dụng tại các cửa hàng liên kết.',
-    'Thời gian sử dụng từ 8:00 AM - 10:00 PM.',
-    'Liên hệ tổng đài để biết thêm chi tiết.',
-  ]
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -128,7 +107,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'flex-start',
     backgroundColor: colors.transparent,
-    color: colors.gray850
+    color: colors.gray850,
+    justifyContent:'center',
+    alignItems: 'center',
   },
   endDate: {
     color: colors.orange700
@@ -143,7 +124,8 @@ const styles = StyleSheet.create({
     width: width / 2,
     height: width / 2,
     borderRadius: 8,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    resizeMode:"cover"
   },
   discountCode: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
