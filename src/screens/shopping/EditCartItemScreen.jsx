@@ -54,7 +54,7 @@ const EditCartItemScreen = ({ route, navigation }) => {
   const calculateTotal = (product, variant, toppings, quantity) => {
     if (!product) return 0; // Nếu không có sản phẩm, trả về 0
 
-    const basePrice = variant ? variant.sellingPrice : product.originalPrice; // Nếu không có variant, lấy giá sản phẩm
+    const basePrice = variant ? variant.sellingPrice : product.sellingPrice; // Nếu không có variant, lấy giá sản phẩm
     const toppingsAmount =
       toppings?.reduce(
         (acc, item) => acc + item.extraPrice * item.quantity,

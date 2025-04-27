@@ -124,7 +124,7 @@ const HomeScreen = () => {
           title="Sản phẩm mới"
           products={allProducts
             .flatMap(category => category.products)
-            .slice(0, 10)}
+            .slice(4, 12)}
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />
@@ -132,7 +132,7 @@ const HomeScreen = () => {
 
         <FlashList
           data={allProducts}
-          estimatedItemSize={600}
+          estimatedItemSize={900}
           keyExtractor={item => item._id}
           scrollEnabled={false}
           nestedScrollEnabled={true}

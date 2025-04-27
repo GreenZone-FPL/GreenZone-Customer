@@ -30,6 +30,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   res => res.data,
   async err => {
+    console.log('errr', err)
     if (err.response.data.statusCode === 401) {
       console.log('401 log out');
 

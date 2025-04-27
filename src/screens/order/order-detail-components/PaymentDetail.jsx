@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import React from 'react';
-import {Pressable, StyleSheet, Text, View, Image, FlatList} from 'react-native';
-import {Icon, Snackbar} from 'react-native-paper';
+import { Pressable, StyleSheet, Text, View, Image, FlatList } from 'react-native';
+import { Icon, Snackbar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import moment from 'moment';
 import {
@@ -11,11 +11,12 @@ import {
   Row,
   StatusText,
 } from '../../../components';
-import {colors, GLOBAL_KEYS, OrderStatus} from '../../../constants';
+import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../../constants';
 
-export const PaymentDetails = ({detail}) => {
+export const PaymentDetails = ({ detail }) => {
   const {
     _id,
+    deliveryMethod,
     shippingFee,
     cancelReason,
     voucher,
@@ -24,6 +25,7 @@ export const PaymentDetails = ({detail}) => {
     totalPrice,
     status,
     createdAt,
+    pendingConfirmationAt,
     readyForPickupAt,
     shippingOrderAt,
     completedAt,
@@ -35,7 +37,7 @@ export const PaymentDetails = ({detail}) => {
     0,
   );
 
-  // console.log('detail', JSON.stringify(detail, null, 3));
+  console.log('detail', JSON.stringify(detail, null, 3));
 
   const discount = voucher
     ? voucher.discountType === 'percentage'
@@ -45,16 +47,16 @@ export const PaymentDetails = ({detail}) => {
 
   const getPaymentStatus = () => {
     if (status === 'completed') {
-      return {text: 'Đã thanh toán', color: colors.primary};
+      return { text: 'Đã thanh toán', color: colors.primary };
     } else if (
       paymentMethod === 'online' &&
       status !== OrderStatus.AWAITING_PAYMENT.value
     ) {
-      return {text: 'Đã thanh toán', color: colors.primary};
+      return { text: 'Đã thanh toán', color: colors.primary };
     } else if (status === 'awaitingPayment') {
-      return {text: 'Chờ thanh toán', color: colors.pink500};
+      return { text: 'Chờ thanh toán', color: colors.pink500 };
     } else {
-      return {text: 'Chưa thanh toán', color: colors.orange700};
+      return { text: 'Chưa thanh toán', color: colors.orange700 };
     }
   };
 
@@ -67,63 +69,6 @@ export const PaymentDetails = ({detail}) => {
       return total + item.price * item.quantity;
     }, 0);
   };
-
-
-  const formatTime = time => {
-      return time ? moment(time).format('HH:mm DD/MM/YYYY') : null;
-    };
-    // Tạo danh sách các mốc timeline theo thứ tự logic
-    const timelineData = [
-      createdAt && {
-        time: formatTime(createdAt),
-        title: 'Đơn hàng của bạn vừa được tạo',
-        status: OrderStatus.PENDING_CONFIRMATION.value
-      },
-      readyForPickupAt && {
-        time: formatTime(readyForPickupAt),
-        title: 'GreenZone vừa xác nhận, đơn hàng của bạn đã sẵn sàng',
-        status: OrderStatus.READY_FOR_PICKUP.value
-  
-      },
-      shippingOrderAt && {
-        time: formatTime(shippingOrderAt),
-        title: 'Nhân viên GreenZone đang giao hàng đến bạn',
-        status: OrderStatus.SHIPPING_ORDER.value
-  
-      },
-      completedAt && {
-        time: formatTime(completedAt),
-        title: 'Đơn hàng đã hoàn thành',
-        status: OrderStatus.COMPLETED.value
-  
-      },
-      cancelledAt && {
-        time: formatTime(cancelledAt),
-        title: 'Đơn hàng đã hủy',
-        status: OrderStatus.CANCELLED.value
-      },
-    ].filter(Boolean);
-      const TimelineItem = ({item, isLast,}) => {
-    
-        const color = item.status == status ? colors.orange700 : colors.black;
-        
-        return(
-        <View style={styles.itemContainer}>
-          {/* Cột trái: vòng tròn và line */}
-          <View style={styles.leftColumn}>
-            <View style={styles.circle} />
-            {!isLast && <View style={styles.verticalLine} />}
-          </View>
-          {/* Cột phải: nội dung */}
-          <View style={styles.rightContent}>
-            <View style={styles.bubble}>
-              <Text style={styles.timeText}>{item.time}</Text>
-              <Text style={[styles.titleText, {color}]}>{item.title}</Text>
-            </View>
-          </View>
-        </View>
-      );
-    };
 
   return (
     <View
@@ -153,7 +98,7 @@ export const PaymentDetails = ({detail}) => {
         <NormalText text="Phương thức giao hàng" />
         <DeliveryMethodText
           deliveryMethod={detail?.deliveryMethod}
-          style={{textAlign: 'right'}}
+          style={{ textAlign: 'right' }}
         />
       </Row>
 
@@ -180,10 +125,14 @@ export const PaymentDetails = ({detail}) => {
         ).toLocaleString('vi-VN')}đ`}
       />
 
-      <DualTextRow
-        leftText="Phí giao hàng"
-        rightText={`${shippingFee.toLocaleString()}đ`}
-      />
+      {
+        deliveryMethod === DeliveryMethod.DELIVERY.value &&
+
+        <DualTextRow
+          leftText="Phí giao hàng"
+          rightText={`${shippingFee.toLocaleString()}đ`}
+        />
+      }
 
       <DualTextRow
         leftText={
@@ -192,13 +141,13 @@ export const PaymentDetails = ({detail}) => {
             : `Giảm giá`
         }
         rightText={`-${(discount || 0).toLocaleString('vi-VN')}đ`}
-        rightTextStyle={{color: colors.primary}}
+        rightTextStyle={{ color: colors.primary }}
       />
 
       <DualTextRow
         leftText="Trạng thái thanh toán"
         rightText={paymentStatus.text}
-        rightTextStyle={{color: paymentStatus.color}}
+        rightTextStyle={{ color: paymentStatus.color }}
       />
       {cancelReason && (
         <DualTextRow
@@ -207,17 +156,6 @@ export const PaymentDetails = ({detail}) => {
           rightTextStyle={styles.normalText}
         />
       )}
-       {/* <FlatList
-              data={timelineData}
-              keyExtractor={(index, item) => index.toString()}
-              renderItem={({item, index}) => (
-                <TimelineItem
-                  item={item}
-                  isLast={index === timelineData.length - 1}
-                />
-              )}
-              contentContainerStyle={{paddingVertical: 10}}
-            /> */}
       {createdAt && (
         <DualTextRow
           leftText="Thời gian tạo đơn"
@@ -225,40 +163,40 @@ export const PaymentDetails = ({detail}) => {
         />
       )}
 
-      {detail?.pendingConfirmationAt && (
+      {pendingConfirmationAt && (
         <DualTextRow
           leftText="Thời gian chờ xác nhận"
-          rightText={new Date(detail?.pendingConfirmationAt).toLocaleString(
+          rightText={new Date(pendingConfirmationAt).toLocaleString(
             'vi-VN',
           )}
         />
       )}
 
-      {detail?.readyForPickupAt && (
+      {readyForPickupAt && (
         <DualTextRow
           leftText="Thời gian sẵn sàng lấy hàng"
-          rightText={new Date(detail?.readyForPickupAt).toLocaleString('vi-VN')}
+          rightText={new Date(readyForPickupAt).toLocaleString('vi-VN')}
         />
       )}
 
-      {detail?.shippingOrderAt && (
+      {shippingOrderAt && (
         <DualTextRow
           leftText="Thời gian giao hàng"
-          rightText={new Date(detail?.shippingOrderAt).toLocaleString('vi-VN')}
+          rightText={new Date(shippingOrderAt).toLocaleString('vi-VN')}
         />
       )}
 
-      {detail?.completedAt && (
+      {completedAt && (
         <DualTextRow
           leftText="Thời gian nhận hàng"
-          rightText={new Date(detail?.completedAt).toLocaleString('vi-VN')}
+          rightText={new Date(completedAt).toLocaleString('vi-VN')}
         />
       )}
 
-      {detail?.cancelledAt && (
+      {cancelledAt && (
         <DualTextRow
           leftText="Thời gian hủy đơn"
-          rightText={new Date(detail?.cancelledAt).toLocaleString('vi-VN')}
+          rightText={new Date(cancelledAt).toLocaleString('vi-VN')}
         />
       )}
 
@@ -284,12 +222,12 @@ export const PaymentDetails = ({detail}) => {
           {paymentMethod === 'online' ? (
             <Image
               source={require('../../../assets/images/onl.jpg')}
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           ) : (
             <Image
               source={require('../../../assets/images/logo_vnd.png')}
-              style={{width: 22, height: 22}}
+              style={{ width: 22, height: 22 }}
             />
           )}
           <Text
@@ -311,13 +249,13 @@ export const PaymentDetails = ({detail}) => {
           fontWeight: '700',
           fontSize: 18,
         }}
-        leftTextStyle={{color: colors.black, fontWeight: '500'}}
+        leftTextStyle={{ color: colors.black, fontWeight: '500' }}
       />
     </View>
   );
 };
 
-const OrderId = ({_id}) => {
+const OrderId = ({ _id }) => {
   const [visible, setVisible] = React.useState(false);
 
   const handleCopy = () => {
@@ -336,10 +274,10 @@ const OrderId = ({_id}) => {
   };
 
   return (
-    <View style={[styles.row, {marginBottom: 6}]}>
+    <View style={[styles.row, { marginBottom: 6 }]}>
       <Text style={styles.normalText}>Mã đơn hàng</Text>
       <Pressable style={styles.row} onPress={handleCopy}>
-        <Text style={[styles.normalText, {fontWeight: 'bold', marginRight: 8}]}>
+        <Text style={[styles.normalText, { fontWeight: 'bold', marginRight: 8 }]}>
           {_id}
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
