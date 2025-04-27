@@ -309,6 +309,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     paddingVertical: 12,
     marginBottom: 5,
+    flex: 1
   },
 
   normalText: {

@@ -20,8 +20,8 @@ const ProductDetailShort = ({ route, navigation }) => {
     const { product } = route.params
 
 
-    const { cartDispatch } = useCartContext()
-
+    const { cartDispatch, cartState } = useCartContext()
+    console.log('cartState', JSON.stringify(cartState, null, 3))
 
     useEffect(() => {
         if (product) {
@@ -39,30 +39,15 @@ const ProductDetailShort = ({ route, navigation }) => {
         return quantity * (basePrice + toppingsAmount);
     };
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const fetchProductDetail = async () => {
-    //         setLoading(true)
-    //         try {
-    //             const detail = await getProductDetail(productId);
+        if (product.variant.length > 0) {
+            const firstVariant = product.variant[0]
+            setSelectedVariant(firstVariant)
+            setTotalAmount(calculateTotal(firstVariant, selectedToppings));
+        }
 
-    //             if (detail) {
-    //                 setProduct(detail); // Lưu danh mục vào state
-    //                 if (detail.variant.length > 0) {
-    //                     const firstVariant = detail.variant[0]
-    //                     setSelectedVariant(firstVariant)
-    //                     setTotalAmount(calculateTotal(firstVariant, selectedToppings));
-    //                 }
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetchProductDetail:", error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchProductDetail();
-    // }, []);
+    }, []);
 
 
     return (
@@ -86,7 +71,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.modalContent}>
-                       
+
                         {
                             product.variant.length > 1 && selectedVariant &&
                             <View style={styles.infoContainer}>
@@ -243,7 +228,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         gap: 8
     },
- 
+
 });
 
 export default ProductDetailShort
