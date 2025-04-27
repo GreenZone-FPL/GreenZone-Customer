@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   payButton: {
     marginVertical: 16,
-    flex: 1,
-    padding: 13,
+    borderRadius: 20,
+    padding: 14
   },
 });

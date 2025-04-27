@@ -108,3 +108,4 @@ export * from './texts/DeliveryMethodText';
 
 // modals
 export * from './modal/ToppingModal';
+export * from './barcode/QRcodeVoucher';

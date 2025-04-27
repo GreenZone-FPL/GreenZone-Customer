@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Dimensions,
+  Image,
   Pressable,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { IconButton } from 'react-native-paper';
 import {
   deleteFavoriteProduct,
@@ -17,6 +17,7 @@ import {
 } from '../../axios';
 import {
   CheckoutFooter,
+  Column,
   OverlayStatusBar,
   RadioGroup,
   SelectableGroup
@@ -27,7 +28,7 @@ import { useAuthContext, useCartContext } from '../../context';
 import { ProductDetailSkeleton } from '../../skeletons';
 import { CartManager, Toaster } from '../../utils';
 
-
+const width = Dimensions.get('window').width
 const ProductDetailSheet = ({ route, navigation }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -91,9 +92,10 @@ const ProductDetailSheet = ({ route, navigation }) => {
     fetchProductDetail();
   }, []);
 
+
   return (
-    <Pressable style={styles.modalContainer}>
-      <OverlayStatusBar />
+
+    <Column style={styles.container}>
       <IconButton
         icon="close"
         size={GLOBAL_KEYS.ICON_SIZE_SMALL}
@@ -101,17 +103,22 @@ const ProductDetailSheet = ({ route, navigation }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       />
-
       {
         loading &&
         <ProductDetailSkeleton />
       }
-      {product && (
-
+      {
+        product &&
         <>
-          <ScrollView style={styles.modalContent} removeClippedSubviews={true} showsVerticalScrollIndicator  >
-            <ProductImage product={product} />
+          <ScrollView
+            style={styles.modalContent}
+            showsVerticalScrollIndicator={false} >
+            <OverlayStatusBar />
 
+
+            <Image
+              style={styles.imageContainer}
+              source={{ uri: product.image }} resizeMode={'cover'} />
 
 
             <ProductInfo
@@ -151,6 +158,8 @@ const ProductDetailSheet = ({ route, navigation }) => {
 
 
             )}
+
+
           </ScrollView>
 
           <CheckoutFooter
@@ -205,29 +214,15 @@ const ProductDetailSheet = ({ route, navigation }) => {
             buttonTitle="Chọn -"
           />
         </>
+      }
 
-
-      )}
-    </Pressable>
-  );
-};
-
-const ProductImage = ({ product }) => {
-
-  return (
-
-    <Pressable style={styles.imageContainer}>
-      <FastImage
-        style={styles.productImage}
-        source={{ uri: product.image }}
-        resizeMode={FastImage.resizeMode.cover}
-      />
-    </Pressable>
+    </Column>
 
   );
 };
 
-const ProductInfo = ({
+
+export const ProductInfo = ({
   product,
   showFullDescription,
   toggleDescription,
@@ -315,32 +310,24 @@ const FavoriteButton = ({ productId }) => {
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
-    backgroundColor: colors.overlay,
+  container: {
+    backgroundColor: colors.white,
     flex: 1,
-    width: '100%',
     position: 'relative'
   },
   modalContent: {
-    width: '100%',
     backgroundColor: colors.white,
     flexDirection: 'column',
-    marginTop: StatusBar.currentHeight + 40,
     flex: 1,
   },
   imageContainer: {
     position: 'relative',
-    width: '100%',
-    height: 300,
-  },
-  productImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: width,
+    height: width / 1.2,
   },
   closeButton: {
     position: 'absolute',
-    top: StatusBar.currentHeight + 40 + 16,
+    top: 16,
     right: GLOBAL_KEYS.PADDING_DEFAULT,
     zIndex: 1,
     backgroundColor: colors.green100,
@@ -373,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    textAlign: 'justify',
+    // textAlign: 'justify',
   },
 
   textButton: {

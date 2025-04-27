@@ -7,7 +7,7 @@ export const createOrder = async (body) => {
     return response;
 
   } catch (error) {
-    console.log("error:", error);
+    console.log("error:", error.message);
     throw error
   }
 };

@@ -15,6 +15,7 @@ import {
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NormalLoading,
   NormalText,
   NotificationList,
   ProductsGrid,
@@ -44,6 +45,7 @@ const HomeScreen = () => {
     currentCategory,
     needToPay,
     loadingProducts,
+    loadingDetail,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -68,8 +70,8 @@ const HomeScreen = () => {
     onNavigateProductDetailSheet(productId);
   }, [onNavigateProductDetailSheet]);
 
-  const onIconClick = useCallback((productId) => {
-    onClickAddToCart(productId);
+  const onIconClick = useCallback(async (productId) => {
+    await onClickAddToCart(productId);
   }, [onClickAddToCart]);
 
 
@@ -77,6 +79,10 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+      {
+        loadingDetail &&
+        <NormalLoading visible={loadingDetail} />
+      }
       <HeaderWithBadge
         title={
           authState.isLoggedIn
@@ -124,7 +130,7 @@ const HomeScreen = () => {
           title="Sản phẩm mới"
           products={allProducts
             .flatMap(category => category.products)
-            .slice(0, 10)}
+            .slice(4, 12)}
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />
@@ -132,7 +138,7 @@ const HomeScreen = () => {
 
         <FlashList
           data={allProducts}
-          estimatedItemSize={600}
+          estimatedItemSize={900}
           keyExtractor={item => item._id}
           scrollEnabled={false}
           nestedScrollEnabled={true}

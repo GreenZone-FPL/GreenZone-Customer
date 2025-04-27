@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getNotifications, getOrdersByStatus, getProfile } from '../../axios';
+import { getAllProducts, getNotifications, getOrdersByStatus, getProductDetail, getProfile } from '../../axios';
 import { DeliveryMethod, OrderStatus } from '../../constants';
 
 import { useAppContext, useAuthContext, useCartContext, useProductContext } from '../../context';
@@ -13,7 +13,7 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
-import { AppAsyncStorage, fetchData, Toaster } from '../../utils';
+import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
 import { onUserLoginZego } from '../../zego/common';
 import { useAuthActions } from '../auth/useAuthActions';
 
@@ -33,9 +33,10 @@ export const useHomeContainer = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
   const [needToPay, setNeedToPay] = useState(false)
-  const [loadingProfile, setLoadingProfile] = useState(true);
-  const [loadingMerchant, setLoadingMerchant] = useState(true);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingMerchant, setLoadingMerchant] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingNoti, setLoadingNoti] = useState(false);
 
   const { onNavigateLogin } = useAuthActions()
@@ -111,7 +112,7 @@ export const useHomeContainer = () => {
       }
     }
     fetchProducts()
-    // fetchData(getAllProducts, setAllProducts, setLoadingProducts)
+
   }, []);
 
 
@@ -153,9 +154,34 @@ export const useHomeContainer = () => {
 
 
 
-  const onClickAddToCart = productId => {
+  const onClickAddToCart = async productId => {
     if (authState.lastName) {
-      navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
+      try {
+        setLoadingDetail(true);
+        const detail = await getProductDetail(productId);
+        if (detail) {
+          console.log('detail', JSON.stringify(detail, null, 3))
+          if (detail.variant.length > 1 || detail.topping.length > 0) {
+            navigation.navigate(ShoppingGraph.ProductDetailShort, { product: detail });
+          } else {
+            console.log('addTocart')
+            await CartManager.addToCart(
+              detail, // product
+              detail.variant[0], // variant
+              [], // toppings
+              detail.sellingPrice, // totalPrice
+              1, // quantity
+              cartDispatch // dispatch
+            )
+          }
+        }
+
+      } catch (error) {
+        console.log('Error fetchProductDetail:', error);
+      } finally {
+        setLoadingDetail(false)
+      }
+
     } else {
       onNavigateLogin();
     }
@@ -167,7 +193,7 @@ export const useHomeContainer = () => {
 
       if (authState.lastName) {
         const response = await getOrdersByStatus();
-
+        console.log('focus')
         const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
 
         if (awaitingPayments.length > 0) {
@@ -234,29 +260,29 @@ export const useHomeContainer = () => {
 
   };
 
-  
+
   const handleScroll = useCallback((event) => {
     const scrollY = event.nativeEvent.contentOffset.y;
-  
+
     let closestCategory = 'Danh mục';
     let minDistance = Number.MAX_VALUE;
-  
+
     let minPos = Number.MAX_VALUE;
     let firstCategoryId = null;
-  
+
     Object.entries(positions).forEach(([categoryId, posY]) => {
       const distance = Math.abs(scrollY - posY);
       if (distance < minDistance) {
         minDistance = distance;
         closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
       }
-  
+
       if (posY < minPos) {
         minPos = posY;
         firstCategoryId = categoryId;
       }
     });
-  
+
     // Nếu cuộn lên trên danh mục đầu tiên
     if (scrollY < minPos) {
       if (lastCategoryRef.current !== 'Xin chào') {
@@ -265,15 +291,15 @@ export const useHomeContainer = () => {
       }
       return;
     }
-  
+
     if (closestCategory !== lastCategoryRef.current) {
       lastCategoryRef.current = closestCategory;
       setCurrentCategory(closestCategory);
     }
   }, [positions, allProducts]);
-  
 
- 
+
+
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
@@ -325,6 +351,7 @@ export const useHomeContainer = () => {
     loadingProducts,
     loadingProfile,
     loadingNoti,
+    loadingDetail,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,

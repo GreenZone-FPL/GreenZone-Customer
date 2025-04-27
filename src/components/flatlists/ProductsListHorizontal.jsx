@@ -3,6 +3,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -81,9 +82,9 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
         </Text>
       </Row>
 
-      <TouchableOpacity onPress={onIconClick} style={styles.addButtonContainer}>
+      <Pressable onPress={onIconClick} style={styles.addButtonContainer}>
         <Icon source="plus" color={colors.primary} size={22} />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

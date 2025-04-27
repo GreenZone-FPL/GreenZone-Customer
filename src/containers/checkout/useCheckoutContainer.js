@@ -131,6 +131,7 @@ export const useCheckoutContainer = () => {
 
     const onApproveCreateOrder = async () => {
         const orderData = prepareOrderData();
+        console.log('prepare', JSON.stringify(orderData, null, 2))
         if (!validateOrderData(orderData)) return;
         try {
             setLoading(true);
@@ -184,6 +185,7 @@ export const useCheckoutContainer = () => {
         setDialogCreateOrderVisible(false);
         const response = await createOrder(orderData);
         return response?.data
+
     };
 
 

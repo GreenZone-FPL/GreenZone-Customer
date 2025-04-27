@@ -67,13 +67,13 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
 
         <NormalText
           style={styles.productPrice}
-          text={TextFormatter.formatCurrency(item.originalPrice)} />
+          text={TextFormatter.formatCurrency(item.sellingPrice)} />
 
       </Column>
 
-      <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
+      <Pressable onPress={onIconClick} style={styles.addButton}>
         <Icon source="plus" size={22} color={colors.white} />
-      </TouchableOpacity>
+      </Pressable>
     </Pressable>
   );
 };

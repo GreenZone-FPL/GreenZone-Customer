@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { getAllCategories } from '../../axios';
+import { getAllCategories, getProductDetail } from '../../axios';
 import { DeliveryMethod } from '../../constants';
 
 import {
@@ -39,15 +39,41 @@ export const useOrderContainer = () => {
   const [currentCategory, setCurrentCategory] = useState('Danh mục');
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
-  const onClickAddToCart = productId => {
-
-    if (authState.lastName) {
-      navigation.navigate(ShoppingGraph.ProductDetailShort, { productId });
-    } else {
-      onNavigateLogin();
-    }
-
-  };
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const onClickAddToCart = async productId => {
+      if (authState.lastName) {
+        try {
+          setLoadingDetail(true);
+          const detail = await getProductDetail(productId);
+          if (detail) {
+            console.log('detail', JSON.stringify(detail, null, 3))
+            if (detail.variant.length > 1 || detail.topping.length > 0) {
+              navigation.navigate(ShoppingGraph.ProductDetailShort, { product: detail });
+            } else {
+              console.log('addTocart')
+              await CartManager.addToCart(
+                detail, // product
+                detail.variant[0], // variant
+                [], // toppings
+                detail.sellingPrice, // totalPrice
+                1, // quantity
+                cartDispatch // dispatch
+              )
+            }
+          }
+  
+        } catch (error) {
+          console.log('Error fetchProductDetail:', error);
+        } finally {
+          setLoadingDetail(false)
+        }
+  
+      } else {
+        onNavigateLogin();
+      }
+  
+    };
+  
 
 
   useEffect(() => {
@@ -223,6 +249,7 @@ export const useOrderContainer = () => {
     scrollViewRef,
     loadingProducts,
     loadingCategories,
+    loadingDetail,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,

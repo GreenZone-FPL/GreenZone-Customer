@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
-import { Column, Row } from '../components';
-import { colors } from '../constants';
-import { SkeletonBox } from './SkeletonBox';
+import { Column, Row } from '../../components';
+import { colors } from '../../constants';
+import { SkeletonBox } from '../SkeletonBox';
 
 const { width } = Dimensions.get('window');
 export const VoucherVerticalSkeleton = () => {
@@ -19,7 +19,7 @@ export const VoucherVerticalSkeleton = () => {
 const VoucherItemSkeleton = () => {
   return (
     <Row style={styles.itemVoucher}>
-      <SkeletonBox width={width / 4.5} height={width / 4.5} borderRadius={width / 1.5} />
+      <SkeletonBox width={width / 5.5} height={width / 5.5} borderRadius={width / 1.5} />
 
       <Column style={{ flex: 1, gap: 16 }}>
         <SkeletonBox width={150} height={15} />
@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   image: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 5.5,
+    height: width / 5.5,
     borderRadius: width / 1.5,
     resizeMode: 'cover',
   }

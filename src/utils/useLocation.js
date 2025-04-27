@@ -17,6 +17,7 @@ export const useLocation = () => {
         // Step 1: Lấy danh sách merchant
         const merchantRes = await getAllMerchants();
         const merchants = merchantRes.docs;
+        // console.log('merchants', JSON.stringify(merchants, null, 3))
 
         // Step 2: Lấy vị trí user
         const location = await fetchUserLocation();
@@ -50,7 +51,7 @@ export const useLocation = () => {
 
         if (!nearest) return;
 
-        const storeAddress = `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`;
+        const storeAddress = `${nearest.address}`;
 
         await AppAsyncStorage.storeData(AppAsyncStorage.STORAGE_KEYS.merchantLocation, {
           _id: nearest._id,

@@ -139,7 +139,7 @@ function MainNavigator() {
       />
       <MainStack.Screen
         name={VoucherGraph.VoucherDetailSheet}
-        options={slideFromRightOption}
+        options={slideFromBottomOption}
         component={VoucherDetailSheet}
       />
 

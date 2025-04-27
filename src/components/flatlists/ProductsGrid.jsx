@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Dimensions,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -66,13 +67,13 @@ const ItemProduct = ({item, onItemClick, onIconClick}) => {
         <Column style={styles.productInfo}>
           <Text style={styles.productName}>{item.name}</Text>
           <Text style={styles.productPrice}>
-            {TextFormatter.formatCurrency(item.originalPrice)}
+            {TextFormatter.formatCurrency(item.sellingPrice)}
           </Text>
         </Column>
 
-        <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
+        <Pressable onPress={onIconClick} style={styles.addButton}>
           <Icon source="plus" size={22} color={colors.white} />
-        </TouchableOpacity>
+        </Pressable>
       </Row>
     </View>
   );
