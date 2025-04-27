@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     },
     storeName: {
         marginBottom: 8,
-        color: colors.green500,
+        color: colors.lemon,
     },
     warningText: {
         color: colors.orange700,

@@ -4,7 +4,6 @@ import {
   Image,
   Pressable,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   View
@@ -93,9 +92,6 @@ const ProductDetailSheet = ({ route, navigation }) => {
     fetchProductDetail();
   }, []);
 
-  if (loading) {
-    return (<ProductDetailSkeleton />)
-  }
 
   return (
 
@@ -107,6 +103,10 @@ const ProductDetailSheet = ({ route, navigation }) => {
         style={styles.closeButton}
         onPress={() => navigation.goBack()}
       />
+      {
+        loading &&
+        <ProductDetailSkeleton />
+      }
       {
         product &&
         <>
@@ -222,7 +222,7 @@ const ProductDetailSheet = ({ route, navigation }) => {
 };
 
 
-const ProductInfo = ({
+export const ProductInfo = ({
   product,
   showFullDescription,
   toggleDescription,
@@ -325,10 +325,6 @@ const styles = StyleSheet.create({
     width: width,
     height: width / 1.2,
   },
-  productImage: {
-    width: '100%',
-    height: '100%',
-  },
   closeButton: {
     position: 'absolute',
     top: 16,
@@ -364,7 +360,7 @@ const styles = StyleSheet.create({
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
     color: colors.gray700,
     lineHeight: GLOBAL_KEYS.LIGHT_HEIGHT_DEFAULT,
-    textAlign: 'justify',
+    // textAlign: 'justify',
   },
 
   textButton: {

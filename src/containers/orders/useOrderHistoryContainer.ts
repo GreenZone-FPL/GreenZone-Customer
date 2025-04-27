@@ -26,8 +26,6 @@ export const useOrderHistoryContainer = () => {
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
 
   const [orders, setOrders] = useState({});
-  // const setOrders = (item: any) => {};
-  // const orders = mockOrders;
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodItem>(
     onlineMethods[0],
@@ -58,9 +56,9 @@ export const useOrderHistoryContainer = () => {
     orderStatuses.forEach(status => fetchOrders(status));
   }, [updateOrderMessage.status]);
 
-  useEffect(() => {
-    // fetchOrders(orderStatuses[tabIndex]);
-  }, [tabIndex]);
+  // useEffect(() => {
+  //   fetchOrders(orderStatuses[tabIndex]);
+  // }, [tabIndex]);
 
   const handleSelectMethod = (method: PaymentMethodItem) => {
     setPaymentMethod(method);

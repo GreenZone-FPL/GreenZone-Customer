@@ -15,6 +15,7 @@ import {
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NormalLoading,
   NormalText,
   NotificationList,
   ProductsGrid,
@@ -44,6 +45,7 @@ const HomeScreen = () => {
     currentCategory,
     needToPay,
     loadingProducts,
+    loadingDetail,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -68,8 +70,8 @@ const HomeScreen = () => {
     onNavigateProductDetailSheet(productId);
   }, [onNavigateProductDetailSheet]);
 
-  const onIconClick = useCallback((productId) => {
-    onClickAddToCart(productId);
+  const onIconClick = useCallback(async (productId) => {
+    await onClickAddToCart(productId);
   }, [onClickAddToCart]);
 
 
@@ -77,6 +79,10 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+      {
+        loadingDetail &&
+        <NormalLoading visible={loadingDetail} />
+      }
       <HeaderWithBadge
         title={
           authState.isLoggedIn

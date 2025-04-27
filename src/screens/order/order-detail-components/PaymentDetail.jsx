@@ -1,19 +1,20 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View, Image, FlatList } from 'react-native';
-import { Icon, Snackbar } from 'react-native-paper';
+import React, { useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Icon } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import moment from 'moment';
 import {
   DeliveryMethodText,
   DualTextRow,
   NormalText,
   Row,
   StatusText,
+  TitleText,
 } from '../../../components';
 import { colors, DeliveryMethod, GLOBAL_KEYS, OrderStatus } from '../../../constants';
 
 export const PaymentDetails = ({ detail }) => {
+  const [showFull, setShowFull] = useState(false)
   const {
     _id,
     deliveryMethod,
@@ -79,167 +80,186 @@ export const PaymentDetails = ({ detail }) => {
         paddingVertical: 8,
         backgroundColor: colors.white,
       }}>
-      <DualTextRow
-        leftText="Chi tiết đơn hàng"
-        leftTextStyle={{
-          color: colors.lemon,
-          fontWeight: 'bold',
-          fontSize: 16,
-          marginBottom: 8,
-        }}
-      />
-      <OrderId _id={_id} />
-      <Row
-        style={{
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginVertical: 6,
-        }}>
-        <NormalText text="Phương thức giao hàng" />
-        <DeliveryMethodText
-          deliveryMethod={detail?.deliveryMethod}
-          style={{ textAlign: 'right' }}
-        />
-      </Row>
-
-      <Row
-        style={{
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-        <Text
+      <Row style={{ marginBottom: 8, justifyContent: 'space-between' }}>
+        <TitleText
           style={{
-            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-            color: colors.black,
-            marginRight: 8,
+            color: colors.lemon,
+            fontWeight: 'bold',
+            fontSize: 16,
+          }}
+          text='Chi tiết đơn hàng' />
+        <Pressable
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          onPress={() => {
+            setShowFull(!showFull)
           }}>
-          Trạng thái đơn hàng
-        </Text>
-        <StatusText status={status} />
-      </Row>
+          <NormalText text='Xem thêm' />
+          <Icon source='chevron-down' size={24} color={colors.lemon} />
+        </Pressable>
 
-      <DualTextRow
-        leftText={`Tạm tính (${orderItems.length} sản phẩm)`}
-        rightText={`${(
-          calculateTotalOrderPrice(orderItems) || 0
-        ).toLocaleString('vi-VN')}đ`}
-      />
+
+      </Row>
 
       {
-        deliveryMethod === DeliveryMethod.DELIVERY.value &&
+        showFull &&
+        <>
+          <OrderId _id={_id} />
+          <Row
+            style={{
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginVertical: 6,
+            }}>
+            <NormalText text="Phương thức giao hàng" />
+            <DeliveryMethodText
+              deliveryMethod={detail?.deliveryMethod}
+              style={{ textAlign: 'right' }}
+            />
+          </Row>
 
-        <DualTextRow
-          leftText="Phí giao hàng"
-          rightText={`${shippingFee.toLocaleString()}đ`}
-        />
+          <Row
+            style={{
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <Text
+              style={{
+                fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+                color: colors.black,
+                marginRight: 8,
+              }}>
+              Trạng thái đơn hàng
+            </Text>
+            <StatusText status={status} />
+          </Row>
+
+
+          <DualTextRow
+            leftText={`Tạm tính (${orderItems.length} sản phẩm)`}
+            rightText={`${(
+              calculateTotalOrderPrice(orderItems) || 0
+            ).toLocaleString('vi-VN')}đ`}
+          />
+
+          {
+            deliveryMethod === DeliveryMethod.DELIVERY.value &&
+
+            <DualTextRow
+              leftText="Phí giao hàng"
+              rightText={`${shippingFee.toLocaleString()}đ`}
+            />
+          }
+
+          <DualTextRow
+            leftText={
+              detail?.voucher?.name
+                ? `Giảm giá (${detail.voucher.name})`
+                : `Giảm giá`
+            }
+            rightText={`-${(discount || 0).toLocaleString('vi-VN')}đ`}
+            rightTextStyle={{ color: colors.primary }}
+          />
+
+          <DualTextRow
+            leftText="Trạng thái thanh toán"
+            rightText={paymentStatus.text}
+            rightTextStyle={{ color: paymentStatus.color }}
+          />
+          {cancelReason && (
+            <DualTextRow
+              leftText="Lý do hủy đơn"
+              rightText={cancelReason}
+              rightTextStyle={styles.normalText}
+            />
+          )}
+          {createdAt && (
+            <DualTextRow
+              leftText="Thời gian tạo đơn"
+              rightText={new Date(createdAt).toLocaleString('vi-VN')}
+            />
+          )}
+
+          {pendingConfirmationAt && (
+            <DualTextRow
+              leftText="Thời gian chờ xác nhận"
+              rightText={new Date(pendingConfirmationAt).toLocaleString(
+                'vi-VN',
+              )}
+            />
+          )}
+
+          {readyForPickupAt && (
+            <DualTextRow
+              leftText="Thời gian sẵn sàng lấy hàng"
+              rightText={new Date(readyForPickupAt).toLocaleString('vi-VN')}
+            />
+          )}
+
+          {shippingOrderAt && (
+            <DualTextRow
+              leftText="Thời gian giao hàng"
+              rightText={new Date(shippingOrderAt).toLocaleString('vi-VN')}
+            />
+          )}
+
+          {completedAt && (
+            <DualTextRow
+              leftText="Thời gian nhận hàng"
+              rightText={new Date(completedAt).toLocaleString('vi-VN')}
+            />
+          )}
+
+          {cancelledAt && (
+            <DualTextRow
+              leftText="Thời gian hủy đơn"
+              rightText={new Date(cancelledAt).toLocaleString('vi-VN')}
+            />
+          )}
+
+          <Row
+            style={{
+              alignItems: 'center',
+              marginVertical: 6,
+              justifyContent: 'space-between',
+            }}>
+            <Text
+              style={{
+                fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+                color: colors.black,
+                marginRight: 8,
+              }}>
+              Phương thức thanh toán:
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              {paymentMethod === 'online' ? (
+                <Image
+                  source={require('../../../assets/images/onl.jpg')}
+                  style={{ width: 22, height: 22 }}
+                />
+              ) : (
+                <Image
+                  source={require('../../../assets/images/logo_vnd.png')}
+                  style={{ width: 22, height: 22 }}
+                />
+              )}
+              <Text
+                style={{
+                  fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+                  color: colors.black,
+                  marginLeft: 8,
+                }}>
+                {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
+              </Text>
+            </View>
+          </Row>
+        </>
       }
 
-      <DualTextRow
-        leftText={
-          detail?.voucher?.name
-            ? `Giảm giá (${detail.voucher.name})`
-            : `Giảm giá`
-        }
-        rightText={`-${(discount || 0).toLocaleString('vi-VN')}đ`}
-        rightTextStyle={{ color: colors.primary }}
-      />
 
-      <DualTextRow
-        leftText="Trạng thái thanh toán"
-        rightText={paymentStatus.text}
-        rightTextStyle={{ color: paymentStatus.color }}
-      />
-      {cancelReason && (
-        <DualTextRow
-          leftText="Lý do hủy đơn"
-          rightText={cancelReason}
-          rightTextStyle={styles.normalText}
-        />
-      )}
-      {createdAt && (
-        <DualTextRow
-          leftText="Thời gian tạo đơn"
-          rightText={new Date(createdAt).toLocaleString('vi-VN')}
-        />
-      )}
-
-      {pendingConfirmationAt && (
-        <DualTextRow
-          leftText="Thời gian chờ xác nhận"
-          rightText={new Date(pendingConfirmationAt).toLocaleString(
-            'vi-VN',
-          )}
-        />
-      )}
-
-      {readyForPickupAt && (
-        <DualTextRow
-          leftText="Thời gian sẵn sàng lấy hàng"
-          rightText={new Date(readyForPickupAt).toLocaleString('vi-VN')}
-        />
-      )}
-
-      {shippingOrderAt && (
-        <DualTextRow
-          leftText="Thời gian giao hàng"
-          rightText={new Date(shippingOrderAt).toLocaleString('vi-VN')}
-        />
-      )}
-
-      {completedAt && (
-        <DualTextRow
-          leftText="Thời gian nhận hàng"
-          rightText={new Date(completedAt).toLocaleString('vi-VN')}
-        />
-      )}
-
-      {cancelledAt && (
-        <DualTextRow
-          leftText="Thời gian hủy đơn"
-          rightText={new Date(cancelledAt).toLocaleString('vi-VN')}
-        />
-      )}
-
-      <Row
-        style={{
-          alignItems: 'center',
-          marginVertical: 6,
-          justifyContent: 'space-between',
-        }}>
-        <Text
-          style={{
-            fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-            color: colors.black,
-            marginRight: 8,
-          }}>
-          Phương thức thanh toán:
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
-          {paymentMethod === 'online' ? (
-            <Image
-              source={require('../../../assets/images/onl.jpg')}
-              style={{ width: 22, height: 22 }}
-            />
-          ) : (
-            <Image
-              source={require('../../../assets/images/logo_vnd.png')}
-              style={{ width: 22, height: 22 }}
-            />
-          )}
-          <Text
-            style={{
-              fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-              color: colors.black,
-              marginLeft: 8,
-            }}>
-            {paymentMethod === 'online' ? 'Thanh toán online' : 'Tiền mặt'}
-          </Text>
-        </View>
-      </Row>
 
       <DualTextRow
         leftText="Tổng tiền"
@@ -256,8 +276,6 @@ export const PaymentDetails = ({ detail }) => {
 };
 
 const OrderId = ({ _id }) => {
-  const [visible, setVisible] = React.useState(false);
-
   const handleCopy = () => {
     Clipboard.setString(_id);
     Toast.show({
@@ -282,14 +300,6 @@ const OrderId = ({ _id }) => {
         </Text>
         <Icon source="content-copy" color={colors.teal900} size={18} />
       </Pressable>
-
-      <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        duration={Snackbar.DURATION_SHORT}
-        style={styles.snackbar}>
-        Mã đơn hàng đã được sao chép!
-      </Snackbar>
     </View>
   );
 };

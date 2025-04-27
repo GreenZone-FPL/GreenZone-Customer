@@ -22,6 +22,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAuthContext, useCartContext, useProductContext } from '../../context';
 import { FlashList } from '@shopify/flash-list';
+import { AIAssistant } from './HomeComponents';
 
 const OrderScreen = () => {
   const { authState } = useAuthContext()
@@ -167,6 +168,7 @@ const OrderScreen = () => {
 
         </MyBottomSheet>
       }
+      <AIAssistant/>
 
     </SafeAreaView>
   );

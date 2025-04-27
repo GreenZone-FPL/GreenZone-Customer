@@ -6,6 +6,7 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity
@@ -149,7 +150,7 @@ export const VoucherVertical = ({
 const ItemVoucher = ({ onPress, item }) => {
 
   return (
-    <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
+    <Pressable style={styles.itemVoucher} onPress={onPress}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
         {/* Tên voucher: màu đậm, dễ đọc */}
@@ -177,7 +178,7 @@ const ItemVoucher = ({ onPress, item }) => {
         </Row>
 
       </Column>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -199,8 +200,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   itemImage: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 5.5,
+    height: width / 5.5,
     borderRadius: width / 1.5,
     resizeMode: 'cover',
   },
