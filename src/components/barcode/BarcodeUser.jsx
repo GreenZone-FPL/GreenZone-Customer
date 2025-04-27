@@ -39,11 +39,11 @@ export const BarcodeUser = ({
           scale: 15,
           height: 4,
           includetext: true,
-          textsize: GLOBAL_KEYS.TEXT_SIZE_SMALL - 4,
+          textsize: GLOBAL_KEYS.TEXT_SIZE_SMALL - 2,
           textyoffset: GLOBAL_KEYS.PADDING_SMALL - 4,
           padding: 0,
           margin: 0,
-          textfont: 'Helvetica',
+          textfont: 'Arial',
         });
 
         setBarcodeSVG(svg);
