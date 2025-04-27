@@ -9,7 +9,7 @@ interface StoreAddressProps {
 }
 
 export const StoreAddress: React.FC<StoreAddressProps> = ({ storeInfo, chooseMerchant }) => {
-    console.log('storeInfo', JSON.stringify(storeInfo, null, 2))
+
     return (
         <View style={styles.containerItem}>
             <DualTextRow
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     },
     storeName: {
         marginBottom: 8,
-        color: colors.green500,
+        color: colors.lemon,
     },
     warningText: {
         color: colors.orange700,

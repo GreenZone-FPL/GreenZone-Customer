@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
   itemContainer: {
     backgroundColor: colors.white,
     paddingVertical: GLOBAL_KEYS.PADDING_SMALL,
+    borderBottomColor: colors.fbBg,
+    borderBottomWidth: 1
   },
   orderItem: {
     backgroundColor: colors.white,
@@ -105,6 +107,7 @@ const styles = StyleSheet.create({
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     alignItems: 'center',
     justifyContent: 'space-between',
+   
   },
   orderColumn: {
     flex: 1

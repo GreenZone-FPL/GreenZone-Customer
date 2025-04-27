@@ -51,7 +51,7 @@ const ItemProduct = ({item, onItemClick, onIconClick}) => {
 
         <NormalText
           style={styles.productPrice}
-          text={TextFormatter.formatCurrency(item.sellingPrice)} // Assuming item.sellingPrice is the price field
+          text={TextFormatter.formatCurrency(item.sellingPrice)}
         />
       </Column>
 

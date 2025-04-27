@@ -12,12 +12,12 @@ const ProductDetailShort = ({ route, navigation }) => {
 
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [product, setProduct] = useState(null)
+    // const [product, setProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedToppings, setSelectedToppings] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
-    const { productId } = route.params
+    const { product } = route.params
 
 
     const { cartDispatch } = useCartContext()
@@ -39,30 +39,30 @@ const ProductDetailShort = ({ route, navigation }) => {
         return quantity * (basePrice + toppingsAmount);
     };
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const fetchProductDetail = async () => {
-            setLoading(true)
-            try {
-                const detail = await getProductDetail(productId);
+    //     const fetchProductDetail = async () => {
+    //         setLoading(true)
+    //         try {
+    //             const detail = await getProductDetail(productId);
 
-                if (detail) {
-                    setProduct(detail); // Lưu danh mục vào state
-                    if (detail.variant.length > 0) {
-                        const firstVariant = detail.variant[0]
-                        setSelectedVariant(firstVariant)
-                        setTotalAmount(calculateTotal(firstVariant, selectedToppings));
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetchProductDetail:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    //             if (detail) {
+    //                 setProduct(detail); // Lưu danh mục vào state
+    //                 if (detail.variant.length > 0) {
+    //                     const firstVariant = detail.variant[0]
+    //                     setSelectedVariant(firstVariant)
+    //                     setTotalAmount(calculateTotal(firstVariant, selectedToppings));
+    //                 }
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetchProductDetail:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
 
-        fetchProductDetail();
-    }, []);
+    //     fetchProductDetail();
+    // }, []);
 
 
     return (

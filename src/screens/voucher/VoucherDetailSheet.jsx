@@ -95,8 +95,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexDirection: 'column',
     backgroundColor: colors.white,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
     alignSelf: 'flex-end',
     flex: 1,
   },

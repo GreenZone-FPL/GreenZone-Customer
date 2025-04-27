@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
   HeaderOrder,
   LightStatusBar,
   MyBottomSheet,
+  NormalLoading,
   ProductsListHorizontal,
   ProductsListVertical
 } from '../../components';
@@ -22,6 +23,7 @@ import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions, useOrderContainer } from '../../containers';
 import { useAuthContext, useCartContext, useProductContext } from '../../context';
 import { FlashList } from '@shopify/flash-list';
+import { AIAssistant } from './HomeComponents';
 
 const OrderScreen = () => {
   const { authState } = useAuthContext()
@@ -35,6 +37,7 @@ const OrderScreen = () => {
     dialogVisible,
     scrollViewRef,
     loadingCategories,
+    loadingDetail,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,
@@ -53,10 +56,21 @@ const OrderScreen = () => {
 
   const { onNavigateLogin } = useAuthActions();
 
+  const onItemClick = useCallback((productId) => {
+    onNavigateProductDetailSheet(productId);
+  }, [onNavigateProductDetailSheet]);
+
+  const onIconClick = useCallback(async (productId) => {
+    await onClickAddToCart(productId);
+  }, [onClickAddToCart]);
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-
+      {
+        loadingDetail &&
+        <NormalLoading visible={loadingDetail} />
+      }
       <HeaderOrder
         title={currentCategory}
         onCategoryPress={() => setDialogVisible(true)}
@@ -87,17 +101,13 @@ const OrderScreen = () => {
           products={allProducts
             .flatMap(category => category.products)
             .slice(0, 10)}
-          onItemClick={productId => {
-            onNavigateProductDetailSheet(productId);
-          }}
-          onIconClick={productId => {
-            onClickAddToCart(productId);
-          }}
+          onItemClick={onItemClick}
+          onIconClick={onIconClick}
         />
 
         <FlashList
           data={allProducts}
-          estimatedItemSize={600}
+          estimatedItemSize={900}
           keyExtractor={item => item._id}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}
@@ -106,12 +116,8 @@ const OrderScreen = () => {
               <ProductsListVertical
                 title={item.name}
                 products={item.products}
-                onItemClick={productId => {
-                  onNavigateProductDetailSheet(productId);
-                }}
-                onIconClick={productId => {
-                  onClickAddToCart(productId);
-                }}
+                onItemClick={onItemClick}
+                onIconClick={onIconClick}
               />
             </View>
           )}
@@ -167,6 +173,7 @@ const OrderScreen = () => {
 
         </MyBottomSheet>
       }
+      <AIAssistant />
 
     </SafeAreaView>
   );

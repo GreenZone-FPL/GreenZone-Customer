@@ -17,7 +17,7 @@ export const useLocation = () => {
         // Step 1: Lấy danh sách merchant
         const merchantRes = await getAllMerchants();
         const merchants = merchantRes.docs;
-        console.log('merchants', JSON.stringify(merchants, null, 3))
+        // console.log('merchants', JSON.stringify(merchants, null, 3))
 
         // Step 2: Lấy vị trí user
         const location = await fetchUserLocation();

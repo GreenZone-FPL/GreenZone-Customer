@@ -71,9 +71,9 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
 
       </Column>
 
-      <TouchableOpacity onPress={onIconClick} style={styles.addButton}>
+      <Pressable onPress={onIconClick} style={styles.addButton}>
         <Icon source="plus" size={22} color={colors.white} />
-      </TouchableOpacity>
+      </Pressable>
     </Pressable>
   );
 };

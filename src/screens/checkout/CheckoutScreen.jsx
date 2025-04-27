@@ -43,7 +43,6 @@ const CheckoutScreen = () => {
   const { cartState, cartDispatch } = useCartContext();
   const navigation = useNavigation()
 
-  // console.log('cartState', JSON.stringify(cartState, null, 3))
   const {
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,

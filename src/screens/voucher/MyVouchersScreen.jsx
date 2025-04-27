@@ -19,14 +19,14 @@ const MyVouchersScreen = ({ navigation }) => {
       try {
         setLoading(true);
         const response = await getMyVouchers();
-      if (response) {
-        const allVouchers = response
-          .filter(item => item?.voucher)
-          .map(item => item.voucher);
+        if (response) {
+          const allVouchers = response
+            .filter(item => item?.voucher)
+            .map(item => item.voucher);
 
-        setVouchers(allVouchers);
-      }
-       
+          setVouchers(allVouchers);
+        }
+
       } catch (error) {
         console.log('error', error);
       } finally {
@@ -35,10 +35,15 @@ const MyVouchersScreen = ({ navigation }) => {
     };
     getMyVochers();
   }, []);
+
   return (
     <Column style={styles.container}>
       <LightStatusBar />
-      <NormalLoading visible={loading} />
+      {
+        loading &&
+        <NormalLoading visible={loading} />
+      }
+
       <NormalHeader
         title="Phiếu ưu đãi của tôi"
         onLeftPress={() => {
@@ -46,14 +51,17 @@ const MyVouchersScreen = ({ navigation }) => {
         }}
       />
 
-      {vouchers?.length > 0 ? (
+      {vouchers.length > 0 &&
         <VoucherVertical
           loading={loading}
           vouchers={vouchers}
           route={{ params: { isUpdateOrderInfo: false, isChangeBeans: false } }}
           type={0}
         />
-      ) : (
+
+      }
+      {
+        !loading && vouchers.length === 0 &&
         <Text
           style={{
             flex: 1,
@@ -67,7 +75,9 @@ const MyVouchersScreen = ({ navigation }) => {
           Bạn chưa đổi phiếu giảm giá nào.
           Hãy đổi phiếu giảm giá ở mục Đổi Seed nhé!
         </Text>
-      )}
+      }
+
+
 
 
     </Column>
