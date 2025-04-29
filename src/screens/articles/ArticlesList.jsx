@@ -29,7 +29,7 @@ export const ArticlesList = props => {
 
 
       <FlatList
-        data={articles}
+       data={articles.slice().reverse()}
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={item => item.id}
