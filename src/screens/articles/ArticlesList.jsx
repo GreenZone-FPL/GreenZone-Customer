@@ -21,7 +21,11 @@ export const ArticlesList = props => {
   return (
     <Column style={{ padding: 16 }}>
 
-      <TitleText text='Khám phá thêm' style={styles.headerTitle} />
+      <Row>
+        <Icon source='star-shooting' size={24} color={colors.yellow500} />
+        <TitleText text='Khám phá thêm' style={styles.headerTitle} />
+      </Row>
+
 
 
       <FlatList
