@@ -1,14 +1,14 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { FAB } from 'react-native-paper';
 import RenderHtml from 'react-native-render-html';
 import { NormalHeader, OverlayStatusBar } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
 
-
+const { width } = Dimensions.get('window');
 const ArticleScreen = () => {
-  const { width } = useWindowDimensions();
+
   const { html } = useRoute().params;
   const navigation = useNavigation();
 
@@ -25,6 +25,11 @@ const ArticleScreen = () => {
           contentWidth={width}
           source={{ html }}
           tagsStyles={tagsStyles}
+          renderersProps={{
+            img: {
+              enableExperimentalPercentWidth: true
+            }
+          }}
         />
       </ScrollView>
       <FAB
@@ -70,12 +75,13 @@ const tagsStyles = {
 
   },
   img: {
-    width: '100%',
-    height: undefined,
-    aspectRatio: 2,
+    width: '100%', // sẽ lấy theo contentWidth đã truyền vào
+    height: 'auto',
     marginVertical: 12,
-    borderRadius: 8
+    borderRadius: 8,
+    resizeMode: 'cover',
   }
+  
 };
 const styles = StyleSheet.create({
   container: {

@@ -35,7 +35,7 @@ export const ArticlesList = props => {
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <Pressable style={styles.itemContainer} onPress={() => onArticlePress(item.html)}>
-            <Image source={item.image} style={styles.image} resizeMode='cover' />
+            <Image source={{uri: item.image}} style={styles.image} resizeMode='cover' />
 
 
             <Column style={styles.contentContaner}>
@@ -60,16 +60,17 @@ export const ArticlesList = props => {
   );
 };
 
+
 const articles = [
   {
     id: '1',
-    image: require('../../assets/images/banerlogin.png'),
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/2e4a939c-b2a1-4cfc-a082-4f81158cf268.png',
     title: 'Giới thiệu GreenZone',
     content: `GreenZone là hệ thống ứng dụng toàn diện giúp người dùng dễ dàng đặt hàng, quản lý cửa hàng và tối ưu hóa quy trình bán hàng một cách hiệu quả và hiện đại.`,
     html: `
       <h1>Giới thiệu GreenZone</h1>
       <p>GreenZone là hệ thống ứng dụng hỗ trợ đặt hàng và quản lý cửa hàng đồ uống. Hệ thống được thiết kế để mang đến trải nghiệm mua hàng thuận tiện, hiện đại cho khách hàng, đồng thời giúp tối ưu hóa quy trình vận hành cho các cửa hàng và nhân viên giao hàng.</p>
-      <img src="https://via.placeholder.com/300x150.png?text=GreenZone+System" alt="GreenZone System"/>
+      <img src="https://greenzone.motcaiweb.io.vn/uploads/2e4a939c-b2a1-4cfc-a082-4f81158cf268.png" alt="GreenZone System"/>
       <h2>Khả năng tích hợp linh hoạt</h2>
       <p>GreenZone có thể tích hợp dễ dàng với hệ thống bán hàng hiện tại, mang lại hiệu quả tối ưu trong việc theo dõi đơn hàng, xử lý thanh toán, và đánh giá khách hàng.</p>
       <h2>Phát triển hướng tới tương lai</h2>
@@ -80,7 +81,7 @@ const articles = [
   },
   {
     id: '2',
-    image: require('../../assets/images/logo.png'),
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/f6376273-4556-4157-ad0c-0c9915647e54.png',
     title: 'Các ứng dụng trong hệ thống',
     content: `Hệ thống bao gồm nhiều ứng dụng từ khách hàng đến quản trị viên: đặt hàng, quản lý cửa hàng, ứng dụng dành cho shipper và giao diện quản trị cho Admin.`,
     html: `
@@ -91,16 +92,17 @@ const articles = [
         <li><strong>Ứng dụng dành cho shipper:</strong> Cập nhật trạng thái giao hàng theo thời gian thực.</li>
         <li><strong>Trang quản trị dành cho Admin:</strong> Quản lý toàn bộ hệ thống, người dùng và báo cáo thống kê.</li>
       </ul>
-      <img src="https://via.placeholder.com/250x120.png?text=Ứng+Dụng+GreenZone" alt="GreenZone Apps"/>
+      <img src="https://greenzone.motcaiweb.io.vn/uploads/f6376273-4556-4157-ad0c-0c9915647e54.png" alt="GreenZone Apps"/>
       <h2>Kết nối đồng bộ giữa các ứng dụng</h2>
       <p>Các ứng dụng trong hệ thống GreenZone được kết nối đồng bộ với nhau qua cơ sở dữ liệu đám mây, giúp đảm bảo dữ liệu luôn được cập nhật theo thời gian thực.</p>
       <p>Việc quản lý đơn hàng, theo dõi trạng thái và phân phối nhiệm vụ giữa các bên diễn ra trơn tru và tự động, hạn chế tối đa lỗi do thao tác thủ công.</p>
     `,
     date: '2025-04-05'
   },
+  
   {
     id: '3',
-    image: require('../../assets/images/logo.png'),
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/179d3df1-38f2-4e22-bb1f-5d08bccc766e.png',
     title: 'Lợi ích cho khách hàng',
     content: `Khách hàng có thể đặt hàng mọi lúc mọi nơi, nhận thông báo cập nhật đơn hàng, thanh toán tiện lợi và hỗ trợ nhanh chóng từ hệ thống.`,
     html: `
@@ -108,7 +110,7 @@ const articles = [
       <p>GreenZone mang đến sự tiện lợi cho khách hàng với chức năng đặt hàng online, theo dõi đơn hàng, thanh toán nhanh chóng và giao hàng đúng thời gian.</p>
       <h2>Trải nghiệm người dùng vượt trội</h2>
       <p>Khách hàng có thể lưu lại đơn yêu thích, theo dõi lịch sử đặt hàng, nhận thông báo về khuyến mãi và các chương trình ưu đãi đặc biệt.</p>
-      <img src="https://via.placeholder.com/280x130.png?text=Trải+Nghiệm+Khách+Hàng" alt="User Experience"/>
+      <img src="https://greenzone.motcaiweb.io.vn/uploads/179d3df1-38f2-4e22-bb1f-5d08bccc766e.png" alt="User Experience"/>
       <h2>Hỗ trợ và phản hồi nhanh chóng</h2>
 
       <p>GreenZone tạo ra một nền tảng đặt hàng thông minh, giúp khách hàng tiết kiệm thời gian và nâng cao trải nghiệm mua sắm. Người dùng có thể chọn món, đặt hàng và thanh toán chỉ với vài thao tác đơn giản trên điện thoại hoặc máy tính bảng.</p>
@@ -119,13 +121,13 @@ const articles = [
   },
   {
     id: '4',
-    image: require('../../assets/images/logo.png'),
+    image: 'https://greenzone.motcaiweb.io.vn/uploads/65c9de10-8bf8-4de1-a35f-bbad6b2e5850.png',
     title: 'Tối ưu vận hành cho cửa hàng và nhân viên giao hàng',
     content: `GreenZone không chỉ là công cụ bán hàng, mà còn là trợ thủ đắc lực giúp các cửa hàng vận hành mượt mà và đội ngũ giao hàng hoạt động hiệu quả. Hệ thống cập nhật trạng thái đơn hàng theo thời gian thực, hỗ trợ bản đồ dẫn đường thông minh, nâng cao trải nghiệm cho cả người bán và người giao.`,
     html: `
       <h1>Tối ưu vận hành cho cửa hàng và nhân viên giao hàng</h1>
       <p>GreenZone mang đến giải pháp toàn diện giúp các cửa hàng vận hành chuyên nghiệp và hiệu quả hơn bao giờ hết. Mỗi đơn hàng đều được quản lý tự động, từ khi tạo đến lúc giao thành công, giảm thiểu sai sót, tiết kiệm thời gian và nâng cao độ hài lòng từ phía khách hàng.</p>
-  
+      <img src="https://greenzone.motcaiweb.io.vn/uploads/65c9de10-8bf8-4de1-a35f-bbad6b2e5850.png" alt="Quản lý hiệu quả"/>
       <h2>Quản lý thông minh cho cửa hàng</h2>
       <p>Chủ cửa hàng có thể dễ dàng theo dõi sản phẩm, đơn hàng, doanh thu và trạng thái giao hàng ngay trên ứng dụng. Hệ thống phân quyền rõ ràng, hỗ trợ thông báo tức thì và báo cáo trực quan, giúp nhà quản lý nắm bắt toàn bộ hoạt động kinh doanh chỉ trong vài thao tác.</p>
   
@@ -133,7 +135,7 @@ const articles = [
       <p>Nhân viên giao hàng – thành phần không thể thiếu trong chuỗi vận hành – được trang bị ứng dụng hiện đại cho phép theo dõi đơn hàng realtime, cập nhật trạng thái liên tục như “đang chuẩn bị”, “đang giao hàng”, hay “đã giao thành công”.</p>
       <p>Hệ thống còn tích hợp bản đồ định vị GPS thông minh, hỗ trợ chỉ đường tối ưu và chính xác, giúp nhân viên di chuyển thuận lợi, tiết kiệm thời gian, tránh thất lạc đơn và nâng cao hiệu suất làm việc.</p>
   
-      <img src="https://via.placeholder.com/270x140.png?text=Quản+lý+hiệu+quả" alt="Quản lý hiệu quả"/>
+     
   
       <p>GreenZone không chỉ giúp cửa hàng phát triển bền vững, mà còn hỗ trợ đội ngũ nhân viên giao hàng trở thành cánh tay nối dài hiệu quả, chuyên nghiệp và đáng tin cậy của doanh nghiệp.</p>
     `,
