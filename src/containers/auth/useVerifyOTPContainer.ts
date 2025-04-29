@@ -30,66 +30,66 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
 
     Keyboard.dismiss();
 
-    try {
-      setLoading(true);
-      const response = await verifyOTP({ phoneNumber, code });
-      const userLastName: string | undefined = response.user?.lastName;
+    // try {
+    //   setLoading(true);
+    //   const response = await verifyOTP({ phoneNumber, code });
+    //   const userLastName: string | undefined = response.user?.lastName;
 
-      if (userLastName) {
-        Toaster.show('Đăng nhập thành công!');
+    //   if (userLastName) {
+    //     Toaster.show('Đăng nhập thành công!');
 
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
-        });
-        await onUserLoginZego(phoneNumber, userLastName, navigation)
-      } else {
-        authDispatch({
-          type: AuthActionTypes.REGISTER,
-          payload: { isLoggedIn: false, needLogin: false, needRegister: true },
-        });
-      }
-
-
-    } catch (error: any) {
-      console.log(error)
-      Toaster.show(error)
-    } finally {
-      setLoading(false);
-    }
-
-
-    // if (code === otp) {
-    //   try {
-    //     setLoading(true);
-    //     const response = await verifyOTP({ phoneNumber, code: realCode });
-    //     const userLastName: string | undefined = response.user?.lastName;
-
-    //     if (userLastName) {
-    //       Toaster.show('Đăng nhập thành công!');
-
-    //       authDispatch({
-    //         type: AuthActionTypes.LOGIN,
-    //         payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
-    //       });
-    //       await onUserLoginZego(phoneNumber, userLastName, navigation)
-    //     } else {
-    //       authDispatch({
-    //         type: AuthActionTypes.REGISTER,
-    //         payload: { isLoggedIn: false, needLogin: false, needRegister: true },
-    //       });
-    //     }
-
-
-    //   } catch (error: any) {
-    //     console.log(error)
-    //     Toaster.show(error)
-    //   } finally {
-    //     setLoading(false);
+    //     authDispatch({
+    //       type: AuthActionTypes.LOGIN,
+    //       payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
+    //     });
+    //     await onUserLoginZego(phoneNumber, userLastName, navigation)
+    //   } else {
+    //     authDispatch({
+    //       type: AuthActionTypes.REGISTER,
+    //       payload: { isLoggedIn: false, needLogin: false, needRegister: true },
+    //     });
     //   }
-    // } else {
-    //   Toaster.show(`Lỗi: OTP không chính xác`);
+
+
+    // } catch (error: any) {
+    //   console.log(error)
+    //   Toaster.show(error)
+    // } finally {
+    //   setLoading(false);
     // }
+
+
+    if (code === otp) {
+      try {
+        setLoading(true);
+        const response = await verifyOTP({ phoneNumber, code: realCode });
+        const userLastName: string | undefined = response.user?.lastName;
+
+        if (userLastName) {
+          Toaster.show('Đăng nhập thành công!');
+
+          authDispatch({
+            type: AuthActionTypes.LOGIN,
+            payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
+          });
+          await onUserLoginZego(phoneNumber, userLastName, navigation)
+        } else {
+          authDispatch({
+            type: AuthActionTypes.REGISTER,
+            payload: { isLoggedIn: false, needLogin: false, needRegister: true },
+          });
+        }
+
+
+      } catch (error: any) {
+        console.log(error)
+        Toaster.show(error)
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      Toaster.show(`Lỗi: OTP không chính xác`);
+    }
 
   };
 

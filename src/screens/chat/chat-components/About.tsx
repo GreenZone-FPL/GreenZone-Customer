@@ -45,14 +45,12 @@ export const About: React.FC<Props>= ({handleSuggestionPress}) => {
 };
 
 export const suggestions = [
-  'Gợi ý món tráng miệng',
-  'Tôi muốn ăn bánh',
-  'Có gì mới hôm nay?',
-  'Tôi muốn tỉnh táo',
+  'Cho tôi vài món tráng miệng',
+  'Tôi đang đói bụng',
+  'Tôi cần sự tỉnh táo để làm việc',
   'Món phù hợp buổi tối',
-  'Thức uống lạnh',
-  'Bánh chay',
-  'Ăn nhẹ buổi chiều',
+  'Đồ uống mát mẻ cho ngày hè nóng nực',
+  'Món ăn ngon hương vị biển cả kích thích vị giác',
 ];
 const styles = StyleSheet.create({
   aboutContainer: {

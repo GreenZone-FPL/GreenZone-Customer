@@ -65,6 +65,7 @@ export const CustomTabView = ({
     titleActiveColor: colors.primary,
     titleInActiveColor: colors.gray700,
     scrollable: false,
+    containerStyle: {backgroundColor: colors.white}
   },
   tabViewConfig = {
     tabViewContainerStyle: {},
@@ -77,6 +78,7 @@ export const CustomTabView = ({
     <>
       <Tab
         value={tabIndex}
+        style={tabBarConfig.containerStyle}
         onChange={e => setTabIndex(e)}
         indicatorStyle={[styles.indicatorStyle, tabBarConfig.indicatorStyle]}
         variant="secondary"
