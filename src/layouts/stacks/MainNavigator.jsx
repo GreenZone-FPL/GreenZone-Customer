@@ -38,12 +38,14 @@ import EditCartItemScreen from '../../screens/shopping/EditCartItemScreen';
 import FavoriteScreen from '../../screens/shopping/FavoriteScreen';
 import MerchantDetailSheet from '../../screens/shopping/MerchantDetailSheet';
 
+import ArticleScreen from '../../screens/articles/ArticleScreen';
 import PayOsScreen from '../../screens/shopping/payment/PayOsScreen';
 import ZalopayScreen from '../../screens/shopping/payment/Zalopayscreen';
 import ProductDetailSheet from '../../screens/shopping/ProductDetailSheet';
 import ProductDetailShort from '../../screens/shopping/ProductDetailShort';
 import RecipientInfoSheet from '../../screens/shopping/RecipientInfoSheet';
 import SearchProductScreen from '../../screens/shopping/SearchProductScreen';
+import ShippingMethodScreen from '../../screens/shopping/ShippingMethodScreen';
 import ContactScreen from '../../screens/user-profile/ContactScreen';
 import MyFlatList from '../../screens/user-profile/MyFlatList';
 import SettingScreen from '../../screens/user-profile/SettingScreen';
@@ -52,7 +54,6 @@ import MyVouchersScreen from '../../screens/voucher/MyVouchersScreen';
 import SeedScreen from '../../screens/voucher/SeedScreen';
 import SelectVouchersScreen from '../../screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from '../../screens/voucher/VoucherDetailSheet';
-import ShippingMethodScreen from '../../screens/shopping/ShippingMethodScreen';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -107,6 +108,12 @@ function MainNavigator() {
         name={AppGraph.AIChatScreen}
         options={slideFromRightOption}
         component={AIChatScreen}
+      />
+
+      <MainStack.Screen
+        name={AppGraph.ArticleScreen}
+        options={slideFromRightOption}
+        component={ArticleScreen}
       />
       <MainStack.Screen name={'MyFlatList'} component={MyFlatList} />
       <MainStack.Screen

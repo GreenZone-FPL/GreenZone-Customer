@@ -56,9 +56,9 @@ export const useOrderHistoryContainer = () => {
     orderStatuses.forEach(status => fetchOrders(status));
   }, [updateOrderMessage.status]);
 
-  // useEffect(() => {
-  //   fetchOrders(orderStatuses[tabIndex]);
-  // }, [tabIndex]);
+  useEffect(() => {
+    fetchOrders(orderStatuses[tabIndex]);
+  }, [tabIndex]);
 
   const handleSelectMethod = (method: PaymentMethodItem) => {
     setPaymentMethod(method);

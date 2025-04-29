@@ -336,7 +336,7 @@ export const useHomeContainer = () => {
   };
 
   const navigateAdvertising = () => {
-    navigation.navigate(AppGraph.AdvertisingScreen);
+    navigation.navigate(AppGraph.HtmlScreen);
   };
   const navigateSeedScreen = () => {
     navigation.navigate(VoucherGraph.SeedScreen);

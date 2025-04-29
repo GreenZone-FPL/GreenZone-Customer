@@ -17,7 +17,6 @@ import {
   LightStatusBar,
   NormalLoading,
   NormalText,
-  NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText
@@ -27,6 +26,7 @@ import { useAuthActions, useHomeContainer } from '../../containers';
 import { useAuthContext, useCartContext, useProductContext } from '../../context';
 import { useLocation } from '../../utils';
 import { AIAssistant, CategoryView } from './HomeComponents';
+import { ArticlesList } from '../articles/ArticlesList';
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -56,7 +56,6 @@ const HomeScreen = () => {
     onClickAddToCart,
     navigateCheckOut,
     navigateOrderHistory,
-    navigateAdvertising,
     navigateSeedScreen
   } = useHomeContainer();
 
@@ -84,13 +83,7 @@ const HomeScreen = () => {
         <NormalLoading visible={loadingDetail} />
       }
       <HeaderWithBadge
-        title={
-          authState.isLoggedIn
-            ? currentCategory
-              ? currentCategory
-              : 'Xin chào'
-            : 'Chào bạn mới'
-        }
+        title={currentCategory}
         isHome={false}
         enableBadge={!!authState.lastName}
       />
@@ -134,7 +127,7 @@ const HomeScreen = () => {
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />
-        <NotificationList onSeeMorePress={navigateAdvertising} />
+        <ArticlesList />
 
         <FlashList
           data={allProducts}

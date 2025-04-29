@@ -171,10 +171,16 @@ const VoucherScreen = ({navigation}) => {
           />
         </Column>
       ) : (
-        <Image
-          source={require('../../assets/images/logo.png')}
-          style={styles.logo}
-        />
+        <Column style={styles.emptyView}>
+          <Image
+            source={require('../../assets/images/logo.png')}
+            style={styles.logo}
+          />
+          <NormalText
+            style={styles.description}
+            text={`Đăng nhập để xem những ưu đãi cho thành viên bạn nhé`}
+          />
+        </Column>
       )}
     </ScrollView>
   );
@@ -226,8 +232,8 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   logo: {
-    width: Dimensions.get('window').width / 1.5,
-    height: Dimensions.get('window').width / 1.5,
+    width: Dimensions.get('window').width / 3,
+    height: Dimensions.get('window').width / 3,
     alignSelf: 'center',
   },
 
@@ -240,6 +246,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray200,
     borderRadius: 10,
+  },
+  description: {
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  emptyView: {
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+    padding: 16,
   },
 });
 

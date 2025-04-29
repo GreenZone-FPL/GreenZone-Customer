@@ -56,7 +56,6 @@ export * from './dialogs/DialogNotification';
 export * from './flatlists/ProductsListHorizontal';
 export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
-export * from './flatlists/NotificationList';
 export * from './flatlists/ProductsGrid';
 export * from './flatlists/VoucherVertical';
 
