@@ -6,7 +6,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View
+  View,
+  RefreshControl
 } from 'react-native';
 import {
   AuthContainer,
@@ -46,6 +47,8 @@ const HomeScreen = () => {
     needToPay,
     loadingProducts,
     loadingDetail,
+    refreshing,
+    onRefresh,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -93,6 +96,9 @@ const HomeScreen = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl colors={[colors.primary]} refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+        }
         style={styles.containerContent}>
 
         {authState.lastName ? (

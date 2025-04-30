@@ -17,10 +17,11 @@ import { useAuthContext, useCartContext, useProductContext } from '../../context
 export const useOrderContainer = () => {
   const { authState } = useAuthContext();
   const { cartState, cartDispatch } = useCartContext();
-  const { allProducts } = useProductContext();
+  const { allProducts, setAllProducts } = useProductContext();
   const { onNavigateLogin } = useAuthActions();
   const navigation = useNavigation();
   const lastCategoryRef = useRef(currentCategory);
+  const [refreshing, setRefreshing] = useState(false);
 
 
   const [editOption, setEditOption] = useState('');
@@ -108,6 +109,24 @@ export const useOrderContainer = () => {
     }
 
   };
+   const onRefresh = async() => {
+      
+      // Giả lập delay để mô phỏng loading
+      try {
+  
+        setRefreshing(true);
+        const response = await getAllProducts()
+        console.log('getAllProducts')
+        if (response) {
+          setAllProducts(response)
+        }
+  
+      } catch (error) {
+        Toaster.show('Error', error)
+      } finally {
+        setRefreshing(false)
+      }
+    };
 
   const handleOptionSelect = async option => {
     setSelectedOption(option);
@@ -250,6 +269,8 @@ export const useOrderContainer = () => {
     loadingProducts,
     loadingCategories,
     loadingDetail,
+    refreshing,
+    onRefresh,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,
