@@ -22,7 +22,7 @@ export const useHomeContainer = () => {
   const { authState } = useAuthContext();
   const { cartState, cartDispatch } = useCartContext();
   const { allProducts, setAllProducts } = useProductContext();
-
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   const [editOption, setEditOption] = useState('');
@@ -94,6 +94,26 @@ export const useHomeContainer = () => {
     fetchProfile(true)
   }, [])
 
+  const onRefresh = async() => {
+    
+    // Giả lập delay để mô phỏng loading
+    try {
+
+      setRefreshing(true);
+      const response = await getAllProducts()
+      console.log('getAllProducts')
+      if (response) {
+        setAllProducts(response)
+      }
+
+    } catch (error) {
+      Toaster.show('Error', error)
+    } finally {
+      setRefreshing(false)
+    }
+  };
+
+ 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -352,6 +372,8 @@ export const useHomeContainer = () => {
     loadingProfile,
     loadingNoti,
     loadingDetail,
+    refreshing,
+    onRefresh,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,

@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  RefreshControl
 } from 'react-native';
 
 import {
@@ -38,6 +39,8 @@ const OrderScreen = () => {
     scrollViewRef,
     loadingCategories,
     loadingDetail,
+    refreshing,
+    onRefresh,
     setDialogShippingVisible,
     setDialogVisible,
     handleEditOption,
@@ -82,6 +85,9 @@ const OrderScreen = () => {
         ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
+        refreshControl={
+          <RefreshControl colors={[colors.primary]} refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+        }
         scrollEventThrottle={16}>
 
         {!authState.lastName && (

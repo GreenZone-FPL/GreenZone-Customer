@@ -34,7 +34,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
                     }
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy thông tin người dùng từ AsyncStorage:', error);
+                console.log('Error fetching Profile', error);
             }
         };
         handleUserData();

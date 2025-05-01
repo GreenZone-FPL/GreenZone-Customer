@@ -55,7 +55,7 @@ const LoginScreen = ({ route, navigation }) => {
       console.log('Kết quả gửi SMS:', response.data);
       return response.data;
     } catch (error) {
-      console.error(
+      console.log(
         'Lỗi khi gửi SMS:',
         error.response ? error.response.data : error.message,
       );

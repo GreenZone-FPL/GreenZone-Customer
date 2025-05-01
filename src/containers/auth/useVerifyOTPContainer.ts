@@ -2,8 +2,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 import { verifyOTP } from '../../axios';
-import { useAuthContext } from '../../context';
-import { AuthActionTypes } from '../../reducers';
+import { useAuthContext, useCartContext } from '../../context';
+import { AuthActionTypes, CartActionTypes } from '../../reducers';
 import { Toaster } from '../../utils';
 import { onUserLoginZego } from '../../zego/common';
 
@@ -11,6 +11,7 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
   const navigation = useNavigation();
   const [code, setCode] = useState('');
   const { authDispatch } = useAuthContext();
+  const { cartDispatch } = useCartContext();
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 
@@ -72,6 +73,13 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
             type: AuthActionTypes.LOGIN,
             payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
           });
+          cartDispatch({
+            type: CartActionTypes.UPDATE_ORDER_INFO,
+            payload: {
+              consigneeName: `${response.user?.firstName} ${userLastName}`,
+              consigneePhone: phoneNumber
+            }
+          })
           await onUserLoginZego(phoneNumber, userLastName, navigation)
         } else {
           authDispatch({
