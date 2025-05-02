@@ -35,7 +35,7 @@ export const ArticlesList = props => {
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <Pressable style={styles.itemContainer} onPress={() => onArticlePress(item.html)}>
-            <Image source={{uri: item.image}} style={styles.image} resizeMode='cover' />
+            <Image source={{uri: item.image}} style={styles.image} resizeMode='cover'/>
 
 
             <Column style={styles.contentContaner}>
@@ -147,11 +147,6 @@ const articles = [
 
 
 
-
-
-
-
-
 const styles = StyleSheet.create({
   itemContainer: {
     width: width / 2,
@@ -160,15 +155,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.gray200,
-    paddingBottom: 10
+
   },
   contentContaner: {
-    paddingHorizontal: 8,
-
+    padding: 8,
   },
   image: {
     width: '100%',
-    height: 160,
+    height: 200,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
   },

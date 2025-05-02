@@ -15,6 +15,8 @@ const notificationStyle = 'CustomView';
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego')
   try {
+    const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
+
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
@@ -32,7 +34,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
               <Image
                 style={{ width: '100%', height: '100%' }}
                 resizeMode="cover"
-                source={{ uri: `https://robohash.org/${userInfo.userId}.png` }}
+                source={{ uri: avatar ?? `https://robohash.org/${userInfo.userId}.png` }}
               />
             </View>
           );
