@@ -101,7 +101,7 @@ export const useHomeContainer = () => {
 
       setRefreshing(true);
       const response = await getAllProducts()
-      console.log('getAllProducts')
+      console.log('refreshing')
       if (response) {
         setAllProducts(response)
       }
@@ -120,7 +120,7 @@ export const useHomeContainer = () => {
 
         setLoadingProducts(true)
         const response = await getAllProducts()
-        console.log('getAllProducts')
+       
         if (response) {
           setAllProducts(response)
         }

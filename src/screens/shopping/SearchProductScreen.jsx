@@ -5,26 +5,30 @@ import { getAllProducts } from '../../axios';
 import {
   CustomSearchBar,
   LightStatusBar,
+  NormalLoading,
   NormalText,
   ProductsListVertical,
   Row,
 } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { useHomeContainer } from '../../containers';
+import { useProductContext } from '../../context';
 
 
 const { width } = Dimensions.get('window');
 
 const SearchProductScreen = props => {
   const { navigation } = props;
-  const [allProducts, setAllProducts] = useState([]);
+  const [ allProducts, setAllProducts ] = useState();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(false)
   const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true)
         const data = await getAllProducts();
         if (data.length > 0) {
           const allProductsRaw = data.flatMap(category => category.products);
@@ -44,6 +48,8 @@ const SearchProductScreen = props => {
         }
       } catch (error) {
         console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false)
       }
     };
 
@@ -100,6 +106,10 @@ const SearchProductScreen = props => {
   return (
     <View style={styles.content}>
       <LightStatusBar />
+      {loading &&
+        <NormalLoading visible={loading} />
+
+      }
       <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, gap: 16 }}>
         <CustomSearchBar
           placeholder="Tìm kiếm..."
@@ -108,12 +118,14 @@ const SearchProductScreen = props => {
           onClearIconPress={handleClearSearch}
           leftIcon="magnify"
           rightIcon="close"
-          style={{ flex: 1, elevation: 3, backgroundColor: colors.fbBg }}
+          style={{ flex: 1, elevation: 1, backgroundColor: colors.fbBg }}
         />
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => navigation.goBack()}>
           <NormalText
             text="Huỷ"
-            style={{ color: colors.orange700, fontWeight: '500' }}
+            style={{ color: colors.primary, fontWeight: '500' }}
           />
         </TouchableOpacity>
       </Row>
@@ -154,6 +166,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     flex: 1,
   },
+  cancelButton: {
+    backgroundColor: colors.green100,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 6
+  }
 });
 
 export default SearchProductScreen;

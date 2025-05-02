@@ -43,6 +43,7 @@ export const OrderListView = ({
           totalPages > 1 && (
             <Row style={styles.navigator}>
               <Pressable
+              style={{paddingHorizontal: 12, paddingVertical: 6}}
                 onPress={() => onPageChange(Math.max(1, currentPage - 1))}
               >
 
@@ -55,6 +56,7 @@ export const OrderListView = ({
               />
 
               <Pressable
+                 style={{paddingHorizontal: 12, paddingVertical: 6}}
                 onPress={() => onPageChange(Math.min(totalPages, currentPage + 1))}
               >
 

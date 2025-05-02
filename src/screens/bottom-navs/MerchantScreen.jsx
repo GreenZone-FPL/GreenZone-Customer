@@ -240,16 +240,7 @@ const MerchantScreen = ({ navigation, route }) => {
       <View style={styles.content}>
         <View style={styles.tool}>
           <View style={{ position: 'relative', flex: 1 }}>
-            <CustomSearchBar
-              placeholder="Tìm kiếm cửa hàng ..."
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              onClearIconPress={() => setSearchQuery('')}
-              leftIcon="magnify"
-              rightIcon="close"
-              style={{ elevation: 3 }}
-              onFocus={handleSearchPress}
-            />
+          
 
             {suggestions.length > 0 && (
               <View style={styles.suggestionContainer}>

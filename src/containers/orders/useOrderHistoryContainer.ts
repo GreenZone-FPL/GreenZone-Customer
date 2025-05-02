@@ -18,7 +18,7 @@ interface OrderDetail {
   totalPrice: number;
   [key: string]: any;
 }
-const itemsPerPage = 5;
+const itemsPerPage = 4;
 const orderStatuses = ['', 'completed', 'cancelled'];
 
 export const useOrderHistoryContainer = () => {
