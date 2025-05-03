@@ -54,6 +54,7 @@ import MyVouchersScreen from '../../screens/voucher/MyVouchersScreen';
 import SeedScreen from '../../screens/voucher/SeedScreen';
 import SelectVouchersScreen from '../../screens/voucher/SelectVouchersScreen';
 import VoucherDetailSheet from '../../screens/voucher/VoucherDetailSheet';
+import AgoraVoiceCall from '../../agora/AgoraVoiceCall';
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -114,6 +115,12 @@ function MainNavigator() {
         name={AppGraph.ArticleScreen}
         options={slideFromRightOption}
         component={ArticleScreen}
+      />
+
+      <MainStack.Screen
+        name={AppGraph.AgoraVoiceCall}
+        options={slideFromRightOption}
+        component={AgoraVoiceCall}
       />
       <MainStack.Screen name={'MyFlatList'} component={MyFlatList} />
       <MainStack.Screen

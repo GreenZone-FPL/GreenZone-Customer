@@ -18,5 +18,6 @@ export const AppGraph = Object.freeze({
     UpdateProfileScreen: 'UpdateProfileScreen',
     NotificationScreen: 'NotificationScreen',
     AIChatScreen: 'AIChatScreen',
-    ArticleScreen: 'ArticleScreen'
+    ArticleScreen: 'ArticleScreen',
+    AgoraVoiceCall: 'AgoraVoiceCall'
 });
