@@ -9,14 +9,16 @@ import ZegoUIKitPrebuiltCallService, {
 import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
+import { getProfile } from '../axios/modules/auth'
 
 const notificationStyle = 'CustomView';
 
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego')
   try {
+    // const profile = await getProfile()
     const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
-
+    // const avatar = profile.avatar
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
@@ -123,7 +125,7 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 duration,
               );
 
-              ZegoUIKitPrebuiltCallService.hangUp();
+              // ZegoUIKitPrebuiltCallService.hangUp();
 
               // navigation.navigate(AppGraph.OrderHistoryScreen)
               navigation.goBack()

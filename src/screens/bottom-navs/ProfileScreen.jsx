@@ -16,7 +16,7 @@ import {
 import { colors, GLOBAL_KEYS } from '../../constants';
 import { useAuthActions } from '../../containers';
 import { useAuthContext } from '../../context';
-import { OrderGraph, UserGraph } from '../../layouts/graphs';
+import { AppGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 
 
@@ -116,6 +116,11 @@ const ProfileScreen = ({ navigation }) => {
               icon="star-outline"
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
+            />
+             <CardUtiliti
+              icon="phone"
+              title="Agora Voice Call"
+              onPress={() => navigateIfLoggedIn(AppGraph.AgoraVoiceCall)}
             />
 
             {authState.lastName && (

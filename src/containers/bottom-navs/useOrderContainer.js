@@ -47,7 +47,7 @@ export const useOrderContainer = () => {
           setLoadingDetail(true);
           const detail = await getProductDetail(productId);
           if (detail) {
-            console.log('detail', JSON.stringify(detail, null, 3))
+
             if (detail.variant.length > 1 || detail.topping.length > 0) {
               navigation.navigate(ShoppingGraph.ProductDetailShort, { product: detail });
             } else {

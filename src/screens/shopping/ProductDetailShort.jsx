@@ -21,7 +21,7 @@ const ProductDetailShort = ({ route, navigation }) => {
 
 
     const { cartDispatch, cartState } = useCartContext()
-    console.log('cartState', JSON.stringify(cartState, null, 3))
+
 
     useEffect(() => {
         if (product) {
