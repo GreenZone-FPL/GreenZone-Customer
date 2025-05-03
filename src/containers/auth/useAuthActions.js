@@ -3,7 +3,7 @@ import { useAuthContext, useCartContext } from '../../context';
 import { BottomGraph } from '../../layouts/graphs';
 import { AuthActionTypes, cartInitialState } from '../../reducers';
 import { AppAsyncStorage, CartManager } from '../../utils';
-
+import ZegoUIKitPrebuiltCallService from '@zegocloud/zego-uikit-prebuilt-call-rn'
 export const useAuthActions = () => {
   const { authDispatch } = useAuthContext();
   const { cartDispatch } = useCartContext();
@@ -27,6 +27,7 @@ export const useAuthActions = () => {
     try {
       await AppAsyncStorage.clearAll();
       await CartManager.updateOrderInfo(cartDispatch, cartInitialState);
+      await ZegoUIKitPrebuiltCallService.uninit();
       authDispatch({
         type: AuthActionTypes.LOGOUT,
         payload: { isLoggedIn: false, lastName: null, needLogin: false, needRegister: false },
