@@ -6,27 +6,31 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity
 } from 'react-native';
 import { changeBeans } from '../../axios';
 import { colors } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import { VoucherGraph } from '../../layouts/graphs';
-import { CartManager, Toaster } from '../../utils';
+import { CartActionTypes } from '../../reducers';
+import { VoucherVerticalSkeleton } from '../../skeletons';
+import { Toaster } from '../../utils';
 import { Column, NormalText, Row, SeedText, TitleText } from '../index';
 
 const { width } = Dimensions.get('window');
 
 export const VoucherVertical = ({
+  loading = false,
   route,
   vouchers,
   type,
   setChangePoint = false,
 }) => {
   const navigation = useNavigation();
-  const { cartDispatch } = useAppContext();
+  const { cartDispatch } = useCartContext();
   const { isUpdateOrderInfo } = route.params || false;
   const { isChangeBeans } = route.params || false;
   const [validVouchers, setValidVouchers] = useState([]);
@@ -54,11 +58,11 @@ export const VoucherVertical = ({
   const changeBean = async item => {
     // Hiển thị alert xác nhận
     Alert.alert(
-      'Xác nhận đổi Bean',
-      `Bạn có chắc muốn đổi "${item.requiredPoints}" Bean lấy mã giảm giá "${item.name}" không?`,
+      'Xác nhận',
+      `Bạn có chắc muốn đổi ${item.requiredPoints} Seed lấy mã giảm giá "${item.name}" không?`,
       [
         {
-          text: 'Hủy',
+          text: 'Đóng',
           onPress: () => console.log('Hành động hủy bỏ'),
           style: 'cancel',
         },
@@ -103,21 +107,27 @@ export const VoucherVertical = ({
 
   const onItemPress = item => {
     if (isUpdateOrderInfo) {
-      // console.log('item Vouher = ', item);
-      if (cartDispatch) {
-        CartManager.updateOrderInfo(cartDispatch, {
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           voucher: item._id,
           voucherInfo: item,
-        });
-      }
+        }
+      })
 
       navigation.goBack();
+
     } else if (isChangeBeans) {
       changeBean(item);
     } else {
       navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
+  if (loading) {
+    return (
+      <VoucherVerticalSkeleton />
+    )
+  }
 
   return (
     <Column style={styles.container}>
@@ -126,7 +136,7 @@ export const VoucherVertical = ({
         data={filterByDiscountType(type)}
         keyExtractor={item => item._id.toString()}
         renderItem={({ item }) => (
-          <ItemVoucher onPress={() => onItemPress(item)} item={item} />
+          <ItemVoucher onPress={() => onItemPress(item)} item={item} loading={loading} />
         )}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
@@ -136,9 +146,11 @@ export const VoucherVertical = ({
   );
 };
 
+
 const ItemVoucher = ({ onPress, item }) => {
+
   return (
-    <TouchableOpacity style={styles.itemVoucher} onPress={onPress}>
+    <Pressable style={styles.itemVoucher} onPress={onPress}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
       <Column>
         {/* Tên voucher: màu đậm, dễ đọc */}
@@ -166,7 +178,7 @@ const ItemVoucher = ({ onPress, item }) => {
         </Row>
 
       </Column>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -188,8 +200,8 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   itemImage: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 5.5,
+    height: width / 5.5,
     borderRadius: width / 1.5,
     resizeMode: 'cover',
   },

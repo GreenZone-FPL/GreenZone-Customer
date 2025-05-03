@@ -78,12 +78,11 @@ const NewAddressScreen = props => {
         ward: locationDetail.commune,
         district: locationDetail.district,
         province: locationDetail.province,
-        consigneePhone: consigneeName,
-        consigneeName: consigneePhone,
+        consigneePhone: consigneePhone,
+        consigneeName: consigneeName,
         latitude: String(locationDetail.lat),
         longitude: String(locationDetail.lng),
       };
-      console.log('Tạo địa chỉ thành công:', JSON.stringify(payload, null, 2));
       try {
         setLoading(true)
         const response = await postAddress(payload);
@@ -109,7 +108,7 @@ const NewAddressScreen = props => {
         <TouchableOpacity
           onPress={() => setModalVisible(true)}
           style={styles.btnAddress} disabled={loading}>
-          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}>
+          <Text style={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE, color: colors.black }}>
             {selectedAddress}
           </Text>
         </TouchableOpacity>
@@ -321,6 +320,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontWeight: '500',
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    color: colors.black
   },
   cardSubtitle: {
     color: colors.gray400,

@@ -1,10 +1,10 @@
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { getProfile } from '../../axios';
-import { useAppContext } from '../../context/appContext';
+import { useAuthContext } from '../../context';
 import { AppAsyncStorage } from '../../utils';
 export const useVoucherContainer = () => {
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const [user, setUser] = useState(null);
 
   useFocusEffect(

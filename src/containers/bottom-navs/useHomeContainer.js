@@ -1,8 +1,20 @@
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {getAllProducts, getOrdersByStatus} from '../../axios';
+import {
+  getAllProducts,
+  getNotifications,
+  getOrdersByStatus,
+  getProductDetail,
+  getProfile,
+} from '../../axios';
 import {DeliveryMethod, OrderStatus} from '../../constants';
-import {useAppContext} from '../../context/appContext';
+
+import {
+  useAppContext,
+  useAuthContext,
+  useCartContext,
+  useProductContext,
+} from '../../context';
 import {
   AppGraph,
   BottomGraph,
@@ -12,14 +24,18 @@ import {
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import {AppAsyncStorage, CartManager, fetchData} from '../../utils';
+import {CartActionTypes} from '../../reducers';
+import {AppAsyncStorage, CartManager, fetchData, Toaster} from '../../utils';
+import {onUserLoginZego} from '../../zego/common';
 import {useAuthActions} from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const {authState, cartState, cartDispatch} = useAppContext();
-
+  const {updateOrderMessage, setUser, setNotifications} = useAppContext();
+  const {authState} = useAuthContext();
+  const {cartState, cartDispatch} = useCartContext();
+  const {allProducts, setAllProducts} = useProductContext();
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const [allProducts, setAllProducts] = useState([]);
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -28,8 +44,12 @@ export const useHomeContainer = () => {
   const [positions, setPositions] = useState({});
   const [currentCategory, setCurrentCategory] = useState(null);
   const lastCategoryRef = useRef(currentCategory);
-
   const [needToPay, setNeedToPay] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [loadingMerchant, setLoadingMerchant] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [loadingNoti, setLoadingNoti] = useState(false);
 
   const {onNavigateLogin} = useAuthActions();
 
@@ -37,53 +57,88 @@ export const useHomeContainer = () => {
     navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 
-  const onClickAddToCart = async productId => {
+  const fetchProfile = async enableLoading => {
     try {
-      const isTokenValid = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.accessToken,
-      );
-
-      if (isTokenValid && authState.lastName) {
-        navigation.navigate(ShoppingGraph.ProductDetailShort, {productId});
-      } else {
-        onNavigateLogin();
+      if (enableLoading) {
+        setLoadingProfile(true);
       }
-    } catch (error) {
-      console.log('Error', error);
-    }
-  };
 
-  const fetchOrderHistory = async () => {
-    try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid();
-      if (isTokenValid) {
-        const response = await getOrdersByStatus();
-        const awaitingPayments = response.filter(
-          o => o.status === OrderStatus.AWAITING_PAYMENT.value,
-        );
+      if (authState.lastName) {
+        const response = await getProfile();
 
-        if (awaitingPayments.length > 0) {
-          setNeedToPay(true);
+        if (response) {
+          setUser(response);
         }
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      if (enableLoading) {
+        setLoadingProfile(false);
+      }
     }
   };
-  useFocusEffect(
-    useCallback(() => {
-      fetchOrderHistory();
-    }, []),
-  );
 
   useEffect(() => {
-    if (allProducts.length === 0) {
-      fetchData(getAllProducts, setAllProducts).then(r => {});
+    const fetchNotifications = async () => {
+      try {
+        if (authState.lastName) {
+          setLoadingNoti(true);
+          const response = await getNotifications();
+          if (response) {
+            setNotifications(response);
+          }
+        }
+      } catch (error) {
+        Toaster.show('Error', error);
+      } finally {
+        setLoadingNoti(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
+  useEffect(() => {
+    fetchProfile(true);
+  }, []);
+
+  const onRefresh = async () => {
+    // Giả lập delay để mô phỏng loading
+    try {
+      setRefreshing(true);
+      const response = await getAllProducts();
+      console.log('refreshing');
+      if (response) {
+        setAllProducts(response);
+      }
+    } catch (error) {
+      Toaster.show('Error', error);
+    } finally {
+      setRefreshing(false);
     }
-  }, [allProducts.length]);
+  };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoadingProducts(true);
+        const response = await getAllProducts();
+
+        if (response) {
+          setAllProducts(response);
+        }
+      } catch (error) {
+        Toaster.show('Error', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const getMerchantLocation = async () => {
+      setLoadingMerchant(true);
       try {
         setMerchantLocal(
           await AppAsyncStorage.readData(
@@ -92,15 +147,85 @@ export const useHomeContainer = () => {
         );
       } catch (error) {
         console.log('error', error);
+      } finally {
+        setLoadingMerchant(false);
       }
     };
 
     getMerchantLocation();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchOrderHistory();
+    }, []),
+  );
+
+  useEffect(() => {
+    // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
+    // load lần sau, không cần loading
+    if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
+      fetchProfile(false);
+    }
+  }, [updateOrderMessage.status]);
+
+  const onClickAddToCart = async productId => {
+    if (authState.lastName) {
+      try {
+        setLoadingDetail(true);
+        const detail = await getProductDetail(productId);
+        if (detail) {
+          console.log('detail', JSON.stringify(detail, null, 3));
+          if (detail.variant.length > 1 || detail.topping.length > 0) {
+            navigation.navigate(ShoppingGraph.ProductDetailShort, {
+              product: detail,
+            });
+          } else {
+            console.log('addTocart');
+            await CartManager.addToCart(
+              detail, // product
+              detail.variant[0], // variant
+              [], // toppings
+              detail.sellingPrice, // totalPrice
+              1, // quantity
+              cartDispatch, // dispatch
+            );
+          }
+        }
+      } catch (error) {
+        console.log('Error fetchProductDetail:', error);
+      } finally {
+        setLoadingDetail(false);
+      }
+    } else {
+      onNavigateLogin();
+    }
+  };
+
+  const fetchOrderHistory = async () => {
+    try {
+      if (authState.lastName) {
+        const response = await getOrdersByStatus();
+        console.log('focus');
+        const awaitingPayments = response.filter(
+          o => o.status === OrderStatus.AWAITING_PAYMENT.value,
+        );
+
+        if (awaitingPayments.length > 0) {
+          setNeedToPay(true);
+        } else {
+          setNeedToPay(false);
+        }
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const handleEditOption = option => {
-    setEditOption(option);
     setDialogShippingVisible(false);
+    setEditOption(option);
+
     if (option === 'Giao hàng') {
       navigation.navigate(UserGraph.SelectAddressScreen, {
         isUpdateOrderInfo: true,
@@ -113,39 +238,46 @@ export const useHomeContainer = () => {
     }
   };
 
-  const handleOptionSelect = async option => {
-    setSelectedOption(option);
+  const handleOptionSelect = option => {
     setDialogShippingVisible(false);
-    try {
-      if (option === 'Mang đi') {
-        await CartManager.updateOrderInfo(cartDispatch, {
+    setSelectedOption(option);
+
+    if (option === 'Mang đi') {
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           deliveryMethod: DeliveryMethod.PICK_UP.value,
           store: cartState?.storeSelect,
           storeInfo: {
             storeName: cartState?.storeInfoSelect?.storeName,
             storeAddress: cartState?.storeInfoSelect?.storeAddress,
           },
-        });
-      } else if (option === 'Giao hàng') {
-        await CartManager.updateOrderInfo(cartDispatch, {
+        },
+      });
+    } else if (option === 'Giao hàng') {
+      cartDispatch({
+        type: CartActionTypes.UPDATE_ORDER_INFO,
+        payload: {
           deliveryMethod: DeliveryMethod.DELIVERY.value,
           store: merchantLocal?._id,
           storeInfo: {
             storeName: merchantLocal?.name,
             storeAddress: merchantLocal?.storeAddress,
           },
-        });
-      }
-    } catch (error) {
-      console.log('Error', error);
+        },
+      });
     }
   };
 
   const handleScroll = useCallback(
     event => {
       const scrollY = event.nativeEvent.contentOffset.y;
+
       let closestCategory = 'Danh mục';
       let minDistance = Number.MAX_VALUE;
+
+      let minPos = Number.MAX_VALUE;
+      let firstCategoryId = null;
 
       Object.entries(positions).forEach(([categoryId, posY]) => {
         const distance = Math.abs(scrollY - posY);
@@ -154,26 +286,58 @@ export const useHomeContainer = () => {
           closestCategory =
             allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
         }
+
+        if (posY < minPos) {
+          minPos = posY;
+          firstCategoryId = categoryId;
+        }
       });
+
+      // Nếu cuộn lên trên danh mục đầu tiên
+      if (scrollY < minPos) {
+        if (lastCategoryRef.current !== 'Xin chào') {
+          lastCategoryRef.current = 'Xin Chào';
+          setCurrentCategory('Xin chào');
+        }
+        return;
+      }
 
       if (closestCategory !== lastCategoryRef.current) {
         lastCategoryRef.current = closestCategory;
         setCurrentCategory(closestCategory);
       }
     },
-
     [positions, allProducts],
   );
-
-  const handleCloseDialog = () => {
-    setDialogShippingVisible(false);
-  };
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
       setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
+
+  const handleCloseDialog = () => {
+    setDialogShippingVisible(false);
+  };
+
+  const initZego = async () => {
+    // const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
+    if (authState.lastName && authState.phoneNumber) {
+      await onUserLoginZego(
+        authState.phoneNumber,
+        authState.lastName,
+        navigation,
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (authState.lastName) {
+      initZego();
+    } else {
+      console.log('Khong the init Zego');
+    }
+  }, [authState.lastName]);
 
   const navigateOrderHistory = () => {
     navigation.navigate(OrderGraph.OrderHistoryScreen);
@@ -184,7 +348,7 @@ export const useHomeContainer = () => {
   };
 
   const navigateAdvertising = () => {
-    navigation.navigate(AppGraph.AdvertisingScreen);
+    navigation.navigate(AppGraph.HtmlScreen);
   };
   const navigateSeedScreen = () => {
     navigation.navigate(VoucherGraph.SeedScreen);
@@ -198,7 +362,13 @@ export const useHomeContainer = () => {
     selectedOption,
     currentCategory,
     needToPay,
-    allProducts,
+    loadingMerchant,
+    loadingProducts,
+    loadingProfile,
+    loadingNoti,
+    loadingDetail,
+    refreshing,
+    onRefresh,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,

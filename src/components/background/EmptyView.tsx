@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     gap: 20,
-    backgroundColor: colors.transparent
+    backgroundColor: colors.white
   },
   emptyImage: {
     width: width / 1.5,

@@ -7,16 +7,18 @@ import { colors, GLOBAL_KEYS } from '../../../constants';
 
 interface InputContainerProps {
   handleSend: () => Promise<void>;
+  setInputText: React.Dispatch<any>,
+  inputText: any
 }
-export const InputContainer: React.FC<InputContainerProps> = ({handleSend}) => {
+export const InputContainer: React.FC<InputContainerProps> = ({handleSend, setInputText, inputText}) => {
 
-  const [inputText, setInputText] = React.useState('');
+
   return (
     <Row style={styles.inputRow}>
       <TextInput
         value={inputText}
         onChangeText={setInputText}
-        placeholder="Nhắn tin"
+        placeholder="Trò chuyện"
         returnKeyType="send"
         style={styles.input}
       />

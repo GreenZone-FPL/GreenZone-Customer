@@ -17,16 +17,20 @@ const requiredFieldsDelivery = [
   'fulfillmentDateTime',
   // 'totalPrice',
   'paymentMethod',
-  'shippingAddress',
+  'consigneeName',
+  'consigneePhone',
   'store',
+  'shippingAddress',
   'orderItems',
+  'latitude',
+  'longitude',
+  
 ];
 export const CartManager = (() => {
   const setupDeliveryOrder = cartState => {
     const deliveryOrder = {
       deliveryMethod: cartState.deliveryMethod,
       fulfillmentDateTime: cartState.fulfillmentDateTime,
-      note: cartState.note,
       totalPrice: cartState.totalPrice,
       paymentMethod: cartState.paymentMethod,
       consigneeName: cartState.consigneeName,
@@ -57,7 +61,6 @@ export const CartManager = (() => {
     const pickupOrder = {
       deliveryMethod: cartState.deliveryMethod,
       fulfillmentDateTime: cartState.fulfillmentDateTime,
-      note: cartState.note,
       totalPrice: cartState.totalPrice,
       paymentMethod: cartState.paymentMethod,
       store: cartState.store,
@@ -209,10 +212,8 @@ export const CartManager = (() => {
         type: CartActionTypes.UPDATE_ORDER_ITEMS,
         payload: cart.orderItems,
       });
-
   
       Toaster.show('Thêm vào giỏ hàng thành công');
-
 
       await AppAsyncStorage.storeData('CART', cart);
 
@@ -221,6 +222,51 @@ export const CartManager = (() => {
       console.log('Error addToCart', error);
     }
   };
+
+  const updateCartItem = async (itemId, updatedData, cartDispatch) => {
+    try {
+      const cart = await AppAsyncStorage.readData('CART', {});
+      const items = cart.orderItems;
+      const index = items.findIndex(i => i.itemId === itemId);
+      if (index === -1) return;
+  
+      const updatedItem = { ...items[index], ...updatedData };
+      const toppings = updatedItem.toppingItems?.sort((a, b) => a._id.localeCompare(b._id)) || [];
+  
+      const isSameToppings = (a, b) => {
+        if (a.length !== b.length) return false;
+        const aIds = a.map(t => t._id).sort();
+        const bIds = b.map(t => t._id).sort();
+        return JSON.stringify(aIds) === JSON.stringify(bIds);
+      };
+  
+      const dupIndex = items.findIndex((i, idx) =>
+        idx !== index &&
+        i.productId === updatedItem.productId &&
+        i.variant === updatedItem.variant &&
+        isSameToppings(i.toppingItems || [], toppings)
+      );
+  
+      if (dupIndex !== -1 && index !== dupIndex) {
+        items[dupIndex].quantity += updatedItem.quantity;
+        items.splice(index, 1);
+      } else {
+        items[index] = { ...updatedItem, toppingItems: toppings };
+      }
+  
+      cart.orderItems = [...items];
+      await AppAsyncStorage.storeData('CART', cart);
+      cartDispatch({ type: CartActionTypes.UPDATE_ORDER_ITEMS, payload: cart.orderItems });
+  
+      Toaster.show('Cập nhật giỏ hàng thành công');
+      return cart;
+    } catch (e) {
+      console.log('Error updateCartItem:', e);
+    }
+  };
+  
+  
+  
 
   const removeFromCart = async (itemId, cartDispatch) => {
     try {
@@ -265,29 +311,7 @@ export const CartManager = (() => {
     }
   };
 
-  const updateCartItem = async (itemId, updatedProductData, cartDispatch) => {
-    try {
-      let cart = await AppAsyncStorage.readData('CART', {});
-
-      const itemIndex = cart.orderItems.findIndex(
-        item => item.itemId === itemId,
-      );
-      if (itemIndex !== -1) {
-        cart.orderItems[itemIndex] = {
-          ...cart.orderItems[itemIndex],
-          ...updatedProductData,
-        };
-      }
-
-      await AppAsyncStorage.storeData('CART', cart);
-      cartDispatch({ type: CartActionTypes.UPDATE_ORDER_INFO, payload: cart });
-
-      Toaster.show('Cập nhật giỏ hàng thành công');
-      return cart;
-    } catch (error) {
-      console.log('Error updateCartItem:', error);
-    }
-  };
+ 
 
   return {
     setupDeliveryOrder,

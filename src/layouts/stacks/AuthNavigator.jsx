@@ -1,19 +1,20 @@
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import {useAppContext} from '../../context/appContext';
+import { useAuthContext } from '../../context';
 import LoginScreen from '../../screens/auth/LoginScreen';
 import RegisterScreen from '../../screens/auth/RegisterScreen';
 import VerifyOTPScreen from '../../screens/auth/VerifyOTPScreen';
-import {AuthGraph, MainGraph} from '../graphs';
-import MainNavigation from '../MainNavigation';
+import BottomTab from '../BottomTab';
+import { AuthGraph, BottomGraph } from '../graphs';
 
 const AuthStack = createNativeStackNavigator();
 
 const AuthNavigator = () => {
-  const {authState} = useAppContext(); // Lấy trạng thái đăng nhập
+  const { authState } = useAuthContext();
+
 
   return (
-    <AuthStack.Navigator screenOptions={{headerShown: false}}>
+    <AuthStack.Navigator screenOptions={{ headerShown: false }}>
       {authState.needRegister ? (
         <AuthStack.Screen
           name={AuthGraph.RegisterScreen}
@@ -43,7 +44,7 @@ const AuthNavigator = () => {
       ) : null}
 
       {/* Luôn thêm MainNavigation vào AuthStack để reset() hoạt động */}
-      <AuthStack.Screen name={MainGraph.graphName} component={MainNavigation} />
+      <AuthStack.Screen name={BottomGraph.graphName} component={BottomTab} />
     </AuthStack.Navigator>
   );
 };

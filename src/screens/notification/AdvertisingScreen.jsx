@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View, FlatList, Image, Dimensions } from 'react-native';
-import React, { useState } from 'react';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { LightStatusBar, NormalHeader } from '../../components';
 import { Tab, TabView } from '@rneui/themed';
+import React, { useState } from 'react';
+import { Dimensions, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-paper';
-import { Row } from '../../components';
+import { Column, CustomTabView, LightStatusBar, NormalHeader, Row } from '../../components';
+import { colors, GLOBAL_KEYS } from '../../constants';
+import { Pressable } from 'react-native';
+import { Toaster } from '../../utils';
 
 
 const width = Dimensions.get('window').width;
@@ -26,59 +27,62 @@ const AdvertisingScreen = ({ navigation }) => {
             <LightStatusBar />
             <NormalHeader title="Khám phá thêm" onLeftPress={() => navigation.goBack()} />
 
-            {/* Tabs */}
-            <View style={{margin: 16}}>
-                <Tab
-                    value={index}
-                    onChange={setIndex}
-                    indicatorStyle={styles.indicator}>
-                    {categories.map((category, i) => (
-                        <Tab.Item
-                            key={i}
-                            title={category}
-                            titleStyle={styles.tabTitle} />
-                    ))}
-                </Tab>
-            </View>
-            
 
-            {/* Tab View */}
-            <View style={{flex: 1}}>
-                <TabView
-                    value={index}
-                    onChange={setIndex}
-                    animationType="spring">
-                    {categories.map((category, i) => (
-                        <TabView.Item
-                            key={i}
-                            style={styles.listContainer}>
-                            <FlatList
-                                data={filterAdsByType(category)}
-                                keyExtractor={(item) => item.id.toString()}
-                                numColumns={2}
-                                columnWrapperStyle={{gap: 10 , width: '50%', alignItems: 'center'}}
-                                style
-                                renderItem={({ item }) => (
-                                    <View style={{width: "95%", marginVertical: 6}}>
-                                        <Image source={item.image} style={styles.image} />
-                                        <Text style={styles.title} numberOfLines={2} >{item.title}</Text>
-                                        <Text style={styles.type}>{item.type}</Text>
-                                        <Row>
-                                            <Icon
-                                                source="calendar-month-outline"
-                                                size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
-                                                color={colors.primary}
-                                            />
-                                            <Text style={styles.date}>{item.date}</Text>
-                                        </Row>
-                                    </View>
-                                )}
-                            />
-                        </TabView.Item>
-                    ))}
-                </TabView>
-            </View>
-         
+
+            <Tab
+                value={index}
+                scrollable
+                style={{ marginHorizontal: 16 }}
+                onChange={setIndex}
+                indicatorStyle={styles.indicator}>
+                {categories.map((category, i) => (
+                    <Tab.Item
+                        key={i}
+                        title={category}
+                        titleStyle={styles.tabTitle} />
+                ))}
+            </Tab>
+
+
+
+            <TabView
+                value={index}
+                onChange={setIndex}
+                style={{ flex: 1 }}
+                animationType="spring">
+                {categories.map((category, i) => (
+                    <TabView.Item
+                        key={i}
+                        style={styles.listContainer}>
+                        <FlatList
+                            data={filterAdsByType(category)}
+                            keyExtractor={(item) => item.id.toString()}
+                            numColumns={2}
+                            columnWrapperStyle={{ gap: 16, width: '50%', alignItems: 'center' }}
+                            style
+                            renderItem={({ item }) => (
+                                <Pressable
+                                    onPress={() => Toaster.show('Tính năng đang phát triển')}
+                                    style={{ width: "95%", marginBottom: 16, gap: 5 }}>
+                                    <Image source={item.image} style={styles.image} />
+                                    <Text style={styles.title} numberOfLines={2} >{item.title}</Text>
+                                    <Text style={styles.type}>{item.type}</Text>
+                                    <Row>
+                                        <Icon
+                                            source="calendar-month-outline"
+                                            size={GLOBAL_KEYS.ICON_SIZE_DEFAULT}
+                                            color={colors.yellow700}
+                                        />
+                                        <Text style={styles.date}>{item.date}</Text>
+                                    </Row>
+                                </Pressable>
+                            )}
+                        />
+                    </TabView.Item>
+                ))}
+            </TabView>
+
+
         </View>
     );
 };
@@ -95,21 +99,21 @@ const ListAdvertising = [
         id: '2',
         title: 'Giảm 50% combo Trà Sữa Trân Châu Hoàng Kim',
         image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-        type: '#Ưu đãi đặc biệt', 
+        type: '#Ưu đãi đặc biệt',
         date: '03/02'
     },
     {
         id: '3',
         title: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
         image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-        type: '#Ưu đãi đặc biệt', 
+        type: '#Ưu đãi đặc biệt',
         date: '03/02'
     },
     {
         id: '4',
         title: 'Combo 2 Trà Sữa Trân Châu Hoàng Kim',
         image: require('../../assets/images/imgae_product_combo/image_combo_2_milk_tea.png'),
-        type: '#Ưu đãi đặc biệt', 
+        type: '#Ưu đãi đặc biệt',
         date: '03/02'
     },
     {
@@ -161,14 +165,13 @@ const styles = StyleSheet.create({
         height: 3,
     },
     tabTitle: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        fontWeight: 'bold',
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        fontWeight: '500',
         color: colors.black,
     },
     listContainer: {
         padding: 10,
         marginHorizontal: 8,
-        justifyContent: 'space-between',
         flex: 1
     },
     image: {
@@ -180,15 +183,16 @@ const styles = StyleSheet.create({
         fontSize: GLOBAL_KEYS.TE,
         fontWeight: 'bold',
         marginTop: 8,
-        height: 40
+        height: 40,
+        color: colors.black
     },
     type: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        color: 'gray',
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.gray900,
     },
     date: {
-        fontSize: GLOBAL_KEYS.TEXT_SIZE_SMALL,
-        color: colors.gray400,
+        fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
+        color: colors.brown700,
         marginTop: 4,
     },
 });

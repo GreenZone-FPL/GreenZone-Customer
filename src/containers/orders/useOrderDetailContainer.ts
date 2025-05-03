@@ -5,12 +5,11 @@ import {
 } from '@react-navigation/native';
 import {useCallback, useEffect, useState} from 'react';
 import {BackHandler} from 'react-native';
-import {cancelOrder, getOrderDetail} from '../../axios';
-import {OnlineMethod, OrderStatus} from '../../constants';
+import {getOrderDetail} from '../../axios';
+import {OnlineMethod} from '../../constants';
 import {useAppContext} from '../../context/appContext';
 import {onlineMethods} from '../../screens/checkout/checkout-components';
-import {PaymentMethodItem} from '../../type/checkout';
-import {Toaster} from '../../utils';
+import {PaymentMethodItem} from '../../type-interface/checkout';
 
 // ✅ Type cho navigation
 type ShoppingGraphParamList = {
@@ -35,7 +34,7 @@ export const useOrderDetailContainer = (orderId: string) => {
     useState(false);
   const [cancelDialogVisible, setCancelDialogVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<ShoppingGraphParamList>>();
-  const {updateOrderMessage, setUpdateOrderMessage} = useAppContext();
+  const {updateOrderMessage} = useAppContext();
 
   useEffect(() => {
     fetchOrderDetail();
@@ -89,32 +88,7 @@ export const useOrderDetailContainer = (orderId: string) => {
     }, [navigation]),
   );
 
-  const onCancelOrder = async () => {
-    try {
-      if (!orderDetail) return;
-
-      const response = await cancelOrder(
-        orderDetail._id,
-        'Đổi ý không muốn mua nữa',
-      );
-      if (response) {
-        Toaster.show('Hủy đơn hàng thành công');
-        await fetchOrderDetail();
-      }
-    } catch (error) {
-      console.error('Cancel order error:', error);
-    } finally {
-      setCancelDialogVisible(false);
-    }
-  };
-
-  const callBackAfterCancel = async () => {
-    setUpdateOrderMessage({
-      visible: true,
-      orderId: orderId,
-      message: 'Đơn hàng đã bị hủy',
-      status: OrderStatus.CANCELLED.value,
-    });
+  const callBackAfterCancel = async (): Promise<void> => {
     await fetchOrderDetail();
   };
 

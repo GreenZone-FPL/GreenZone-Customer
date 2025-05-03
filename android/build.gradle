@@ -18,7 +18,23 @@ buildscript {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
-           classpath ("com.google.gms:google-services:4.4.2")
+        classpath ("com.google.gms:google-services:4.4.2")
+    }
+}
+
+// Ép buộc phiên bản Kotlin cho 'react-native-hmac'
+subprojects { subproject ->
+    if (subproject.name == 'react-native-hmac') {
+        subproject.buildscript {
+            ext.kotlin_version = '1.9.24'
+        }
+        subproject.configurations.all {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.group == 'org.jetbrains.kotlin') {
+                    details.useVersion '1.9.24'
+                }
+            }
+        }
     }
 }
 

@@ -1,117 +1,42 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
-  useReducer,
-  useState,
+  useState
 } from 'react';
-import { AppAsyncStorage } from '../utils';
-import {
-  authReducer,
-  authInitialState,
-  AuthActionTypes,
-} from '../reducers/authReducer';
-import {
-  cartReducer,
-  cartInitialState,
-  CartActionTypes,
-} from '../reducers/cartReducer';
-import { CartManager } from '../utils';
 
 
-export const AppContext = createContext();
-
-export let globalAuthDispatch = null;
+export const AppContext = createContext(); 
 
 export const AppContextProvider = ({ children }) => {
-  const [authState, authDispatch] = useReducer(authReducer, authInitialState);
-  const [cartState, cartDispatch] = useReducer(cartReducer, cartInitialState);
-
+ 
   const [updateOrderMessage, setUpdateOrderMessage] = useState({
     visible: false,
     order: null,
   });
-  const [showCallUI, setShowCallUI] = useState(true);
 
   const [activeOrders, setActiveOrders] = useState([]);
   const [merchantLocation, setMerchantLocation] = useState(null);
- 
+  const [user, setUser] = useState(0)
+  const [notifications, setNotifications] = useState([]);
 
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const isValid = await AppAsyncStorage.isTokenValid();
+  const [allProducts, setAllProducts] = useState([]);
 
-     
-      const user = await AppAsyncStorage.readData(
-        AppAsyncStorage.STORAGE_KEYS.user,
-      );
-      if (isValid && user) {
-
-
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: {
-            needLogin: false,
-            isLoggedIn: true,
-            lastName: user.lastName,
-            firstName: user.firstName,
-            needRegister: false,
-            phoneNumber: user.phoneNumber
-          },
-        });
-
-      } else {
-        // Không có accessToken, chưa đăng ký
-        authDispatch({
-          type: AuthActionTypes.LOGIN,
-          payload: { needLogin: false, isLoggedIn: false, needRegister: false },
-        });
-      }
-    };
-    checkLoginStatus();
-  }, []);
-
-  useEffect(() => {
-    globalAuthDispatch = authDispatch;
-
-    return () => {
-      globalAuthDispatch = null;
-    };
-  }, [authState]);
-
- 
-
-  useEffect(() => {
-    const readCart = async () => {
-      try {
-        const cart = await CartManager.readCart();
-        cartDispatch({ type: CartActionTypes.READ_CART, payload: cart });
-      } catch (error) {
-        console.log('Error loading cart', error);
-      }
-    };
-    readCart();
-
-    return () => { };
-  }, []);
-
- 
 
   return (
     <AppContext.Provider
       value={{
-        authState,
-        authDispatch,
-        cartState,
-        cartDispatch,
         updateOrderMessage,
         setUpdateOrderMessage,
         activeOrders,
         setActiveOrders,
         merchantLocation,
         setMerchantLocation,
-        showCallUI,
-        setShowCallUI
+        user,
+        setUser,
+        notifications,
+        setNotifications,
+        allProducts,
+        setAllProducts
       }}>
       {children}
     </AppContext.Provider>

@@ -1,14 +1,13 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import {FlashList} from '@shopify/flash-list';
+
+import React, {useCallback} from 'react';
 import {
-  FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  Image,
-  Pressable,
+  RefreshControl,
 } from 'react-native';
 import {
   AuthContainer,
@@ -17,28 +16,38 @@ import {
   DialogShippingMethod,
   HeaderWithBadge,
   LightStatusBar,
+  NormalLoading,
   NormalText,
-  NotificationList,
   ProductsGrid,
   ProductsListHorizontal,
   TitleText,
 } from '../../components';
 import {colors, GLOBAL_KEYS} from '../../constants';
 import {useAuthActions, useHomeContainer} from '../../containers';
-import {useAppContext} from '../../context/appContext';
-import useSaveLocation from '../../utils/useSaveLocation';
-import {CategoryView} from './HomeComponents/CategoryView';
-import {AppGraph} from '../../layouts/graphs';
+import {useAuthContext, useCartContext, useProductContext} from '../../context';
+import {useLocation} from '../../utils';
+import {AIAssistant, CategoryView} from './HomeComponents';
+import {ArticlesList} from '../articles/ArticlesList';
+import {LogBox} from 'react-native';
+
+LogBox.ignoreLogs([
+  'VirtualizedLists should never be nested inside plain ScrollViews',
+]);
 
 const HomeScreen = () => {
-  const {cartState, authState} = useAppContext();
+  const {authState} = useAuthContext();
+  const {cartState} = useCartContext();
+  const {allProducts} = useProductContext();
 
   const {
     dialogShippingVisible,
     selectedOption,
     currentCategory,
     needToPay,
-    allProducts,
+    loadingProducts,
+    loadingDetail,
+    refreshing,
+    onRefresh,
     handleEditOption,
     setDialogShippingVisible,
     handleScroll,
@@ -49,24 +58,33 @@ const HomeScreen = () => {
     onClickAddToCart,
     navigateCheckOut,
     navigateOrderHistory,
-    navigateAdvertising,
     navigateSeedScreen,
   } = useHomeContainer();
 
   const {onNavigateLogin} = useAuthActions();
-  useSaveLocation();
-  const navigation = useNavigation();
+
+  useLocation();
+
+  const onItemClick = useCallback(
+    productId => {
+      onNavigateProductDetailSheet(productId);
+    },
+    [onNavigateProductDetailSheet],
+  );
+
+  const onIconClick = useCallback(
+    async productId => {
+      await onClickAddToCart(productId);
+    },
+    [onClickAddToCart],
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
+      {loadingDetail && <NormalLoading visible={loadingDetail} />}
       <HeaderWithBadge
-        title={
-          authState.isLoggedIn
-            ? currentCategory
-              ? currentCategory
-              : 'Xin chào'
-            : 'Chào bạn mới'
-        }
+        title={currentCategory}
         isHome={false}
         enableBadge={!!authState.lastName}
       />
@@ -75,6 +93,14 @@ const HomeScreen = () => {
         onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            colors={[colors.primary]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
+        }
         style={styles.containerContent}>
         {authState.lastName ? (
           <BarcodeUser showPoints={true} onPress={navigateSeedScreen} />
@@ -93,42 +119,31 @@ const HomeScreen = () => {
           </TouchableOpacity>
         )}
 
-        {allProducts.length > 0 && (
-          <ProductsListHorizontal
-            title="Sản phẩm mới"
-            products={allProducts
-              .flatMap(category => category.products)
-              .slice(0, 10)}
-            onItemClick={productId => {
-              onNavigateProductDetailSheet(productId);
-            }}
-            onIconClick={productId => {
-              onClickAddToCart(productId);
-            }}
-          />
-        )}
-        <NotificationList onSeeMorePress={navigateAdvertising} />
+        <ProductsListHorizontal
+          loading={loadingProducts}
+          title="Sản phẩm mới"
+          products={allProducts
+            .flatMap(category => category.products)
+            .slice(4, 12)}
+          onItemClick={onItemClick}
+          onIconClick={onIconClick}
+        />
+        <ArticlesList />
 
-        <FlatList
+        <FlashList
           data={allProducts}
+          estimatedItemSize={900}
           keyExtractor={item => item._id}
           scrollEnabled={false}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          nestedScrollEnabled
-          initialNumToRender={10} // Chỉ render 10 item đầu tiên
-          removeClippedSubviews={true} // Tắt item khi ra khỏi màn hình
+          nestedScrollEnabled={true}
+          removeClippedSubviews={true}
           renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsGrid
                 title={item.name}
                 products={item.products}
-                onItemClick={productId => {
-                  onNavigateProductDetailSheet(productId);
-                }}
-                onIconClick={productId => {
-                  onClickAddToCart(productId);
-                }}
+                onItemClick={onItemClick}
+                onIconClick={onIconClick}
               />
             </View>
           )}
@@ -163,14 +178,7 @@ const HomeScreen = () => {
         onPressCart={navigateCheckOut}
       />
 
-      <Pressable
-        onPress={() => navigation.navigate(AppGraph.AIChatScreen)}
-        style={styles.chat}>
-        <Image
-          source={require('../../assets/images/robot.png')}
-          style={styles.imageRobot}
-        />
-      </Pressable>
+      <AIAssistant />
     </SafeAreaView>
   );
 };
@@ -192,6 +200,7 @@ const styles = StyleSheet.create({
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
   },
   btnAwaitingPayments: {
+    marginBottom: 16,
     marginHorizontal: 16,
     backgroundColor: colors.yellow300,
     paddingHorizontal: 24,
@@ -200,8 +209,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   imageRobot: {
-    width: '100%',
-    height: '100%',
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
   },
   chat: {
     width: 70,

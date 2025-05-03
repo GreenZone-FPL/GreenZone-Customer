@@ -19,9 +19,8 @@ import { updatePaymentStatus } from '../../../axios';
 import { NormalLoading } from '../../../components';
 import ToastDialog from '../../../components/dialogs/ToastDialog';
 import { colors } from '../../../constants';
-import { useAppContext } from '../../../context/appContext';
-import { MainGraph } from '../../../layouts/graphs';
-import { AppAsyncStorage, CartManager, Toaster } from '../../../utils';
+import { BottomGraph } from '../../../layouts/graphs';
+import { Toaster } from '../../../utils';
 
 const PayOsScreen = () => {
   const clientID = 'fe4d0414-d208-41a0-9f57-6de694aac3e6';
@@ -53,7 +52,7 @@ const PayOsScreen = () => {
               navigation.reset({
                 index: 1,
                 routes: [
-                  { name: MainGraph.graphName },
+                  { name: BottomGraph.graphName },
                   { name: 'OrderDetailScreen', params: { orderId } },
                 ],
               });
@@ -162,7 +161,7 @@ const PayOsScreen = () => {
       navigation.reset({
         index: 1,
         routes: [
-          { name: MainGraph.graphName },
+          { name: BottomGraph.graphName },
           { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });
@@ -171,7 +170,7 @@ const PayOsScreen = () => {
       navigation.reset({
         index: 1,
         routes: [
-          { name: MainGraph.graphName },
+          { name: BottomGraph.graphName },
           { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });

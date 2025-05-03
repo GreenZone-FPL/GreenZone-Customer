@@ -1,7 +1,9 @@
 import React from 'react';
 import {
+  Dimensions,
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,42 +13,56 @@ import { Icon } from 'react-native-paper';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { TextFormatter } from '../../utils';
 import { Row } from '../containers/Row';
+import { SkeletonBox } from '../../skeletons';
+import { Column } from '../containers/Column';
 
 export const ProductsListHorizontal = ({
+  loading = false,
   title = 'Combo 69K + Freeship',
   onItemClick,
   onIconClick,
   products,
 }) => {
 
+  if (loading) {
+    return (
+      <Column style={styles.container}>
+        <SkeletonBox width="45%" height={25} borderRadius={12} />
+        <Row style={{ gap: 16 }}>
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+          <SkeletonBox width="45%" height={250} borderRadius={12} />
+        </Row>
+      </Column>
+    )
+  }
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.headerTextContainer}>
-          <Text style={styles.headerText}>{title}</Text>
-          {/* <Text style={styles.timeText}>08:00:00</Text> */}
-        </View>
-        <FlatList
-          data={products}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({ item }) => {
+    <Column style={styles.container}>
 
-            return (
-              <ItemProduct
-                item={item}
-                onItemClick={() => onItemClick(item._id)}
-                onIconClick={() => onIconClick(item._id)}
-              />
-            );
-          }}
-          horizontal={true}
-          contentContainerStyle={{
-            gap: GLOBAL_KEYS.GAP_DEFAULT,
-          }}
-          scrollEnabled={true}
-        />
+      <View style={styles.headerTextContainer}>
+        <Text style={styles.headerText}>{title}</Text>
       </View>
-    </View>
+      <FlatList
+        data={products}
+        keyExtractor={item => item._id.toString()}
+        renderItem={({ item }) => {
+
+          return (
+            <ItemProduct
+              item={item}
+              onItemClick={() => onItemClick(item._id)}
+              onIconClick={() => onIconClick(item._id)}
+            />
+          );
+        }}
+        horizontal={true}
+        contentContainerStyle={{
+          gap: GLOBAL_KEYS.GAP_DEFAULT,
+        }}
+        scrollEnabled={true}
+      />
+
+    </Column>
   );
 };
 
@@ -66,9 +82,9 @@ const ItemProduct = ({ item, onItemClick, onIconClick }) => {
         </Text>
       </Row>
 
-      <TouchableOpacity onPress={onIconClick} style={styles.addButtonContainer}>
+      <Pressable onPress={onIconClick} style={styles.addButtonContainer}>
         <Icon source="plus" color={colors.primary} size={22} />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };
@@ -77,10 +93,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.white,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
-  },
-  headerContainer: {
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
-    margin: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
+    marginBottom: 16
   },
   headerTextContainer: {
     flexDirection: 'row',
@@ -103,7 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemImage: {
-    width: 180,
+    width: (Dimensions.get('window').width - 48) / 2,
     height: 245,
     resizeMode: 'cover',
     opacity: 0.7,

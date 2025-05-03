@@ -10,11 +10,12 @@ import OrderStackScreen from './stacks/OrderStackScreen';
 import ProfileStackScreen from './stacks/ProfileStackScreen';
 import VoucherStackScreen from './stacks/VoucherStackScreen';
 
-const BottomTab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
-const MainNavigation = () => {
+const BottomTab = () => {
+
   return (
-    <BottomTab.Navigator
+    <Tab.Navigator
       initialRouteName={MainGraph.HomeStackScreen}
       screenOptions={({route}) => ({
         headerShown: false,
@@ -75,28 +76,28 @@ const MainNavigation = () => {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.gray700,
       })}>
-      <BottomTab.Screen
+      <Tab.Screen
         name={MainGraph.HomeStackScreen}
         component={HomeStackScreen}
       />
-      <BottomTab.Screen
+      <Tab.Screen
         name={MainGraph.OrderStackScreen}
         component={OrderStackScreen}
       />
-      <BottomTab.Screen
+      <Tab.Screen
         name={MainGraph.MerchantStackScreen}
         component={MerchantStackScreen}
       />
-      <BottomTab.Screen
+      <Tab.Screen
         name={MainGraph.VoucherStackScreen}
         component={VoucherStackScreen}
       />
-      <BottomTab.Screen
+      <Tab.Screen
         name={MainGraph.ProfileStackScreen}
         component={ProfileStackScreen}
       />
-    </BottomTab.Navigator>
+    </Tab.Navigator>
   );
 };
 
-export default MainNavigation;
+export default BottomTab;

@@ -2,23 +2,21 @@ import { Image, View } from 'react-native';
 
 import * as ZIM from 'zego-zim-react-native';
 
-import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 import ZegoUIKitPrebuiltCallService, {
   ZegoInvitationType,
   ZegoMenuBarButtonName,
 } from '@zegocloud/zego-uikit-prebuilt-call-rn';
+import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
-import { OrderGraph } from '../layouts/graphs';
-import { getProfile } from '../axios';
 
 const notificationStyle = 'CustomView';
 
 export const onUserLoginZego = async (userID, userName, navigation) => {
   console.log('onUserLoginZego')
   try {
-    const profile = await getProfile();
-    const avatar = profile.avatar;
+    const avatar = 'https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?w=360'
+
     await ZegoUIKitPrebuiltCallService.init(
       KeyCenter.appID,
       KeyCenter.appSign,
@@ -124,9 +122,11 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 reason,
                 duration,
               );
+
               ZegoUIKitPrebuiltCallService.hangUp();
-            
-              navigation.navigate(OrderGraph.OrderHistoryScreen);
+
+              // navigation.navigate(AppGraph.OrderHistoryScreen)
+              navigation.goBack()
             },
 
             timingConfig: {
@@ -141,27 +141,30 @@ export const onUserLoginZego = async (userID, userName, navigation) => {
                 }
               },
             },
+
             topMenuBarConfig: {
               buttons: [
                 ZegoMenuBarButtonName.minimizingButton,
                 // ZegoMenuBarButtonName.showMemberListButton
               ],
             },
+
             bottomMenuBarConfig: {
               buttons: [
-                ZegoMenuBarButtonName.toggleCameraButton,
-                ZegoMenuBarButtonName.toggleMicrophoneButton,
+                // ZegoMenuBarButtonName.toggleCameraButton,
+                // ZegoMenuBarButtonName.toggleMicrophoneButton,
                 ZegoMenuBarButtonName.hangUpButton, // Đây là nút tắt cuộc gọi
               ],
             },
 
-            // onWindowMinimized: () => {
-            //   console.log('[Demo]CallInvitation onWindowMinimized');
-            //   navigation.navigate(OrderGraph.OrderHistoryScreen);
-            // },
+            onWindowMinimized: () => {
+              console.log('[Demo]CallInvitation onWindowMinimized');
+              // navigation.navigate(OrderGraph.OrderHistoryScreen);
+            },
+
             onWindowMaximized: () => {
               console.log('[Demo]CallInvitation onWindowMaximized');
-              navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
+              // navigation.navigate('ZegoUIKitPrebuiltCallInCallScreen');
             },
           };
         },

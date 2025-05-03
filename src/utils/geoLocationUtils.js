@@ -12,7 +12,7 @@ const REVERSE_GEOCODE_URL =
  */
 const reverseGeocode = async (lat, long) => {
   try {
-    const {data} = await axios.get(
+    const { data } = await axios.get(
       `${REVERSE_GEOCODE_URL}?at=${lat},${long}&lang=vi-VI&apikey=${API_KEY}`,
     );
     return data?.items?.[0] || null; // Trả về địa chỉ đầu tiên hoặc null nếu không có
@@ -29,12 +29,12 @@ const reverseGeocode = async (lat, long) => {
 const getCurrentLocation = () =>
   new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
-      async ({coords}) =>
+      async ({ coords }) =>
         coords
           ? resolve(await reverseGeocode(coords.latitude, coords.longitude))
           : reject('Không thể lấy tọa độ.'),
       reject,
-      {timeout: 5000},
+      { timeout: 5000 },
     );
   });
 
@@ -44,21 +44,21 @@ const getCurrentLocation = () =>
  * @param {Function} setLoading - Hàm cập nhật state loading
  */
 const fetchUserLocation = async (setCurrentLocation, setLoading) => {
-  setLoading(true);
+
 
   try {
     // await new Promise(resolve => setTimeout(resolve, 1000)); // Delay 1s
-
+    if (setLoading) setLoading(true);
     const location = await getCurrentLocation();
 
-    if (location) setCurrentLocation(location);
+    if (location && setCurrentLocation) setCurrentLocation(location);
 
     return location;
   } catch (error) {
     console.log('Lỗi khi lấy vị trí:', error);
   } finally {
-    setLoading(false);
+    if (setLoading) setLoading(false);
   }
 };
 
-export {fetchUserLocation, getCurrentLocation, reverseGeocode};
+export { fetchUserLocation, getCurrentLocation, reverseGeocode };

@@ -1,9 +1,8 @@
 import axios from 'axios';
-import { globalAuthDispatch } from '../context/appContext';
+
+import { globalAuthDispatch } from '../context';
 import { AuthActionTypes } from '../reducers';
 import { AppAsyncStorage } from '../utils';
-import { useNavigation } from '@react-navigation/native';
-import { AuthGraph } from '../layouts/graphs';
 
 export const baseURL = 'https://greenzone.motcaiweb.io.vn/';
 
@@ -31,6 +30,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   res => res.data,
   async err => {
+    console.log('errr', err)
     if (err.response.data.statusCode === 401) {
       console.log('401 log out');
 

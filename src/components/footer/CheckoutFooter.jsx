@@ -101,7 +101,7 @@ export const CheckoutFooter = ({
             </Row>
 
             <PrimaryButton
-                style={{ flex: 1, borderRadius: 16 }}
+                style={{ flex: 1, borderRadius: 30, paddingVertical: 13 }}
                 titleStyle={{ fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }}
                 title={`${buttonTitle} ${TextFormatter.formatCurrency(totalPrice)}`}
                 onPress={onButtonPress}

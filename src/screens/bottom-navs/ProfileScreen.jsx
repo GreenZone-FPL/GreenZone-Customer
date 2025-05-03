@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-paper';
 import { getProfile } from '../../axios';
 import {
-  AuthButton,
   AuthContainer,
   Column,
   HeaderWithBadge,
@@ -12,18 +11,18 @@ import {
   NormalLoading,
   NormalText,
   Row,
-  TitleText,
+  TitleText
 } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContainer, useAuthActions } from '../../containers';
-import { useAppContext } from '../../context/appContext';
-import { OrderGraph, UserGraph } from '../../layouts/graphs';
+import { useAuthActions } from '../../containers';
+import { useAuthContext } from '../../context';
+import { AppGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
 import { Toaster } from '../../utils';
 
 
 const ProfileScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
-  const { authState } = useAppContext();
+  const { authState } = useAuthContext();
   const { onLogout, onNavigateLogin } = useAuthActions();
 
   const handleProfile = async () => {
@@ -106,20 +105,24 @@ const ProfileScreen = ({ navigation }) => {
               onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)}
             />
 
-            <View style={styles.separator} />
+
             <CardUtiliti
               icon="chat-outline"
               title="Liên hệ góp ý"
               onPress={() => navigateIfLoggedIn(UserGraph.ContactScreen)}
             />
-            <View style={styles.separator} />
+
             <CardUtiliti
               icon="star-outline"
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
+             <CardUtiliti
+              icon="phone"
+              title="Agora Voice Call"
+              onPress={() => navigateIfLoggedIn(AppGraph.AgoraVoiceCall)}
+            />
 
-            <View style={styles.separator} />
             {authState.lastName && (
               <CardUtiliti icon="logout" title="Đăng xuất" onPress={handleLogout} />
             )}
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
   },
   utilities: {
     backgroundColor: colors.white,
-    padding: GLOBAL_KEYS.PADDING_SMALL,
+    paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     elevation: 1,
     borderWidth: 1,
@@ -195,8 +198,11 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 5,
+    paddingVertical: 10,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
+    borderBottomColor: colors.gray200,
+    borderBottomWidth: 1
+
   },
   leftSection: {
     flexDirection: 'row',

@@ -28,7 +28,7 @@ export const StatusText = ({ status }) => {
 
     return (
         <View style={[styles.statusContainer, { backgroundColor: statusStyle.backgroundColor }]}>
-            <NormalText style={{ color: statusStyle.color, fontWeight: '600' }} text={OrderStatus.getLabelByValue(status)} />
+            <NormalText style={{ color: statusStyle.color, fontWeight: '400' }} text={OrderStatus.getLabelByValue(status)} />
         </View>
     )
 }

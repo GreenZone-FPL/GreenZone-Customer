@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { globalAuthDispatch } from '../context/appContext';
+import { globalAuthDispatch } from '../context';
 import { AuthActionTypes } from '../reducers';
 import { AppAsyncStorage } from '../utils';
 

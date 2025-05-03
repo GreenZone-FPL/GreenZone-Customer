@@ -1,39 +1,38 @@
 import React from 'react';
 import {
-  Dimensions,
-  FlatList,
   Pressable,
-  StyleSheet,
-  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import {Icon} from 'react-native-paper';
-import {GLOBAL_KEYS, colors} from '../../../constants';
-import {TextFormatter} from '../../../utils';
-import {TitleText, NormalText, Column, Row} from '../../../components';
+import { Icon } from 'react-native-paper';
+import { Column, NormalText, TitleText } from '../../../components';
+import { GLOBAL_KEYS, colors } from '../../../constants';
+import { TextFormatter } from '../../../utils';
 
-const width = Dimensions.get('window').width;
 
-export const SuggestedList = ({onItemClick, onIconClick, products}) => {
+type SuggestedListProps = {
+  onItemClick: (id: string) => void;
+  onIconClick: (id: string) => void;
+  products: any[];
+};
+
+export const SuggestedList: React.FC<SuggestedListProps> = ({
+  onItemClick,
+  onIconClick,
+  products,
+}) => {
   return (
-    <Column style={styles.container}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={products}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        nestedScrollEnabled
-        initialNumToRender={10}
-        keyExtractor={item => item._id.toString()}
-        renderItem={({item}) => (
+    <Column>
+      {products.map((product: any) => {
+        return (
           <ItemProduct
-            item={item}
-            onItemClick={() => onItemClick(item._id)}
-            onIconClick={() => onIconClick(item._id)}
+            key={product._id}
+            item={product}
+            onItemClick={() => onItemClick(product._id)}
+            onIconClick={() => onIconClick(product._id)}
           />
-        )}
-        contentContainerStyle={{gap: 16}}
-      />
+        );
+      })}
     </Column>
   );
 };
@@ -52,12 +51,12 @@ const ItemProduct = ({item, onItemClick, onIconClick}) => {
 
         <NormalText
           style={styles.productPrice}
-          text={TextFormatter.formatCurrency(item.originalPrice)}
+          text={TextFormatter.formatCurrency(item.sellingPrice)}
         />
       </Column>
 
       <Pressable onPress={onIconClick} style={styles.addButton}>
-        <Icon source="plus" size={22} color={colors.white} />
+        <Icon source="plus" size={20} color={colors.primary} />
       </Pressable>
     </Pressable>
   );
@@ -65,24 +64,27 @@ const ItemProduct = ({item, onItemClick, onIconClick}) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
-    gap: GLOBAL_KEYS.GAP_DEFAULT,
+    gap: 5,
+    maxHeight: 500,
   },
   itemProduct: {
     flexDirection: 'row',
-    flex: 1,
-    marginVertical: GLOBAL_KEYS.PADDING_SMALL,
     gap: 16,
+    backgroundColor: colors.white,
+    marginBottom: 4,
   },
   itemImage: {
-    width: width / 4.5,
-    height: width / 4.5,
-    borderRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
+    width: 80,
+    height: 80,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    resizeMode: 'cover',
   },
+
   productInfo: {
     flexDirection: 'column',
     flex: 1,
+    paddingVertical: 8,
   },
   productPrice: {
     marginTop: GLOBAL_KEYS.PADDING_SMALL,
@@ -92,7 +94,8 @@ const styles = StyleSheet.create({
   addButton: {
     alignSelf: 'flex-end',
     borderRadius: 20,
-    backgroundColor: colors.primary,
-    padding: 4,
+    backgroundColor: colors.green100,
+    margin: 8,
+    padding: 6,
   },
 });

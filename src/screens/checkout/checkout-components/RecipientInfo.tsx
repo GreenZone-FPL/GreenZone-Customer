@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
+import { getProfile } from "../../../axios";
 import { NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from "../../../constants";
-import { AppAsyncStorage, CartManager } from "../../../utils";
-import { getProfile } from "../../../axios";
+import { CartManager } from "../../../utils";
 
 interface RecipientInfoProps {
     cartState: any,
@@ -34,7 +34,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
                     }
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy thông tin người dùng từ AsyncStorage:', error);
+                console.log('Error fetching Profile', error);
             }
         };
         handleUserData();
@@ -49,7 +49,7 @@ export const RecipientInfo: React.FC<RecipientInfoProps> = ({
     return (
         <Pressable onPress={onChangeRecipientInfo} style={[styles.container, style]}>
             <NormalText text={`${consigneeName}`} style={styles.consigneeName} />
-            <NormalText text={`${consigneePhone}`} style={styles.phoneText} />
+            <NormalText text={`${consigneePhone}`} />
         </Pressable>
     );
 };
@@ -63,12 +63,9 @@ const styles = StyleSheet.create({
         borderRightColor: colors.primary,
         borderRightWidth: 5,
     },
-    phoneText: {
-        color: colors.gray700,
-    },
     consigneeName: {
         fontWeight: '500',
-        color: colors.green500,
+        color: colors.lemon,
         fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE
     }
 });

@@ -1,14 +1,14 @@
+import { useEffect, useReducer, useState } from 'react';
+import { Keyboard } from 'react-native';
+import { register } from '../../axios';
+import { useAuthContext } from '../../context';
+import { AuthActionTypes } from '../../reducers';
 import {
   RegisterAction,
   RegisterFormProps,
   RegisterRequest,
-} from '../../type/register';
-import {useEffect, useReducer, useState} from 'react';
-import {Keyboard} from 'react-native';
-import {register} from '../../axios';
-import {useAppContext} from '../../context/appContext';
-import {Toaster} from '../../utils';
-import {AuthActionTypes} from '../../reducers';
+} from '../../type-interface';
+import { Toaster } from '../../utils';
 
 export const useRegisterContainer = () => {
   const initialState: RegisterFormProps = {
@@ -37,7 +37,7 @@ export const useRegisterContainer = () => {
   const [isValidForm, setIsValidForm] = useState(false);
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {authDispatch} = useAppContext();
+  const {authDispatch} = useAuthContext();
   useEffect(() => {
     setIsValidForm(
       state.firstName.trim() !== '' && state.lastName.trim() !== '',

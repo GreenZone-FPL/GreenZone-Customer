@@ -1,41 +1,61 @@
-import React, {useEffect, useState} from 'react';
-import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {getAllProducts} from '../../axios';
+import debounce from 'lodash.debounce';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { getAllProducts } from '../../axios';
 import {
   CustomSearchBar,
   LightStatusBar,
+  NormalLoading,
   NormalText,
   ProductsListVertical,
   Row,
 } from '../../components';
-import {GLOBAL_KEYS, colors} from '../../constants';
-import {ShoppingGraph} from '../../layouts/graphs';
-import {useHomeContainer} from '../../containers';
+import { GLOBAL_KEYS, colors } from '../../constants';
+import { useHomeContainer } from '../../containers';
+import { useProductContext } from '../../context';
 
-const {width} = Dimensions.get('window');
+
+const { width } = Dimensions.get('window');
 
 const SearchProductScreen = props => {
-  const {navigation} = props;
-  const [allProducts, setAllProducts] = useState([]);
+  const { navigation } = props;
+  const [ allProducts, setAllProducts ] = useState();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const {onNavigateProductDetailSheet, onClickAddToCart} = useHomeContainer();
+  const [loading, setLoading] = useState(false)
+  const { onNavigateProductDetailSheet, onClickAddToCart } = useHomeContainer();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true)
         const data = await getAllProducts();
         if (data.length > 0) {
-          setAllProducts(data.flatMap(category => category.products));
-          setFilteredProducts(data.flatMap(category => category.products)); // Khởi tạo danh sách hiển thị
+          const allProductsRaw = data.flatMap(category => category.products);
+
+          // Dùng Map để loại bỏ sản phẩm trùng id
+          const uniqueProductsMap = new Map();
+          allProductsRaw.forEach(product => {
+            if (!uniqueProductsMap.has(product._id)) {
+              uniqueProductsMap.set(product._id, product);
+            }
+          });
+
+          const uniqueProducts = Array.from(uniqueProductsMap.values());
+
+          setAllProducts(uniqueProducts);
+          setFilteredProducts(uniqueProducts); // Khởi tạo danh sách hiển thị ban đầu
         }
       } catch (error) {
         console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false)
       }
     };
 
     fetchProducts();
   }, []);
+
 
   const removeVietnameseTones = str => {
     return str
@@ -46,8 +66,7 @@ const SearchProductScreen = props => {
       .toLowerCase(); // Chuyển về chữ thường
   };
 
-  const handleSearch = query => {
-    setSearchQuery(query);
+  const realHandleSearch = query => {
     const queryNormalized = removeVietnameseTones(query.trim());
 
     if (queryNormalized === '') {
@@ -59,6 +78,19 @@ const SearchProductScreen = props => {
       setFilteredProducts(filtered);
     }
   };
+
+  const debouncedHandleSearch = React.useMemo(
+    () => debounce(realHandleSearch, 300),
+    [allProducts]
+  );
+
+  const handleSearchInput = query => {
+    setSearchQuery(query); // Gõ input thì cập nhật ngay
+    debouncedHandleSearch(query); // Search thì delay
+  };
+
+
+
 
   const onItemClick = productId => {
     onNavigateProductDetailSheet(productId);
@@ -74,20 +106,26 @@ const SearchProductScreen = props => {
   return (
     <View style={styles.content}>
       <LightStatusBar />
-      <Row style={{padding: GLOBAL_KEYS.PADDING_DEFAULT, gap: 16}}>
+      {loading &&
+        <NormalLoading visible={loading} />
+
+      }
+      <Row style={{ padding: GLOBAL_KEYS.PADDING_DEFAULT, gap: 16 }}>
         <CustomSearchBar
           placeholder="Tìm kiếm..."
           searchQuery={searchQuery}
-          setSearchQuery={handleSearch}
+          setSearchQuery={handleSearchInput}
           onClearIconPress={handleClearSearch}
           leftIcon="magnify"
           rightIcon="close"
-          style={{flex: 1, elevation: 3, backgroundColor: colors.fbBg}}
+          style={{ flex: 1, elevation: 1, backgroundColor: colors.fbBg }}
         />
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => navigation.goBack()}>
           <NormalText
             text="Huỷ"
-            style={{color: colors.orange700, fontWeight: '500'}}
+            style={{ color: colors.primary, fontWeight: '500' }}
           />
         </TouchableOpacity>
       </Row>
@@ -102,12 +140,38 @@ const SearchProductScreen = props => {
   );
 };
 
+export const useDebounce = (callback, delay) => {
+  const latestCallback = useRef(callback);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    latestCallback.current = callback;
+  }, [callback]);
+
+  const debouncedFunction = (...args) => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(() => {
+      latestCallback.current(...args);
+    }, delay);
+  };
+
+  return debouncedFunction;
+};
+
 const styles = StyleSheet.create({
   content: {
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     backgroundColor: colors.white,
     flex: 1,
   },
+  cancelButton: {
+    backgroundColor: colors.green100,
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 6
+  }
 });
 
 export default SearchProductScreen;

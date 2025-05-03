@@ -14,7 +14,7 @@ import {
 import { WebView } from 'react-native-webview';
 import { updatePaymentStatus } from '../../../axios';
 import { useAppContext } from '../../../context/appContext';
-import { MainGraph, OrderGraph } from '../../../layouts/graphs';
+import { BottomGraph, MainGraph, OrderGraph } from '../../../layouts/graphs';
 import { AppAsyncStorage, Toaster, CartManager } from '../../../utils';
 
 const generateMac = (
@@ -65,7 +65,7 @@ const ZalopayScreen = () => {
               navigation.reset({
                 index: 1,
                 routes: [
-                  { name: MainGraph.graphName },
+                  { name: BottomGraph.graphName },
                   { name: 'OrderDetailScreen', params: { orderId } },
                 ],
               });
@@ -161,7 +161,7 @@ const ZalopayScreen = () => {
       navigation.reset({
         index: 1,
         routes: [
-          { name: MainGraph.graphName },
+          { name: BottomGraph.graphName },
           { name: 'OrderDetailScreen', params: { orderId } },
         ],
       });
@@ -173,7 +173,7 @@ const ZalopayScreen = () => {
        navigation.reset({
                       index: 1,
                       routes: [
-                        { name: MainGraph.graphName },
+                        { name: BottomGraph.graphName },
                         { name: 'OrderDetailScreen', params: { orderId } },
                       ],
                     });
@@ -202,4 +202,4 @@ const ZalopayScreen = () => {
   );
 };
 
-export default ZalopayScreen;
+export default ZalopayScreen

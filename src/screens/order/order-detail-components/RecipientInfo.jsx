@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { DualTextRow, NormalText } from '../../../components';
 import { colors, GLOBAL_KEYS } from '../../../constants';
 import { Title } from './Title';
+import moment from 'moment';
 
 export const RecipientInfo = ({ detail }) => {
   const {
@@ -48,7 +49,8 @@ export const RecipientInfo = ({ detail }) => {
       <DualTextRow
         style={{ marginVertical: 0 }}
         leftText={`Thời gian dự kiến nhận hàng`}
-        rightText={new Date(detail.fulfillmentDateTime).toLocaleString('vi-VN')}
+        // rightText={new Date(detail.fulfillmentDateTime).toLocaleString('vi-VN')}
+        rightText={moment(detail.fulfillmentDateTime).utcOffset(7).format('HH:mm - DD/MM/YYYY')}
       />
     </View>
   );

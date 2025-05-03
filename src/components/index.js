@@ -9,13 +9,9 @@ export * from './indicators/Indicator';
 //barcode
 export * from './barcode/BarcodeUser';
 
-
-
 // bottom-sheets
 export * from './bottom-sheets/DeliveryMethodSheet';
 export * from './bottom-sheets/MyBottomSheet';
-
-
 
 //background
 export * from './background/EmptyView';
@@ -53,7 +49,6 @@ export * from './dialogs/DialogNotification';
 export * from './flatlists/ProductsListHorizontal';
 export * from './flatlists/ProductsListVertical';
 export * from './flatlists/SaleProductsListHorizontal';
-export * from './flatlists/NotificationList';
 export * from './flatlists/ProductsGrid';
 export * from './flatlists/VoucherVertical';
 
@@ -105,4 +100,4 @@ export * from './texts/DeliveryMethodText';
 
 // modals
 export * from './modal/ToppingModal';
-export * from './modal/VoucherPopup';
+export * from './barcode/QRcodeVoucher';

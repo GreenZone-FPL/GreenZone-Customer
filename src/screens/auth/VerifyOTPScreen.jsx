@@ -15,9 +15,9 @@ import { useRoute } from '@react-navigation/native';
 
 const VerifyOTPScreen = () => {
   const route = useRoute()
-  const { expired, phoneNumber } = route.params;
+  const { expired, phoneNumber, otp, code } = route.params;
   const { navigation, setCode, timeLeft, loading, formatTime } =
-    useVerifyOTPContainer(expired, phoneNumber);
+    useVerifyOTPContainer(expired, phoneNumber, otp, code);
 
   return (
     <Column style={styles.container}>
@@ -36,11 +36,11 @@ const VerifyOTPScreen = () => {
 
         <OtpInput autoFocus={false} numberOfDigits={6} onTextChange={setCode} />
 
-        {timeLeft > 0 ? (
+        {/* {timeLeft > 0 ? (
           <NormalText text={`  Mã OTP hết hạn sau ${formatTime(timeLeft)}`} />
         ) : (
           <NormalText text="OTP đã hết hạn" style={{ color: colors.red900 }} />
-        )}
+        )} */}
       </Column>
     </Column>
   );

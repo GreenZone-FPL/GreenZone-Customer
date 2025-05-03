@@ -4,28 +4,22 @@ import { Alert, BackHandler } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { navigationRef } from '../../App';
 import { OrderStatus } from '../constants';
-import { useAppContext } from '../context/appContext';
-import { OrderGraph } from '../layouts/graphs';
+import { useAppContext, useAuthContext } from '../context';
 import { AuthActionTypes } from '../reducers';
 import socketService from '../services/socketService';
 import { AppAsyncStorage } from '../utils';
-import { useAuthActions } from './auth/useAuthActions';
 
 export const useAppContainer = () => {
-  const {
-    updateOrderMessage,
-    setUpdateOrderMessage,
-    authDispatch,
-    authState,
-  } = useAppContext();
+  const { updateOrderMessage, setUpdateOrderMessage } = useAppContext();
+  const { authDispatch, authState } = useAuthContext();
+
 
   const navigation = useNavigation();
-  const { onNavigateLogin } = useAuthActions()
 
   useEffect(() => {
     const backAction = () => {
       if (authState.needLogin) {
-        console.log('Showing alert...'); // Kiểm tra log trước khi gọi Alert.alert
+
         Alert.alert('Xác nhận', 'Bạn muốn quay lại?', [
           { text: 'Đóng', style: 'cancel' },
           {
@@ -43,8 +37,9 @@ export const useAppContainer = () => {
         ]);
         return true;
       }
+
       if (authState.needRegister) {
-        console.log('Showing alert...'); // Kiểm tra log trước khi gọi Alert.alert
+
         Alert.alert('Xác nhận', 'Quay lại sẽ hủy bỏ quá trình tạo tài khoản', [
           { text: 'Đóng', style: 'cancel' },
           {
@@ -102,21 +97,12 @@ export const useAppContainer = () => {
       );
 
       const duration = 1500; // Thời gian hiển thị message
-
-
       showMessage({
         message: updateOrderMessage.message,
         type,
         icon,
         duration,
-        onPress: () => {
-          navigation.navigate(OrderGraph.OrderDetailScreen, {
-            orderId: updateOrderMessage.orderId,
-          });
-        },
       });
-
-      // Sau khi message ẩn đi, cập nhật visible thành false
       const timer = setTimeout(() => {
         setUpdateOrderMessage(prev => ({ ...prev, visible: false }));
       }, duration);
@@ -125,15 +111,15 @@ export const useAppContainer = () => {
     }
   }, [navigation, setUpdateOrderMessage, updateOrderMessage]);
 
+
+
+
   useEffect(() => {
     const initializeSocket = async () => {
       try {
-        // Khởi tạo socket
         await socketService.initialize();
-
-        // Gọi lại tất cả các đơn hàng đã có trong activeOrders
         await socketService.rejoinOrder(data => {
-          // Cập nhật trạng thái đơn hàng khi join thành công
+
           if (data.status != updateOrderMessage.status) {
             setUpdateOrderMessage({
               visible: true,
@@ -142,7 +128,6 @@ export const useAppContainer = () => {
               status: data.status,
             });
           }
-
         });
       } catch (error) {
         console.error('Lỗi khi khởi tạo socket hoặc rejoin đơn hàng:', error);
@@ -150,7 +135,6 @@ export const useAppContainer = () => {
     };
 
     initializeSocket().then(r => { });
-
     return () => {
       socketService.disconnect();
     };

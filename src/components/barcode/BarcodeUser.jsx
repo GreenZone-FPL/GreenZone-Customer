@@ -1,6 +1,5 @@
 import bwipjs from '@bwip-js/react-native';
-import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   ImageBackground,
@@ -10,11 +9,10 @@ import {
   View,
 } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import { getProfile } from '../../axios';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { SeedText } from '../texts/SeedText';
-import { AppAsyncStorage } from '../../utils';
 import { useAppContext } from '../../context/appContext';
+import { SeedText } from '../texts/SeedText';
+import { SkeletonBox } from '../../skeletons';
 
 
 const width = Dimensions.get('window').width;
@@ -26,37 +24,14 @@ export const BarcodeUser = ({
   onPress = () => { },
 }) => {
   const [barcodeSVG, setBarcodeSVG] = useState(null);
-  const [user, setUser] = useState(null);
-  const { updateOrderMessage } = useAppContext()
-
-  const fetchProfile = async () => {
-    try {
-      const isTokenValid = await AppAsyncStorage.isTokenValid()
-      if (isTokenValid) {
-        const response = await getProfile();
-        if (response) {
-          setUser(response);
-        }
-      }
-
-    } catch (error) {
-      console.log('error', error);
-    }
-  };
-  useEffect(() => {
-    fetchProfile()
-  }, [updateOrderMessage])
-
-  
-  useFocusEffect(
-    useCallback(() => {
-      fetchProfile();
-    }, [])
-  );
+  const { user } = useAppContext()
 
   useEffect(() => {
+    if (!user?.code) return;
+
+
+
     const generateBarcode = async () => {
-      if (!user?.code) return;
       try {
         const svg = bwipjs.toSVG({
           bcid: 'code128',
@@ -64,12 +39,13 @@ export const BarcodeUser = ({
           scale: 15,
           height: 4,
           includetext: true,
-          textsize: GLOBAL_KEYS.TEXT_SIZE_SMALL - 4,
+          textsize: GLOBAL_KEYS.TEXT_SIZE_SMALL - 2,
           textyoffset: GLOBAL_KEYS.PADDING_SMALL - 4,
           padding: 0,
           margin: 0,
-          textfont: 'Helvetica',
+          textfont: 'Arial',
         });
+
         setBarcodeSVG(svg);
       } catch (e) {
         console.error('Lỗi khi tạo mã vạch:', e);
@@ -77,7 +53,12 @@ export const BarcodeUser = ({
     };
 
     generateBarcode();
-  }, [user]);
+
+    return () => {
+
+    };
+  }, [user?.code]);
+
 
   const BarcodeContent = () => {
     return (
@@ -123,7 +104,7 @@ export const BarcodeUser = ({
     );
   }
 
-  return null;
+  return <SkeletonBox width="100%" height={150} borderRadius={12} />
 };
 
 const styles = StyleSheet.create({
@@ -164,10 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.green500,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 16,
-    // borderTopWidth: 1,
-    // borderBottomWidth: 1,
-    // borderLeftWidth: 1,
-    // borderColor: colors.orange700,
+    borderTopRightRadius: GLOBAL_KEYS.BORDER_RADIUS_DEFAULT,
     paddingVertical: 6,
     paddingHorizontal: 12,
     flexDirection: 'row',

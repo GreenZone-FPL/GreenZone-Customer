@@ -9,6 +9,7 @@ export interface PaymentMethodItem {
     image: any;
     value: string;
     paymentMethod: string;
+    disabled?: boolean
 }
 
 export interface UserInfo {

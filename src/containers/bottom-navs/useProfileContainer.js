@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native';
-import { useAppContext } from '../../context/appContext';
+import { useAuthContext } from '../../context';
 import { useAuthActions } from '../auth/useAuthActions';
 
 export const useProfileContainer = () => {
-  const {authDispatch, authState} = useAppContext();
+  const {authDispatch, authState} = useAuthContext();
   const {onNavigateLogin, onNavigateRegister} = useAuthActions();
 
   const navigation = useNavigation();

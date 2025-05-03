@@ -4,25 +4,24 @@ import { Icon } from 'react-native-paper';
 import { getProductDetail } from '../../axios';
 import { CheckoutFooter, OverlayStatusBar, RadioGroup, Row, SelectableGroup } from '../../components';
 import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAppContext } from '../../context/appContext';
+import { useCartContext } from '../../context';
 import { CartManager, Toaster } from '../../utils';
-import FastImage from 'react-native-fast-image';
 
 const { width, height } = Dimensions.get('window')
 const ProductDetailShort = ({ route, navigation }) => {
 
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [product, setProduct] = useState(null)
+    // const [product, setProduct] = useState(null)
     const [selectedVariant, setSelectedVariant] = useState(null);
     const [selectedToppings, setSelectedToppings] = useState([]);
     const [quantity, setQuantity] = useState(1);
     const [totalAmount, setTotalAmount] = useState(0)
-    const { productId } = route.params
+    const { product } = route.params
 
 
-    const { cartDispatch, cartState } = useAppContext()
-
+    const { cartDispatch, cartState } = useCartContext()
+    console.log('cartState', JSON.stringify(cartState, null, 3))
 
     useEffect(() => {
         if (product) {
@@ -42,27 +41,12 @@ const ProductDetailShort = ({ route, navigation }) => {
 
     useEffect(() => {
 
-        const fetchProductDetail = async () => {
-            setLoading(true)
-            try {
-                const detail = await getProductDetail(productId);
+        if (product.variant.length > 0) {
+            const firstVariant = product.variant[0]
+            setSelectedVariant(firstVariant)
+            setTotalAmount(calculateTotal(firstVariant, selectedToppings));
+        }
 
-                if (detail) {
-                    setProduct(detail); // Lưu danh mục vào state
-                    if (detail.variant.length > 0) {
-                        const firstVariant = detail.variant[0]
-                        setSelectedVariant(firstVariant)
-                        setTotalAmount(calculateTotal(firstVariant, selectedToppings));
-                    }
-                }
-            } catch (error) {
-                console.error("Error fetchProductDetail:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProductDetail();
     }, []);
 
 
@@ -87,7 +71,7 @@ const ProductDetailShort = ({ route, navigation }) => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.modalContent}>
-                       
+
                         {
                             product.variant.length > 1 && selectedVariant &&
                             <View style={styles.infoContainer}>
@@ -244,7 +228,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         gap: 8
     },
- 
+
 });
 
 export default ProductDetailShort
