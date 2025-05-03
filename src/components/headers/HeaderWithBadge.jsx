@@ -54,7 +54,7 @@ export const HeaderWithBadge = ({
         // 1. Nếu là trang Home thì đổi Header Chào user
         // 2. Nếu không phải Home thì chỉ hiển thị Header Title
         isHome ? (
-          <Row >
+          <Row style={{ paddingVertical: 8 }}>
             <Image
               source={require('../../assets/images/ic_coffee_cup.png')}
               style={styles.image}
@@ -63,18 +63,14 @@ export const HeaderWithBadge = ({
               style={[styles.title, { fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE }]}>
               {title}
             </Text>
-            <Icon
-              source="hand-wave"
-              color={colors.yellow700}
-              size={GLOBAL_KEYS.ICON_SIZE_SMALL}
-            />
+
           </Row>
         ) :
           <Text style={styles.title}>{title}</Text>
       }
-      
+
       {
-        enableBadge  &&
+        enableBadge &&
         <IconWithBadge
           quantity={notifications.length}
           onPress={() => navigation.navigate(AppGraph.NotificationScreen)}
@@ -103,7 +99,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: colors.black,
   },
 

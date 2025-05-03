@@ -1,8 +1,8 @@
 import moment from 'moment/moment';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Dimensions, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { getNotifications } from '../../axios';
-import { Column, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText, Row } from '../../components';
+import { Column, EmptyView, LightStatusBar, NormalHeader, NormalLoading, NormalText } from '../../components';
 import { GLOBAL_KEYS, colors } from '../../constants';
 import { Toaster } from '../../utils';
 const { height, width } = Dimensions.get('window');
@@ -35,10 +35,10 @@ const NotificationScreen = (props) => {
 
   };
 
- 
+
 
   return (
-    <SafeAreaView style={styles.container}>
+    <Column style={styles.container}>
       <LightStatusBar />
       <NormalLoading visible={loading} />
       <NormalHeader
@@ -48,8 +48,11 @@ const NotificationScreen = (props) => {
       {
         notifications.length === 0 ?
 
-          <EmptyView  /> :
+          <EmptyView /> :
+
           <FlatList
+            scrollEnabled
+            showsVerticalScrollIndicator={false}
             data={notifications}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
@@ -60,10 +63,9 @@ const NotificationScreen = (props) => {
             )}
             contentContainerStyle={styles.listContainer}
           />
-
       }
 
-    </SafeAreaView>
+    </Column>
   );
 };
 
@@ -73,31 +75,29 @@ const Card = ({ item, handleItemPress }) => {
       onPress={() => handleItemPress(item)}
       style={styles.itemContainer}>
 
-      <Image source={{ uri: item.image }} style={styles.image} />
+      {
+        item.type === 'points' ?
+
+        <Image
+        style={styles.image}
+        source={require('../../assets/images/icon_exchange.png')}
+      />
+          // <Image source={{ uri: item.image }} style={styles.image} />
+          :
+          <Image
+            style={styles.image}
+            source={require('../../assets/images/icon_score.png')}
+          />
+      }
+
 
       <Column style={styles.textContainer}>
         <NormalText text={item.title} style={styles.title} />
-        <Row>
-          {
-            item.type === 'points' ?
-
-              <Image
-                style={styles.icon}
-                source={require('../../assets/seed/icon_seed.png')}
-              /> :
-              <Image
-                style={styles.icon}
-                source={require('../../assets/images/ic_order.png')}
-              />
-          }
-
-          <NormalText
-            style={styles.date}
-            text={moment(item.createdAt).utcOffset(7).format('HH:mm - DD/MM/YYYY')} />
-
-        </Row>
 
 
+        <NormalText
+          style={styles.date}
+          text={moment(item.createdAt).utcOffset(7).format('HH:mm - DD/MM/YYYY')} />
 
         <NormalText text={item.content} />
       </Column>
@@ -112,12 +112,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: colors.white,
-    gap: 16
   },
   listContainer: {
-    flex: 1,
     backgroundColor: colors.fbBg,
-    gap: 4
+    gap: 4,
   },
   itemContainer: {
     flexDirection: 'row',

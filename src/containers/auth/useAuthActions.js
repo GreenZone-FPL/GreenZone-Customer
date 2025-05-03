@@ -30,7 +30,7 @@ export const useAuthActions = () => {
       await ZegoUIKitPrebuiltCallService.uninit();
       authDispatch({
         type: AuthActionTypes.LOGOUT,
-        payload: { isLoggedIn: false, lastName: null, needLogin: false, needRegister: false },
+        payload: { isLoggedIn: false, lastName: '', needLogin: false, needRegister: false, firstName: '' },
       });
       navigation.reset({
         index: 0,

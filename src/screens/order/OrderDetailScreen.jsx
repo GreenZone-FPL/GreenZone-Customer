@@ -159,7 +159,7 @@ const OrderDetailScreen = () => {
       {
         dialogPaymentMethodVisible &&
         <DialogPaymentMethod
-          methods={onlineMethods}
+          // methods={onlineMethods}
           visible={dialogPaymentMethodVisible}
           onHide={() => setDialogPaymentMethodVisible(false)}
           cartState={cartState}
