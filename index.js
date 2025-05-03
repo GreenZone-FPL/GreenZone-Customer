@@ -3,5 +3,5 @@ import { name as appName } from './app.json';
 import App from './App';
 import AgoraVoiceCall from './src/agora/AgoraVoiceCall'
 
-AppRegistry.registerComponent(appName, () => AgoraVoiceCall);
+AppRegistry.registerComponent(appName, () => App);
 
