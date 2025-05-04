@@ -114,11 +114,7 @@ const ProfileScreen = ({navigation}) => {
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
-            {/* <CardUtiliti
-              icon="phone"
-              title="Agora Voice Call"
-              onPress={() => navigateIfLoggedIn(AppGraph.AgoraVoiceCall)}
-            /> */}
+          
 
             {authState.lastName && (
               <CardUtiliti

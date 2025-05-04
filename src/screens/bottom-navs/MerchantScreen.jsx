@@ -111,14 +111,20 @@ const MerchantScreen = ({ navigation, route }) => {
         storeAddress: `${merchant.address}`,
       };
 
-      const updatePayload = fromHome
-        ? { storeSelect, storeInfoSelect }
-        : {
-          store: storeSelect,
-          storeInfo: storeInfoSelect,
-          storeSelect,
-          storeInfoSelect
-        };
+      // const updatePayload = fromHome
+      //   ? { storeSelect, storeInfoSelect }
+      //   : {
+      //     store: storeSelect,
+      //     storeInfo: storeInfoSelect,
+      //     storeSelect,
+      //     storeInfoSelect
+      //   };
+      const updatePayload = {
+        store: storeSelect,
+        storeInfo: storeInfoSelect,
+        storeSelect,
+        storeInfoSelect
+      };
 
       CartManager.updateOrderInfo(cartDispatch, updatePayload);
       navigation.goBack();
@@ -240,7 +246,7 @@ const MerchantScreen = ({ navigation, route }) => {
       <View style={styles.content}>
         <View style={styles.tool}>
           <View style={{ position: 'relative', flex: 1 }}>
-          
+
 
             {suggestions.length > 0 && (
               <View style={styles.suggestionContainer}>
