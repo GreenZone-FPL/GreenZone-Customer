@@ -29,7 +29,7 @@ import { AIAssistant } from './HomeComponents';
 const OrderScreen = () => {
   const { authState } = useAuthContext()
   const { cartState } = useCartContext()
-  const { allProducts } = useProductContext();
+  const {allProducts, newProducts} = useProductContext();
   const {
     dialogShippingVisible,
     selectedOption,
@@ -104,9 +104,7 @@ const OrderScreen = () => {
         <ProductsListHorizontal
           loading={false}
           title='Sản phẩm mới'
-          products={allProducts
-            .flatMap(category => category.products)
-            .slice(0, 10)}
+          products={newProducts}
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />

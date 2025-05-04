@@ -46,6 +46,8 @@ const HomeScreen = () => {
     loadingProducts,
     loadingDetail,
     refreshing,
+    loadingNewProducts,
+    newProducts,
     onRefresh,
     handleEditOption,
     setDialogShippingVisible,
@@ -122,11 +124,9 @@ const HomeScreen = () => {
         )}
 
         <ProductsListHorizontal
-          loading={loadingProducts}
+          loading={loadingNewProducts}
           title="Sản phẩm mới"
-          products={allProducts
-            .flatMap(category => category.products)
-            .slice(4, 12)}
+          products={newProducts}
           onItemClick={onItemClick}
           onIconClick={onIconClick}
         />
