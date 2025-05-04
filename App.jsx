@@ -4,10 +4,10 @@ import React from 'react';
 import { LogBox } from 'react-native';
 import FlashMessage from 'react-native-flash-message';
 import 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { PaperProvider } from 'react-native-paper';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {PaperProvider} from 'react-native-paper';
 import 'react-native-reanimated';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useAppContainer } from './src/containers/useAppContainer';
 import { AppContextProvider, AuthProvider, CartProvider, ProductProvider, useAuthContext } from './src/context';
@@ -22,7 +22,6 @@ LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 const BaseStack = createNativeStackNavigator();
 export const navigationRef = React.createRef();
-
 
 export default function App() {
   return (
@@ -48,7 +47,6 @@ export default function App() {
 
 
     </AppContextProvider>
-
   );
 }
 function AppNavigator() {
@@ -57,7 +55,7 @@ function AppNavigator() {
       <RootNavigator />
       <ZegoCallUI />
     </NavigationContainer>
-  )
+  );
 }
 
 function RootNavigator() {

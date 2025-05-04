@@ -1,13 +1,13 @@
-import { FlashList } from '@shopify/flash-list';
+import {FlashList} from '@shopify/flash-list';
 
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import {
   AuthContainer,
@@ -20,25 +20,24 @@ import {
   NormalText,
   ProductsGrid,
   ProductsListHorizontal,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAuthActions, useHomeContainer } from '../../containers';
-import { useAuthContext, useCartContext, useProductContext } from '../../context';
-import { useLocation } from '../../utils';
-import { AIAssistant, CategoryView } from './HomeComponents';
-import { ArticlesList } from '../articles/ArticlesList';
-import { LogBox } from 'react-native';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAuthActions, useHomeContainer} from '../../containers';
+import {useAuthContext, useCartContext, useProductContext} from '../../context';
+import {useLocation} from '../../utils';
+import {AIAssistant, CategoryView} from './HomeComponents';
+import {ArticlesList} from '../articles/ArticlesList';
+import {LogBox} from 'react-native';
 
 LogBox.ignoreLogs([
   'VirtualizedLists should never be nested inside plain ScrollViews',
 ]);
 
 const HomeScreen = () => {
-  const { authState } = useAuthContext();
-  const { cartState } = useCartContext();
-  const { allProducts } = useProductContext();
-
+  const {authState} = useAuthContext();
+  const {cartState} = useCartContext();
+  const {allProducts} = useProductContext();
 
   const {
     dialogShippingVisible,
@@ -56,78 +55,71 @@ const HomeScreen = () => {
     onClickAddToCart,
     navigateCheckOut,
     navigateOrderHistory,
-    navigateSeedScreen
+    navigateSeedScreen,
   } = useHomeContainer();
 
+  const {onNavigateLogin} = useAuthActions();
 
-  const { onNavigateLogin } = useAuthActions();
+  useLocation();
 
-  useLocation()
+  const onItemClick = useCallback(
+    productId => {
+      onNavigateProductDetailSheet(productId);
+    },
+    [onNavigateProductDetailSheet],
+  );
 
-
-  const onItemClick = useCallback((productId) => {
-    onNavigateProductDetailSheet(productId);
-  }, [onNavigateProductDetailSheet]);
-
-  const onIconClick = useCallback(async (productId) => {
-    await onClickAddToCart(productId);
-  }, [onClickAddToCart]);
-
-
+  const onIconClick = useCallback(
+    async productId => {
+      await onClickAddToCart(productId);
+    },
+    [onClickAddToCart],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-      {
-        loadingDetail &&
-        <NormalLoading visible={loadingDetail} />
-      }
+      {loadingDetail && <NormalLoading visible={loadingDetail} />}
       <HeaderWithBadge
         title={
           authState?.firstName
             ? `Xin chào, ${authState.firstName} ${authState?.lastName ?? ''}`
             : authState?.lastName
-              ? `Xin chào, ${authState.lastName}`
-              : 'Xin chào'
+            ? `Xin chào, ${authState.lastName}`
+            : 'Xin chào'
         }
         isHome={true}
         enableBadge={!!(authState?.firstName || authState?.lastName)}
       />
 
-
-
-
       <ScrollView
-
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl colors={[colors.primary]} refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          <RefreshControl
+            colors={[colors.primary]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
         }
         style={styles.containerContent}>
-
         {authState.lastName ? (
-          <BarcodeUser
-            showPoints={true}
-            onPress={navigateSeedScreen}
-          />
+          <BarcodeUser showPoints={true} onPress={navigateSeedScreen} />
         ) : (
           <AuthContainer onPress={onNavigateLogin} />
         )}
 
         <CategoryView />
 
-        {
-          needToPay &&
+        {needToPay && (
           <TouchableOpacity
             style={styles.btnAwaitingPayments}
             onPress={navigateOrderHistory}>
-            <TitleText
-              text={`Bạn có đơn hàng cần thanh toán`}
-            />
+            <TitleText text={`Bạn có đơn hàng cần thanh toán`} />
             <NormalText text={'Ấn để tiếp tục'} />
           </TouchableOpacity>
-        }
+        )}
 
         <ProductsListHorizontal
           loading={loadingProducts}
@@ -147,7 +139,7 @@ const HomeScreen = () => {
           scrollEnabled={false}
           nestedScrollEnabled={true}
           removeClippedSubviews={true}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <ProductsGrid
               title={item.name}
               products={item.products}
@@ -156,15 +148,9 @@ const HomeScreen = () => {
             />
           )}
         />
-
-
-
-
-
       </ScrollView>
 
-      {
-        dialogShippingVisible &&
+      {dialogShippingVisible && (
         <DialogShippingMethod
           visible={dialogShippingVisible}
           selectedOption={selectedOption}
@@ -172,7 +158,7 @@ const HomeScreen = () => {
           onOptionSelect={handleOptionSelect}
           onEditOption={handleEditOption}
         />
-      }
+      )}
 
       <DeliveryButton
         deliveryMethod={selectedOption}
@@ -181,10 +167,10 @@ const HomeScreen = () => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
+            : 'Đang xác định vị trí...'
         }
         onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
@@ -193,7 +179,7 @@ const HomeScreen = () => {
       />
 
       <AIAssistant />
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 
@@ -236,6 +222,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 100,
     right: 16,
-  }
-
+  },
 });

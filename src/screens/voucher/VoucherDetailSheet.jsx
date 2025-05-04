@@ -1,5 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
 import {
   Dimensions,
@@ -7,19 +7,27 @@ import {
   Pressable,
   SafeAreaView,
   StyleSheet,
-  Text
+  Text,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
+import {Icon} from 'react-native-paper';
 import Toast from 'react-native-toast-message';
-import { Column, NormalText, OverlayStatusBar, QrCodeVoucher, Row, TitleText } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { TextFormatter } from '../../utils';
+import {
+  Column,
+  NormalText,
+  OverlayStatusBar,
+  QrCodeVoucher,
+  Row,
+  TitleText,
+} from '../../components';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {TextFormatter} from '../../utils';
+import moment from 'moment';
 
 const width = Dimensions.get('window').width;
 
 const VoucherDetailSheet = () => {
-  const { item } = useRoute().params
-  const navigation = useNavigation()
+  const {item} = useRoute().params;
+  const navigation = useNavigation();
 
   const copyToClipboard = () => {
     Clipboard.setString(item.code);
@@ -37,23 +45,25 @@ const VoucherDetailSheet = () => {
   };
 
   return (
-
     <SafeAreaView style={styles.contentContainer}>
       <OverlayStatusBar />
-      <Pressable
-        onPress={() => navigation.goBack()}
-        style={styles.closeButton}>
+      <Pressable onPress={() => navigation.goBack()} style={styles.closeButton}>
         <Icon source="close" size={24} color={colors.primary} />
       </Pressable>
 
-      <Column style={{ gap: 16, paddingHorizontal: 16 }}>
+      <Column style={{gap: 16, paddingHorizontal: 16}}>
         <TitleText text="GreenZone" style={styles.voucherTitle} />
-        <Row style={{ alignSelf: 'center' }}>
-          <Image source={{ uri: item.image }} style={styles.qrCodeImage} />
+        <Column style={{alignSelf: 'center', alignItems: 'center'}}>
+          <Image
+            source={{uri: item.image}}
+            style={
+              item?.voucherType === 'seed'
+                ? styles.qrCodeImage2
+                : styles.qrCodeImage
+            }
+          />
           <Text style={styles.voucherName}>{item.name}</Text>
-        </Row>
-
-
+        </Column>
 
         <QrCodeVoucher voucherCode={item.code} />
 
@@ -63,23 +73,22 @@ const VoucherDetailSheet = () => {
           <Text style={styles.copyText}>Sao chép</Text>
         </Pressable>
 
-
-        <Row >
+        <Row>
           <NormalText text="Ngày hết hạn:" />
           <NormalText
-            text={TextFormatter.formatDateSimple(item.endDate)}
+            text={`${
+              item.endDate
+                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'
+            }`}
             style={styles.endDate}
           />
         </Row>
         <Text style={styles.infoText}>{item.description}</Text>
       </Column>
-
     </SafeAreaView>
-
-
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
@@ -90,7 +99,7 @@ const styles = StyleSheet.create({
   closeButton: {
     margin: 16,
     alignSelf: 'flex-start',
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   contentContainer: {
     flexDirection: 'column',
@@ -109,35 +118,38 @@ const styles = StyleSheet.create({
   infoText: {
     color: colors.gray850,
     fontSize: GLOBAL_KEYS.TEXT_SIZE_DEFAULT,
-    lineHeight: 20
+    lineHeight: 20,
   },
   endDate: {
-    color: colors.orange700
+    color: colors.orange700,
   },
   voucherName: {
-    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
+    fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE + 2,
     fontWeight: '700',
     textAlign: 'center',
     color: colors.black,
   },
   qrCodeImage: {
-    width: width / 4.5,
-    height: width / 4.5,
+    width: width / 3,
+    height: width / 3,
     borderRadius: 8,
-    resizeMode: "cover"
+    resizeMode: 'cover',
+  },
+  qrCodeImage2: {
+    width: width / 1.5,
+    height: width / 3,
   },
   discountCode: {
     fontSize: GLOBAL_KEYS.TEXT_SIZE_TITLE,
     fontWeight: '500',
     textAlign: 'center',
-    color: colors.primary
+    color: colors.primary,
   },
   copyText: {
     fontWeight: '500',
     textAlign: 'center',
     color: colors.blue600,
   },
-
 });
 
 export default VoucherDetailSheet;

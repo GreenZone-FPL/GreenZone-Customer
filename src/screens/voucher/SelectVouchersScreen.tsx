@@ -24,6 +24,8 @@ import {VoucherGraph} from '../../layouts/graphs';
 import {CartActionTypes} from '../../reducers';
 import {TextFormatter} from '../../utils';
 import { useCartContext } from '../../context';
+import { Icon } from 'react-native-paper';
+import moment from 'moment';
 
 const {width} = Dimensions.get('window');
 
@@ -48,12 +50,8 @@ const SelectVouchersScreen = ({navigation, route}) => {
 
         if (myResponse) {
           const uniqueVouchers: any = Object.values(
-            myResponse.reduce((acc: any, item: any) => {
-              if (item?.voucher) {
-                acc[item.voucher._id] = item.voucher;
-              }
-              return acc;
-            }, {}),
+            myResponse.filter((item:any) => item?.voucher)
+            .map((item:any) => item.voucher)
           );
           setMyExchangedVouchers(uniqueVouchers);
         }
@@ -102,6 +100,8 @@ const SelectVouchersScreen = ({navigation, route}) => {
   };
 
   const onItemPress = (item: any) => {
+
+    
     if (isUpdateOrderInfo) {
       cartDispatch({
         type: CartActionTypes.UPDATE_ORDER_INFO,
@@ -132,7 +132,7 @@ const SelectVouchersScreen = ({navigation, route}) => {
             <FlatList
               data={myExchangedVouchers}
               // data={validMyVouchers}
-              keyExtractor={(item: any) => item._id.toString()}
+              keyExtractor={(_,index:number) => index.toString()}
               renderItem={({item}) => (
                 <ItemVoucher onPress={() => onItemPress(item)} item={item} />
               )}
@@ -166,8 +166,16 @@ const SelectVouchersScreen = ({navigation, route}) => {
 const ItemVoucher = ({onPress, item}) => {
   return (
     <Pressable style={styles.itemVoucher} onPress={onPress}>
-      <Image source={{uri: item.image}} style={styles.itemImage} />
-      <Column>
+      <View>
+       
+      <Image
+        source={{uri: item.image}}
+        style={
+          item?.voucherType === 'seed' ? styles.itemImageSeed : styles.itemImage
+        }
+      />
+      </View>
+      <Column style={{flex:1}}>
         <View style={{maxWidth: width / 2}}>
           <Text numberOfLines={2} style={styles.voucherName}>
             {`${item.name}`}
@@ -179,7 +187,11 @@ const ItemVoucher = ({onPress, item}) => {
 
           <NormalText
             style={{color: colors.orange700}}
-            text={`${TextFormatter.formatDateSimple(item.endDate)}`}
+            text={`${
+              item.endDate
+                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'
+            }`}
           />
         </Row>
       </Column>
@@ -210,6 +222,11 @@ const styles = StyleSheet.create({
     width: width / 5,
     height: width / 5,
     borderRadius: width / 1.5,
+    resizeMode: 'cover',
+  },
+  itemImageSeed: {
+    width: width / 2.5,
+    height: width / 5,
     resizeMode: 'cover',
   },
   voucherName: {
