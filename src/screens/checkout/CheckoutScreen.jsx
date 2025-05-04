@@ -22,7 +22,7 @@ import {
   VoucherGraph,
 } from '../../layouts/graphs';
 import { CartActionTypes } from '../../reducers';
-import { CartManager } from '../../utils';
+import { AppAsyncStorage, CartManager, useLocation } from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -44,7 +44,8 @@ const CheckoutScreen = () => {
   const navigation = useNavigation()
 
 
-  
+  console.log('cartState', JSON.stringify(cartState, null, 3))
+
   const {
     dialogCreateOrderVisible,
     setDialogCreateOrderVisible,
@@ -298,9 +299,35 @@ const CheckoutScreen = () => {
           onSelect={async option => {
             setDialogShippingMethodVisible(false);
             try {
-              await CartManager.updateOrderInfo(cartDispatch, {
-                deliveryMethod: option.value,
-              })
+              // console.log('option', option)
+              //select home: 
+              // storeInfo: checkout
+
+              if (option.value === DeliveryMethod.DELIVERY.value) {
+
+                const merchantLocation = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.merchantLocation)
+                if (merchantLocation) {
+                  await CartManager.updateOrderInfo(cartDispatch, {
+                    deliveryMethod: option.value,
+                    store: merchantLocation._id,
+                    storeInfo: {
+                      storeName: merchantLocation.name,
+                      storeAddress: merchantLocation.storeAddress
+                    },
+                  })
+                }
+              } else {
+                await CartManager.updateOrderInfo(cartDispatch, {
+                  deliveryMethod: option.value,
+                  store: cartState.storeSelect,
+                  storeInfo: {
+                    storeName: cartState.storeInfoSelect.storeName,
+                    storeAddress: cartState.storeInfoSelect.storeAddress,
+                  },
+
+                })
+              }
+
             } catch (error) {
               console.log('Lỗi khi updateOrderInfo:', error);
             }

@@ -63,37 +63,25 @@ const SeedScreen = ({ navigation }) => {
       <LightStatusBar />
       <NormalHeader title="Đổi Seed" onLeftPress={() => navigation.goBack()} />
 
-      <SectionLoader
-        loading={loadingProfile}
-        skeleton={
-          <Row style={{ marginHorizontal: 16 }}>
-            <SkeletonBox width={70} height={70} borderRadius={48} />
-            <Column>
-              <SkeletonBox width={150} height={25} borderRadius={20} />
-              <SkeletonBox width={75} height={25} borderRadius={20} />
-            </Column>
-          </Row>
-        }>
-        <Row style={styles.headerRow}>
-          <Image
-            style={styles.iconSeed}
-            source={require('../../assets/seed/icon_seed.png')}
-          />
-          <Column>
-            <Text style={styles.headerText}>Số seed của bạn</Text>
-            <Text style={styles.beanAmount}>
-              {TextFormatter.formatted(user?.seed) || 0}{' '}
-              <Text
-                style={[
-                  styles.beanAmount,
-                  { color: colors.black, fontSize: 14 },
-                ]}>
-                seed
-              </Text>
+      <Row style={styles.headerRow}>
+        <Image
+          style={styles.iconSeed}
+          source={require('../../assets/seed/icon_seed.png')}
+        />
+        <Column>
+          <Text style={styles.headerText}>Số seed của bạn</Text>
+          <Text style={styles.beanAmount}>
+            {TextFormatter.formatted(user?.seed) || 0}{' '}
+            <Text
+              style={[
+                styles.beanAmount,
+                { color: colors.black, fontSize: 14 },
+              ]}>
+              seed
             </Text>
-          </Column>
-        </Row>
-      </SectionLoader>
+          </Text>
+        </Column>
+      </Row>
 
       <VoucherVertical
         loading={loadingVoucher}

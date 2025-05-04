@@ -1,38 +1,40 @@
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment/moment';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Dimensions,
   FlatList,
   Image,
   Pressable,
+  RefreshControl,
   StyleSheet,
-  Text,
-  TouchableOpacity,
+  Text
 } from 'react-native';
-import {changeBeans} from '../../axios';
-import {colors} from '../../constants';
-import {useCartContext} from '../../context';
-import {VoucherGraph} from '../../layouts/graphs';
-import {CartActionTypes} from '../../reducers';
-import {VoucherVerticalSkeleton} from '../../skeletons';
-import {Toaster} from '../../utils';
-import {Column, NormalText, Row, SeedText, TitleText} from '../index';
+import { changeBeans } from '../../axios';
+import { colors } from '../../constants';
+import { useCartContext } from '../../context';
+import { VoucherGraph } from '../../layouts/graphs';
+import { CartActionTypes } from '../../reducers';
+import { VoucherVerticalSkeleton } from '../../skeletons';
+import { Toaster } from '../../utils';
+import { Column, NormalText, Row, SeedText, TitleText } from '../index';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export const VoucherVertical = ({
   loading = false,
   route,
   vouchers,
   type,
-  setChangePoint = false,
+  // setChangePoint = false,
+  // refreshing = false,
+  onRefresh = () => { }
 }) => {
   const navigation = useNavigation();
-  const {cartDispatch} = useCartContext();
-  const {isUpdateOrderInfo} = route.params || false;
-  const {isChangeBeans} = route.params || false;
+  const { cartDispatch } = useCartContext();
+  const { isUpdateOrderInfo } = route.params || false;
+  const { isChangeBeans } = route.params || false;
   const [validVouchers, setValidVouchers] = useState([]);
   // PERCENTAGE = 'percentage',
   // FIXED_AMOUNT = 'fixedAmount',
@@ -83,7 +85,7 @@ export const VoucherVertical = ({
           },
         },
       ],
-      {cancelable: false},
+      { cancelable: false },
     );
   };
 
@@ -119,7 +121,7 @@ export const VoucherVertical = ({
     } else if (isChangeBeans) {
       changeBean(item);
     } else {
-      navigation.navigate(VoucherGraph.VoucherDetailSheet, {item});
+      navigation.navigate(VoucherGraph.VoucherDetailSheet, { item });
     }
   };
   if (loading) {
@@ -130,12 +132,12 @@ export const VoucherVertical = ({
     <Column style={styles.container}>
       <TitleText
         text="Phiếu ưu đãi"
-        style={{marginHorizontal: 16, fontSize: 16}}
+        style={{ marginHorizontal: 16, fontSize: 16 }}
       />
       <FlatList
         data={filterByDiscountType(type)}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <ItemVoucher
             onPress={() => onItemPress(item)}
             item={item}
@@ -145,26 +147,29 @@ export const VoucherVertical = ({
         )}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
-        contentContainerStyle={{gap: 2, backgroundColor: colors.fbBg}}
+        contentContainerStyle={{ gap: 2, backgroundColor: colors.fbBg }}
+        // refreshControl={
+        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+        // }
       />
     </Column>
   );
 };
 
-const ItemVoucher = ({onPress, item, isChangeBeans}) => {
+const ItemVoucher = ({ onPress, item, isChangeBeans }) => {
   return (
     <Pressable style={styles.itemVoucher} onPress={onPress}>
       <Image
-        source={{uri: item.image}}
+        source={{ uri: item.image }}
         style={
           item?.voucherType === 'seed' ? styles.itemImageSeed : styles.itemImage
         }
       />
-      <Column style={{flex: 1}}>
+      <Column style={{ flex: 1 }}>
         {/* Tên voucher: màu đậm, dễ đọc */}
         <Text
           numberOfLines={2}
-          style={{fontSize: 14, fontWeight: '600', color: colors.black}}>
+          style={{ fontSize: 14, fontWeight: '600', color: colors.black }}>
           {item.name}
         </Text>
 
@@ -177,14 +182,13 @@ const ItemVoucher = ({onPress, item, isChangeBeans}) => {
             <NormalText text={`Ngày đổi:`} />
 
             <NormalText
-              style={{color: colors.blue600}}
-              text={`${
-                item.endDate
-                  ? moment(item.exchangedAt)
-                      .utcOffset(7)
-                      .format('HH:mm - DD/MM/YYYY')
-                  : 'Chưa có thời gian'
-              }`}
+              style={{ color: colors.blue600 }}
+              text={`${item.endDate
+                ? moment(item.exchangedAt)
+                  .utcOffset(7)
+                  .format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'
+                }`}
             />
           </Row>
         ) : (
@@ -192,14 +196,13 @@ const ItemVoucher = ({onPress, item, isChangeBeans}) => {
             <NormalText text={`Hết hạn:`} />
 
             <NormalText
-              style={{color: colors.orange700}}
-              text={`${
-                item.endDate
-                  ? moment(item.endDate)
-                      .utcOffset(7)
-                      .format('HH:mm - DD/MM/YYYY')
-                  : 'Chưa có thời gian'
-              }`}
+              style={{ color: colors.orange700 }}
+              text={`${item.endDate
+                ? moment(item.endDate)
+                  .utcOffset(7)
+                  .format('HH:mm - DD/MM/YYYY')
+                : 'Chưa có thời gian'
+                }`}
             />
           </Row>
         )}

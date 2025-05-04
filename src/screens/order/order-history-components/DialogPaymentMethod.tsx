@@ -10,20 +10,7 @@ import {
 import {colors, DeliveryMethod, PaymentMethod} from '../../../constants';
 import {PaymentMethodItem} from '../../../type-interface/checkout';
 
-export const onlineMethods: PaymentMethodItem[] = [
-  {
-    label: 'PayOs',
-    image: require('../../../assets/images/logo_payos.png'),
-    value: 'payos',
-    paymentMethod: PaymentMethod.ONLINE.value,
-  },
-  // {
-  //   label: 'Thẻ Visa, ngân hàng',
-  //   image: require('../../../assets/images/logo_card.png'),
-  //   value: 'card',
-  //   paymentMethod: PaymentMethod.ONLINE.value,
-  // },
-];
+
 
 // Định nghĩa các phương thức thanh toán
 export const paymentMethods: PaymentMethodItem[] = [
@@ -38,39 +25,34 @@ export const paymentMethods: PaymentMethodItem[] = [
     image: require('../../../assets/images/logo_payos.png'),
     value: 'payos',
     paymentMethod: PaymentMethod.ONLINE.value,
-  },
-  // {
-  //   label: 'Thẻ Visa, ngân hàng',
-  //   image: require('../../../assets/images/logo_card.png'),
-  //   value: 'card',
-  //   paymentMethod: PaymentMethod.ONLINE.value,
-  // },
+  }
 ];
 
 interface DialogPaymentMethodProps {
+  orderDetail: any,
   methods: PaymentMethodItem[];
   visible: boolean;
   onHide: () => void;
-  cartState: any;
   selectedMethod: PaymentMethodItem;
   handleSelectMethod: (method: PaymentMethodItem, disabled: boolean) => void;
 }
 
 export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
+  orderDetail,
   methods = paymentMethods,
   visible,
   onHide,
-  cartState,
   selectedMethod,
   handleSelectMethod,
 }) => {
+  console.log('orderDetail', orderDetail.totalPrice)
   const [currentSelected, setCurrentSelected] =
     React.useState<PaymentMethodItem>(selectedMethod);
 
   const methodOptions = useMemo(() => {
     return methods.map(method => {
       const disabled =
-        cartState.deliveryMethod === DeliveryMethod.PICK_UP.value &&
+        orderDetail.deliveryMethod === DeliveryMethod.PICK_UP.value &&
         method.paymentMethod === PaymentMethod.COD.value;
 
       return {
@@ -78,7 +60,7 @@ export const DialogPaymentMethod: React.FC<DialogPaymentMethodProps> = ({
         disabled,
       };
     });
-  }, [methods, cartState.deliveryMethod]);
+  }, [methods, orderDetail.deliveryMethod]);
 
   return (
     <>

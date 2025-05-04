@@ -5,6 +5,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
 } from 'react-native';
@@ -36,6 +37,7 @@ const VoucherScreen = ({navigation}) => {
   const [vouchers, setVouchers] = useState([]);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingVouchers, setLoadingVouchers] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchProfile = async (enableLoading: boolean) => {
     try {
@@ -58,6 +60,23 @@ const VoucherScreen = ({navigation}) => {
     }
   };
 
+  const onRefresh = async () => {
+    if (authState.lastName) {
+      try {
+        setRefreshing(true);
+        const response = await getAllVoucher();
+        console.log('refreshing');
+        if (response) {
+          setVouchers(response);
+        }
+      } catch (error) {
+        console.log('Lỗi khi gọi API Voucher:', error);
+      } finally {
+        setRefreshing(false);
+      }
+    }
+  };
+
   useEffect(() => {
     // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
     // load lần sau, không cần loading
@@ -70,26 +89,32 @@ const VoucherScreen = ({navigation}) => {
     fetchProfile(true);
   }, []);
 
-  useEffect(() => {
-    const fetchVouchers = async () => {
-      try {
-        if (authState.lastName) {
-          setLoadingVouchers(true);
-          const response = await getAllVoucher();
-          setVouchers(response);
-        }
-      } catch (error) {
-        console.log('Lỗi khi gọi API Voucher:', error);
-      } finally {
-        setLoadingVouchers(false);
+  const fetchVouchers = async () => {
+    try {
+      if (authState.lastName) {
+        setLoadingVouchers(true);
+        const response = await getAllVoucher();
+        setVouchers(response);
       }
-    };
+    } catch (error) {
+      console.log('Lỗi khi gọi API Voucher:', error);
+    } finally {
+      setLoadingVouchers(false);
+    }
+  };
 
+  useEffect(() => {
+  
     fetchVouchers();
   }, []);
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+    <ScrollView
+    refreshControl={
+      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+    }
+      showsVerticalScrollIndicator={false}
+      style={styles.container}>
       <LightStatusBar />
 
       {!authState.lastName ? (
@@ -168,6 +193,8 @@ const VoucherScreen = ({navigation}) => {
             vouchers={vouchers}
             type={1}
             route={{params: {isUpdateOrderInfo: false}}}
+            // refreshing={refreshing}
+            // onRefresh={onRefresh}
           />
         </Column>
       ) : (
