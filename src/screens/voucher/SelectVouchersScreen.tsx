@@ -49,12 +49,16 @@ const SelectVouchersScreen = ({navigation, route}) => {
         }
 
         if (myResponse) {
-          const uniqueVouchers: any = Object.values(
-            myResponse.filter((item:any) => item?.voucher)
-            .map((item:any) => item.voucher)
-          );
+          const uniqueVouchers: any = myResponse
+            .filter((item: any) => item?.voucher)
+            .map((item: any) => ({
+              ...item.voucher,
+              exchangedAt: item.exchangedAt
+            }));
+        
           setMyExchangedVouchers(uniqueVouchers);
         }
+        
       } catch (error) {
         console.log('Lỗi khi gọi API Voucher:', error);
       }
@@ -182,18 +186,30 @@ const ItemVoucher = ({onPress, item}) => {
           </Text>
         </View>
 
-        <Row>
-          <NormalText text={`Hết hạn:`} />
+        {item.voucherType==="seed"? <Row>
+          <NormalText text={`Ngày đổi:`} />
 
           <NormalText
             style={{color: colors.orange700}}
             text={`${
               item.endDate
-                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+                ? moment(item.exchangedAt).utcOffset(7).format('HH:mm - DD/MM/YYYY')
                 : 'Chưa có thời gian'
             }`}
           />
-        </Row>
+        </Row>:
+        <Row>
+        <NormalText text={`Hết hạn:`} />
+
+        <NormalText
+          style={{color: colors.orange700}}
+          text={`${
+            item.endDate
+              ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
+              : 'Chưa có thời gian'
+          }`}
+        />
+      </Row>}
       </Column>
     </Pressable>
   );
