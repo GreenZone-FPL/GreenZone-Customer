@@ -21,3 +21,14 @@ export const getProductDetail = async (productId) => {
         throw error
     }
 }
+
+export const getNewProducts = async () => {
+  try {
+    const response = await axiosInstance.get('/v1/product/admin/all');
+// console.log('newProduct:', response.data);
+    return response.data;
+  } catch (error) {
+    console.log('error:', error);
+    throw error;
+  }
+};

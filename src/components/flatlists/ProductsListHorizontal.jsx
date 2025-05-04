@@ -9,12 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Icon } from 'react-native-paper';
-import { GLOBAL_KEYS, colors } from '../../constants';
-import { TextFormatter } from '../../utils';
-import { Row } from '../containers/Row';
-import { SkeletonBox } from '../../skeletons';
-import { Column } from '../containers/Column';
+import {Icon} from 'react-native-paper';
+import {GLOBAL_KEYS, colors} from '../../constants';
+import {TextFormatter} from '../../utils';
+import {Row} from '../containers/Row';
+import {SkeletonBox} from '../../skeletons';
+import {Column} from '../containers/Column';
 
 export const ProductsListHorizontal = ({
   loading = false,
@@ -23,30 +23,27 @@ export const ProductsListHorizontal = ({
   onIconClick,
   products,
 }) => {
-
   if (loading) {
     return (
       <Column style={styles.container}>
         <SkeletonBox width="45%" height={25} borderRadius={12} />
-        <Row style={{ gap: 16 }}>
+        <Row style={{gap: 16}}>
           <SkeletonBox width="45%" height={250} borderRadius={12} />
           <SkeletonBox width="45%" height={250} borderRadius={12} />
           <SkeletonBox width="45%" height={250} borderRadius={12} />
         </Row>
       </Column>
-    )
+    );
   }
   return (
     <Column style={styles.container}>
-
       <View style={styles.headerTextContainer}>
         <Text style={styles.headerText}>{title}</Text>
       </View>
       <FlatList
         data={products}
         keyExtractor={item => item._id.toString()}
-        renderItem={({ item }) => {
-
+        renderItem={({item}) => {
           return (
             <ItemProduct
               item={item}
@@ -61,16 +58,15 @@ export const ProductsListHorizontal = ({
         }}
         scrollEnabled={true}
       />
-
     </Column>
   );
 };
 
-const ItemProduct = ({ item, onItemClick, onIconClick }) => {
+const ItemProduct = ({item, onItemClick, onIconClick}) => {
   return (
     <View style={styles.itemProduct}>
       <TouchableOpacity onPress={onItemClick}>
-        <Image source={{ uri: String(item.image) }} style={styles.itemImage} />
+        <Image source={{uri: String(item.image)}} style={styles.itemImage} />
       </TouchableOpacity>
 
       <Text numberOfLines={1} style={styles.productNameText}>
@@ -94,7 +90,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     gap: GLOBAL_KEYS.GAP_DEFAULT,
     marginHorizontal: GLOBAL_KEYS.PADDING_DEFAULT,
-    marginBottom: 16
+    marginBottom: 16,
   },
   headerTextContainer: {
     flexDirection: 'row',

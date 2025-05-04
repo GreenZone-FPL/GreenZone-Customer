@@ -1,28 +1,33 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { getAllCategories, getProductDetail } from '../../axios';
-import { DeliveryMethod } from '../../constants';
+import {useNavigation} from '@react-navigation/native';
+import {useEffect, useRef, useState, useCallback} from 'react';
+import {
+  getAllCategories,
+  getAllProducts,
+  getNewProducts,
+  getProductDetail,
+} from '../../axios';
+import {DeliveryMethod} from '../../constants';
 
 import {
   AppGraph,
   BottomGraph,
   ShoppingGraph,
-  UserGraph
+  UserGraph,
 } from '../../layouts/graphs';
 
-import { AppAsyncStorage, CartManager } from '../../utils';
-import { useAuthActions } from '../auth/useAuthActions';
-import { useAuthContext, useCartContext, useProductContext } from '../../context';
+import {AppAsyncStorage, CartManager, Toaster} from '../../utils';
+import {useAuthActions} from '../auth/useAuthActions';
+import {useAuthContext, useCartContext, useProductContext} from '../../context';
 
 export const useOrderContainer = () => {
-  const { authState } = useAuthContext();
-  const { cartState, cartDispatch } = useCartContext();
-  const { allProducts, setAllProducts } = useProductContext();
-  const { onNavigateLogin } = useAuthActions();
+  const {authState} = useAuthContext();
+  const {cartState, cartDispatch} = useCartContext();
+  const {allProducts, setAllProducts, newProducts, setNewProducts} =
+    useProductContext();
+  const {onNavigateLogin} = useAuthActions();
   const navigation = useNavigation();
   const lastCategoryRef = useRef(currentCategory);
   const [refreshing, setRefreshing] = useState(false);
-
 
   const [editOption, setEditOption] = useState('');
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
@@ -42,40 +47,36 @@ export const useOrderContainer = () => {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const onClickAddToCart = async productId => {
-      if (authState.lastName) {
-        try {
-          setLoadingDetail(true);
-          const detail = await getProductDetail(productId);
-          if (detail) {
-
-            if (detail.variant.length > 1 || detail.topping.length > 0) {
-              navigation.navigate(ShoppingGraph.ProductDetailShort, { product: detail });
-            } else {
-              console.log('addTocart')
-              await CartManager.addToCart(
-                detail, // product
-                detail.variant[0], // variant
-                [], // toppings
-                detail.sellingPrice, // totalPrice
-                1, // quantity
-                cartDispatch // dispatch
-              )
-            }
+    if (authState.lastName) {
+      try {
+        setLoadingDetail(true);
+        const detail = await getProductDetail(productId);
+        if (detail) {
+          if (detail.variant.length > 1 || detail.topping.length > 0) {
+            navigation.navigate(ShoppingGraph.ProductDetailShort, {
+              product: detail,
+            });
+          } else {
+            console.log('addTocart');
+            await CartManager.addToCart(
+              detail, // product
+              detail.variant[0], // variant
+              [], // toppings
+              detail.sellingPrice, // totalPrice
+              1, // quantity
+              cartDispatch, // dispatch
+            );
           }
-  
-        } catch (error) {
-          console.log('Error fetchProductDetail:', error);
-        } finally {
-          setLoadingDetail(false)
         }
-  
-      } else {
-        onNavigateLogin();
+      } catch (error) {
+        console.log('Error fetchProductDetail:', error);
+      } finally {
+        setLoadingDetail(false);
       }
-  
-    };
-  
-
+    } else {
+      onNavigateLogin();
+    }
+  };
 
   useEffect(() => {
     const getMerchantLocation = async () => {
@@ -93,7 +94,6 @@ export const useOrderContainer = () => {
     getMerchantLocation();
   }, []);
 
-
   const handleEditOption = option => {
     setEditOption(option);
     setDialogShippingVisible(false);
@@ -107,26 +107,28 @@ export const useOrderContainer = () => {
         fromHome: true,
       });
     }
-
   };
-   const onRefresh = async() => {
-      
-      // Giả lập delay để mô phỏng loading
-      try {
-  
-        setRefreshing(true);
-        const response = await getAllProducts()
-        console.log('refreshing')
-        if (response) {
-          setAllProducts(response)
-        }
-  
-      } catch (error) {
-        Toaster.show('Error', error)
-      } finally {
-        setRefreshing(false)
+
+  const onRefresh = async () => {
+    // Giả lập delay để mô phỏng loading
+    try {
+      setRefreshing(true);
+      const responseAllProducts = await getAllProducts();
+      console.log('refreshing');
+      if (responseAllProducts) {
+        setAllProducts(responseAllProducts);
       }
-    };
+      const responseNewProducts = await getNewProducts();
+      console.log('refreshingNewProducts');
+      if (responseNewProducts) {
+        setNewProducts(responseNewProducts.docs);
+      }
+    } catch (error) {
+      Toaster.show('Error', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const handleOptionSelect = async option => {
     setSelectedOption(option);
@@ -152,12 +154,9 @@ export const useOrderContainer = () => {
         });
       }
     } catch (error) {
-      console.log('Error', error)
+      console.log('Error', error);
     }
-
-
   };
-
 
   const scrollToCategory = categoryId => {
     if (!scrollViewRef.current) {
@@ -181,53 +180,57 @@ export const useOrderContainer = () => {
     setDialogShippingVisible(false);
   };
 
-  const handleScroll = useCallback((event) => {
-    const scrollY = event.nativeEvent.contentOffset.y;
-  
-    let closestCategory = 'Danh mục';
-    let minDistance = Number.MAX_VALUE;
-  
-    let minPos = Number.MAX_VALUE;
-    let firstCategoryId = null;
-  
-    Object.entries(positions).forEach(([categoryId, posY]) => {
-      const distance = Math.abs(scrollY - posY);
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestCategory = allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+  const handleScroll = useCallback(
+    event => {
+      const scrollY = event.nativeEvent.contentOffset.y;
+
+      let closestCategory = 'Danh mục';
+      let minDistance = Number.MAX_VALUE;
+
+      let minPos = Number.MAX_VALUE;
+      let firstCategoryId = null;
+
+      Object.entries(positions).forEach(([categoryId, posY]) => {
+        const distance = Math.abs(scrollY - posY);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestCategory =
+            allProducts.find(cat => cat._id === categoryId)?.name || 'Danh mục';
+        }
+
+        if (posY < minPos) {
+          minPos = posY;
+          firstCategoryId = categoryId;
+        }
+      });
+
+      // Nếu cuộn lên trên danh mục đầu tiên
+      if (scrollY < minPos) {
+        if (lastCategoryRef.current !== 'Xin chào') {
+          lastCategoryRef.current = 'Xin Chào';
+          setCurrentCategory('Xin chào');
+        }
+        return;
       }
-  
-      if (posY < minPos) {
-        minPos = posY;
-        firstCategoryId = categoryId;
+
+      if (closestCategory !== lastCategoryRef.current) {
+        lastCategoryRef.current = closestCategory;
+        setCurrentCategory(closestCategory);
       }
-    });
-  
-    // Nếu cuộn lên trên danh mục đầu tiên
-    if (scrollY < minPos) {
-      if (lastCategoryRef.current !== 'Xin chào') {
-        lastCategoryRef.current = 'Xin Chào';
-        setCurrentCategory('Xin chào');
-      }
-      return;
-    }
-  
-    if (closestCategory !== lastCategoryRef.current) {
-      lastCategoryRef.current = closestCategory;
-      setCurrentCategory(closestCategory);
-    }
-  }, [positions, allProducts]);
+    },
+    [positions, allProducts],
+  );
 
   const onLayoutCategory = (categoryId, event) => {
     event.target.measureInWindow((x, y) => {
-      setPositions(prev => ({ ...prev, [categoryId]: y }));
+      setPositions(prev => ({...prev, [categoryId]: y}));
     });
   };
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        setLoadingCategories(true)
+        setLoadingCategories(true);
         const data = await getAllCategories();
         setCategories(data.docs);
       } catch (error) {
@@ -238,7 +241,6 @@ export const useOrderContainer = () => {
     };
 
     fetchCategories();
-
   }, []);
 
   const navigateCheckOut = () => {
@@ -254,9 +256,8 @@ export const useOrderContainer = () => {
   };
 
   const onNavigateProductDetailSheet = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
-
 
   return {
     dialogShippingVisible,
@@ -283,6 +284,6 @@ export const useOrderContainer = () => {
     scrollToCategory,
     handleScroll,
     navigateFavorite,
-    navigateSearchProduct
+    navigateSearchProduct,
   };
 };

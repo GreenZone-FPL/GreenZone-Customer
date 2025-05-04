@@ -2,6 +2,7 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {
   getAllProducts,
+  getNewProducts,
   getNotifications,
   getOrdersByStatus,
   getProductDetail,
@@ -33,7 +34,8 @@ export const useHomeContainer = () => {
   const {updateOrderMessage, setUser, setNotifications} = useAppContext();
   const {authState} = useAuthContext();
   const {cartState, cartDispatch} = useCartContext();
-  const {allProducts, setAllProducts} = useProductContext();
+  const {allProducts, setAllProducts, newProducts, setNewProducts} =
+    useProductContext();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
@@ -47,6 +49,7 @@ export const useHomeContainer = () => {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingNoti, setLoadingNoti] = useState(false);
+  const [loadingNewProducts, setLoadingNewProducts] = useState(false);
 
   const {onNavigateLogin} = useAuthActions();
 
@@ -103,10 +106,15 @@ export const useHomeContainer = () => {
     // Giả lập delay để mô phỏng loading
     try {
       setRefreshing(true);
-      const response = await getAllProducts();
+      const responseAllProducts = await getAllProducts();
       console.log('refreshing');
-      if (response) {
-        setAllProducts(response);
+      if (responseAllProducts) {
+        setAllProducts(responseAllProducts);
+      }
+      const responseNewProducts = await getNewProducts();
+      console.log('refreshingNewProducts');
+      if (responseNewProducts) {
+        setNewProducts(responseNewProducts.docs);
       }
     } catch (error) {
       Toaster.show('Error', error);
@@ -131,6 +139,23 @@ export const useHomeContainer = () => {
       }
     };
     fetchProducts();
+  }, []);
+  useEffect(() => {
+    const fetchNewProducts = async () => {
+      try {
+        setLoadingNewProducts(true);
+        const response = await getNewProducts();
+        console.log('newProducts:', JSON.stringify(response, null, 3));
+        if (response) {
+          setNewProducts(response.docs);
+        }
+      } catch (error) {
+        Toaster.show('Error', error);
+      } finally {
+        setLoadingNewProducts(false);
+      }
+    };
+    fetchNewProducts();
   }, []);
 
   useEffect(() => {
@@ -316,6 +341,8 @@ export const useHomeContainer = () => {
     loadingNoti,
     loadingDetail,
     refreshing,
+    loadingNewProducts,
+    newProducts,
     onRefresh,
     handleEditOption,
     setDialogShippingVisible,

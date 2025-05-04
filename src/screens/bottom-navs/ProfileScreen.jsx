@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Icon } from 'react-native-paper';
-import { getProfile } from '../../axios';
+import React, {useState} from 'react';
+import {Pressable, SafeAreaView, StyleSheet, View} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import {Icon} from 'react-native-paper';
+import {getProfile} from '../../axios';
 import {
   AuthContainer,
   Column,
@@ -11,26 +11,25 @@ import {
   NormalLoading,
   NormalText,
   Row,
-  TitleText
+  TitleText,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAuthActions } from '../../containers';
-import { useAuthContext } from '../../context';
-import { AppGraph, OrderGraph, UserGraph } from '../../layouts/graphs';
-import { Toaster } from '../../utils';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAuthActions} from '../../containers';
+import {useAuthContext} from '../../context';
+import {AppGraph, OrderGraph, UserGraph} from '../../layouts/graphs';
+import {Toaster} from '../../utils';
 
-
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
-  const { authState } = useAuthContext();
-  const { onLogout, onNavigateLogin } = useAuthActions();
+  const {authState} = useAuthContext();
+  const {onLogout, onNavigateLogin} = useAuthActions();
 
   const handleProfile = async () => {
     setLoading(true);
     try {
       if (authState.lastName) {
         const reponse = await getProfile();
-        navigation.navigate(UserGraph.UpdateProfileScreen, { profile: reponse });
+        navigation.navigate(UserGraph.UpdateProfileScreen, {profile: reponse});
       } else {
         onNavigateLogin();
       }
@@ -43,14 +42,14 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleLogout = async () => {
     try {
-      setLoading(true)
-      await onLogout()
+      setLoading(true);
+      await onLogout();
     } catch (error) {
-      Toaster.show(error.message)
+      Toaster.show(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const navigateIfLoggedIn = screen => {
     authState.lastName ? navigation.navigate(screen) : onNavigateLogin();
@@ -65,7 +64,6 @@ const ProfileScreen = ({ navigation }) => {
       <ScrollView>
         {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
         <Column style={styles.body}>
-
           <TitleText text="Tài khoản" />
 
           <Column>
@@ -105,7 +103,6 @@ const ProfileScreen = ({ navigation }) => {
               onPress={() => navigateIfLoggedIn(UserGraph.SettingScreen)}
             />
 
-
             <CardUtiliti
               icon="chat-outline"
               title="Liên hệ góp ý"
@@ -117,14 +114,14 @@ const ProfileScreen = ({ navigation }) => {
               title="Đánh giá đơn hàng"
               onPress={() => navigateIfLoggedIn(OrderGraph.RatingOrderScreen)}
             />
-             {/* <CardUtiliti
-              icon="phone"
-              title="Agora Voice Call"
-              onPress={() => navigateIfLoggedIn(AppGraph.AgoraVoiceCall)}
-            /> */}
+          
 
             {authState.lastName && (
-              <CardUtiliti icon="logout" title="Đăng xuất" onPress={handleLogout} />
+              <CardUtiliti
+                icon="logout"
+                title="Đăng xuất"
+                onPress={handleLogout}
+              />
             )}
           </View>
         </Column>
@@ -135,19 +132,18 @@ const ProfileScreen = ({ navigation }) => {
 
 export default ProfileScreen;
 
-const CardAccount = ({ icon, color, title, onPress }) => (
+const CardAccount = ({icon, color, title, onPress}) => (
   <Pressable style={styles.card} onPress={onPress}>
     <Icon source={icon} size={30} color={color} />
     <TitleText text={title} />
   </Pressable>
 );
 
-const CardUtiliti = ({ icon, title, onPress }) => (
+const CardUtiliti = ({icon, title, onPress}) => (
   <Pressable style={styles.item} onPress={onPress}>
     <View style={styles.leftSection}>
       <Icon source={icon} size={26} color={colors.gray700} />
-      <NormalText text={title} style={{ fontSize: 14 }} />
-
+      <NormalText text={title} style={{fontSize: 14}} />
     </View>
   </Pressable>
 );
@@ -201,8 +197,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: GLOBAL_KEYS.PADDING_SMALL,
     borderBottomColor: colors.gray200,
-    borderBottomWidth: 1
-
+    borderBottomWidth: 1,
   },
   leftSection: {
     flexDirection: 'row',
