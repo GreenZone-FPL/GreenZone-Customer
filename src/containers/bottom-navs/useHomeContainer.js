@@ -41,7 +41,7 @@ export const useHomeContainer = () => {
   const [dialogShippingVisible, setDialogShippingVisible] = useState(false);
   const [merchantLocal, setMerchantLocal] = useState(null);
   const [selectedOption, setSelectedOption] = useState('Giao hàng'); //[Mang đi, Giao hàng]
-  const [needToPay, setNeedToPay] = useState(false)
+  const [needToPay, setNeedToPay] = useState(false);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingMerchant, setLoadingMerchant] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -264,10 +264,6 @@ export const useHomeContainer = () => {
       });
     }
   };
-
-  const handleScroll = useCallback(
-    event => {
-      const scrollY = event.nativeEvent.contentOffset.y;
 
   const handleCloseDialog = () => {
     setDialogShippingVisible(false);
