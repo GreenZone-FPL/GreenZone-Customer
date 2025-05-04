@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { getAllMerchants } from '../axios/modules/merchant';
-import { useCartContext } from '../context';
-import { AppAsyncStorage } from './appAsyncStorage';
-import { CartManager } from './cartMananger';
-import { fetchUserLocation } from './geoLocationUtils';
+import {useEffect, useState} from 'react';
+import {getAllMerchants} from '../axios/modules/merchant';
+import {useCartContext} from '../context';
+import {AppAsyncStorage} from './appAsyncStorage';
+import {CartManager} from './cartMananger';
+import {fetchUserLocation} from './geoLocationUtils';
 import LocationManager from './locationManager';
 
 const useSaveLocation = () => {
@@ -85,7 +85,7 @@ const useSaveLocation = () => {
             {
               _id: nearest._id,
               name: nearest.name,
-              storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
+              storeAddress: `${nearest.address}`,
               latitude: nearest.latitude.toString(),
               longitude: nearest.longitude.toString(),
             },
@@ -95,12 +95,12 @@ const useSaveLocation = () => {
             store: nearest._id,
             storeInfo: {
               storeName: nearest.name,
-              storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
+              storeAddress: `${nearest.address}`,
             },
             storeSelect: nearest._id,
             storeInfoSelect: {
               storeName: nearest.name,
-              storeAddress: `${nearest.specificAddress}, ${nearest.ward}, ${nearest.district}, ${nearest.province}`,
+              storeAddress: `${address}`,
             },
           });
         }
