@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import {
   ActionDialog,
   Column,
@@ -11,18 +11,18 @@ import {
   Row,
 } from '../../components';
 
-import {useNavigation} from '@react-navigation/native';
-import {DeliveryMethod, GLOBAL_KEYS, colors} from '../../constants';
-import {useCheckoutContainer} from '../../containers/checkout/useCheckoutContainer';
-import {useCartContext} from '../../context';
+import { useNavigation } from '@react-navigation/native';
+import { DeliveryMethod, GLOBAL_KEYS, colors } from '../../constants';
+import { useCheckoutContainer } from '../../containers/checkout/useCheckoutContainer';
+import { useCartContext } from '../../context';
 import {
   BottomGraph,
   ShoppingGraph,
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import {CartActionTypes} from '../../reducers';
-import {AppAsyncStorage, CartManager, useLocation} from '../../utils';
+import { CartActionTypes } from '../../reducers';
+import { AppAsyncStorage, CartManager, useLocation } from '../../utils';
 import {
   DialogPaymentMethod,
   DialogRecipientInfo,
@@ -37,11 +37,11 @@ import {
   StoreAddress,
   TimeSection,
 } from './checkout-components';
-import {shippingAddress2} from '../../utils/shippingAddress2';
-import {getAllMerchants} from '../../axios/modules/merchant';
+import { shippingAddress2 } from '../../utils/shippingAddress2';
+import { getAllMerchants } from '../../axios/modules/merchant';
 
 const CheckoutScreen = () => {
-  const {cartState, cartDispatch} = useCartContext();
+  const { cartState, cartDispatch } = useCartContext();
   const navigation = useNavigation();
 
   console.log('cartState', JSON.stringify(cartState, null, 3));
@@ -74,6 +74,8 @@ const CheckoutScreen = () => {
 
   const [nearestMerchant, setNearestMerchant] = useState(null);
   const [loadingMerchants, setLoadingMerchants] = useState(false);
+
+
   useEffect(() => {
     if (
       cartState?.deliveryMethod === DeliveryMethod.DELIVERY.value &&
@@ -90,7 +92,7 @@ const CheckoutScreen = () => {
       const data = await getAllMerchants();
       const merchants = data.docs;
 
-      const {latitude, longitude} = cartState.shippingAddressInfo;
+      const { latitude, longitude } = cartState.shippingAddressInfo;
 
       const nearest = findNearestMerchant(latitude, longitude, merchants);
 
@@ -115,9 +117,9 @@ const CheckoutScreen = () => {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -184,7 +186,7 @@ const CheckoutScreen = () => {
               fontWeight: '700',
               fontSize: 16,
             }}
-            rightTextStyle={{color: colors.primary}}
+            rightTextStyle={{ color: colors.primary }}
             onRightPress={() => setDialogShippingMethodVisible(true)}
           />
 
@@ -211,7 +213,7 @@ const CheckoutScreen = () => {
                   });
                 }}
               />
-              <Row style={{gap: 0}}>
+              <Row style={{ gap: 0 }}>
                 {cartState?.shippingAddressInfo && (
                   <RecipientInfo
                     cartDispatch={cartDispatch}
@@ -219,7 +221,7 @@ const CheckoutScreen = () => {
                     onChangeRecipientInfo={() =>
                       setDialogRecipientInfoVisible(true)
                     }
-                    style={{flex: 1}}
+                    style={{ flex: 1 }}
                   />
                 )}
 
@@ -227,7 +229,7 @@ const CheckoutScreen = () => {
                   timeInfo={timeInfo}
                   showDialog={() => setDialogSelectTimeVisible(true)}
                   cartState={cartState}
-                  style={{flex: 1}}
+                  style={{ flex: 1 }}
                 />
               </Row>
             </>
@@ -239,7 +241,7 @@ const CheckoutScreen = () => {
                 timeInfo={timeInfo}
                 showDialog={() => setDialogSelectTimeVisible(true)}
                 cartState={cartState}
-                style={{flex: 1}}
+                style={{ flex: 1 }}
               />
             </>
           )}
@@ -265,7 +267,7 @@ const CheckoutScreen = () => {
               isUpdateOrderInfo: true,
             })
           }
-          style={{flex: 1}}
+          style={{ flex: 1 }}
         />
         <PaymentMethodView
           selectedMethod={paymentMethod}
@@ -298,7 +300,7 @@ const CheckoutScreen = () => {
             setTimeout(() => {
               cartDispatch({
                 type: CartActionTypes.UPDATE_ORDER_INFO,
-                payload: {fulfillmentDateTime: data.fulfillmentDateTime},
+                payload: { fulfillmentDateTime: data.fulfillmentDateTime },
               });
             }, 0);
             setDialogSelectTimeVisible(false);

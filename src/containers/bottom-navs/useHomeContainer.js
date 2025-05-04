@@ -180,6 +180,9 @@ export const useHomeContainer = () => {
   useFocusEffect(
     useCallback(() => {
       fetchOrderHistory();
+      fetchProfile()
+    
+
     }, []),
   );
 

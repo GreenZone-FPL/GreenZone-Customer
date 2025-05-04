@@ -27,9 +27,9 @@ export const VoucherVertical = ({
   route,
   vouchers,
   type,
-  // setChangePoint = false,
+  setChangePoint = false,
   // refreshing = false,
-  onRefresh = () => { }
+  // onRefresh = () => { }
 }) => {
   const navigation = useNavigation();
   const { cartDispatch } = useCartContext();
