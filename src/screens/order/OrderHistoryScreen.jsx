@@ -4,7 +4,7 @@ import { CustomTabView, LightStatusBar, NormalHeader } from '../../components';
 import { colors } from '../../constants';
 import { useOrderHistoryContainer } from '../../containers';
 import { useCartContext } from '../../context';
-import { DialogPaymentMethod, onlineMethods } from '../checkout/checkout-components';
+import { DialogPaymentMethod } from './order-history-components';
 import { CancelDialog } from './order-detail-components';
 import { OrderListView } from './order-history-components';
 
@@ -92,6 +92,7 @@ const OrderHistoryScreen = () => {
         dialogPaymentMethodVisible &&
         <DialogPaymentMethod
           // methods={onlineMethods}
+          orderDetail={selectedOrder}
           visible={dialogPaymentMethodVisible}
           onHide={() => setDialogPaymentMethodVisible(false)}
           cartState={cartState}

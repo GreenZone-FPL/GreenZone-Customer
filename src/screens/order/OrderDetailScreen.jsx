@@ -21,10 +21,8 @@ import {
 } from '../../constants';
 import { useOrderDetailContainer } from '../../containers/orders/useOrderDetailContainer';
 import { useCartContext } from '../../context';
-import {
-  DialogPaymentMethod,
-  onlineMethods,
-} from '../checkout/checkout-components';
+import { DialogPaymentMethod } from './order-history-components';
+
 import {
   CancelDialog,
   MerchantInfo,
@@ -159,7 +157,7 @@ const OrderDetailScreen = () => {
       {
         dialogPaymentMethodVisible &&
         <DialogPaymentMethod
-          // methods={onlineMethods}
+          orderDetail={orderDetail}
           visible={dialogPaymentMethodVisible}
           onHide={() => setDialogPaymentMethodVisible(false)}
           cartState={cartState}

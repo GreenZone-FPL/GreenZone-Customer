@@ -10,6 +10,7 @@ import { ZegoLayoutMode } from '@zegocloud/zego-uikit-rn';
 
 import KeyCenter from '../../KeyCenter';
 import { getProfile } from '../axios/modules/auth'
+import { AppGraph } from '../layouts/graphs';
 
 const notificationStyle = 'CustomView';
 
