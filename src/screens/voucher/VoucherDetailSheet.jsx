@@ -73,17 +73,35 @@ const VoucherDetailSheet = () => {
           <Text style={styles.copyText}>Sao chép</Text>
         </Pressable>
 
-        <Row>
-          <NormalText text="Ngày hết hạn:" />
-          <NormalText
-            text={`${
-              item.endDate
-                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
-                : 'Chưa có thời gian'
-            }`}
-            style={styles.endDate}
-          />
-        </Row>
+        {item.voucherType == 'seed' ? (
+          <Row>
+            <NormalText text="Ngày đổi:" />
+            <NormalText
+              text={`${
+                item.endDate
+                  ? moment(item.exchangedAt)
+                      .utcOffset(7)
+                      .format('HH:mm - DD/MM/YYYY')
+                  : 'Chưa có thời gian'
+              }`}
+              style={styles.endDate}
+            />
+          </Row>
+        ) : (
+          <Row>
+            <NormalText text="Ngày hết hạn:" />
+            <NormalText
+              text={`${
+                item.endDate
+                  ? moment(item.endDate)
+                      .utcOffset(7)
+                      .format('HH:mm - DD/MM/YYYY')
+                  : 'Chưa có thời gian'
+              }`}
+              style={styles.endDate}
+            />
+          </Row>
+        )}
         <Text style={styles.infoText}>{item.description}</Text>
       </Column>
     </SafeAreaView>

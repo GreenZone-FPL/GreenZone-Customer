@@ -140,6 +140,7 @@ export const VoucherVertical = ({
             onPress={() => onItemPress(item)}
             item={item}
             loading={loading}
+            isChangeBeans={isChangeBeans}
           />
         )}
         showsVerticalScrollIndicator={false}
@@ -150,7 +151,7 @@ export const VoucherVertical = ({
   );
 };
 
-const ItemVoucher = ({onPress, item}) => {
+const ItemVoucher = ({onPress, item, isChangeBeans}) => {
   return (
     <Pressable style={styles.itemVoucher} onPress={onPress}>
       <Image
@@ -171,20 +172,37 @@ const ItemVoucher = ({onPress, item}) => {
           <SeedText point={item?.requiredPoints} />
         )}
 
-        <Row>
-          <NormalText text={`Hết hạn:`} style={{color: colors.gray850}} />
+        {item.voucherType === 'seed' && !isChangeBeans ? (
+          <Row>
+            <NormalText text={`Ngày đổi:`} />
 
-          <NormalText
-            style={{
-              color: colors.orange700,
-            }}
-            text={`${
-              item.endDate
-                ? moment(item.endDate).utcOffset(7).format('HH:mm - DD/MM/YYYY')
-                : 'Chưa có thời gian'
-            }`}
-          />
-        </Row>
+            <NormalText
+              style={{color: colors.blue600}}
+              text={`${
+                item.endDate
+                  ? moment(item.exchangedAt)
+                      .utcOffset(7)
+                      .format('HH:mm - DD/MM/YYYY')
+                  : 'Chưa có thời gian'
+              }`}
+            />
+          </Row>
+        ) : (
+          <Row>
+            <NormalText text={`Hết hạn:`} />
+
+            <NormalText
+              style={{color: colors.orange700}}
+              text={`${
+                item.endDate
+                  ? moment(item.endDate)
+                      .utcOffset(7)
+                      .format('HH:mm - DD/MM/YYYY')
+                  : 'Chưa có thời gian'
+              }`}
+            />
+          </Row>
+        )}
       </Column>
     </Pressable>
   );
