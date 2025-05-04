@@ -1,5 +1,5 @@
 // @ts-ignore
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Dimensions,
   Image,
@@ -27,6 +27,7 @@ import {useAppContext} from '../../context/appContext';
 import {VoucherGraph} from '../../layouts/graphs';
 import {SectionLoader, SkeletonBox} from '../../skeletons';
 import {Toaster} from '../../utils';
+import {useFocusEffect} from '@react-navigation/native';
 
 const width: number = Dimensions.get('window').width;
 const VoucherScreen = ({navigation}) => {
@@ -104,15 +105,24 @@ const VoucherScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-  
     fetchVouchers();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfile(false);
+    }, []),
+  );
+
   return (
     <ScrollView
-    refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
-    }
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[colors.primary]}
+        />
+      }
       showsVerticalScrollIndicator={false}
       style={styles.container}>
       <LightStatusBar />
