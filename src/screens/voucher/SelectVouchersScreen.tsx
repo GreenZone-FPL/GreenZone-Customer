@@ -190,7 +190,7 @@ const ItemVoucher = ({onPress, item}) => {
           <NormalText text={`Ngày đổi:`} />
 
           <NormalText
-            style={{color: colors.orange700}}
+            style={{color: colors.blue600}}
             text={`${
               item.endDate
                 ? moment(item.exchangedAt).utcOffset(7).format('HH:mm - DD/MM/YYYY')
