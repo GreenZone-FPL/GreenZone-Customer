@@ -1,4 +1,3 @@
-
 import {AppGraph} from './appGraph';
 
 export const ShoppingGraph = Object.freeze({

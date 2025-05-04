@@ -1,27 +1,39 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAllProducts, getNotifications, getOrdersByStatus, getProductDetail, getProfile } from '../../axios';
-import { DeliveryMethod, OrderStatus } from '../../constants';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {
+  getAllProducts,
+  getNotifications,
+  getOrdersByStatus,
+  getProductDetail,
+  getProfile,
+} from '../../axios';
+import {DeliveryMethod, OrderStatus} from '../../constants';
 
-import { useAppContext, useAuthContext, useCartContext, useProductContext } from '../../context';
+import {
+  useAppContext,
+  useAuthContext,
+  useCartContext,
+  useProductContext,
+} from '../../context';
 import {
   AppGraph,
   BottomGraph,
+  MainGraph,
   OrderGraph,
   ShoppingGraph,
   UserGraph,
   VoucherGraph,
 } from '../../layouts/graphs';
-import { CartActionTypes } from '../../reducers';
-import { AppAsyncStorage, CartManager, fetchData, Toaster } from '../../utils';
-import { onUserLoginZego } from '../../zego/common';
-import { useAuthActions } from '../auth/useAuthActions';
+import {CartActionTypes} from '../../reducers';
+import {AppAsyncStorage, CartManager, fetchData, Toaster} from '../../utils';
+import {onUserLoginZego} from '../../zego/common';
+import {useAuthActions} from '../auth/useAuthActions';
 
 export const useHomeContainer = () => {
-  const { updateOrderMessage, setUser, setNotifications } = useAppContext();
-  const { authState } = useAuthContext();
-  const { cartState, cartDispatch } = useCartContext();
-  const { allProducts, setAllProducts } = useProductContext();
+  const {updateOrderMessage, setUser, setNotifications} = useAppContext();
+  const {authState} = useAuthContext();
+  const {cartState, cartDispatch} = useCartContext();
+  const {allProducts, setAllProducts} = useProductContext();
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
@@ -36,16 +48,16 @@ export const useHomeContainer = () => {
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [loadingNoti, setLoadingNoti] = useState(false);
 
-  const { onNavigateLogin } = useAuthActions()
+  const {onNavigateLogin} = useAuthActions();
 
   const onNavigateProductDetailSheet = productId => {
-    navigation.navigate(ShoppingGraph.ProductDetailSheet, { productId });
+    navigation.navigate(ShoppingGraph.ProductDetailSheet, {productId});
   };
 
-  const fetchProfile = async (enableLoading) => {
+  const fetchProfile = async enableLoading => {
     try {
       if (enableLoading) {
-        setLoadingProfile(true)
+        setLoadingProfile(true);
       }
 
       if (authState.lastName) {
@@ -55,88 +67,75 @@ export const useHomeContainer = () => {
           setUser(response);
         }
       }
-
     } catch (error) {
       console.log('error', error);
     } finally {
       if (enableLoading) {
-        setLoadingProfile(false)
+        setLoadingProfile(false);
       }
-
     }
   };
-
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         if (authState.lastName) {
-          setLoadingNoti(true)
-          const response = await getNotifications()
+          setLoadingNoti(true);
+          const response = await getNotifications();
           if (response) {
-            setNotifications(response)
+            setNotifications(response);
           }
         }
-
       } catch (error) {
-        Toaster.show('Error', error)
+        Toaster.show('Error', error);
       } finally {
-        setLoadingNoti(false)
+        setLoadingNoti(false);
       }
-    }
+    };
 
-    fetchNotifications()
-  }, [])
+    fetchNotifications();
+  }, []);
   useEffect(() => {
-    fetchProfile(true)
-  }, [])
+    fetchProfile(true);
+  }, []);
 
-  const onRefresh = async() => {
-    
+  const onRefresh = async () => {
     // Giả lập delay để mô phỏng loading
     try {
-
       setRefreshing(true);
-      const response = await getAllProducts()
-      console.log('refreshing')
+      const response = await getAllProducts();
+      console.log('refreshing');
       if (response) {
-        setAllProducts(response)
+        setAllProducts(response);
       }
-
     } catch (error) {
-      Toaster.show('Error', error)
+      Toaster.show('Error', error);
     } finally {
-      setRefreshing(false)
+      setRefreshing(false);
     }
   };
 
- 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoadingProducts(true);
+        const response = await getAllProducts();
 
-        setLoadingProducts(true)
-        const response = await getAllProducts()
-       
         if (response) {
-          setAllProducts(response)
+          setAllProducts(response);
         }
-
       } catch (error) {
-        Toaster.show('Error', error)
+        Toaster.show('Error', error);
       } finally {
-        setLoadingProducts(false)
+        setLoadingProducts(false);
       }
-    }
-    fetchProducts()
-
+    };
+    fetchProducts();
   }, []);
-
-
 
   useEffect(() => {
     const getMerchantLocation = async () => {
-      setLoadingMerchant(true)
+      setLoadingMerchant(true);
       try {
         setMerchantLocal(
           await AppAsyncStorage.readData(
@@ -146,30 +145,26 @@ export const useHomeContainer = () => {
       } catch (error) {
         console.log('error', error);
       } finally {
-        setLoadingMerchant(false)
+        setLoadingMerchant(false);
       }
     };
 
     getMerchantLocation();
   }, []);
 
-
   useFocusEffect(
     useCallback(() => {
       fetchOrderHistory();
-    }, [])
+    }, []),
   );
-
 
   useEffect(() => {
     // Sau khi hoàn thành đơn hàng, nhận socket và cập nhật lại UI
     // load lần sau, không cần loading
     if (updateOrderMessage.status === OrderStatus.COMPLETED.value) {
-      fetchProfile(false)
+      fetchProfile(false);
     }
-  }, [updateOrderMessage.status])
-
-
+  }, [updateOrderMessage.status]);
 
   const onClickAddToCart = async productId => {
     if (authState.lastName) {
@@ -177,46 +172,45 @@ export const useHomeContainer = () => {
         setLoadingDetail(true);
         const detail = await getProductDetail(productId);
         if (detail) {
-
           if (detail.variant.length > 1 || detail.topping.length > 0) {
-            navigation.navigate(ShoppingGraph.ProductDetailShort, { product: detail });
+            navigation.navigate(ShoppingGraph.ProductDetailShort, {
+              product: detail,
+            });
           } else {
-            console.log('addTocart')
+            console.log('addTocart');
             await CartManager.addToCart(
               detail, // product
               detail.variant[0], // variant
               [], // toppings
               detail.sellingPrice, // totalPrice
               1, // quantity
-              cartDispatch // dispatch
-            )
+              cartDispatch, // dispatch
+            );
           }
         }
-
       } catch (error) {
         console.log('Error fetchProductDetail:', error);
       } finally {
-        setLoadingDetail(false)
+        setLoadingDetail(false);
       }
-
     } else {
       onNavigateLogin();
     }
-
   };
 
   const fetchOrderHistory = async () => {
     try {
-
       if (authState.lastName) {
         const response = await getOrdersByStatus();
-        console.log('focus')
-        const awaitingPayments = response.filter(o => o.status === OrderStatus.AWAITING_PAYMENT.value)
+        console.log('focus');
+        const awaitingPayments = response.filter(
+          o => o.status === OrderStatus.AWAITING_PAYMENT.value,
+        );
 
         if (awaitingPayments.length > 0) {
           setNeedToPay(true);
         } else {
-          setNeedToPay(false)
+          setNeedToPay(false);
         }
       }
     } catch (error) {
@@ -238,7 +232,6 @@ export const useHomeContainer = () => {
         fromHome: true,
       });
     }
-
   };
 
   const handleOptionSelect = option => {
@@ -246,7 +239,6 @@ export const useHomeContainer = () => {
     setSelectedOption(option);
 
     if (option === 'Mang đi') {
-
       cartDispatch({
         type: CartActionTypes.UPDATE_ORDER_INFO,
         payload: {
@@ -256,11 +248,9 @@ export const useHomeContainer = () => {
             storeName: cartState?.storeInfoSelect?.storeName,
             storeAddress: cartState?.storeInfoSelect?.storeAddress,
           },
-        }
-      })
-
+        },
+      });
     } else if (option === 'Giao hàng') {
-
       cartDispatch({
         type: CartActionTypes.UPDATE_ORDER_INFO,
         payload: {
@@ -270,13 +260,14 @@ export const useHomeContainer = () => {
             storeName: merchantLocal?.name,
             storeAddress: merchantLocal?.storeAddress,
           },
-        }
-      })
-
+        },
+      });
     }
-
   };
 
+  const handleScroll = useCallback(
+    event => {
+      const scrollY = event.nativeEvent.contentOffset.y;
 
   const handleCloseDialog = () => {
     setDialogShippingVisible(false);
@@ -285,18 +276,21 @@ export const useHomeContainer = () => {
   const initZego = async () => {
     // const user = await AppAsyncStorage.readData(AppAsyncStorage.STORAGE_KEYS.user);
     if (authState.lastName && authState.phoneNumber) {
-      await onUserLoginZego(authState.phoneNumber, authState.lastName, navigation);
+      await onUserLoginZego(
+        authState.phoneNumber,
+        authState.lastName,
+        navigation,
+      );
     }
-  }
+  };
 
   useEffect(() => {
     if (authState.lastName) {
-      initZego()
+      initZego();
     } else {
-      console.log('Khong the init Zego')
+      console.log('Khong the init Zego');
     }
-  }, [authState.lastName])
-
+  }, [authState.lastName]);
 
   const navigateOrderHistory = () => {
     navigation.navigate(OrderGraph.OrderHistoryScreen);
@@ -311,6 +305,9 @@ export const useHomeContainer = () => {
   };
   const navigateSeedScreen = () => {
     navigation.navigate(VoucherGraph.SeedScreen);
+  };
+  const navigateOrderScreen = () => {
+    navigation.navigate(MainGraph.OrderStackScreen);
   };
 
   return {

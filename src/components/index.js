@@ -9,17 +9,12 @@ export * from './indicators/Indicator';
 //barcode
 export * from './barcode/BarcodeUser';
 
-
-
 // bottom-sheets
 export * from './bottom-sheets/DeliveryMethodSheet';
 export * from './bottom-sheets/MyBottomSheet';
 
-
-
 //background
-export * from './background/EmptyView'
-
+export * from './background/EmptyView';
 
 // buttons
 export * from './buttons/DeliveryButton';
@@ -41,7 +36,6 @@ export * from './containers/Column';
 export * from './containers/Row';
 export * from './containers/AuthContainer';
 
-
 // dialogs
 export * from './dialogs/ActionDialog';
 
@@ -50,7 +44,6 @@ export * from './dialogs/DialogFeedback';
 export * from './dialogs/DialogBasic';
 export * from './dialogs/DialogReviewOder';
 export * from './dialogs/DialogNotification';
-
 
 // flatlists
 export * from './flatlists/ProductsListHorizontal';
