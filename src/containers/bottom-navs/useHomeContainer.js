@@ -106,10 +106,15 @@ export const useHomeContainer = () => {
     // Giả lập delay để mô phỏng loading
     try {
       setRefreshing(true);
-      const response = await getAllProducts();
+      const responseAllProducts = await getAllProducts();
       console.log('refreshing');
-      if (response) {
-        setAllProducts(response);
+      if (responseAllProducts) {
+        setAllProducts(responseAllProducts);
+      }
+      const responseNewProducts = await getNewProducts();
+      console.log('refreshingNewProducts');
+      if (responseNewProducts) {
+        setNewProducts(responseNewProducts.docs);
       }
     } catch (error) {
       Toaster.show('Error', error);
@@ -140,7 +145,7 @@ export const useHomeContainer = () => {
       try {
         setLoadingNewProducts(true);
         const response = await getNewProducts();
-        console.log('newProducts:', JSON.stringify(response,null,3));
+        console.log('newProducts:', JSON.stringify(response, null, 3));
         if (response) {
           setNewProducts(response.docs);
         }

@@ -177,7 +177,7 @@ const ItemVoucher = ({onPress, item, isChangeBeans}) => {
             <NormalText text={`Ngày đổi:`} />
 
             <NormalText
-              style={{color: colors.orange700}}
+              style={{color: colors.blue600}}
               text={`${
                 item.endDate
                   ? moment(item.exchangedAt)

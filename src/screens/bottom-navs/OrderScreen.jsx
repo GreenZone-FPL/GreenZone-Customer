@@ -1,11 +1,11 @@
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {
   FlatList,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 
 import {
@@ -18,17 +18,17 @@ import {
   MyBottomSheet,
   NormalLoading,
   ProductsListHorizontal,
-  ProductsListVertical
+  ProductsListVertical,
 } from '../../components';
-import { colors, GLOBAL_KEYS } from '../../constants';
-import { useAuthActions, useOrderContainer } from '../../containers';
-import { useAuthContext, useCartContext, useProductContext } from '../../context';
-import { FlashList } from '@shopify/flash-list';
-import { AIAssistant } from './HomeComponents';
+import {colors, GLOBAL_KEYS} from '../../constants';
+import {useAuthActions, useOrderContainer} from '../../containers';
+import {useAuthContext, useCartContext, useProductContext} from '../../context';
+import {FlashList} from '@shopify/flash-list';
+import {AIAssistant} from './HomeComponents';
 
 const OrderScreen = () => {
-  const { authState } = useAuthContext()
-  const { cartState } = useCartContext()
+  const {authState} = useAuthContext();
+  const {cartState} = useCartContext();
   const {allProducts, newProducts} = useProductContext();
   const {
     dialogShippingVisible,
@@ -53,27 +53,29 @@ const OrderScreen = () => {
     scrollToCategory,
     handleScroll,
     navigateFavorite,
-    navigateSearchProduct
-  } = useOrderContainer()
+    navigateSearchProduct,
+  } = useOrderContainer();
 
+  const {onNavigateLogin} = useAuthActions();
 
-  const { onNavigateLogin } = useAuthActions();
+  const onItemClick = useCallback(
+    productId => {
+      onNavigateProductDetailSheet(productId);
+    },
+    [onNavigateProductDetailSheet],
+  );
 
-  const onItemClick = useCallback((productId) => {
-    onNavigateProductDetailSheet(productId);
-  }, [onNavigateProductDetailSheet]);
-
-  const onIconClick = useCallback(async (productId) => {
-    await onClickAddToCart(productId);
-  }, [onClickAddToCart]);
+  const onIconClick = useCallback(
+    async productId => {
+      await onClickAddToCart(productId);
+    },
+    [onClickAddToCart],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <LightStatusBar />
-      {
-        loadingDetail &&
-        <NormalLoading visible={loadingDetail} />
-      }
+      {loadingDetail && <NormalLoading visible={loadingDetail} />}
       <HeaderOrder
         title={currentCategory}
         onCategoryPress={() => setDialogVisible(true)}
@@ -86,13 +88,15 @@ const OrderScreen = () => {
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         refreshControl={
-          <RefreshControl colors={[colors.primary]} refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          <RefreshControl
+            colors={[colors.primary]}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+          />
         }
         scrollEventThrottle={16}>
-
-        {!authState.lastName && (
-          <AuthContainer onPress={onNavigateLogin} />
-        )}
+        {!authState.lastName && <AuthContainer onPress={onNavigateLogin} />}
 
         <CategoryMenu
           loading={loadingCategories}
@@ -100,10 +104,9 @@ const OrderScreen = () => {
           onCategorySelect={category => scrollToCategory(category._id)}
         />
 
-
         <ProductsListHorizontal
           loading={false}
-          title='Sản phẩm mới'
+          title="Sản phẩm mới"
           products={newProducts}
           onItemClick={onItemClick}
           onIconClick={onIconClick}
@@ -115,7 +118,7 @@ const OrderScreen = () => {
           keyExtractor={item => item._id}
           showsVerticalScrollIndicator={false}
           scrollEnabled={false}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View onLayout={event => onLayoutCategory(item._id, event)}>
               <ProductsListVertical
                 title={item.name}
@@ -135,10 +138,10 @@ const OrderScreen = () => {
           selectedOption === 'Mang đi'
             ? cartState?.storeInfoSelect?.storeAddress
             : cartState?.shippingAddressInfo?.location
-              ? cartState?.shippingAddressInfo?.location
-              : cartState
-                ? cartState?.address?.label
-                : 'Đang xác định vị trí...'
+            ? cartState?.shippingAddressInfo?.location
+            : cartState
+            ? cartState?.address?.label
+            : 'Đang xác định vị trí...'
         }
         onPress={() => setDialogShippingVisible(true)}
         style={styles.deliverybutton}
@@ -146,8 +149,7 @@ const OrderScreen = () => {
         onPressCart={navigateCheckOut}
       />
 
-      {
-        dialogShippingVisible &&
+      {dialogShippingVisible && (
         <DialogShippingMethod
           visible={dialogShippingVisible}
           selectedOption={selectedOption}
@@ -155,16 +157,14 @@ const OrderScreen = () => {
           onOptionSelect={handleOptionSelect}
           onEditOption={handleEditOption}
         />
-      }
+      )}
 
-
-      {
-        dialogVisible &&
+      {dialogVisible && (
         <MyBottomSheet
           visible={dialogVisible}
           onHide={() => setDialogVisible(false)}
           title="Danh mục">
-          <View style={{ marginVertical: 8 }}>
+          <View style={{marginVertical: 8}}>
             <CategoryMenu
               categories={categories}
               loading={loadingCategories}
@@ -172,13 +172,10 @@ const OrderScreen = () => {
                 scrollToCategory(category._id);
               }}
             />
-
           </View>
-
         </MyBottomSheet>
-      }
+      )}
       <AIAssistant />
-
     </SafeAreaView>
   );
 };
