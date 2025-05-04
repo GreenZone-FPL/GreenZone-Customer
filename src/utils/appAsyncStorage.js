@@ -11,7 +11,9 @@ export class AppAsyncStorage {
     activeOrders: 'activeOrders',
     currentLocation: 'currentLocation',
     merchantLocation: 'merchantLocation',
-  }
+    shippingAddress: 'shippingAddress',
+    merchantLocationShipping: 'merchantLocationShipping',
+  };
 
   static async readData(key, defaultValue = null) {
     try {
