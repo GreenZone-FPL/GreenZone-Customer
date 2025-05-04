@@ -19,6 +19,7 @@ const AgoraVoiceCall = () => {
 
   return videoCall ? (
     <AgoraUIKit
+      videoCall={false}
       connectionData={connectionData}
       rtcCallbacks={rtcCallbacks}
     />

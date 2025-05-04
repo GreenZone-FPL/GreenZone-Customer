@@ -71,7 +71,7 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
 
           authDispatch({
             type: AuthActionTypes.LOGIN,
-            payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
+            payload: { needLogin: false, isLoggedIn: true, lastName: userLastName, firstName: response.user?.firstName },
           });
           cartDispatch({
             type: CartActionTypes.UPDATE_ORDER_INFO,

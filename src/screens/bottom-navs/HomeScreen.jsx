@@ -42,7 +42,6 @@ const HomeScreen = () => {
   const {
     dialogShippingVisible,
     selectedOption,
-    currentCategory,
     needToPay,
     loadingProducts,
     loadingDetail,
@@ -50,10 +49,8 @@ const HomeScreen = () => {
     onRefresh,
     handleEditOption,
     setDialogShippingVisible,
-    handleScroll,
     handleOptionSelect,
     handleCloseDialog,
-    onLayoutCategory,
     onNavigateProductDetailSheet,
     onClickAddToCart,
     navigateCheckOut,
@@ -84,13 +81,18 @@ const HomeScreen = () => {
       <LightStatusBar />
       {loadingDetail && <NormalLoading visible={loadingDetail} />}
       <HeaderWithBadge
-        title={currentCategory}
-        isHome={false}
-        enableBadge={!!authState.lastName}
+        title={
+          authState?.firstName
+            ? `Xin chào, ${authState.firstName} ${authState?.lastName ?? ''}`
+            : authState?.lastName
+            ? `Xin chào, ${authState.lastName}`
+            : 'Xin chào'
+        }
+        isHome={true}
+        enableBadge={!!(authState?.firstName || authState?.lastName)}
       />
 
       <ScrollView
-        onScroll={handleScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -138,14 +140,12 @@ const HomeScreen = () => {
           nestedScrollEnabled={true}
           removeClippedSubviews={true}
           renderItem={({item}) => (
-            <View onLayout={event => onLayoutCategory(item._id, event)}>
-              <ProductsGrid
-                title={item.name}
-                products={item.products}
-                onItemClick={onItemClick}
-                onIconClick={onIconClick}
-              />
-            </View>
+            <ProductsGrid
+              title={item.name}
+              products={item.products}
+              onItemClick={onItemClick}
+              onIconClick={onIconClick}
+            />
           )}
         />
       </ScrollView>
