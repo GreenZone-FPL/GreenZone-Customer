@@ -1,17 +1,22 @@
-import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { Keyboard } from 'react-native';
-import { verifyOTP } from '../../axios';
-import { useAuthContext, useCartContext } from '../../context';
-import { AuthActionTypes, CartActionTypes } from '../../reducers';
-import { Toaster } from '../../utils';
-import { onUserLoginZego } from '../../zego/common';
+import {useNavigation} from '@react-navigation/native';
+import {useEffect, useState} from 'react';
+import {Keyboard} from 'react-native';
+import {verifyOTP} from '../../axios';
+import {useAuthContext, useCartContext} from '../../context';
+import {AuthActionTypes, CartActionTypes} from '../../reducers';
+import {Toaster} from '../../utils';
+import {onUserLoginZego} from '../../zego/common';
 
-export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp: string, realCode: string) => {
+export const useVerifyOTPContainer = (
+  expired: string,
+  phoneNumber: string,
+  otp: string,
+  realCode: string,
+) => {
   const navigation = useNavigation();
   const [code, setCode] = useState('');
-  const { authDispatch } = useAuthContext();
-  const { cartDispatch } = useCartContext();
+  const {authDispatch} = useAuthContext();
+  const {cartDispatch} = useCartContext();
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
 
@@ -31,39 +36,10 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
 
     Keyboard.dismiss();
 
-    // try {
-    //   setLoading(true);
-    //   const response = await verifyOTP({ phoneNumber, code });
-    //   const userLastName: string | undefined = response.user?.lastName;
-
-    //   if (userLastName) {
-    //     Toaster.show('Đăng nhập thành công!');
-
-    //     authDispatch({
-    //       type: AuthActionTypes.LOGIN,
-    //       payload: { needLogin: false, isLoggedIn: true, lastName: userLastName },
-    //     });
-    //     await onUserLoginZego(phoneNumber, userLastName, navigation)
-    //   } else {
-    //     authDispatch({
-    //       type: AuthActionTypes.REGISTER,
-    //       payload: { isLoggedIn: false, needLogin: false, needRegister: true },
-    //     });
-    //   }
-
-
-    // } catch (error: any) {
-    //   console.log(error)
-    //   Toaster.show(error)
-    // } finally {
-    //   setLoading(false);
-    // }
-
-
     if (code === otp) {
       try {
         setLoading(true);
-        const response = await verifyOTP({ phoneNumber, code: realCode });
+        const response = await verifyOTP({phoneNumber, code: realCode});
         const userLastName: string | undefined = response.user?.lastName;
 
         if (userLastName) {
@@ -71,34 +47,36 @@ export const useVerifyOTPContainer = (expired: string, phoneNumber: string, otp:
 
           authDispatch({
             type: AuthActionTypes.LOGIN,
-            payload: { needLogin: false, isLoggedIn: true, lastName: userLastName, firstName: response.user?.firstName },
+            payload: {
+              needLogin: false,
+              isLoggedIn: true,
+              lastName: userLastName,
+              firstName: response.user?.firstName,
+            },
           });
           cartDispatch({
             type: CartActionTypes.UPDATE_ORDER_INFO,
             payload: {
               consigneeName: `${response.user?.firstName} ${userLastName}`,
-              consigneePhone: phoneNumber
-            }
-          })
-          await onUserLoginZego(phoneNumber, userLastName, navigation)
+              consigneePhone: phoneNumber,
+            },
+          });
+          await onUserLoginZego(phoneNumber, userLastName, navigation);
         } else {
           authDispatch({
             type: AuthActionTypes.REGISTER,
-            payload: { isLoggedIn: false, needLogin: false, needRegister: true },
+            payload: {isLoggedIn: false, needLogin: false, needRegister: true},
           });
         }
-
-
       } catch (error: any) {
-        console.log(error)
-        Toaster.show(error)
+        console.log(error);
+        Toaster.show(error);
       } finally {
         setLoading(false);
       }
     } else {
       Toaster.show(`Lỗi: OTP không chính xác`);
     }
-
   };
 
   useEffect(() => {
